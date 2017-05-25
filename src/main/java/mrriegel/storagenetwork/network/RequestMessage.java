@@ -45,8 +45,27 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.world.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
 					if (tile == null)
 						return;
+					// System.out.println("!RequestMessage message.stack == "+message.stack);
 					int in = message.stack.isEmpty() ? 0 : tile.getAmount(new FilterItem(message.stack, true, false, true));
-					ItemStack stack = message.stack.isEmpty() ? ItemStack.EMPTY : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(Math.min(message.stack.getMaxStackSize() / 2, in / 2), 1), false);
+
+       //   System.out.println("!RequestMessage in == "+in);
+          ItemStack stack ;
+          if(message.stack.isEmpty()){
+            stack = ItemStack.EMPTY ;
+          }
+          else{
+         //   System.out.println("!RequestMessage  message.id = == "+ message.id );
+            int ss = message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(Math.min(message.stack.getMaxStackSize() / 2, in / 2)  , 1);
+           // System.out.println("!RequestMessage  ssssssss "+ ss );
+            stack =tile.request(
+                new FilterItem(message.stack, true, false, true), 
+                ss   , false);
+            
+          }
+
+
+      //    System.out.println("!RequestMessage request"+stack);
+					
 					if (!stack.isEmpty()) {
 						if (message.shift) {
 							ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().playerEntity, stack);

@@ -20,14 +20,15 @@ public class ContainerContainer extends Container {
 			this.addSlotToContainer(new Slot(tile, i, 8 + i * 18, 26) {
 				@Override
 				public boolean isItemValid(ItemStack stack) {
-					return stack != null && stack.isItemEqual(new ItemStack(ModItems.template)) && stack.getTagCompound() != null && stack.getTagCompound().getTag("res") != null;
+					return stack != null &&!stack.isEmpty() && stack.isItemEqual(new ItemStack(ModItems.template)) && stack.getTagCompound() != null && stack.getTagCompound().getTag("res") != null;
 				}
 
 				@Override
 				public void onSlotChanged() {
 					super.onSlotChanged();
-					if (getStack() != null)
+					if (getStack() != null && !getStack().isEmpty()){
 						getStack().getTagCompound().setLong("machine", ((TileEntity) inventory).getPos().toLong());
+					}
 				}
 			});
 		}
@@ -48,30 +49,30 @@ public class ContainerContainer extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
-		ItemStack itemstack = null;
+		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(slotIndex);
 
 		if (slot != null && slot.getHasStack()) {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 			if (!itemstack.isItemEqual(new ItemStack(ModItems.template)) || itemstack.getTagCompound().getTag("res") == null)
-				return null;
+				return ItemStack.EMPTY;
 			if (slotIndex <= 8) {
 				if (!this.mergeItemStack(itemstack1, 8, 8 + 37, true))
-					return null;
+					return ItemStack.EMPTY;
 				slot.onSlotChange(itemstack1, itemstack);
 			} else {
 				if (!this.mergeItemStack(itemstack1, 0, 9, false))
-					return null;
+					return ItemStack.EMPTY;
 			}
 			if (itemstack1.getCount() == 0) {
-				slot.putStack((ItemStack) null);
+				slot.putStack(ItemStack.EMPTY);
 			} else {
 				slot.onSlotChanged();
 			}
 
 			if (itemstack1.getCount() == itemstack.getCount()) {
-				return null;
+				return ItemStack.EMPTY;
 			}
 			slot.onTake(player, itemstack1);
 		}

@@ -47,7 +47,7 @@ public class ContainerCrafter extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-		ItemStack itemstack = null;
+		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(index);
 
 		if (slot != null && slot.getHasStack()) {
@@ -56,30 +56,30 @@ public class ContainerCrafter extends Container {
 
 			if (index == 0) {
 				if (!this.mergeItemStack(itemstack1, 10, 46, true)) {
-					return null;
+					return ItemStack.EMPTY;
 				}
 
 				slot.onSlotChange(itemstack1, itemstack);
 			} else if (index >= 10 && index < 37) {
 				if (!this.mergeItemStack(itemstack1, 37, 46, false)) {
-					return null;
+					return ItemStack.EMPTY;
 				}
 			} else if (index >= 37 && index < 46) {
 				if (!this.mergeItemStack(itemstack1, 10, 37, false)) {
-					return null;
+					return ItemStack.EMPTY;
 				}
 			} else if (!this.mergeItemStack(itemstack1, 10, 46, false)) {
-				return null;
+				return ItemStack.EMPTY;
 			}
 
 			if (itemstack1.getCount() == 0) {
-				slot.putStack((ItemStack) null);
+				slot.putStack(ItemStack.EMPTY);
 			} else {
 				slot.onSlotChanged();
 			}
 
 			if (itemstack1.getCount() == itemstack.getCount()) {
-				return null;
+				return ItemStack.EMPTY;
 			}
 
 			slot.onTake(playerIn, itemstack1);
