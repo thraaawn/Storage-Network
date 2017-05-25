@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.init;
 import mrriegel.storagenetwork.blocks.BlockAnnexer;
 import mrriegel.storagenetwork.blocks.BlockContainer;
 import mrriegel.storagenetwork.blocks.BlockCrafter;
-import mrriegel.storagenetwork.blocks.BlockFannexer;
 import mrriegel.storagenetwork.blocks.BlockIndicator;
 import mrriegel.storagenetwork.blocks.BlockItemBox;
 import mrriegel.storagenetwork.blocks.BlockKabel;
@@ -11,9 +10,6 @@ import mrriegel.storagenetwork.blocks.BlockMaster;
 import mrriegel.storagenetwork.blocks.BlockRequest;
 import mrriegel.storagenetwork.blocks.BlockToggle;
 import mrriegel.storagenetwork.tile.TileAnnexer;
-import mrriegel.storagenetwork.tile.TileFRequest;
-import mrriegel.storagenetwork.tile.TileFannexer;
-import mrriegel.storagenetwork.tile.TileFluidBox;
 import mrriegel.storagenetwork.tile.TileIndicator;
 import mrriegel.storagenetwork.tile.TileItemBox;
 import mrriegel.storagenetwork.tile.TileKabel;
@@ -84,7 +80,7 @@ public class ModBlocks {
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
 		GameRegistry.registerTileEntity(TileRequest.class, "tileRequest");
-		GameRegistry.registerTileEntity(TileFRequest.class, "tileFRequest");
+//		GameRegistry.registerTileEntity(TileFRequest.class, "tileFRequest");
 		// GameRegistry.registerTileEntity(TileContainer.class,
 		// "tileContainer");
 		// GameRegistry.registerTileEntity(TileCrafter.class, "tileCrafter");
@@ -92,7 +88,7 @@ public class ModBlocks {
 		GameRegistry.registerTileEntity(TileAnnexer.class, "tileAnnexer");
 //		GameRegistry.registerTileEntity(TileFannexer.class, "tileFannexer");
 		GameRegistry.registerTileEntity(TileItemBox.class, "tileItemBox");
-		GameRegistry.registerTileEntity(TileFluidBox.class, "tileFluidBox");
+//		GameRegistry.registerTileEntity(TileFluidBox.class, "tileFluidBox");
 		GameRegistry.registerTileEntity(TileToggler.class, "tileToggler");
 
 	}
