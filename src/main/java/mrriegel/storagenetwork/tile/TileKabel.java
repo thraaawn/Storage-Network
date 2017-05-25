@@ -49,7 +49,7 @@ public class TileKabel extends AbstractFilterTile {
 		int res = 0;
 		for (ItemStack s : upgrades) {
 			if (s != null && s.getItemDamage() == num) {
-				res += s.stackSize;
+				res += s.getCount();
 				break;
 			}
 		}
@@ -110,7 +110,7 @@ public class TileKabel extends AbstractFilterTile {
 		if (elements(ItemUpgrade.OP) < 1)
 			return true;
 		if (!isFluid()) {
-			TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
+			TileMaster m = (TileMaster) world.getTileEntity(getMaster());
 			if (getStack() == null)
 				return true;
 			int amount = m.getAmount(new FilterItem(getStack()));
@@ -120,7 +120,7 @@ public class TileKabel extends AbstractFilterTile {
 				return amount <= getLimit();
 			}
 		} else {
-			TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
+			TileMaster m = (TileMaster) world.getTileEntity(getMaster());
 			if (Util.getFluid(getStack()) == null)
 				return true;
 			int amount = m.getAmount(Util.getFluid(getStack()).getFluid());
@@ -143,7 +143,7 @@ public class TileKabel extends AbstractFilterTile {
 		mode = compound.getBoolean("mode");
 		limit = compound.getInteger("limit");
 		if (compound.hasKey("stack", 10))
-			stack = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack")));
+			stack = (new ItemStack(compound.getCompoundTag("stack")));
 		else
 			stack = null;
 		if (compound.hasKey("north"))
@@ -172,7 +172,7 @@ public class TileKabel extends AbstractFilterTile {
 			NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
 			int j = nbttagcompound.getByte("Slot") & 255;
 			if (j >= 0 && j < 4) {
-				upgrades.set(j, ItemStack.loadItemStackFromNBT(nbttagcompound));
+				upgrades.set(j, new ItemStack(nbttagcompound));
 			}
 		}
 	}
@@ -230,9 +230,9 @@ public class TileKabel extends AbstractFilterTile {
 	}
 
 	public Kind getKind() {
-		if (worldObj == null)
+		if (world == null)
 			return null;
-		return getKind(worldObj.getBlockState(pos).getBlock());
+		return getKind(world.getBlockState(pos).getBlock());
 	}
 
 	public BlockPos getConnectedInventory() {
@@ -303,14 +303,14 @@ public class TileKabel extends AbstractFilterTile {
 	public IFluidHandler getFluidTank() {
 		// WARNIGN getopposite
 		if (getConnectedInventory() != null)
-			return InvHelper.getFluidHandler(worldObj.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
+			return InvHelper.getFluidHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
 		return null;
 	}
 
 	@Override
 	public IItemHandler getInventory() {
 		if (getConnectedInventory() != null)
-			return InvHelper.getItemHandler(worldObj.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
+			return InvHelper.getItemHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
 		return null;
 	}
 

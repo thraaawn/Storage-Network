@@ -15,6 +15,7 @@ public class TileAnnexer extends TileConnectable implements ITickable {
 
 	@Override
 	public void update() {
+	  World worldObj = this.world;
 		if (!worldObj.isRemote && worldObj.getTotalWorldTime() % 20 == 0 && master != null && worldObj.getTileEntity(master) instanceof TileMaster && !worldObj.isBlockPowered(pos)) {
 			BlockPos p = pos.offset(worldObj.getBlockState(pos).getValue(BlockAnnexer.FACING).getOpposite());
 			Block block = worldObj.getBlockState(p).getBlock();
@@ -33,7 +34,7 @@ public class TileAnnexer extends TileConnectable implements ITickable {
 				int rest = mas.insertStack(s, null, false);
 				if (rest > 0) {
 					ItemStack spawn = s.copy();
-					spawn.stackSize = rest;
+					spawn.setCount(rest);
 					spawnItemStack(worldObj, p, spawn);
 				}
 			}
@@ -48,11 +49,11 @@ public class TileAnnexer extends TileConnectable implements ITickable {
 			double d2 = worldIn.rand.nextFloat() * f + (1.0F - f) * 0.5D;
 			EntityItem entityitem = new EntityItem(worldIn, pos.getX() + d0, pos.getY() + d1, pos.getZ() + d2, stack);
 			entityitem.setDefaultPickupDelay();
-			worldIn.spawnEntityInWorld(entityitem);
+			worldIn.spawnEntity(entityitem);
 		}
 	}
 
 	private boolean canBreakBlock(Block block, BlockPos pos) {
-		return !worldObj.isAirBlock(pos) && !block.getMaterial(worldObj.getBlockState(pos)).isLiquid() && block != Blocks.BEDROCK && block.getBlockHardness(worldObj.getBlockState(pos), worldObj, pos) > -1.0F && block.getHarvestLevel(worldObj.getBlockState(pos)) <= 3;
+		return !world.isAirBlock(pos) && !block.getMaterial(world.getBlockState(pos)).isLiquid() && block != Blocks.BEDROCK && block.getBlockHardness(world.getBlockState(pos), world, pos) > -1.0F && block.getHarvestLevel(world.getBlockState(pos)) <= 3;
 	}
 }

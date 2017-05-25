@@ -155,10 +155,10 @@ public class GuiFCable extends MyGuiContainer {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		if (operation != null && operation.isMouseOverSlot(mouseX, mouseY) && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) {
-			((TileKabel) tile).setStack(mc.thePlayer.inventory.getItemStack());
-			operation.fluid = Util.getFluid(mc.thePlayer.inventory.getItemStack()) == null ? null : Util.getFluid(mc.thePlayer.inventory.getItemStack()).getFluid();
+			((TileKabel) tile).setStack(mc.player.inventory.getItemStack());
+			operation.fluid = Util.getFluid(mc.player.inventory.getItemStack()) == null ? null : Util.getFluid(mc.player.inventory.getItemStack()).getFluid();
 			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.thePlayer.inventory.getItemStack()));
+			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.player.inventory.getItemStack()));
 			return;
 		}
 		for (int i = 0; i < list.size(); i++) {
@@ -166,9 +166,9 @@ public class GuiFCable extends MyGuiContainer {
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
 				ContainerFCable con = (ContainerFCable) inventorySlots;
 				StackWrapper x = con.tile.getFilter().get(i);
-				if (mc.thePlayer.inventory.getItemStack() != null && Util.getFluid(mc.thePlayer.inventory.getItemStack()) != null) {
-					if (!con.in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1))) {
-						con.tile.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1));
+				if (mc.player.inventory.getItemStack() != null && Util.getFluid(mc.player.inventory.getItemStack()) != null) {
+					if (!con.in(new StackWrapper(mc.player.inventory.getItemStack(), 1))) {
+						con.tile.getFilter().put(i, new StackWrapper(mc.player.inventory.getItemStack(), 1));
 					} else
 						con.tile.getFilter().put(i, null);
 				} else {
@@ -285,7 +285,7 @@ public class GuiFCable extends MyGuiContainer {
 				if (tile instanceof TileKabel) {
 					if (((TileKabel) tile).getStack() != null) {
 						List<String> lis = new ArrayList<String>();
-						String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileKabel) tile).isMode() ? "more" : "less")), ((TileKabel) tile).getLimit() + " mB", Util.getFluid(((TileKabel) tile).getStack()).getFluid().getName());
+						String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.world.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileKabel) tile).isMode() ? "more" : "less")), ((TileKabel) tile).getLimit() + " mB", Util.getFluid(((TileKabel) tile).getStack()).getFluid().getName());
 						List<String> matchList = new ArrayList<String>();
 						Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
 						Matcher regexMatcher = regex.matcher(s);

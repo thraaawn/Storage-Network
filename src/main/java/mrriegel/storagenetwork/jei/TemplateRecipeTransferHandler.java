@@ -26,10 +26,10 @@ public class TemplateRecipeTransferHandler implements IRecipeTransferHandler {
 		return ContainerTemplate.class;
 	}
 
-	@Override
-	public String getRecipeCategoryUid() {
-		return VanillaRecipeCategoryUid.CRAFTING;
-	}
+//	@Override
+//	public String getRecipeCategoryUid() {
+//		return VanillaRecipeCategoryUid.CRAFTING;
+//	}
 
 	@Override
 	public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {

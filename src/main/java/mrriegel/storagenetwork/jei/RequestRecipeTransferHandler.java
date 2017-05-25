@@ -25,16 +25,16 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.primitives.Ints;
 
-public class RequestRecipeTransferHandler implements IRecipeTransferHandler {
+public class RequestRecipeTransferHandler<C extends Container> implements IRecipeTransferHandler {
 	@Override
 	public Class<? extends Container> getContainerClass() {
 		return ContainerRequest.class;
 	}
 
-	@Override
-	public String getRecipeCategoryUid() {
-		return VanillaRecipeCategoryUid.CRAFTING;
-	}
+//	@Override
+//	public String getRecipeCategoryUid() {
+//		return VanillaRecipeCategoryUid.CRAFTING;
+//	}
 
 	@Override
 	public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {

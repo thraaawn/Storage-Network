@@ -45,7 +45,7 @@ public class GuiCrafter extends GuiContainer {
 		GlStateManager.colorMask(true, true, true, false);
 		RenderHelper.enableGUIStandardItemLighting();
 		GlStateManager.color(1f, 1f, 1f, 1f);
-		ItemStack result = CraftingManager.getInstance().findMatchingRecipe(((ContainerCrafter) inventorySlots).crafter.getMatrix(), mc.theWorld);
+		ItemStack result = CraftingManager.getInstance().findMatchingRecipe(((ContainerCrafter) inventorySlots).crafter.getMatrix(), mc.world);
 		mc.getRenderItem().renderItemAndEffectIntoGUI(result, j1, k1);
 		RenderHelper.disableStandardItemLighting();
 		GlStateManager.colorMask(true, true, true, true);

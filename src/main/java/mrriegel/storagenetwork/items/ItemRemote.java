@@ -19,6 +19,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -36,7 +37,8 @@ public class ItemRemote extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, List list) {
+	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
+//	   super.getSubItems(itemIn, tab, subItems);
 		for (int i = 0; i < 2; i++) {
 			list.add(new ItemStack(item, 1, i));
 		}
@@ -56,9 +58,10 @@ public class ItemRemote extends Item {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+	  ItemStack itemStackIn = playerIn.getHeldItem(hand);
 		if (worldIn.isRemote)
-			return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+			return super.onItemRightClick( worldIn, playerIn, hand);
 		int x = NBTHelper.getInteger(itemStackIn, "x");
 		int y = NBTHelper.getInteger(itemStackIn, "y");
 		int z = NBTHelper.getInteger(itemStackIn, "z");
@@ -70,16 +73,17 @@ public class ItemRemote extends Item {
 						NBTHelper.setString(itemStackIn, "sort", Sort.NAME.toString());
 					playerIn.openGui(StorageNetwork.instance, getGui(), world, x, y, z);
 				} else
-					playerIn.addChatMessage(new TextComponentString("Cable Master not loaded."));
+					playerIn.sendMessage(new TextComponentString("Cable Master not loaded."));
 			} else if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() || playerIn.getDistance(x, y, z) > 32))
 				if (!worldIn.isRemote)
-					playerIn.addChatMessage(new TextComponentString("Out of Range"));
+					playerIn.sendMessage(new TextComponentString("Out of Range"));
 		}
-		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+		return super.onItemRightClick( worldIn, playerIn, hand);
 	}
 
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse( EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    ItemStack stack = playerIn.getHeldItem(hand);
 		if (worldIn.getTileEntity(pos) instanceof TileMaster) {
 			NBTHelper.setInteger(stack, "x", pos.getX());
 			NBTHelper.setInteger(stack, "y", pos.getY());
@@ -89,7 +93,7 @@ public class ItemRemote extends Item {
 			NBTHelper.setString(stack, "sort", Sort.NAME.toString());
 			return EnumActionResult.SUCCESS;
 		}
-		return super.onItemUse(stack, playerIn, worldIn, pos, hand, side, hitX, hitY, hitZ);
+		return super.onItemUse( playerIn, worldIn, pos, hand, side, hitX, hitY, hitZ);
 	}
 
 	protected int getGui() {

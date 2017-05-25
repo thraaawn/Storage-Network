@@ -20,7 +20,7 @@ public class StackWrapper {
 
 	public void readFromNBT(NBTTagCompound compound) {
 		NBTTagCompound c = compound.getCompoundTag("stack");
-		stack = ItemStack.loadItemStackFromNBT(c);
+		stack = new ItemStack(c);
 		size = compound.getInteger("size");
 	}
 

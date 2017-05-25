@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.tile;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -11,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -19,12 +21,12 @@ import com.google.common.collect.Lists;
 
 public class TileContainer extends TileConnectable implements ISidedInventory {
 	private EnumFacing input, output;
-	private ItemStack[] inv;
+	private NonNullList<ItemStack> inv;
 	public static final int SIZE = 9;
 
 	public TileContainer() {
 		super();
-		inv = new ItemStack[SIZE];
+		inv = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 		input = EnumFacing.UP;
 		output = EnumFacing.DOWN;
 	}
@@ -36,14 +38,14 @@ public class TileContainer extends TileConnectable implements ISidedInventory {
 		input = input != null ? input : EnumFacing.UP;
 		output = EnumFacing.byName(compound.getString("output"));
 		output = output != null ? output : EnumFacing.DOWN;
-		inv = new ItemStack[SIZE];
+    inv = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 
 		NBTTagList nbttaglist = compound.getTagList("Items", 10);
 		for (int i = 0; i < nbttaglist.tagCount(); ++i) {
 			NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
 			int j = nbttagcompound.getByte("Slot") & 255;
-			if (j >= 0 && j < this.inv.length) {
-				this.inv[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
+			if (j >= 0 && j < this.inv.size()) {
+				this.inv.set(j,new ItemStack(nbttagcompound));
 			}
 		}
 	}
@@ -56,11 +58,11 @@ public class TileContainer extends TileConnectable implements ISidedInventory {
 			compound.setString("output", output.toString());
 
 		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inv.length; ++i) {
-			if (this.inv[i] != null) {
+		for (int i = 0; i < inv.size(); ++i) {
+			if (this.inv.get(i).isEmpty()==false) {
 				NBTTagCompound nbttagcompound = new NBTTagCompound();
 				nbttagcompound.setByte("Slot", (byte) i);
-				this.inv[i].writeToNBT(nbttagcompound);
+				this.inv.get(i).writeToNBT(nbttagcompound);
 				nbttaglist.appendTag(nbttagcompound);
 			}
 		}
@@ -99,8 +101,8 @@ public class TileContainer extends TileConnectable implements ISidedInventory {
 
 	@Override
 	public void onChunkUnload() {
-		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
-			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
+		if (master != null && world.getChunkFromBlockCoords(master).isLoaded() && world.getTileEntity(master) instanceof TileMaster)
+			((TileMaster) world.getTileEntity(master)).refreshNetwork();
 	}
 
 	@Override
@@ -121,7 +123,7 @@ public class TileContainer extends TileConnectable implements ISidedInventory {
 	@Override
 	@Nullable
 	public ItemStack getStackInSlot(int index) {
-		return index >= 0 && index < this.inv.length ? this.inv[index] : null;
+		return index >= 0 && index < this.inv.size() ? this.inv.get(index) : ItemStack.EMPTY;
 	}
 
 	@Override
@@ -139,21 +141,21 @@ public class TileContainer extends TileConnectable implements ISidedInventory {
 	@Override
 	@Nullable
 	public ItemStack removeStackFromSlot(int index) {
-		if (this.inv[index] != null) {
-			ItemStack itemstack = this.inv[index];
-			this.inv[index] = null;
+		if (this.inv.get(index).isEmpty()==false) {
+			ItemStack itemstack = this.inv.get(index) ;
+			this.inv.set(index,ItemStack.EMPTY);
 			return itemstack;
 		} else {
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 
 	@Override
 	public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
-		this.inv[index] = stack;
+    this.inv.set(index,stack);
 
-		if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
-			stack.stackSize = this.getInventoryStackLimit();
+		if (!stack.isEmpty() && stack.getCount() > this.getInventoryStackLimit()) {
+			stack.setCount( this.getInventoryStackLimit());
 		}
 
 		this.markDirty();
@@ -183,12 +185,7 @@ public class TileContainer extends TileConnectable implements ISidedInventory {
 	public int getInventoryStackLimit() {
 		return 64;
 	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer player) {
-		return true;
-	}
-
+ 
 	@Override
 	public void openInventory(EntityPlayer player) {
 	}
@@ -213,6 +210,18 @@ public class TileContainer extends TileConnectable implements ISidedInventory {
 
 	@Override
 	public void clear() {
-		inv = new ItemStack[SIZE];
+    inv = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 	}
+
+  @Override
+  public boolean isEmpty() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean isUsableByPlayer(EntityPlayer player) {
+    // TODO Auto-generated method stub
+    return true;
+  }
 }

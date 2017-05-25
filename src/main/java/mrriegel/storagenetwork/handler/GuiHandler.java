@@ -69,12 +69,12 @@ public class GuiHandler implements IGuiHandler {
 		if (ID == CRAFTER) {
 			return new ContainerCrafter(player.inventory, (TileCrafter) world.getTileEntity(new BlockPos(x, y, z)));
 		}
-		if (ID == FREQUEST) {
-			return new ContainerFRequest((TileFRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
-		}
-		if (ID == FREMOTE) {
-			return new ContainerFRemote(player.inventory);
-		}
+//		if (ID == FREQUEST) {
+//			return new ContainerFRequest((TileFRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+//		}
+//		if (ID == FREMOTE) {
+//			return new ContainerFRemote(player.inventory);
+//		}
 		if (ID == INDICATOR) {
 			return new ContainerIndicator((TileIndicator) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
 		}
@@ -107,12 +107,12 @@ public class GuiHandler implements IGuiHandler {
 		if (ID == CRAFTER) {
 			return new GuiCrafter(new ContainerCrafter(player.inventory, (TileCrafter) world.getTileEntity(new BlockPos(x, y, z))));
 		}
-		if (ID == FREQUEST) {
-			return new GuiFRequest(new ContainerFRequest((TileFRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
-		}
-		if (ID == FREMOTE) {
-			return new GuiFRemote(new ContainerFRemote(player.inventory));
-		}
+//		if (ID == FREQUEST) {
+//			return new GuiFRequest(new ContainerFRequest((TileFRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
+//		}
+//		if (ID == FREMOTE) {
+//			return new GuiFRemote(new ContainerFRemote(player.inventory));
+//		}
 		if (ID == INDICATOR) {
 			return new GuiIndicator(new ContainerIndicator((TileIndicator) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
 		}

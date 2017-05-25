@@ -36,7 +36,7 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 
 	@Override
 	public IMessage onMessage(final InsertMessage message, final MessageContext ctx) {
-		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
@@ -49,16 +49,16 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 				if (t instanceof TileMaster) {
 					TileMaster tile = (TileMaster) t;
 					int rest;
-					ItemStack send = null;
+					ItemStack send = ItemStack.EMPTY;
 					if (message.buttonID == 0) {
 						rest = tile.insertStack(message.stack, null, false);
 						if (rest != 0)
 							send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
 					} else if (message.buttonID == 1) {
 						ItemStack stack1 = message.stack.copy();
-						stack1.stackSize = 1;
-						message.stack.stackSize--;
-						rest = tile.insertStack(stack1, null, false) + message.stack.stackSize;
+						stack1.setCount(1);
+						message.stack.shrink(1);
+						rest = tile.insertStack(stack1, null, false) + message.stack.getCount();
 						if (rest != 0)
 							send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
 					}

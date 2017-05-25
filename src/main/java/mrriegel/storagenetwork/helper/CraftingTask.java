@@ -81,7 +81,7 @@ public class CraftingTask {
 
 	public void readFromNBT(NBTTagCompound nbt) {
 		id = nbt.getInteger("craftingID");
-		output = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("outputStack"));
+		output = new ItemStack(nbt.getCompoundTag("outputStack"));
 		outputSize = nbt.getInteger("outputSize");
 		done = nbt.getInteger("done");
 		process = nbt.getBoolean("process");

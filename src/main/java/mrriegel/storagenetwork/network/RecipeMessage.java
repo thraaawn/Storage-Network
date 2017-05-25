@@ -51,7 +51,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 
 	@Override
 	public IMessage onMessage(final RecipeMessage message, final MessageContext ctx) {
-		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
@@ -59,7 +59,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 					if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest))
 						return;
 					ContainerRequest con = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
-					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(con.tile.getMaster());
+					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.world.getTileEntity(con.tile.getMaster());
 					if (tile == null)
 						return;
 					for (int j = 1; j < 10; j++) {
@@ -72,7 +72,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 							NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
 							for (int i = 0; i < invList.tagCount(); i++) {
 								NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-								map.put(i, ItemStack.loadItemStackFromNBT(stackTag));
+								map.put(i, new ItemStack(stackTag));
 							}
 						}
 
@@ -110,7 +110,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 							NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
 							for (int i = 0; i < invList.tagCount(); i++) {
 								NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-								lis.put(i, ItemStack.loadItemStackFromNBT(stackTag));
+								lis.put(i,new ItemStack(stackTag));
 							}
 						}
 						ItemStack s = lis.get(0);

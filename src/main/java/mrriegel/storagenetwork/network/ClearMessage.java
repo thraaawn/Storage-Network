@@ -20,20 +20,20 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
 
 	@Override
 	public IMessage onMessage(final ClearMessage message, final MessageContext ctx) {
-		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
 					ContainerRequest c = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
-					World w = ctx.getServerHandler().playerEntity.worldObj;
+					World w = ctx.getServerHandler().playerEntity.world;
 					for (int i = 0; i < 9; i++) {
 						if (w.getTileEntity(c.tile.getMaster()) == null)
 							break;
 						ItemStack s = c.craftMatrix.getStackInSlot(i);
 						if (s == null)
 							continue;
-						int num = s.stackSize;
+						int num = s.getCount();
 						int rest = ((TileMaster) w.getTileEntity(c.tile.getMaster())).insertStack(s.copy(), null, false);
 						if (num == rest)
 							continue;

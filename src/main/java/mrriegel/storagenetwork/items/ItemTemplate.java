@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -44,19 +45,20 @@ public class ItemTemplate extends Item {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick( World worldIn, EntityPlayer playerIn, EnumHand hand) {
+	  ItemStack itemStackIn = playerIn.getHeldItem(hand);
 		if (playerIn.isSneaking()) {
 			itemStackIn.setTagCompound(new NBTTagCompound());
 		} else {
-			if (!worldIn.isRemote && itemStackIn.stackSize == 1)
+			if (!worldIn.isRemote && itemStackIn.getCount() == 1)
 				playerIn.openGui(StorageNetwork.instance, GuiHandler.TEMPLATE, worldIn, 0, 0, 0);
 		}
-		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+		return super.onItemRightClick( worldIn, playerIn, hand);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, List list) {
+	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
 		for (int i = 0; i < 2; i++) {
 			list.add(new ItemStack(item, 1, i));
 		}
@@ -79,7 +81,7 @@ public class ItemTemplate extends Item {
 		if (stack.getTagCompound() != null) {
 			NBTTagCompound res = (NBTTagCompound) stack.getTagCompound().getTag("res");
 			if (res != null) {
-				result = ItemStack.loadItemStackFromNBT(res);
+				result = new ItemStack(res);
 			}
 		}
 		return result;
@@ -93,7 +95,7 @@ public class ItemTemplate extends Item {
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
-			map.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
+			map.put(slot,new ItemStack(stackTag));
 		}
 		return map;
 	}

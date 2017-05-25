@@ -50,10 +50,10 @@ public class TileIndicator extends TileConnectable implements ITickable {
 
 	@Override
 	public void update() {
-		if (!worldObj.isRemote && worldObj.getTotalWorldTime() % 40 == 0) {
+		if (!world.isRemote && world.getTotalWorldTime() % 40 == 0) {
 			boolean x = false;
 			if (stack != null && master != null) {
-				TileMaster mas = ((TileMaster) worldObj.getTileEntity(master));
+				TileMaster mas = ((TileMaster) world.getTileEntity(master));
 				int num = mas.getAmount(new FilterItem(stack.getStack()));
 				if (more) {
 					if (num > stack.getSize())
@@ -67,9 +67,9 @@ public class TileIndicator extends TileConnectable implements ITickable {
 						x = false;
 				}
 			}
-			if (worldObj.getBlockState(pos).getValue(BlockIndicator.STATE) != x) {
-				((BlockIndicator) worldObj.getBlockState(pos).getBlock()).setState(worldObj, pos, worldObj.getBlockState(pos), x);
-				Util.updateTile(worldObj, pos);
+			if (world.getBlockState(pos).getValue(BlockIndicator.STATE) != x) {
+				((BlockIndicator) world.getBlockState(pos).getBlock()).setState(world, pos, world.getBlockState(pos), x);
+				Util.updateTile(world, pos);
 			}
 		}
 	}

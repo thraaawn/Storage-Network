@@ -25,7 +25,7 @@ public class ContainerTemplate extends Container {
 	public InventoryPlayer playerInv;
 
 	public ContainerTemplate(InventoryPlayer playerInventory) {
-		this.worldObj = playerInventory.player.worldObj;
+		this.worldObj = playerInventory.player.world;
 		this.storedInv = playerInventory.player.inventory.getCurrentItem();
 		this.playerInv = playerInventory;
 		if (storedInv != null && storedInv.getTagCompound() != null) {
@@ -34,12 +34,12 @@ public class ContainerTemplate extends Container {
 				NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 				int slot = stackTag.getByte("Slot");
 				if (slot >= 0 && slot < craftMatrix.getSizeInventory()) {
-					craftMatrix.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
+					craftMatrix.setInventorySlotContents(slot,new ItemStack(stackTag));
 				}
 			}
 			NBTTagCompound res = (NBTTagCompound) storedInv.getTagCompound().getTag("res");
 			if (res != null)
-				craftResult.setInventorySlotContents(0, ItemStack.loadItemStackFromNBT(res));
+				craftResult.setInventorySlotContents(0,new ItemStack(res));
 		}
 		for (int i = 1; i < 10; i++) {
 			if (!NBTHelper.hasTag(storedInv.getTagCompound(), "meta" + i))
@@ -84,7 +84,7 @@ public class ContainerTemplate extends Container {
 			craftResult.getStackInSlot(0).writeToNBT(res);
 		}
 		storedInv.getTagCompound().setTag("res", res);
-		playerInv.mainInventory[playerInv.currentItem] = storedInv;
+		playerInv.mainInventory.set(playerInv.currentItem ,storedInv);
 	}
 
 	@Override
@@ -97,12 +97,12 @@ public class ContainerTemplate extends Container {
 			else {
 				if (getSlot(slotId).getHasStack()) {
 					if (clickedButton == 0)
-						getSlot(slotId).getStack().stackSize += (mode == ClickType.QUICK_MOVE ? 10 : 1);
+						getSlot(slotId).getStack().grow (mode == ClickType.QUICK_MOVE ? 10 : 1);
 					else if (clickedButton == 1)
-						getSlot(slotId).getStack().stackSize -= (mode == ClickType.QUICK_MOVE ? 10 : 1);
+						getSlot(slotId).getStack().shrink (mode == ClickType.QUICK_MOVE ? 10 : 1);
 					else if (clickedButton == 2)
 						getSlot(slotId).putStack(null);
-					if (getSlot(slotId).getStack() != null && getSlot(slotId).getStack().stackSize <= 0)
+					if (getSlot(slotId).getStack() != null && getSlot(slotId).getStack().getCount() <= 0)
 						getSlot(slotId).putStack(null);
 
 				}
@@ -110,7 +110,7 @@ public class ContainerTemplate extends Container {
 			slotChanged(slotId != 0);
 		} else {
 			ItemStack s = playerInv.getItemStack().copy();
-			s.stackSize = 1;
+			s.setCount(1);
 			getSlot(slotId).putStack(s);
 			slotChanged(slotId != 0);
 		}

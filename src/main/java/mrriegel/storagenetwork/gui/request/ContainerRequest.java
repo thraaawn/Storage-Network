@@ -36,19 +36,20 @@ public class ContainerRequest extends Container {
 		this.playerInv = playerInv;
 		result = new InventoryCraftResult();
 		for (int i = 0; i < 9; i++) {
-			craftMatrix.setInventorySlotContents(i, tile.matrix.get(i));
+		  if(tile.matrix.get(i)!=null&&tile.matrix.get(i).isEmpty() == false)
+		    craftMatrix.setInventorySlotContents(i, tile.matrix.get(i));
 		}
 
 		SlotCrafting x = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
 			@Override
-			public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
-				if (playerIn.worldObj.isRemote) {
-					return;
+			public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
+				if (playerIn.world.isRemote) {
+					return stack;
 				}
 				List<ItemStack> lis = Lists.newArrayList();
 				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
 					lis.add(craftMatrix.getStackInSlot(i));
-				super.onPickupFromSlot(playerIn, stack);
+				super.onTake(playerIn, stack);
 				TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
 				detectAndSendChanges();
 				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
@@ -67,6 +68,7 @@ public class ContainerRequest extends Container {
 				List<StackWrapper> list = t.getStacks();
 				PacketHandler.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
 				detectAndSendChanges();
+				return stack;
 			}
 		};
 
@@ -111,7 +113,7 @@ public class ContainerRequest extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-		if (playerIn.worldObj.isRemote)
+		if (playerIn.world.isRemote)
 			return null;
 		ItemStack itemstack = null;
 		Slot slot = this.inventorySlots.get(slotIndex);
@@ -139,20 +141,20 @@ public class ContainerRequest extends Container {
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
 					if (stack == null)
 						return null;
-					slot.onPickupFromSlot(playerIn, itemstack1);
+					slot.onTake(playerIn, itemstack1);
 					return null;
 				}
 			}
-			if (itemstack1.stackSize == 0) {
+			if (itemstack1.getCount() == 0) {
 				slot.putStack((ItemStack) null);
 			} else {
 				slot.onSlotChanged();
 			}
 
-			if (itemstack1.stackSize == itemstack.stackSize) {
+			if (itemstack1.getCount() == itemstack.getCount()) {
 				return null;
 			}
-			slot.onPickupFromSlot(playerIn, itemstack1);
+			slot.onTake(playerIn, itemstack1);
 		}
 
 		return itemstack;
@@ -165,12 +167,12 @@ public class ContainerRequest extends Container {
 		for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
 			lis.add(craftMatrix.getStackInSlot(i));
 		ItemStack res = result.getStackInSlot(0);
-		while (crafted + res.stackSize <= res.getMaxStackSize()) {
+		while (crafted + res.getCount() <= res.getMaxStackSize()) {
 			if (ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), true) != null)
 				break;
 			ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), false);
-			sl.onPickupFromSlot(player, res);
-			crafted += res.stackSize;
+			sl.onTake(player, res);
+			crafted += res.getCount();
 			for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
 				if (craftMatrix.getStackInSlot(i) == null) {
 					ItemStack req = tile.request(lis.get(i) != null ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);

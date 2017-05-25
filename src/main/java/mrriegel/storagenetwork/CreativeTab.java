@@ -3,12 +3,13 @@ package mrriegel.storagenetwork;
 import mrriegel.storagenetwork.init.ModBlocks;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class CreativeTab {
 	public static CreativeTabs tab1 = new CreativeTabs(StorageNetwork.MODID) {
 		@Override
-		public Item getTabIconItem() {
-			return Item.getItemFromBlock(ModBlocks.request);
+		public ItemStack getTabIconItem() {
+			return new ItemStack(ModBlocks.request);
 		}
 
 		@Override

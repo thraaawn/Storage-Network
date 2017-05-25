@@ -21,66 +21,66 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockFannexer extends BlockConnectable {
-	public static final PropertyDirection FACING = PropertyDirection.create("facing");
-
-	public BlockFannexer() {
-		super(Material.IRON);
-		this.setHardness(3.0F);
-		this.setCreativeTab(CreativeTab.tab1);
-		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-		this.setRegistryName("fannexer");
-		this.setUnlocalizedName(getRegistryName().toString());
-	}
-
-	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state) {
-		return EnumBlockRenderType.MODEL;
-	}
-
-	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TileFannexer();
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		EnumFacing enumfacing = EnumFacing.getFront(meta);
-		if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
-			enumfacing = EnumFacing.NORTH;
-		}
-
-		return this.getDefaultState().withProperty(FACING, enumfacing);
-	}
-
-	@Override
-	public int getMetaFromState(IBlockState state) {
-		return state.getValue(FACING).getIndex();
-	}
-
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] { FACING });
-	}
-
-	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-		IBlockState s = this.getDefaultState().withProperty(FACING, facing.getOpposite());
-		return s;
-	}
-
-	public static class Item extends ItemBlock {
-
-		public Item(Block block) {
-			super(block);
-		}
-
-		@Override
-		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-			super.addInformation(stack, playerIn, tooltip, advanced);
-			tooltip.add(I18n.format("tooltip.storagenetwork.fannexer"));
-			tooltip.add(I18n.format("tooltip.storagenetwork.networkNeeded"));
-		}
-
-	}
+public class BlockFannexer {//extends BlockConnectable 
+//	public static final PropertyDirection FACING = PropertyDirection.create("facing");
+//
+//	public BlockFannexer() {
+//		super(Material.IRON);
+//		this.setHardness(3.0F);
+//		this.setCreativeTab(CreativeTab.tab1);
+//		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+//		this.setRegistryName("fannexer");
+//		this.setUnlocalizedName(getRegistryName().toString());
+//	}
+//
+//	@Override
+//	public EnumBlockRenderType getRenderType(IBlockState state) {
+//		return EnumBlockRenderType.MODEL;
+//	}
+//
+//	@Override
+//	public TileEntity createNewTileEntity(World worldIn, int meta) {
+//		return new TileFannexer();
+//	}
+//
+//	@Override
+//	public IBlockState getStateFromMeta(int meta) {
+//		EnumFacing enumfacing = EnumFacing.getFront(meta);
+//		if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
+//			enumfacing = EnumFacing.NORTH;
+//		}
+//
+//		return this.getDefaultState().withProperty(FACING, enumfacing);
+//	}
+//
+//	@Override
+//	public int getMetaFromState(IBlockState state) {
+//		return state.getValue(FACING).getIndex();
+//	}
+//
+//	@Override
+//	protected BlockStateContainer createBlockState() {
+//		return new BlockStateContainer(this, new IProperty[] { FACING });
+//	}
+//
+//	@Override
+//	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+//		IBlockState s = this.getDefaultState().withProperty(FACING, facing.getOpposite());
+//		return s;
+//	}
+//
+//	public static class Item extends ItemBlock {
+//
+//		public Item(Block block) {
+//			super(block);
+//		}
+//
+//		@Override
+//		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+//			super.addInformation(stack, playerIn, tooltip, advanced);
+//			tooltip.add(I18n.format("tooltip.storagenetwork.fannexer"));
+//			tooltip.add(I18n.format("tooltip.storagenetwork.networkNeeded"));
+//		}
+//
+//	}
 }

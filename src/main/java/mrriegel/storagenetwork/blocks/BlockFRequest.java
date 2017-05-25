@@ -69,13 +69,13 @@ public class BlockFRequest extends BlockConnectable {
 	}
 
 	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
 		IBlockState s = this.getDefaultState().withProperty(FACING, facing.getOpposite());
 		return s;
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand,  EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!(worldIn.getTileEntity(pos) instanceof IConnectable))
 			return false;
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);

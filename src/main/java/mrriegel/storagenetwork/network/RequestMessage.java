@@ -37,17 +37,17 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 
 	@Override
 	public IMessage onMessage(final RequestMessage message, final MessageContext ctx) {
-		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
-					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
+					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.world.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
 					if (tile == null)
 						return;
-					int in = message.stack == null ? 0 : tile.getAmount(new FilterItem(message.stack, true, false, true));
-					ItemStack stack = message.stack == null ? null : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(Math.min(message.stack.getMaxStackSize() / 2, in / 2), 1), false);
-					if (stack != null) {
+					int in = message.stack.isEmpty() ? 0 : tile.getAmount(new FilterItem(message.stack, true, false, true));
+					ItemStack stack = message.stack.isEmpty() ? ItemStack.EMPTY : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(Math.min(message.stack.getMaxStackSize() / 2, in / 2), 1), false);
+					if (!stack.isEmpty()) {
 						if (message.shift) {
 							ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().playerEntity, stack);
 						} else {
@@ -62,9 +62,9 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 					TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.inventory.getCurrentItem());
 					if (tile == null)
 						return;
-					int in = message.stack == null ? 0 : tile.getAmount(new FilterItem(message.stack, true, false, true));
-					ItemStack stack = message.stack == null ? null : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(Math.min(message.stack.getMaxStackSize() / 2, in / 2), 1), false);
-					if (stack != null) {
+					int in = message.stack.isEmpty() ? 0 : tile.getAmount(new FilterItem(message.stack, true, false, true));
+					ItemStack stack = message.stack.isEmpty() ? ItemStack.EMPTY : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(Math.min(message.stack.getMaxStackSize() / 2, in / 2), 1), false);
+				   if (!stack.isEmpty()) {
 						if (message.shift) {
 							ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().playerEntity, stack);
 						} else {

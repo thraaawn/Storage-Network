@@ -22,7 +22,7 @@ public class ContainerRemote extends Container {
 
 	public ContainerRemote(final InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
-		if (!playerInv.player.worldObj.isRemote)
+		if (!playerInv.player.world.isRemote)
 			tile = ItemRemote.getTile(playerInv.getCurrentItem());
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
@@ -49,7 +49,7 @@ public class ContainerRemote extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-		if (playerIn.worldObj.isRemote)
+		if (playerIn.world.isRemote)
 			return null;
 		ItemStack itemstack = null;
 		Slot slot = this.inventorySlots.get(slotIndex);
@@ -76,7 +76,7 @@ public class ContainerRemote extends Container {
 	public boolean canInteractWith(EntityPlayer playerIn) {
 		if (tile == null)
 			return false;
-		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 40 == 0) {
+		if (!playerIn.world.isRemote && playerIn.world.getTotalWorldTime() % 40 == 0) {
 			List<StackWrapper> list = tile.getStacks();
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
 		}

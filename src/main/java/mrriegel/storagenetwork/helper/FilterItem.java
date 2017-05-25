@@ -26,7 +26,7 @@ public class FilterItem {
 
 	public void readFromNBT(NBTTagCompound compound) {
 		NBTTagCompound c = compound.getCompoundTag("stack");
-		stack = ItemStack.loadItemStackFromNBT(c);
+		stack = new ItemStack(c);
 		meta = compound.getBoolean("meta");
 		ore = compound.getBoolean("ore");
 		nbt = compound.getBoolean("nbt");

@@ -28,7 +28,7 @@ public class BlockToggle extends BlockConnectable {
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
 		if (worldIn.getTileEntity(pos) instanceof TileToggler) {
 			TileToggler tile = (TileToggler) worldIn.getTileEntity(pos);
 			boolean x = worldIn.isBlockPowered(pos);
@@ -42,7 +42,7 @@ public class BlockToggle extends BlockConnectable {
 				}
 			}
 		}
-		super.neighborChanged(state, worldIn, pos, blockIn);
+		super.neighborChanged(state, worldIn, pos, blockIn,fromPos);
 	}
 
 	@Override

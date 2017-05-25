@@ -31,11 +31,11 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
 
 	@Override
 	public IMessage onMessage(final ButtonMessage message, final MessageContext ctx) {
-		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				TileEntity t = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+				TileEntity t = ctx.getServerHandler().playerEntity.world.getTileEntity(message.pos);
 				if (t instanceof AbstractFilterTile) {
 					AbstractFilterTile tile = (AbstractFilterTile) t;
 					switch (message.id) {

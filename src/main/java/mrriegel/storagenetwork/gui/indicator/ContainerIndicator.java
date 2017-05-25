@@ -44,7 +44,7 @@ public class ContainerIndicator extends Container {
 			if (itemstack1 == null)
 				return null;
 			if (filter == null) {
-				filter = new StackWrapper(itemstack1.copy(), itemstack1.stackSize);
+				filter = new StackWrapper(itemstack1.copy(), itemstack1.getCount());
 				slotChanged();
 			}
 		}

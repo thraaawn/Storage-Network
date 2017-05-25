@@ -47,21 +47,6 @@ import com.google.common.collect.Maps;
 
 public class BlockKabel extends BlockConnectable {
 
-	// public static final PropertyConnection NORTH =
-	// PropertyConnection.create("north");
-	// public static final PropertyConnection SOUTH =
-	// PropertyConnection.create("south");
-	// public static final PropertyConnection WEST =
-	// PropertyConnection.create("west");
-	// public static final PropertyConnection EAST =
-	// PropertyConnection.create("east");
-	// public static final PropertyConnection DOWN =
-	// PropertyConnection.create("down");
-	// public static final PropertyConnection UP =
-	// PropertyConnection.create("up");
-	// public static final PropertyBool STRAIGHT =
-	// PropertyBool.create("straight");
-
 	public static enum Connect implements IStringSerializable {
 		CONNECT("connect"), STORAGE("storage"), NULL("null");
 		String name;
@@ -119,8 +104,9 @@ public class BlockKabel extends BlockConnectable {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		if (!(worldIn.getTileEntity(pos) instanceof TileKabel))
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand,  EnumFacing side, float hitX, float hitY, float hitZ) {
+	  ItemStack heldItem = playerIn.getHeldItem(hand);
+	  if (!(worldIn.getTileEntity(pos) instanceof TileKabel))
 			return false;
 		if (worldIn.isRemote)
 			return true;
@@ -273,7 +259,8 @@ public class BlockKabel extends BlockConnectable {
 	}
 
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
+ 
 		if (!(worldIn.getTileEntity(pos) instanceof TileKabel))
 			return;
 		state = state.getActualState(worldIn, pos);

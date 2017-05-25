@@ -65,8 +65,8 @@ public class TileConnectable extends TileEntity implements IConnectable {
 	@Override
 	public void onChunkUnload() {
 		try {
-			if (master != null && worldObj.getTileEntity(master) instanceof TileMaster)
-				((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
+			if (master != null && world.getTileEntity(master) instanceof TileMaster)
+				((TileMaster) world.getTileEntity(master)).refreshNetwork();
 		} catch (Exception e) {
 			System.out.println("Error on unload");
 		}

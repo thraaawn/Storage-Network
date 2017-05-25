@@ -12,9 +12,9 @@ public class PacketHandler {
 		int id = 0;
 		INSTANCE.registerMessage(ButtonMessage.class, ButtonMessage.class, id++, Side.SERVER);
 		INSTANCE.registerMessage(StacksMessage.class, StacksMessage.class, id++, Side.CLIENT);
-		INSTANCE.registerMessage(FluidsMessage.class, FluidsMessage.class, id++, Side.CLIENT);
+//		INSTANCE.registerMessage(FluidsMessage.class, FluidsMessage.class, id++, Side.CLIENT);
 		INSTANCE.registerMessage(RequestMessage.class, RequestMessage.class, id++, Side.SERVER);
-		INSTANCE.registerMessage(FRequestMessage.class, FRequestMessage.class, id++, Side.SERVER);
+//		INSTANCE.registerMessage(FRequestMessage.class, FRequestMessage.class, id++, Side.SERVER);
 		INSTANCE.registerMessage(ClearMessage.class, ClearMessage.class, id++, Side.SERVER);
 		INSTANCE.registerMessage(SortMessage.class, SortMessage.class, id++, Side.SERVER);
 		INSTANCE.registerMessage(RecipeMessage.class, RecipeMessage.class, id++, Side.SERVER);

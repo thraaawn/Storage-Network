@@ -32,7 +32,7 @@ public class TileRequest extends TileConnectable {
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
-			matrix.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
+			matrix.put(slot,new ItemStack(stackTag));
 		}
 	}
 

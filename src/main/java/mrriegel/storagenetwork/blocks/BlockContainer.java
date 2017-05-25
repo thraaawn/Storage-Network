@@ -43,7 +43,7 @@ public class BlockContainer extends BlockConnectable {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!(worldIn.getTileEntity(pos) instanceof IConnectable))
 			return false;
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);

@@ -65,7 +65,7 @@ public class GuiContainer extends net.minecraft.client.gui.inventory.GuiContaine
 				NBTTagCompound res = (NBTTagCompound) slot.getStack().getTagCompound().getTag("res");
 				mc.getRenderItem().zLevel += 500;
 				if (res != null)
-					mc.getRenderItem().renderItemAndEffectIntoGUI(ItemStack.loadItemStackFromNBT(res), (int) (slot.xDisplayPosition * pos + 11), (int) (slot.yDisplayPosition * pos));
+					mc.getRenderItem().renderItemAndEffectIntoGUI(new ItemStack(res), (int) (slot.xPos * pos + 11), (int) (slot.yPos * pos));
 				mc.getRenderItem().zLevel -= 500;
 				RenderHelper.disableStandardItemLighting();
 				GlStateManager.enableDepth();

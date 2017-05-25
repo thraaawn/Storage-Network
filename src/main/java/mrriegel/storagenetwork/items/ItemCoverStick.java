@@ -30,12 +30,13 @@ public class ItemCoverStick extends Item {
 	}
 
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse( EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+	  ItemStack stack = playerIn.getHeldItem(hand);
 		if (worldIn.getTileEntity(pos) instanceof TileKabel) {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 			if (playerIn.inventory.currentItem >= 8)
 				return EnumActionResult.PASS;
-			ItemStack right = playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1];
+			ItemStack right = playerIn.inventory.mainInventory.get(playerIn.inventory.currentItem + 1);
 			Block b = right == null ? null : Block.getBlockFromItem(right.getItem());
 			if (!playerIn.isSneaking() && b != null && (b.isBlockNormalCube(b.getStateFromMeta(right.getItem().getDamage(right))) || b == Blocks.GLASS) && !(b instanceof ITileEntityProvider) && (playerIn.capabilities.isCreativeMode || tile.getCover() != null || 1 == playerIn.inventory.clearMatchingItems(Item.getItemFromBlock(ModBlocks.cover), 0, 1, null))) {
 				tile.setCover(b);
@@ -55,7 +56,7 @@ public class ItemCoverStick extends Item {
 					tile.setCover(null);
 					tile.setCoverMeta(0);
 					if (!worldIn.isRemote && !playerIn.capabilities.isCreativeMode)
-						worldIn.spawnEntityInWorld(new EntityItem(worldIn, playerIn.posX, playerIn.posY, playerIn.posZ, new ItemStack(ModBlocks.cover)));
+						worldIn.spawnEntity(new EntityItem(worldIn, playerIn.posX, playerIn.posY, playerIn.posZ, new ItemStack(ModBlocks.cover)));
 					Util.updateTile(worldIn, pos);
 					worldIn.markChunkDirty(tile.getPos(), tile);
 					playerIn.openContainer.detectAndSendChanges();

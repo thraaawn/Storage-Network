@@ -14,8 +14,8 @@ import net.minecraft.item.ItemStack;
 public class SNPlugin implements IModPlugin {
 	@Override
 	public void register(IModRegistry registry) {
-		registry.getRecipeTransferRegistry().addRecipeTransferHandler(new RequestRecipeTransferHandler());
-		registry.getRecipeTransferRegistry().addRecipeTransferHandler(new TemplateRecipeTransferHandler());
+		registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new RequestRecipeTransferHandler());
+		registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new TemplateRecipeTransferHandler());
 		registry.addRecipeCategoryCraftingItem(new ItemStack(ModBlocks.request), VanillaRecipeCategoryUid.CRAFTING);
 	}
 

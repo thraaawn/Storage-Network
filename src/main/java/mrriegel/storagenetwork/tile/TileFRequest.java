@@ -15,11 +15,11 @@ public class TileFRequest extends TileConnectable {
 		downwards = compound.getBoolean("dir");
 		sort = Sort.valueOf(compound.getString("sort"));
 		if (compound.hasKey("fill", 10))
-			fill = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("fill")));
+			fill = (new ItemStack(compound.getCompoundTag("fill")));
 		else
 			fill = null;
 		if (compound.hasKey("drain", 10))
-			drain = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("drain")));
+			drain = (new ItemStack(compound.getCompoundTag("drain")));
 		else
 			drain = null;
 	}

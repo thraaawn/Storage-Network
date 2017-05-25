@@ -53,7 +53,7 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 		this.ySize = 256;
 		this.stacks = Lists.newArrayList();
 		this.craftableStacks = Lists.newArrayList();
-		PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
+		PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
 		lastClick = System.currentTimeMillis();
 	}
 
@@ -102,7 +102,7 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 						tmp.add(s);
 				} else if (search.startsWith("#")) {
 					String tooltipString;
-					List<String> tooltip = s.getStack().getTooltip(mc.thePlayer, false);
+					List<String> tooltip = s.getStack().getTooltip(mc.player, false);
 					tooltipString = Joiner.on(' ').join(tooltip).toLowerCase();
 					tooltipString = ChatFormatting.stripFormatting(tooltipString);
 					if (tooltipString.toLowerCase().contains(search.toLowerCase().substring(1)))
@@ -261,12 +261,12 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 			searchBar.setFocused(true);
 		} else if (inX(mouseX, mouseY)) {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
-			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
-		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.thePlayer.inventory.getItemStack() == null && canClick()) {
+			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0,  ItemStack.EMPTY, false, false));
+		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.player.inventory.getItemStack() == null && canClick()) {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
 			lastClick = System.currentTimeMillis();
-		} else if (mc.thePlayer.inventory.getItemStack() != null && inField(mouseX, mouseY) && canClick()) {
-			PacketHandler.INSTANCE.sendToServer(new InsertMessage(getDim(), mouseButton, mc.thePlayer.inventory.getItemStack()));
+		} else if (mc.player.inventory.getItemStack() != null && inField(mouseX, mouseY) && canClick()) {
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(getDim(), mouseButton, mc.player.inventory.getItemStack()));
 			lastClick = System.currentTimeMillis();
 		}
 	}
@@ -276,12 +276,13 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 		if (!this.checkHotbarKeys(keyCode)) {
 			Keyboard.enableRepeatEvents(true);
 			if (over != null && ConfigHandler.jeiLoaded && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U)) {
-				if (keyCode == Keyboard.KEY_R)
-					Internal.getRuntime().getRecipesGui().showRecipes(over);
-				else
-					Internal.getRuntime().getRecipesGui().showUses(over);
+//				if (keyCode == Keyboard.KEY_R)
+//					Internal.getRuntime().getRecipesGui().show(over);
+//				else
+//					Internal.getRuntime().getRecipesGui().showUses(over);
+ 
 			} else if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
-				PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
+				PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
 			} else {
 				super.keyTyped(typedChar, keyCode);
 			}

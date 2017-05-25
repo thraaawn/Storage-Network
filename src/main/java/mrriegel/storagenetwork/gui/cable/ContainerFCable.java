@@ -91,7 +91,7 @@ public class ContainerFCable extends Container {
 				return null;
 			for (int i = 0; i < 18; i++) {
 				if (tile.getFilter().get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
-					tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.stackSize));
+					tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.getCount()));
 					break;
 				}
 			}

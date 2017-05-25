@@ -196,7 +196,7 @@ public class NBTHelper {
 			setItemStack(stack, keyName, null);
 		}
 		NBTTagCompound res = (NBTTagCompound) stack.getTagCompound().getTag(keyName);
-		return ItemStack.loadItemStackFromNBT(res);
+		return new ItemStack(res);
 
 	}
 

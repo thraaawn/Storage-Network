@@ -19,7 +19,7 @@ public abstract class BlockConnectable extends BlockContainer {
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
 		boolean replaceable = false;
 		try {
 			replaceable = blockIn.isReplaceable(worldIn, pos.up());

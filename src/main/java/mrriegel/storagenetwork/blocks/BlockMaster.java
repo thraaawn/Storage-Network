@@ -49,7 +49,7 @@ public class BlockMaster extends BlockContainer {
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
 		onBlockPlacedBy(worldIn, pos, state, null, null);
 	}
 
@@ -82,15 +82,16 @@ public class BlockMaster extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		if (!(worldIn.getTileEntity(pos) instanceof TileMaster))
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand,   EnumFacing side, float hitX, float hitY, float hitZ) {
+    ItemStack heldItem = playerIn.getHeldItem(hand);
+    if (!(worldIn.getTileEntity(pos) instanceof TileMaster))
 			return false;
 		TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
 		if (!worldIn.isRemote) {
 			if (ConfigHandler.energyNeeded)
-				playerIn.addChatMessage(new TextComponentString(TextFormatting.RED + "RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
-			playerIn.addChatMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "(Potential) Empty Slots: " + tile.emptySlots()));
-			playerIn.addChatMessage(new TextComponentString(TextFormatting.DARK_AQUA + "Connectables: " + tile.connectables.size()));
+				playerIn.sendMessage(new TextComponentString(TextFormatting.RED + "RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
+			playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "(Potential) Empty Slots: " + tile.emptySlots()));
+			playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + "Connectables: " + tile.connectables.size()));
 			Map<String, Integer> map = new HashMap<String, Integer>();
 			for (BlockPos p : tile.connectables) {
 				String block = worldIn.getBlockState(p).getBlock().getLocalizedName();
@@ -108,7 +109,7 @@ public class BlockMaster extends BlockContainer {
 				}
 			});
 			for (Entry<String, Integer> e : lis)
-				playerIn.addChatMessage(new TextComponentString(TextFormatting.AQUA + "    " + e.getKey() + ": " + e.getValue()));
+				playerIn.sendMessage(new TextComponentString(TextFormatting.AQUA + "    " + e.getKey() + ": " + e.getValue()));
 			return false;
 		}
 		return true;

@@ -26,7 +26,7 @@ public class TileItemBox extends AbstractFilterTile {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
 			if (slot >= 0 && slot < inv.getSlots()) {
-				inv.setStackInSlot(slot, ItemStack.loadItemStackFromNBT(stackTag));
+				inv.setStackInSlot(slot,new ItemStack(stackTag));
 			}
 		}
 	}

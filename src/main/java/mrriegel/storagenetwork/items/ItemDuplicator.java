@@ -27,7 +27,8 @@ public class ItemDuplicator extends Item {
 	}
 
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse( EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+	  ItemStack stack = playerIn.getHeldItem(hand);
 		if (!worldIn.isRemote && worldIn.getTileEntity(pos) instanceof AbstractFilterTile) {
 			AbstractFilterTile tile = (AbstractFilterTile) worldIn.getTileEntity(pos);
 			boolean sneak = playerIn.isSneaking();
@@ -36,13 +37,13 @@ public class ItemDuplicator extends Item {
 				tile.writeSettings(stack.getTagCompound());
 				NBTHelper.setBoolean(stack, "fluid", tile.isFluid());
 
-				playerIn.addChatComponentMessage(new TextComponentString("Saved Data to " + getItemStackDisplayName(stack)));
+				playerIn.sendMessage(new TextComponentString("Saved Data to " + getItemStackDisplayName(stack)));
 			} else {
 				if (stack.getTagCompound() != null)
 					if ((NBTHelper.getBoolean(stack, "fluid") && tile.isFluid()) || (!NBTHelper.getBoolean(stack, "fluid") && !tile.isFluid())) {
 						tile.readSettings(stack.getTagCompound());
 						worldIn.markChunkDirty(tile.getPos(), tile);
-						playerIn.addChatComponentMessage(new TextComponentString("Saved Data to " + worldIn.getBlockState(pos).getBlock().getLocalizedName()));
+						playerIn.sendMessage(new TextComponentString("Saved Data to " + worldIn.getBlockState(pos).getBlock().getLocalizedName()));
 					}
 			}
 		}

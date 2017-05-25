@@ -23,10 +23,8 @@ import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -115,11 +113,11 @@ public class Util {
 					return p.getContents().copy();
 		}
 
-		a = FluidContainerRegistry.getFluidForFilledItem(s);
-		if (a != null)
-			return a;
-		if (s.getItem() instanceof IFluidContainerItem)
-			a = ((IFluidContainerItem) s.getItem()).getFluid(s);
+//		a = FluidContainerRegistry.getFluidForFilledItem(s);
+//		if (a != null)
+//			return a;
+//		if (s.getItem() instanceof IFluidContainerItem)
+//			a = ((IFluidContainerItem) s.getItem()).getFluid(s);
 		return a;
 	}
 
@@ -131,14 +129,14 @@ public class Util {
 		float f1 = RANDOM.nextFloat() * 0.8F + 0.1F;
 		float f2 = RANDOM.nextFloat() * 0.8F + 0.1F;
 
-		while (stack.stackSize > 0) {
+		while (stack.getCount() > 0) {
 			int i = RANDOM.nextInt(21) + 10;
 
-			if (i > stack.stackSize) {
-				i = stack.stackSize;
+			if (i > stack.getCount()) {
+				i = stack.getCount();
 			}
 
-			stack.stackSize -= i;
+			stack.shrink(i);
 			EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, new ItemStack(stack.getItem(), i, stack.getMetadata()));
 
 			if (stack.hasTagCompound()) {
@@ -149,7 +147,7 @@ public class Util {
 			entityitem.motionX = RANDOM.nextGaussian() * f3;
 			entityitem.motionY = RANDOM.nextGaussian() * f3 + 0.20000000298023224D;
 			entityitem.motionZ = RANDOM.nextGaussian() * f3;
-			worldIn.spawnEntityInWorld(entityitem);
+			worldIn.spawnEntity(entityitem);
 		}
 	}
 

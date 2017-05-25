@@ -23,13 +23,14 @@ public class TemplateMessage implements IMessage, IMessageHandler<TemplateMessag
 
 	@Override
 	public IMessage onMessage(final TemplateMessage message, final MessageContext ctx) {
-		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
 				NBTHelper.setBoolean(ctx.getServerHandler().playerEntity.inventory.getCurrentItem(), "ore" + message.index, message.ore);
 				NBTHelper.setBoolean(ctx.getServerHandler().playerEntity.inventory.getCurrentItem(), "meta" + message.index, message.meta);
-				ctx.getServerHandler().playerEntity.inventory.mainInventory[ctx.getServerHandler().playerEntity.inventory.currentItem] = ctx.getServerHandler().playerEntity.inventory.getCurrentItem();
+				ctx.getServerHandler().playerEntity.inventory.mainInventory.set(ctx.getServerHandler().playerEntity.inventory.currentItem,
+				    ctx.getServerHandler().playerEntity.inventory.getCurrentItem());
 			}
 		});
 		return null;

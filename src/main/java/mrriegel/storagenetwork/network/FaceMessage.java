@@ -24,11 +24,11 @@ public class FaceMessage implements IMessage, IMessageHandler<FaceMessage, IMess
 
 	@Override
 	public IMessage onMessage(final FaceMessage message, final MessageContext ctx) {
-		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				TileContainer tile = (TileContainer) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+				TileContainer tile = (TileContainer) ctx.getServerHandler().playerEntity.world.getTileEntity(message.pos);
 				switch (message.id) {
 				case 0:
 					tile.setInput(GuiContainer.next(tile.getInput()));

@@ -45,8 +45,9 @@ public class InvHelper {
 		if (inv == null || stack == null)
 			return 0;
 		ItemStack s = ItemHandlerHelper.insertItemStacked(inv, stack, true);
-		int rest = s == null ? 0 : s.stackSize;
-		return stack.stackSize - rest;
+		int rest = s == null ? 0 : s.getCount();
+		 stack.shrink( rest);
+		 return stack.getCount();
 
 	}
 
@@ -66,7 +67,7 @@ public class InvHelper {
 		for (int i = 0; i < inv.getSlots(); i++) {
 			ItemStack slot = inv.getStackInSlot(i);
 			if (fil.match(slot))
-				amount += slot.stackSize;
+				amount += slot.getCount();
 		}
 		return amount;
 	}

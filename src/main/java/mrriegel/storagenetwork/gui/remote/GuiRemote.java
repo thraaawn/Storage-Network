@@ -54,23 +54,23 @@ public class GuiRemote extends AbstractGuiRequest {
 
 	@Override
 	protected boolean getDownwards() {
-		return NBTHelper.getBoolean(mc.thePlayer.inventory.getCurrentItem(), "down");
+		return NBTHelper.getBoolean(mc.player.inventory.getCurrentItem(), "down");
 	}
 
 	@Override
 	protected void setDownwards(boolean d) {
-		NBTHelper.setBoolean(mc.thePlayer.inventory.getCurrentItem(), "down", d);
+		NBTHelper.setBoolean(mc.player.inventory.getCurrentItem(), "down", d);
 
 	}
 
 	@Override
 	protected Sort getSort() {
-		return Sort.valueOf(NBTHelper.getString(mc.thePlayer.inventory.getCurrentItem(), "sort"));
+		return Sort.valueOf(NBTHelper.getString(mc.player.inventory.getCurrentItem(), "sort"));
 	}
 
 	@Override
 	protected void setSort(Sort s) {
-		NBTHelper.setString(mc.thePlayer.inventory.getCurrentItem(), "sort", s.toString());
+		NBTHelper.setString(mc.player.inventory.getCurrentItem(), "sort", s.toString());
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class GuiRemote extends AbstractGuiRequest {
 
 	@Override
 	protected int getDim() {
-		return NBTHelper.getInteger(mc.thePlayer.inventory.getCurrentItem(), "dim");
+		return NBTHelper.getInteger(mc.player.inventory.getCurrentItem(), "dim");
 	}
 
 	@Override

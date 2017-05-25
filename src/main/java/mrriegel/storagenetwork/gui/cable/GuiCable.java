@@ -175,10 +175,10 @@ public class GuiCable extends MyGuiContainer {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		if (operation != null && operation.isMouseOverSlot(mouseX, mouseY) && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) {
-			((TileKabel) tile).setStack(mc.thePlayer.inventory.getItemStack());
-			operation.stack = mc.thePlayer.inventory.getItemStack();
+			((TileKabel) tile).setStack(mc.player.inventory.getItemStack());
+			operation.stack = mc.player.inventory.getItemStack();
 			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.thePlayer.inventory.getItemStack()));
+			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.player.inventory.getItemStack()));
 			return;
 		}
 		for (int i = 0; i < list.size(); i++) {
@@ -186,9 +186,9 @@ public class GuiCable extends MyGuiContainer {
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
 				ContainerCable con = (ContainerCable) inventorySlots;
 				StackWrapper x = con.tile.getFilter().get(i);
-				if (mc.thePlayer.inventory.getItemStack() != null) {
-					if (!con.in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1))) {
-						con.tile.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), mc.thePlayer.inventory.getItemStack().stackSize));
+				if (mc.player.inventory.getItemStack() != null) {
+					if (!con.in(new StackWrapper(mc.player.inventory.getItemStack(), 1))) {
+						con.tile.getFilter().put(i, new StackWrapper(mc.player.inventory.getItemStack(), mc.player.inventory.getItemStack().getCount()));
 						con.tile.getOres().put(i, false);
 						con.tile.getMetas().put(i, true);
 					}
@@ -337,7 +337,7 @@ public class GuiCable extends MyGuiContainer {
 				}
 				if (tile instanceof TileKabel) {
 					List<String> lis = new ArrayList<String>();
-					String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileKabel) tile).isMode() ? "more" : "less")), ((TileKabel) tile).getLimit(), ((TileKabel) tile).getStack() != null ? ((TileKabel) tile).getStack().getDisplayName() : "Items");
+					String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.world.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileKabel) tile).isMode() ? "more" : "less")), ((TileKabel) tile).getLimit(), ((TileKabel) tile).getStack() != null ? ((TileKabel) tile).getStack().getDisplayName() : "Items");
 					List<String> matchList = new ArrayList<String>();
 					Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
 					Matcher regexMatcher = regex.matcher(s);

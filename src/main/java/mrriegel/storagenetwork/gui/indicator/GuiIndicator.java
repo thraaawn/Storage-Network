@@ -79,8 +79,8 @@ public class GuiIndicator extends MyGuiContainer {
 		if (slot.isMouseOverSlot(mouseX, mouseY)) {
 			ContainerIndicator con = (ContainerIndicator) inventorySlots;
 			StackWrapper x = con.getFilter();
-			if (mc.thePlayer.inventory.getItemStack() != null) {
-				con.setFilter(new StackWrapper(mc.thePlayer.inventory.getItemStack(), mc.thePlayer.inventory.getItemStack().stackSize));
+			if (mc.player.inventory.getItemStack() != null) {
+				con.setFilter(new StackWrapper(mc.player.inventory.getItemStack(), mc.player.inventory.getItemStack().getCount()));
 			} else {
 				if (x != null) {
 					if (mouseButton == 0)
@@ -150,7 +150,7 @@ public class GuiIndicator extends MyGuiContainer {
 					l = 16777120;
 				}
 				List<String> lis = Lists.newArrayList();
-				String s = tile.getStack() == null ? "" : I18n.format("gui.storagenetwork.indi.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (tile.isMore() ? "more" : "less")), tile.getStack().getSize(), tile.getStack() != null ? tile.getStack().getStack().getDisplayName() : "Items");
+				String s = tile.getStack() == null ? "" : I18n.format("gui.storagenetwork.indi.tooltip", mc.world.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (tile.isMore() ? "more" : "less")), tile.getStack().getSize(), tile.getStack() != null ? tile.getStack().getStack().getDisplayName() : "Items");
 				List<String> matchList = Lists.newArrayList();
 				Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
 				Matcher regexMatcher = regex.matcher(s);
