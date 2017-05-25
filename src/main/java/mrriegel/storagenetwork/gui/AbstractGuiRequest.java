@@ -262,10 +262,10 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 		} else if (inX(mouseX, mouseY)) {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0,  ItemStack.EMPTY, false, false));
-		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.player.inventory.getItemStack() == null && canClick()) {
+		} else if (over != null && !over.isEmpty() && (mouseButton == 0 || mouseButton == 1) && mc.player.inventory.getItemStack() == null && canClick()) {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
 			lastClick = System.currentTimeMillis();
-		} else if (mc.player.inventory.getItemStack() != null && inField(mouseX, mouseY) && canClick()) {
+		} else if (mc.player.inventory.getItemStack() != null && !mc.player.inventory.getItemStack().isEmpty() && inField(mouseX, mouseY) && canClick()) {
 			PacketHandler.INSTANCE.sendToServer(new InsertMessage(getDim(), mouseButton, mc.player.inventory.getItemStack()));
 			lastClick = System.currentTimeMillis();
 		}

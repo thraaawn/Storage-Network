@@ -77,12 +77,12 @@ public class TileKabel extends AbstractFilterTile {
 			return Kind.storageKabel;
 		if (b == ModBlocks.vacuumKabel)
 			return Kind.vacuumKabel;
-		if (b == ModBlocks.fexKabel)
-			return Kind.fexKabel;
-		if (b == ModBlocks.fimKabel)
-			return Kind.fimKabel;
-		if (b == ModBlocks.fstorageKabel)
-			return Kind.fstorageKabel;
+//		if (b == ModBlocks.fexKabel)
+//			return Kind.fexKabel;
+//		if (b == ModBlocks.fimKabel)
+//			return Kind.fimKabel;
+//		if (b == ModBlocks.fstorageKabel)
+//			return Kind.fstorageKabel;
 		return null;
 	}
 

@@ -80,7 +80,7 @@ public class BlockItemBox extends BlockConnectable {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand,  EnumFacing side, float hitX, float hitY, float hitZ) {
 	  ItemStack heldItem = playerIn.getHeldItem(hand);
-	  if (/* tile.getMaster() == null || */(heldItem != null && (heldItem.getItem() == ModItems.coverstick || heldItem.getItem() == ModItems.duplicator)))
+	  if (/* tile.getMaster() == null || */(heldItem != null && (heldItem.getItem() == ModItems.duplicator)))//heldItem.getItem() == ModItems.coverstick || 
 			return false;
 		if (!(worldIn.getTileEntity(pos) instanceof TileItemBox))
 			return false;

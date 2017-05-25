@@ -111,7 +111,7 @@ public class BlockKabel extends BlockConnectable {
 		if (worldIn.isRemote)
 			return true;
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-		if (/* tile.getMaster() == null || */(heldItem != null && (heldItem.getItem() == ModItems.coverstick || heldItem.getItem() == ModItems.duplicator)))
+		if (/* tile.getMaster() == null || */(heldItem != null && !heldItem.isEmpty() && ( heldItem.getItem() == ModItems.duplicator)))
 			return false;
 		else if (tile.getKind() == Kind.exKabel || tile.getKind() == Kind.imKabel || tile.getKind() == Kind.storageKabel) {
 			playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
@@ -368,8 +368,8 @@ public class BlockKabel extends BlockConnectable {
 			for (int i = 0; i < tile.getUpgrades().size(); i++) {
 				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getUpgrades().get(i));
 			}
-			if (tile.getCover() != null)
-				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ModBlocks.cover));
+//			if (tile.getCover() != null)
+//				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ModBlocks.cover));
 		}
 
 		super.breakBlock(worldIn, pos, state);
