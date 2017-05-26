@@ -11,12 +11,6 @@ public class ModItems {
 	public static final Item remote = new ItemRemote().setRegistryName("remote");
  
 	public static final Item duplicator = new ItemDuplicator();//REMOVE
-
-	public static void init() {
-		GameRegistry.register(upgrade);
-		GameRegistry.register(remote.setUnlocalizedName(remote.getRegistryName().toString()));
  
-		GameRegistry.register(duplicator);
-	}
 
 }

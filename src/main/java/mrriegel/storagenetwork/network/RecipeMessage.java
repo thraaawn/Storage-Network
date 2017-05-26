@@ -5,12 +5,11 @@ import io.netty.buffer.ByteBuf;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.tile.TileMaster;
+import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.request.ContainerRequest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

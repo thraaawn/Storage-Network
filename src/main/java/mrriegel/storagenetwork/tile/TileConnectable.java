@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import mrriegel.storagenetwork.IConnectable;
+import mrriegel.storagenetwork.master.TileMaster;
 
 public class TileConnectable extends TileEntity implements IConnectable {
 	protected BlockPos master;

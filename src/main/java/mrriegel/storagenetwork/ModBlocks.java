@@ -2,12 +2,12 @@ package mrriegel.storagenetwork;
  
  
 
-import mrriegel.storagenetwork.blocks.BlockMaster;
-import mrriegel.storagenetwork.blocks.BlockRequest;
 import mrriegel.storagenetwork.cable.BlockKabel;
 import mrriegel.storagenetwork.cable.TileKabel;
-import mrriegel.storagenetwork.tile.TileMaster;
-import mrriegel.storagenetwork.tile.TileRequest;
+import mrriegel.storagenetwork.master.BlockMaster;
+import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.request.BlockRequest;
+import mrriegel.storagenetwork.request.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 

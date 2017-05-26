@@ -1,10 +1,9 @@
-package mrriegel.storagenetwork.gui.request;
+package mrriegel.storagenetwork.request;
 
+import mrriegel.storagenetwork.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
-import mrriegel.storagenetwork.tile.TileRequest;
-import mrriegel.storagenetwork.tile.TileRequest.Sort;
+import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
@@ -44,37 +43,37 @@ public class GuiRequest extends RigelNetworkGuiRequest {
 	}
 
 	@Override
-	protected int getLines() {
+	public int getLines() {
 		return 4;
 	}
 
 	@Override
-	protected int getColumns() {
+	public int getColumns() {
 		return 9;
 	}
 
 	@Override
-	protected boolean getDownwards() {
+	public boolean getDownwards() {
 		return tile.downwards;
 	}
 
 	@Override
-	protected void setDownwards(boolean d) {
+	public void setDownwards(boolean d) {
 		tile.downwards = d;
 	}
 
 	@Override
-	protected Sort getSort() {
+	public EnumSortType getSort() {
 		return tile.sort;
 	}
 
 	@Override
-	protected void setSort(Sort s) {
+	public void setSort(EnumSortType s) {
 		tile.sort = s;
 	}
 
 	@Override
-	protected BlockPos getPos() {
+	public BlockPos getPos() {
 		return tile.getPos();
 	}
 

@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.blocks;
+package mrriegel.storagenetwork.master;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,7 +11,6 @@ import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;

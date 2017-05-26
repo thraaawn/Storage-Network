@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class CommonProxy {
 
@@ -19,7 +20,10 @@ public class CommonProxy {
 		ConfigHandler.refreshConfig(event.getSuggestedConfigurationFile());
 		PacketHandler.init();
 		ModBlocks.init();
-		ModItems.init();
+    GameRegistry.register(ModItems.upgrade);
+    GameRegistry.register(ModItems.remote.setUnlocalizedName(ModItems.remote.getRegistryName().toString()));
+ 
+    GameRegistry.register(ModItems.duplicator);
 		CraftingRecipes.init();
 	}
 

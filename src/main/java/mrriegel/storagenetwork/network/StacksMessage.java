@@ -3,8 +3,7 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 
 import java.util.List;
-
-import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
+import mrriegel.storagenetwork.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;

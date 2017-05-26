@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork;
 
-import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.proxy.CommonProxy;
+import mrriegel.storagenetwork.request.ContainerRequest;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;

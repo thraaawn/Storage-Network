@@ -5,19 +5,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
-
+import mrriegel.storagenetwork.BlockConnectable;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.GuiHandler;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.blocks.BlockConnectable;
 import mrriegel.storagenetwork.cable.TileKabel.Kind;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.tile.TileMaster;
+import mrriegel.storagenetwork.master.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;

@@ -1,8 +1,8 @@
-package mrriegel.storagenetwork.tile;
+package mrriegel.storagenetwork.request;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import mrriegel.storagenetwork.tile.TileConnectable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -11,13 +11,13 @@ import net.minecraftforge.common.util.Constants;
 public class TileRequest extends TileConnectable {
 	public Map<Integer, ItemStack> matrix = new HashMap<Integer, ItemStack>();
 	public boolean downwards;
-	public Sort sort = Sort.NAME;
+	public EnumSortType sort = EnumSortType.NAME;
 
-	public enum Sort {
+	public enum EnumSortType {
 		AMOUNT, NAME, MOD;
-		private static Sort[] vals = values();
+		private static EnumSortType[] vals = values();
 
-		public Sort next() {
+		public EnumSortType next() {
 			return vals[(this.ordinal() + 1) % vals.length];
 		}
 	}
@@ -26,7 +26,7 @@ public class TileRequest extends TileConnectable {
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
 		downwards = compound.getBoolean("dir");
-		sort = Sort.valueOf(compound.getString("sort"));
+		sort = EnumSortType.valueOf(compound.getString("sort"));
 		NBTTagList invList = compound.getTagList("matrix", Constants.NBT.TAG_COMPOUND);
 		matrix = new HashMap<Integer, ItemStack>();
 		for (int i = 0; i < invList.tagCount(); i++) {

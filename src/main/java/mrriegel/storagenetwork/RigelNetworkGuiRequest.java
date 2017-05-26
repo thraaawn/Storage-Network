@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.gui;
+package mrriegel.storagenetwork;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -15,7 +15,7 @@ import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
-import mrriegel.storagenetwork.tile.TileRequest.Sort;
+import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -61,19 +61,19 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
 		return System.currentTimeMillis() > lastClick + 100L;
 	}
 
-	protected abstract int getLines();
+	public abstract int getLines();
 
-	protected abstract int getColumns();
+	public abstract int getColumns();
 
-	protected abstract boolean getDownwards();
+	public abstract boolean getDownwards();
 
-	protected abstract void setDownwards(boolean d);
+	public abstract void setDownwards(boolean d);
 
-	protected abstract Sort getSort();
+	public abstract EnumSortType getSort();
 
-	protected abstract void setSort(Sort s);
+	public abstract void setSort(EnumSortType s);
 
-	protected abstract BlockPos getPos();
+	public abstract BlockPos getPos();
 
 	// protected abstract BlockPos getMaster();
 
@@ -86,7 +86,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
 	protected abstract boolean inX(int mouseX, int mouseY);
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+	public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		this.mc.getTextureManager().bindTexture(texture);
 		int i = (this.width - this.xSize) / 2;
@@ -200,7 +200,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+	public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		for (ItemSlot s : slots) {
 			s.drawTooltip(mouseX, mouseY);
@@ -236,7 +236,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
 	}
 
 	@Override
-	protected void actionPerformed(GuiButton button) throws IOException {
+	public void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
 		if (button.id == 2 && page > 1)
 			page--;
@@ -252,7 +252,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+	public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		searchBar.setFocused(false);
 		if (inSearchbar(mouseX, mouseY)) {
@@ -272,7 +272,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
 	}
 
 	@Override
-	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+	public void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (!this.checkHotbarKeys(keyCode)) {
 			Keyboard.enableRepeatEvents(true);
 			if (over != null && ConfigHandler.jeiLoaded && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U)) {
@@ -328,7 +328,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
 					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (getDownwards() ? 6 : 0), 14, 6, 8);
 				}
 				if (id == 1) {
-					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (getSort() == Sort.AMOUNT ? 6 : getSort() == Sort.MOD ? 12 : 0), 14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (getSort() == EnumSortType.AMOUNT ? 6 : getSort() == EnumSortType.MOD ? 12 : 0), 14, 6, 8);
 				}
 				if (id == 4) {
 					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (Settings.jeiSearch ? 0 : 6), 22, 6, 8);

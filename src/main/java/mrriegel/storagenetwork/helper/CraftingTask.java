@@ -3,9 +3,8 @@ package mrriegel.storagenetwork.helper;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
+import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.tile.TileContainer;
-import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 

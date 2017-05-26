@@ -3,12 +3,12 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 
 import java.util.List;
-import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.remote.ContainerRemote;
 import mrriegel.storagenetwork.remote.ItemRemote;
-import mrriegel.storagenetwork.tile.TileMaster;
+import mrriegel.storagenetwork.request.ContainerRequest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;

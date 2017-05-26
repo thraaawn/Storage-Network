@@ -7,8 +7,8 @@ import mrriegel.storagenetwork.GuiHandler;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.NBTHelper;
-import mrriegel.storagenetwork.tile.TileMaster;
-import mrriegel.storagenetwork.tile.TileRequest.Sort;
+import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,7 +70,7 @@ public class ItemRemote extends Item {
 			if ((itemStackIn.getItemDamage() == 0 && NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() && playerIn.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor) || itemStackIn.getItemDamage() == 1) {
 				if (world.getChunkFromBlockCoords(new BlockPos(x, y, z)).isLoaded()) {
 					if (NBTHelper.getString(itemStackIn, "sort") == null)
-						NBTHelper.setString(itemStackIn, "sort", Sort.NAME.toString());
+						NBTHelper.setString(itemStackIn, "sort", EnumSortType.NAME.toString());
 					playerIn.openGui(StorageNetwork.instance, getGui(), world, x, y, z);
 				} else
 					playerIn.sendMessage(new TextComponentString("Cable Master not loaded."));
@@ -90,7 +90,7 @@ public class ItemRemote extends Item {
 			NBTHelper.setInteger(stack, "z", pos.getZ());
 			NBTHelper.setBoolean(stack, "bound", true);
 			NBTHelper.setInteger(stack, "dim", worldIn.provider.getDimension());
-			NBTHelper.setString(stack, "sort", Sort.NAME.toString());
+			NBTHelper.setString(stack, "sort", EnumSortType.NAME.toString());
 			return EnumActionResult.SUCCESS;
 		}
 		return super.onItemUse( playerIn, worldIn, pos, hand, side, hitX, hitY, hitZ);

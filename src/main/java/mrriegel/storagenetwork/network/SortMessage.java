@@ -1,11 +1,11 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.tile.TileRequest;
-import mrriegel.storagenetwork.tile.TileRequest.Sort;
+import mrriegel.storagenetwork.request.ContainerRequest;
+import mrriegel.storagenetwork.request.TileRequest;
+import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
@@ -19,12 +19,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMessage> {
 	BlockPos pos;
 	boolean direction;
-	Sort sort;
+	EnumSortType sort;
 
 	public SortMessage() {
 	}
 
-	public SortMessage(BlockPos pos, boolean direction, Sort sort) {
+	public SortMessage(BlockPos pos, boolean direction, EnumSortType sort) {
 		this.pos = pos;
 		this.direction = direction;
 		this.sort = sort;
@@ -66,7 +66,7 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 	public void fromBytes(ByteBuf buf) {
 		this.pos = BlockPos.fromLong(buf.readLong());
 		this.direction = buf.readBoolean();
-		this.sort = Sort.valueOf(ByteBufUtils.readUTF8String(buf));
+		this.sort = EnumSortType.valueOf(ByteBufUtils.readUTF8String(buf));
 	}
 
 	@Override

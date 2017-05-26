@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.tile;
+package mrriegel.storagenetwork.master;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -17,6 +17,8 @@ import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util; 
 import mrriegel.storagenetwork.items.ItemUpgrade;
+import mrriegel.storagenetwork.tile.AbstractFilterTile;
+import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.AbstractFilterTile.Direction;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;

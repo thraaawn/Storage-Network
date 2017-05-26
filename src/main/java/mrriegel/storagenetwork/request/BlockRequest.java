@@ -1,13 +1,12 @@
-package mrriegel.storagenetwork.blocks;
+package mrriegel.storagenetwork.request;
 
 import java.util.List;
-
+import mrriegel.storagenetwork.BlockConnectable;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.GuiHandler;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;

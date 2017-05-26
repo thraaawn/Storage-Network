@@ -1,10 +1,10 @@
 package mrriegel.storagenetwork.remote;
 
+import mrriegel.storagenetwork.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.helper.NBTHelper;
-import mrriegel.storagenetwork.tile.TileRequest.Sort;
+import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
@@ -43,38 +43,38 @@ public class GuiRemote extends RigelNetworkGuiRequest {
 	}
 
 	@Override
-	protected int getLines() {
+	public int getLines() {
 		return 8;
 	}
 
 	@Override
-	protected int getColumns() {
+	public int getColumns() {
 		return 9;
 	}
 
 	@Override
-	protected boolean getDownwards() {
+	public boolean getDownwards() {
 		return NBTHelper.getBoolean(mc.player.inventory.getCurrentItem(), "down");
 	}
 
 	@Override
-	protected void setDownwards(boolean d) {
+	public void setDownwards(boolean d) {
 		NBTHelper.setBoolean(mc.player.inventory.getCurrentItem(), "down", d);
 
 	}
 
 	@Override
-	protected Sort getSort() {
-		return Sort.valueOf(NBTHelper.getString(mc.player.inventory.getCurrentItem(), "sort"));
+	public EnumSortType getSort() {
+		return EnumSortType.valueOf(NBTHelper.getString(mc.player.inventory.getCurrentItem(), "sort"));
 	}
 
 	@Override
-	protected void setSort(Sort s) {
+	public void setSort(EnumSortType s) {
 		NBTHelper.setString(mc.player.inventory.getCurrentItem(), "sort", s.toString());
 	}
 
 	@Override
-	protected BlockPos getPos() {
+	public BlockPos getPos() {
 		return BlockPos.ORIGIN;
 	}
 

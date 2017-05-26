@@ -18,6 +18,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import com.google.common.collect.Lists;
+import mrriegel.storagenetwork.master.TileMaster;
 
 public class TileContainer extends TileConnectable implements ISidedInventory {
 	private EnumFacing input, output;
