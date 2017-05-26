@@ -32,7 +32,8 @@ public class TileRequest extends TileConnectable {
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
-			matrix.put(slot,new ItemStack(stackTag));
+			ItemStack s=  new ItemStack(stackTag);
+			matrix.put(slot,s);
 		}
 	}
 
@@ -44,7 +45,7 @@ public class TileRequest extends TileConnectable {
 		NBTTagList invList = new NBTTagList();
 		invList = new NBTTagList();
 		for (int i = 0; i < 9; i++) {
-			if (matrix.get(i) != null) {
+			if (matrix.get(i) != null && matrix.get(i).isEmpty()==false) {
 				NBTTagCompound stackTag = new NBTTagCompound();
 				stackTag.setByte("Slot", (byte) i);
 				matrix.get(i).writeToNBT(stackTag);

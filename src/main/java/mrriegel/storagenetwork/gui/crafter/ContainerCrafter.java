@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.gui.crafter;
 import mrriegel.storagenetwork.tile.TileCrafter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -16,6 +17,8 @@ public class ContainerCrafter extends Container {
 	TileCrafter crafter;
 
 	public ContainerCrafter(InventoryPlayer playerInventory, TileCrafter crafter) {
+    System.out.println("new ContainerCrafter");
+ 
 		this.crafter = crafter;
 		this.addSlotToContainer(new Slot(this.crafter, 0, 124, 35) {
 			@Override
@@ -39,6 +42,12 @@ public class ContainerCrafter extends Container {
 			this.addSlotToContainer(new Slot(playerInventory, l, 8 + l * 18, 142));
 		}
 	}
+	
+	@Override
+  public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player){
+    System.out.println("slotClick ContainerCrafter");
+	 return super.slotClick(slotId, dragType, clickTypeIn, player);
+	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
@@ -47,6 +56,7 @@ public class ContainerCrafter extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+	  System.out.println("transferStackInSlot crafter");
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(index);
 

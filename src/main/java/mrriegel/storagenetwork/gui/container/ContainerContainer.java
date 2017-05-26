@@ -14,6 +14,7 @@ public class ContainerContainer extends Container {
 	public TileContainer tile;
 
 	public ContainerContainer(TileContainer tile, InventoryPlayer playerInv) {
+    System.out.println("new ContainerContainer");
 		this.playerInv = playerInv;
 		this.tile = tile;
 		for (int i = 0; i < 9; ++i) {
@@ -49,6 +50,7 @@ public class ContainerContainer extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
+    System.out.println("transferStackInSlot ctr plain");
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(slotIndex);
 

@@ -111,11 +111,11 @@ public class TileCrafter extends TileConnectable implements ISidedInventory, ITi
 			return;
 		}
 		boolean m = false;
-		for (BlockPos p : Util.getSides(pos))
-			if (world.getBlockState(p).getBlock() == ModBlocks.container && ((IConnectable) world.getTileEntity(p)).getMaster() != null) {
-				master = ((IConnectable) world.getTileEntity(p)).getMaster();
-				break;
-			}
+//		for (BlockPos p : Util.getSides(pos))
+//			if (world.getBlockState(p).getBlock() == ModBlocks.container && ((IConnectable) world.getTileEntity(p)).getMaster() != null) {
+//				master = ((IConnectable) world.getTileEntity(p)).getMaster();
+//				break;
+//			}
 		if (master == null)
 			duration = 150;
 		else

@@ -20,22 +20,22 @@ import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
-	public static final Block master = new BlockMaster();
-	public static final Block request = new BlockRequest();
+	public static final Block master = new BlockMaster();//network center
+	public static final Block request = new BlockRequest();//the main request table
 //	public static final Block frequest = new BlockFRequest();
-	public static final Block kabel = new BlockKabel().setRegistryName("kabel");
-	public static final Block storageKabel = new BlockKabel().setRegistryName("storage_kabel");
-	public static final Block exKabel = new BlockKabel().setRegistryName("ex_kabel");
-	public static final Block imKabel = new BlockKabel().setRegistryName("im_kabel");
-	public static final Block vacuumKabel = new BlockKabel().setRegistryName("vacuum_kabel");
+	public static final Block kabel = new BlockKabel().setRegistryName("kabel");//cable
+	public static final Block storageKabel = new BlockKabel().setRegistryName("storage_kabel");//cable that connects to chest
+	public static final Block exKabel = new BlockKabel().setRegistryName("ex_kabel");//import
+	public static final Block imKabel = new BlockKabel().setRegistryName("im_kabel");//export
+	public static final Block vacuumKabel = new BlockKabel().setRegistryName("vacuum_kabel");//vacum-doesntwork?
 
  
-	public static final Block container = new BlockContainer();
-	public static final Block crafter = new BlockCrafter();
+//	public static final Block container = new BlockContainer();//??
+//	public static final Block crafter = new BlockCrafter();//??
 	public static final Block indicator = new BlockIndicator();
 	public static final Block annexer = new BlockAnnexer();
 //	public static final Block fannexer = new BlockFannexer();
-	public static final Block itemBox = new BlockItemBox();
+//	public static final Block itemBox = new BlockItemBox();
 //	public static final Block fluidBox = new BlockFluidBox();
 	public static final Block toggler = new BlockToggle();
 
@@ -53,7 +53,7 @@ public class ModBlocks {
 		GameRegistry.register(indicator);
 		GameRegistry.register(annexer);
 //		GameRegistry.register(fannexer);
-		GameRegistry.register(itemBox);
+//		GameRegistry.register(itemBox);
 //		GameRegistry.register(fluidBox);
 		// GameRegistry.register(container);
 		GameRegistry.register(toggler);
@@ -71,7 +71,7 @@ public class ModBlocks {
 		GameRegistry.register(new BlockIndicator.Item(indicator).setRegistryName(indicator.getRegistryName()));
 		GameRegistry.register(new BlockAnnexer.Item(annexer).setRegistryName(annexer.getRegistryName()));
 //		GameRegistry.register(new BlockFannexer.Item(fannexer).setRegistryName(fannexer.getRegistryName()));
-		GameRegistry.register(new BlockItemBox.Item(itemBox).setRegistryName(itemBox.getRegistryName()));
+//		GameRegistry.register(new BlockItemBox.Item(itemBox).setRegistryName(itemBox.getRegistryName()));
 //		GameRegistry.register(new BlockFluidBox.Item(fluidBox).setRegistryName(fluidBox.getRegistryName()));
 		// GameRegistry.register(new
 		// BlockContainer.Item(container).setRegistryName(container.getRegistryName()));

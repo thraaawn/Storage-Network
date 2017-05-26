@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "storagenetwork:blocks/imkabel_n"
+    "all": "storagenetwork:blocks/im_kabel_n"
   }
 }
