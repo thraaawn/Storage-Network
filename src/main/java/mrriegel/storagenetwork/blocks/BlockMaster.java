@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import mrriegel.storagenetwork.CreativeTab;
-import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileMaster;

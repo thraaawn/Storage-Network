@@ -37,7 +37,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
-public abstract class AbstractGuiRequest extends MyGuiContainer {
+public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
 	protected ResourceLocation texture;
 	protected int page = 1, maxPage = 1;
 	public List<StackWrapper> stacks, craftableStacks;
@@ -47,7 +47,7 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 	protected List<ItemSlot> slots;
 	protected long lastClick;
 
-	public AbstractGuiRequest(Container inventorySlotsIn) {
+	public RigelNetworkGuiRequest(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 		this.xSize = 176;
 		this.ySize = 256;

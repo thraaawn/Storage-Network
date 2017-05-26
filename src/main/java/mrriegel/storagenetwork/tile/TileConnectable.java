@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.tile;
 
-import mrriegel.storagenetwork.api.IConnectable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -11,6 +10,7 @@ import net.minecraft.world.World;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import mrriegel.storagenetwork.IConnectable;
 
 public class TileConnectable extends TileEntity implements IConnectable {
 	protected BlockPos master;

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.GuiHandler;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.handler.GuiHandler;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;

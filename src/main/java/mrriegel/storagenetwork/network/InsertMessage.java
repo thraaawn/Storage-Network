@@ -3,10 +3,9 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 
 import java.util.List;
-
-import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.remote.ContainerRemote;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;

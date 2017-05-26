@@ -1,8 +1,8 @@
-package mrriegel.storagenetwork.gui.remote;
+package mrriegel.storagenetwork.remote;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.gui.AbstractGuiRequest;
+import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.gui.GuiTextField;
@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos;
 
 import org.lwjgl.input.Keyboard;
 
-public class GuiRemote extends AbstractGuiRequest {
+public class GuiRemote extends RigelNetworkGuiRequest {
 
 	public GuiRemote(Container inventorySlotsIn) {
 		super(inventorySlotsIn);

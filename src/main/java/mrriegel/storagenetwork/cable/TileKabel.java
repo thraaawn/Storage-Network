@@ -1,13 +1,15 @@
-package mrriegel.storagenetwork.tile;
+package mrriegel.storagenetwork.cable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import mrriegel.storagenetwork.blocks.BlockKabel.Connect;
+import mrriegel.storagenetwork.ModBlocks;
+import mrriegel.storagenetwork.cable.BlockKabel.EnumConnectType;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
+import mrriegel.storagenetwork.tile.AbstractFilterTile;
+import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +31,7 @@ public class TileKabel extends AbstractFilterTile {
   private boolean mode = true;
   private int limit = 0;
   // public Map<EnumFacing, Connect> connections = Maps.newHashMap();
-  public Connect north, south, east, west, up, down;
+  public EnumConnectType north, south, east, west, up, down;
   private Block cover;
   private int coverMeta;
   ItemStack stack = null;
@@ -66,8 +68,8 @@ public class TileKabel extends AbstractFilterTile {
  
     return null;
   }
-  public Map<EnumFacing, Connect> getConnects() {
-    Map<EnumFacing, Connect> map = Maps.newHashMap();
+  public Map<EnumFacing, EnumConnectType> getConnects() {
+    Map<EnumFacing, EnumConnectType> map = Maps.newHashMap();
     map.put(EnumFacing.NORTH, north);
     map.put(EnumFacing.SOUTH, south);
     map.put(EnumFacing.EAST, east);
@@ -76,7 +78,7 @@ public class TileKabel extends AbstractFilterTile {
     map.put(EnumFacing.DOWN, down);
     return map;
   }
-  public void setConnects(Map<EnumFacing, Connect> map) {
+  public void setConnects(Map<EnumFacing, EnumConnectType> map) {
     north = map.get(EnumFacing.NORTH);
     south = map.get(EnumFacing.SOUTH);
     east = map.get(EnumFacing.EAST);
@@ -114,17 +116,17 @@ public class TileKabel extends AbstractFilterTile {
     else
       stack = null;
     if (compound.hasKey("north"))
-      north = Connect.valueOf(compound.getString("north"));
+      north = EnumConnectType.valueOf(compound.getString("north"));
     if (compound.hasKey("south"))
-      south = Connect.valueOf(compound.getString("south"));
+      south = EnumConnectType.valueOf(compound.getString("south"));
     if (compound.hasKey("east"))
-      east = Connect.valueOf(compound.getString("east"));
+      east = EnumConnectType.valueOf(compound.getString("east"));
     if (compound.hasKey("west"))
-      west = Connect.valueOf(compound.getString("west"));
+      west = EnumConnectType.valueOf(compound.getString("west"));
     if (compound.hasKey("up"))
-      up = Connect.valueOf(compound.getString("up"));
+      up = EnumConnectType.valueOf(compound.getString("up"));
     if (compound.hasKey("down"))
-      down = Connect.valueOf(compound.getString("down"));
+      down = EnumConnectType.valueOf(compound.getString("down"));
     String fs = compound.getString("cover");
     if (fs == null || "null".equals(fs)) {
       cover = null;

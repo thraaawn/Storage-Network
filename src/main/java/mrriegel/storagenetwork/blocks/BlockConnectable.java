@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.blocks;
 
-import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;

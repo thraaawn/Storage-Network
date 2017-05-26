@@ -3,9 +3,9 @@ package mrriegel.storagenetwork.blocks;
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.GuiHandler;
+import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.api.IConnectable;
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.block.Block;

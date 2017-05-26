@@ -1,12 +1,12 @@
-package mrriegel.storagenetwork.init;
+package mrriegel.storagenetwork;
  
  
 
-import mrriegel.storagenetwork.blocks.BlockKabel;
 import mrriegel.storagenetwork.blocks.BlockMaster;
 import mrriegel.storagenetwork.blocks.BlockRequest;
-import mrriegel.storagenetwork.blocks.BlockToggle; 
-import mrriegel.storagenetwork.tile.TileKabel;
+import mrriegel.storagenetwork.blocks.BlockToggle;
+import mrriegel.storagenetwork.cable.BlockKabel;
+import mrriegel.storagenetwork.cable.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileToggler;

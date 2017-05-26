@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.gui.cable;
+package mrriegel.storagenetwork.cable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,16 +7,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.gui.MyGuiContainer;
+import mrriegel.storagenetwork.cable.TileKabel.Kind;
+import mrriegel.storagenetwork.gui.RigelNetworkGuiContainer;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.network.ButtonMessage;
 import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
-import mrriegel.storagenetwork.tile.AbstractFilterTile; 
-import mrriegel.storagenetwork.tile.TileKabel;
-import mrriegel.storagenetwork.tile.TileKabel.Kind;
+import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -36,7 +35,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Lists;
 
-public class GuiCable extends MyGuiContainer {
+public class GuiCable extends RigelNetworkGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
 	Button pPlus, pMinus, white, acti, impor, way;

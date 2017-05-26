@@ -1,11 +1,11 @@
 package mrriegel.storagenetwork.proxy;
 
+import mrriegel.storagenetwork.ModBlocks;
+import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.init.ModBlocks;
-import mrriegel.storagenetwork.init.ModItems;
+import mrriegel.storagenetwork.cable.TileKabel;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.render.CableRenderer;
-import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;

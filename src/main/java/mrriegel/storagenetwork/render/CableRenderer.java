@@ -1,8 +1,8 @@
 package mrriegel.storagenetwork.render;
 
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.blocks.BlockKabel;
-import mrriegel.storagenetwork.tile.TileKabel;
+import mrriegel.storagenetwork.cable.BlockKabel;
+import mrriegel.storagenetwork.cable.TileKabel;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

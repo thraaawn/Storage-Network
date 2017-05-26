@@ -1,11 +1,11 @@
-package mrriegel.storagenetwork.items;
+package mrriegel.storagenetwork.remote;
 
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.GuiHandler;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;

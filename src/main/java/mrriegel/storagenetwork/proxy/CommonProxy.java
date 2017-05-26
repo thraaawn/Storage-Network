@@ -1,12 +1,12 @@
 package mrriegel.storagenetwork.proxy;
 
+import mrriegel.storagenetwork.CraftingRecipes;
+import mrriegel.storagenetwork.GuiHandler;
+import mrriegel.storagenetwork.ModBlocks;
+import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.init.CraftingRecipes;
-import mrriegel.storagenetwork.init.ModBlocks;
-import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.network.PacketHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;

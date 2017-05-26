@@ -2,7 +2,7 @@ package mrriegel.storagenetwork.gui.request;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.gui.AbstractGuiRequest;
+import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.gui.GuiTextField;
@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos;
 
 import org.lwjgl.input.Keyboard;
 
-public class GuiRequest extends AbstractGuiRequest {
+public class GuiRequest extends RigelNetworkGuiRequest {
 	TileRequest tile;
 
 	public GuiRequest(Container inventorySlotsIn) {

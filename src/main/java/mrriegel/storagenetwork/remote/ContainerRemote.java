@@ -1,10 +1,8 @@
-package mrriegel.storagenetwork.gui.remote;
+package mrriegel.storagenetwork.remote;
 
 import java.util.List;
-
+import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.init.ModItems;
-import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
 import mrriegel.storagenetwork.tile.TileMaster;

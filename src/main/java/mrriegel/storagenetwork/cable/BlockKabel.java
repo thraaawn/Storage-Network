@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.blocks;
+package mrriegel.storagenetwork.cable;
 
 import java.util.List;
 import java.util.Map;
@@ -7,16 +7,16 @@ import java.util.Map.Entry;
 import javax.annotation.Nullable;
 
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.GuiHandler;
+import mrriegel.storagenetwork.IConnectable;
+import mrriegel.storagenetwork.ModBlocks;
+import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.blocks.BlockConnectable;
+import mrriegel.storagenetwork.cable.TileKabel.Kind;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.init.ModBlocks;
-import mrriegel.storagenetwork.init.ModItems;
-import mrriegel.storagenetwork.tile.TileKabel;
-import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -47,11 +47,11 @@ import com.google.common.collect.Maps;
 
 public class BlockKabel extends BlockConnectable {
 
-	public static enum Connect implements IStringSerializable {
+	public static enum EnumConnectType implements IStringSerializable {
 		CONNECT("connect"), STORAGE("storage"), NULL("null");
 		String name;
 
-		private Connect(String name) {
+		private EnumConnectType(String name) {
 			this.name = name;
 		}
 
@@ -146,61 +146,61 @@ public class BlockKabel extends BlockConnectable {
 		TileKabel tile = (TileKabel) world.getTileEntity(pos);
 		EnumFacing face = null;
 		BlockPos con = null;
-		Map<EnumFacing, Connect> oldMap = tile.getConnects();
-		Map<EnumFacing, Connect> newMap = Maps.newHashMap();
+		Map<EnumFacing, EnumConnectType> oldMap = tile.getConnects();
+		Map<EnumFacing, EnumConnectType> newMap = Maps.newHashMap();
 
 		EnumFacing stor = null;
-		for (Entry<EnumFacing, Connect> e : oldMap.entrySet()) {
-			if (e.getValue() == Connect.STORAGE) {
+		for (Entry<EnumFacing, EnumConnectType> e : oldMap.entrySet()) {
+			if (e.getValue() == EnumConnectType.STORAGE) {
 				stor = e.getKey();
 				break;
 			}
 		}
 		boolean storage = false;
 		boolean first = false;
-		if (stor != null && getConnect(world, pos, pos.offset(stor)) == Connect.STORAGE) {
-			newMap.put(stor, Connect.STORAGE);
+		if (stor != null && getConnect(world, pos, pos.offset(stor)) == EnumConnectType.STORAGE) {
+			newMap.put(stor, EnumConnectType.STORAGE);
 			storage = true;
 			first = true;
 		}
 		for (EnumFacing f : EnumFacing.values()) {
 			if (stor == f && first)
 				continue;
-			Connect neu = getConnect(world, pos, pos.offset(f));
-			if (neu == Connect.STORAGE)
+			EnumConnectType neu = getConnect(world, pos, pos.offset(f));
+			if (neu == EnumConnectType.STORAGE)
 				if (!storage) {
 					newMap.put(f, neu);
 					storage = true;
 				} else
-					newMap.put(f, Connect.NULL);
+					newMap.put(f, EnumConnectType.NULL);
 			else
 				newMap.put(f, neu);
 		}
 		tile.setConnects(newMap);
 
-		if (tile.north == Connect.STORAGE) {
+		if (tile.north == EnumConnectType.STORAGE) {
 			face = EnumFacing.NORTH;
 			con = pos.north();
-		} else if (tile.south == Connect.STORAGE) {
+		} else if (tile.south == EnumConnectType.STORAGE) {
 			face = EnumFacing.SOUTH;
 			con = pos.south();
-		} else if (tile.east == Connect.STORAGE) {
+		} else if (tile.east == EnumConnectType.STORAGE) {
 			face = EnumFacing.EAST;
 			con = pos.east();
-		} else if (tile.west == Connect.STORAGE) {
+		} else if (tile.west == EnumConnectType.STORAGE) {
 			face = EnumFacing.WEST;
 			con = pos.west();
-		} else if (tile.down == Connect.STORAGE) {
+		} else if (tile.down == EnumConnectType.STORAGE) {
 			face = EnumFacing.DOWN;
 			con = pos.down();
-		} else if (tile.up == Connect.STORAGE) {
+		} else if (tile.up == EnumConnectType.STORAGE) {
 			face = EnumFacing.UP;
 			con = pos.up();
 		}
 
 		tile.setInventoryFace(face);
 		tile.setConnectedInventory(con);
-		Map<EnumFacing, Connect> map = tile.getConnects();
+		Map<EnumFacing, EnumConnectType> map = tile.getConnects();
 		// return world.getBlockState(pos).withProperty(NORTH,
 		// map.get(EnumFacing.NORTH)).withProperty(SOUTH,
 		// map.get(EnumFacing.SOUTH)).withProperty(EAST,
@@ -238,8 +238,8 @@ public class BlockKabel extends BlockConnectable {
 		return (a ^ b ^ c) && tile.getKind() == Kind.kabel;
 	}
 
-	private boolean connected(Connect c) {
-		return c == Connect.STORAGE || c == Connect.CONNECT;
+	private boolean connected(EnumConnectType c) {
+		return c == EnumConnectType.STORAGE || c == EnumConnectType.CONNECT;
 	}
 
 	public static EnumFacing get(BlockPos a, BlockPos b) {
@@ -280,27 +280,27 @@ public class BlockKabel extends BlockConnectable {
 		float f5 = 0.6875F;
 		addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
 
-		if (tile.north != Connect.NULL) {
+		if (tile.north != EnumConnectType.NULL) {
 			f2 = 0f;
 			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
 		}
-		if (tile.south != Connect.NULL) {
+		if (tile.south != EnumConnectType.NULL) {
 			f3 = 1f;
 			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
 		}
-		if (tile.west != Connect.NULL) {
+		if (tile.west != EnumConnectType.NULL) {
 			f = 0f;
 			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
 		}
-		if (tile.east != Connect.NULL) {
+		if (tile.east != EnumConnectType.NULL) {
 			f1 = 1f;
 			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
 		}
-		if (tile.down != Connect.NULL) {
+		if (tile.down != EnumConnectType.NULL) {
 			f4 = 0f;
 			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
 		}
-		if (tile.up != Connect.NULL) {
+		if (tile.up != EnumConnectType.NULL) {
 			f5 = 1f;
 			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
 		}
@@ -326,38 +326,38 @@ public class BlockKabel extends BlockConnectable {
 		}
 		AxisAlignedBB res = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-		if (tile.north != Connect.NULL) {
+		if (tile.north != EnumConnectType.NULL) {
 			f2 = 0f;
 		}
-		if (tile.south != Connect.NULL) {
+		if (tile.south != EnumConnectType.NULL) {
 			f3 = 1f;
 		}
-		if (tile.west != Connect.NULL) {
+		if (tile.west != EnumConnectType.NULL) {
 			f = 0f;
 		}
-		if (tile.east != Connect.NULL) {
+		if (tile.east != EnumConnectType.NULL) {
 			f1 = 1f;
 		}
-		if (tile.down != Connect.NULL) {
+		if (tile.down != EnumConnectType.NULL) {
 			f4 = 0f;
 		}
-		if (tile.up != Connect.NULL) {
+		if (tile.up != EnumConnectType.NULL) {
 			f5 = 1f;
 		}
 		return new AxisAlignedBB(f, f4, f2, f1, f5, f3);
 	}
 
-	protected Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
+	protected EnumConnectType getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
 		Block block = worldIn.getBlockState(pos).getBlock();
 		Block ori = worldIn.getBlockState(orig).getBlock();
 		if (worldIn.getTileEntity(pos) instanceof IConnectable || worldIn.getTileEntity(pos) instanceof TileMaster)
-			return Connect.CONNECT;
+			return EnumConnectType.CONNECT;
 		if (ori == ModBlocks.kabel  )
-			return Connect.NULL;
+			return EnumConnectType.NULL;
 		EnumFacing face = get(orig, pos);
 		if (!validInventory(worldIn, pos, face))
-			return Connect.NULL;
-		return Connect.STORAGE;
+			return EnumConnectType.NULL;
+		return EnumConnectType.STORAGE;
 	}
 
 	@Override
@@ -404,12 +404,12 @@ public class BlockKabel extends BlockConnectable {
 
 	}
 
-	public static class PropertyConnection extends PropertyEnum<Connect> {
+	public static class PropertyConnection extends PropertyEnum<EnumConnectType> {
 
 		String name;
 
 		public PropertyConnection(String name2) {
-			super(name2, Connect.class, Lists.newArrayList(Connect.values()));
+			super(name2, EnumConnectType.class, Lists.newArrayList(EnumConnectType.values()));
 			this.name = name2;
 		}
 

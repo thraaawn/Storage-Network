@@ -1,9 +1,8 @@
-package mrriegel.storagenetwork.init;
+package mrriegel.storagenetwork;
 
 import java.util.Arrays;
 import java.util.List;
-
-import mrriegel.storagenetwork.items.ItemRemote;
+import mrriegel.storagenetwork.remote.ItemRemote;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;

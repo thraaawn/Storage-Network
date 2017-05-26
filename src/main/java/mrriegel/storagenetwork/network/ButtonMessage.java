@@ -1,11 +1,11 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.gui.cable.ContainerCable;
+import mrriegel.storagenetwork.cable.ContainerCable;
+import mrriegel.storagenetwork.cable.TileKabel;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.tile.AbstractFilterTile; 
-import mrriegel.storagenetwork.tile.TileKabel;
+import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;

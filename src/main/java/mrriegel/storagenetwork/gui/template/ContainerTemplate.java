@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.gui.template;
 
+import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.helper.NBTHelper;
-import mrriegel.storagenetwork.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;

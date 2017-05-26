@@ -1,8 +1,8 @@
 package mrriegel.storagenetwork.render;
 
-import mrriegel.storagenetwork.blocks.BlockKabel.Connect;
-import mrriegel.storagenetwork.tile.TileKabel;
-import mrriegel.storagenetwork.tile.TileKabel.Kind;
+import mrriegel.storagenetwork.cable.TileKabel;
+import mrriegel.storagenetwork.cable.BlockKabel.EnumConnectType;
+import mrriegel.storagenetwork.cable.TileKabel.Kind;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -83,45 +83,45 @@ public class ModelCable extends ModelBase {
 		return (a ^ b ^ c);
 	}
 
-	private boolean connected(Connect c) {
-		return c == Connect.STORAGE || c == Connect.CONNECT;
+	private boolean connected(EnumConnectType c) {
+		return c == EnumConnectType.STORAGE || c == EnumConnectType.CONNECT;
 	}
 
 	public void render(TileKabel tile) {
 		float f5 = 0.0625F;
-		if (tile.north == Connect.CONNECT) {
+		if (tile.north == EnumConnectType.CONNECT) {
 			this.north.render(f5);
-		} else if (tile.north == Connect.STORAGE) {
+		} else if (tile.north == EnumConnectType.STORAGE) {
 			this.north.render(f5);
 			this.northC.render(f5);
 		}
-		if (tile.south == Connect.CONNECT) {
+		if (tile.south == EnumConnectType.CONNECT) {
 			this.south.render(f5);
-		} else if (tile.south == Connect.STORAGE) {
+		} else if (tile.south == EnumConnectType.STORAGE) {
 			this.south.render(f5);
 			this.southC.render(f5);
 		}
-		if (tile.east == Connect.CONNECT) {
+		if (tile.east == EnumConnectType.CONNECT) {
 			this.east.render(f5);
-		} else if (tile.east == Connect.STORAGE) {
+		} else if (tile.east == EnumConnectType.STORAGE) {
 			this.east.render(f5);
 			this.eastC.render(f5);
 		}
-		if (tile.west == Connect.CONNECT) {
+		if (tile.west == EnumConnectType.CONNECT) {
 			this.west.render(f5);
-		} else if (tile.west == Connect.STORAGE) {
+		} else if (tile.west == EnumConnectType.STORAGE) {
 			this.west.render(f5);
 			this.westC.render(f5);
 		}
-		if (tile.up == Connect.CONNECT) {
+		if (tile.up == EnumConnectType.CONNECT) {
 			this.up.render(f5);
-		} else if (tile.up == Connect.STORAGE) {
+		} else if (tile.up == EnumConnectType.STORAGE) {
 			this.up.render(f5);
 			this.upC.render(f5);
 		}
-		if (tile.down == Connect.CONNECT) {
+		if (tile.down == EnumConnectType.CONNECT) {
 			this.down.render(f5);
-		} else if (tile.down == Connect.STORAGE) {
+		} else if (tile.down == EnumConnectType.STORAGE) {
 			this.down.render(f5);
 			this.downC.render(f5);
 		}

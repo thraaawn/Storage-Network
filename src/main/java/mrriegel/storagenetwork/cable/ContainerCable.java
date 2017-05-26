@@ -1,11 +1,9 @@
-package mrriegel.storagenetwork.gui.cable;
+package mrriegel.storagenetwork.cable;
 
 import java.util.Arrays;
-
+import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
-import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;

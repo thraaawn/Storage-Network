@@ -1,9 +1,9 @@
-package mrriegel.storagenetwork.init;
+package mrriegel.storagenetwork;
 
 import mrriegel.storagenetwork.items.ItemDuplicator;
-import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.items.ItemTemplate;
 import mrriegel.storagenetwork.items.ItemUpgrade;
+import mrriegel.storagenetwork.remote.ItemRemote;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 

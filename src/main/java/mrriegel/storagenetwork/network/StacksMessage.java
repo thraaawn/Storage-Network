@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.List;
 
-import mrriegel.storagenetwork.gui.AbstractGuiRequest;
+import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,8 +37,8 @@ public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, I
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				if (Minecraft.getMinecraft().currentScreen instanceof AbstractGuiRequest) {
-					AbstractGuiRequest gui = (AbstractGuiRequest) Minecraft.getMinecraft().currentScreen;
+				if (Minecraft.getMinecraft().currentScreen instanceof RigelNetworkGuiRequest) {
+					RigelNetworkGuiRequest gui = (RigelNetworkGuiRequest) Minecraft.getMinecraft().currentScreen;
 					gui.stacks = message.stacks;
 					gui.craftableStacks = message.craftableStacks;
 				}

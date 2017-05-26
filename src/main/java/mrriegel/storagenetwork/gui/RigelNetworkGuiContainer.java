@@ -15,9 +15,9 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-public abstract class MyGuiContainer extends GuiContainer {
+public abstract class RigelNetworkGuiContainer extends GuiContainer {
 
-	public MyGuiContainer(Container inventorySlotsIn) {
+	public RigelNetworkGuiContainer(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 	}
 
