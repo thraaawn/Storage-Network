@@ -30,19 +30,15 @@ public class ModBlocks {
 	public static final Block vacuumKabel = new BlockKabel().setRegistryName("vacuum_kabel");//vacum-doesntwork?
 
  
-//	public static final Block container = new BlockContainer();//??
-//	public static final Block crafter = new BlockCrafter();//??
 	public static final Block indicator = new BlockIndicator();
 	public static final Block annexer = new BlockAnnexer();
-//	public static final Block fannexer = new BlockFannexer();
-//	public static final Block itemBox = new BlockItemBox();
-//	public static final Block fluidBox = new BlockFluidBox();
+
 	public static final Block toggler = new BlockToggle();
 
 	public static void init() {
 		GameRegistry.register(master);
 		GameRegistry.register(request);
-//		GameRegistry.register(frequest);
+ 
 		GameRegistry.register(kabel.setUnlocalizedName(kabel.getRegistryName().toString()));
 		GameRegistry.register(storageKabel.setUnlocalizedName(storageKabel.getRegistryName().toString()));
 		GameRegistry.register(exKabel.setUnlocalizedName(exKabel.getRegistryName().toString()));
@@ -52,10 +48,7 @@ public class ModBlocks {
  
 		GameRegistry.register(indicator);
 		GameRegistry.register(annexer);
-//		GameRegistry.register(fannexer);
-//		GameRegistry.register(itemBox);
-//		GameRegistry.register(fluidBox);
-		// GameRegistry.register(container);
+
 		GameRegistry.register(toggler);
 
 		GameRegistry.register(new BlockMaster.Item(master).setRegistryName(master.getRegistryName()));

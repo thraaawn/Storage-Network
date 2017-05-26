@@ -8,11 +8,11 @@ import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModItems {
-	public static final Item upgrade = new ItemUpgrade();
+	public static final Item upgrade = new ItemUpgrade();//REMOVE
 	public static final Item remote = new ItemRemote().setRegistryName("remote");
  
-	public static final Item template = new ItemTemplate();
-	public static final Item duplicator = new ItemDuplicator();
+	public static final Item template = new ItemTemplate();//REMOVE
+	public static final Item duplicator = new ItemDuplicator();//REMOVE
 
 	public static void init() {
 		GameRegistry.register(upgrade);
