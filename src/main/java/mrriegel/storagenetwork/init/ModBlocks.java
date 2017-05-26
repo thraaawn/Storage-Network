@@ -1,14 +1,11 @@
 package mrriegel.storagenetwork.init;
-
-import mrriegel.storagenetwork.blocks.BlockAnnexer;
-import mrriegel.storagenetwork.blocks.BlockContainer;
-import mrriegel.storagenetwork.blocks.BlockCrafter;
  
+import mrriegel.storagenetwork.blocks.BlockContainer;
+
 import mrriegel.storagenetwork.blocks.BlockKabel;
 import mrriegel.storagenetwork.blocks.BlockMaster;
 import mrriegel.storagenetwork.blocks.BlockRequest;
-import mrriegel.storagenetwork.blocks.BlockToggle;
-import mrriegel.storagenetwork.tile.TileAnnexer; 
+import mrriegel.storagenetwork.blocks.BlockToggle; 
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
@@ -42,26 +39,18 @@ public class ModBlocks {
 
 		GameRegistry.register(new BlockMaster.Item(master).setRegistryName(master.getRegistryName()));
 		GameRegistry.register(new BlockRequest.Item(request).setRegistryName(request.getRegistryName()));
-//		GameRegistry.register(new BlockFRequest.Item(frequest).setRegistryName(frequest.getRegistryName()));
+
 		GameRegistry.register(new BlockKabel.Item(kabel).setRegistryName(kabel.getRegistryName()));
 		GameRegistry.register(new BlockKabel.Item(storageKabel).setRegistryName(storageKabel.getRegistryName()));
 		GameRegistry.register(new BlockKabel.Item(exKabel).setRegistryName(exKabel.getRegistryName()));
 		GameRegistry.register(new BlockKabel.Item(imKabel).setRegistryName(imKabel.getRegistryName()));
-//		GameRegistry.register(new BlockKabel.Item(vacuumKabel).setRegistryName(vacuumKabel.getRegistryName()));
 
- 
-		// GameRegistry.register(new
-		// BlockContainer.Item(container).setRegistryName(container.getRegistryName()));
 		GameRegistry.register(new BlockToggle.Item(toggler).setRegistryName(toggler.getRegistryName()));
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
 		GameRegistry.registerTileEntity(TileRequest.class, "tileRequest");
- 
-		GameRegistry.registerTileEntity(TileAnnexer.class, "tileAnnexer");
-//		GameRegistry.registerTileEntity(TileFannexer.class, "tileFannexer");
-//		GameRegistry.registerTileEntity(TileItemBox.class, "tileItemBox");
-//		GameRegistry.registerTileEntity(TileFluidBox.class, "tileFluidBox");
+  
 		GameRegistry.registerTileEntity(TileToggler.class, "tileToggler");
 
 	}
