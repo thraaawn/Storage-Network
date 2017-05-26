@@ -141,11 +141,12 @@ public class ContainerRequest extends Container {
     int crafted = 0;
     List<ItemStack> lis = Lists.newArrayList();
     for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
-      lis.add(craftMatrix.getStackInSlot(i));
+      lis.add(craftMatrix.getStackInSlot(i).copy());
     ItemStack res = result.getStackInSlot(0);
     while (crafted + res.getCount() <= res.getMaxStackSize()) {
-      if (ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), true) != null)
+      if (!ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), true).isEmpty()){
         break;
+      }
       ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), false);
       sl.onTake(player, res);
       crafted += res.getCount();
