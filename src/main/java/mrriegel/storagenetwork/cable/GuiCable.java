@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.RigelNetworkGuiContainer;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.cable.TileKabel.Kind;
+import mrriegel.storagenetwork.cable.TileCable.Kind;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.network.ButtonMessage;
@@ -44,8 +44,8 @@ public class GuiCable extends RigelNetworkGuiContainer {
     this.xSize = 176;
     this.ySize = 171;
     this.tile = ((ContainerCable) inventorySlots).tile;
-    if (tile instanceof TileKabel) {
-      this.kind = ((TileKabel) tile).getKind();
+    if (tile instanceof TileCable) {
+      this.kind = ((TileCable) tile).getKind();
     }
     list = Lists.newArrayList();
   }
@@ -60,12 +60,12 @@ public class GuiCable extends RigelNetworkGuiContainer {
       for (int jj = 0; jj < 2; jj++)
         this.drawTexturedModalRect(i + 7 + ii * 18, j + 25 + 18 * jj, 176, 34, 18, 18);
     }
-    if (tile instanceof TileKabel) {
-      if (((TileKabel) tile).isUpgradeable())
+    if (tile instanceof TileCable) {
+      if (((TileCable) tile).isUpgradeable())
         for (int ii = 0; ii < 4; ii++) {
         this.drawTexturedModalRect(i + 97 + ii * 18, j + 5, 176, 34, 18, 18);
         }
-      if (((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) {
+      if (((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1) {
         acti.enabled = true;
         acti.visible = true;
         this.mc.getTextureManager().bindTexture(texture);
@@ -85,13 +85,13 @@ public class GuiCable extends RigelNetworkGuiContainer {
         StackWrapper wrap = tile.getFilter().get(index);
         ItemStack s = wrap == null ? null : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
-        boolean numShow = tile instanceof TileKabel ? ((TileKabel) tile).elements(ItemUpgrade.STOCK) > 0 : false;
+        boolean numShow = tile instanceof TileCable ? ((TileCable) tile).getUpgradesOfType(ItemUpgrade.STOCK) > 0 : false;
         list.add(new ItemSlot(s, guiLeft + 8 + ii * 18, guiTop + 26 + jj * 18, num, guiLeft, guiTop, numShow, true, false, true));
       }
     }
     for (ItemSlot s : list)
       s.drawSlot(mouseX, mouseY);
-    if (tile instanceof TileKabel && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1)
+    if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1)
       operation.drawSlot(mouseX, mouseY);
     fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
   }
@@ -116,7 +116,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
     }
     for (ItemSlot s : list)
       s.drawTooltip(mouseX, mouseY);
-    if (tile instanceof TileKabel && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1)
+    if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1)
       operation.drawTooltip(mouseX, mouseY);
     if (impor != null && impor.isMouseOver())
       drawHoveringText(Lists.newArrayList("Import Filter"), mouseX - guiLeft, mouseY - guiTop);
@@ -144,7 +144,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
       white = new Button(3, guiLeft + 70, guiTop + 5, "");
       buttonList.add(white);
     }
-    if (tile instanceof TileKabel) {
+    if (tile instanceof TileCable) {
       Keyboard.enableRepeatEvents(true);
       searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 34, guiTop + 69, 85, fontRendererObj.FONT_HEIGHT);
       searchBar.setMaxStringLength(30);
@@ -153,17 +153,17 @@ public class GuiCable extends RigelNetworkGuiContainer {
       searchBar.setTextColor(16777215);
       searchBar.setCanLoseFocus(false);
       searchBar.setFocused(true);
-      searchBar.setText(((TileKabel) tile).getLimit() + "");
+      searchBar.setText(((TileCable) tile).getLimit() + "");
       acti = new Button(4, guiLeft + 127, guiTop + 65, "");
       buttonList.add(acti);
-      operation = new ItemSlot(((TileKabel) tile).getStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
+      operation = new ItemSlot(((TileCable) tile).getStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
     }
   }
   @Override
   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
-    if (operation != null && operation.isMouseOverSlot(mouseX, mouseY) && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) {
-      ((TileKabel) tile).setStack(mc.player.inventory.getItemStack());
+    if (operation != null && operation.isMouseOverSlot(mouseX, mouseY) && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1) {
+      ((TileCable) tile).setStack(mc.player.inventory.getItemStack());
       operation.stack = mc.player.inventory.getItemStack();
       int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
       PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.player.inventory.getItemStack()));
@@ -220,8 +220,8 @@ public class GuiCable extends RigelNetworkGuiContainer {
         tile.setWhite(!tile.isWhite());
       break;
       case 4:
-        if (tile instanceof TileKabel)
-          ((TileKabel) tile).setMode(!((TileKabel) tile).isMode());
+        if (tile instanceof TileCable)
+          ((TileCable) tile).setMode(!((TileCable) tile).isMode());
       break;
     }
   }
@@ -244,17 +244,17 @@ public class GuiCable extends RigelNetworkGuiContainer {
         }
       }
     }
-    if (!(tile instanceof TileKabel)) {
+    if (!(tile instanceof TileCable)) {
       super.keyTyped(typedChar, keyCode);
       return;
     }
     if (!this.checkHotbarKeys(keyCode)) {
       Keyboard.enableRepeatEvents(true);
       String s = "";
-      if (((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) {
+      if (((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1) {
         s = searchBar.getText();
       }
-      if ((((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) && this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
+      if ((((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1) && this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
         if (!StringUtils.isNumeric(searchBar.getText()) && !searchBar.getText().isEmpty())
           searchBar.setText(s);
         int num = 0;
@@ -264,7 +264,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
         catch (Exception e) {
           searchBar.setText("0");
         }
-        ((TileKabel) tile).setLimit(num);
+        ((TileCable) tile).setLimit(num);
         PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), operation.stack));
       }
       else {
@@ -300,7 +300,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
             this.drawTexturedModalRect(this.xPosition + 1, this.yPosition + 3, 190, 83, 13, 10);
         }
         if (id == 4) {
-          if (((TileKabel) tile).isMode())
+          if (((TileCable) tile).isMode())
             this.drawTexturedModalRect(this.xPosition + 0, this.yPosition + 0, 176, 94, 16, 15);
           else
             this.drawTexturedModalRect(this.xPosition + 0, this.yPosition + 0, 176 + 16, 94, 16, 15);
@@ -319,9 +319,9 @@ public class GuiCable extends RigelNetworkGuiContainer {
         else if (this.hovered) {
           l = 16777120;
         }
-        if (tile instanceof TileKabel) {
+        if (tile instanceof TileCable) {
           List<String> lis = new ArrayList<String>();
-          String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.world.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileKabel) tile).isMode() ? "more" : "less")), ((TileKabel) tile).getLimit(), ((TileKabel) tile).getStack() != null ? ((TileKabel) tile).getStack().getDisplayName() : "Items");
+          String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.world.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileCable) tile).isMode() ? "more" : "less")), ((TileCable) tile).getLimit(), ((TileCable) tile).getStack() != null ? ((TileCable) tile).getStack().getDisplayName() : "Items");
           List<String> matchList = new ArrayList<String>();
           Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
           Matcher regexMatcher = regex.matcher(s);
@@ -329,7 +329,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
             matchList.add(regexMatcher.group());
           }
           lis = new ArrayList<String>(matchList);
-          if (this.hovered && id == 4 && ((TileKabel) tile).getStack() != null) {
+          if (this.hovered && id == 4 && ((TileCable) tile).getStack() != null) {
             GlStateManager.pushMatrix();
             GlStateManager.disableLighting();
             drawHoveringText(lis, p_146112_2_, p_146112_3_, fontRendererObj);

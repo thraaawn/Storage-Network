@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.cable.ContainerCable;
-import mrriegel.storagenetwork.cable.TileKabel;
+import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
@@ -43,8 +43,8 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
               tile.setWhite(!tile.isWhite());
             break;
             case 4:
-              if (tile instanceof TileKabel)
-                ((TileKabel) tile).setMode(!((TileKabel) tile).isMode());
+              if (tile instanceof TileCable)
+                ((TileCable) tile).setMode(!((TileCable) tile).isMode());
             break;
             case 5:
               if (tile.getInventory() != null) {

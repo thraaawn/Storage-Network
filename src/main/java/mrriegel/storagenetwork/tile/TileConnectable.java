@@ -58,6 +58,7 @@ public class TileConnectable extends TileEntity implements IConnectable {
     }
     catch (Exception e) {
       System.out.println("Error on unload");
+      e.printStackTrace();
     }
   }
 }

@@ -10,8 +10,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public abstract class BlockConnectable extends BlockContainer {
-  public BlockConnectable(Material materialIn) {
+public abstract class AbstractBlockConnectable extends BlockContainer {
+  public AbstractBlockConnectable(Material materialIn) {
     super(materialIn);
   }
   @Override

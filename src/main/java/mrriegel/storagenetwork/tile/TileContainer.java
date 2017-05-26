@@ -174,12 +174,12 @@ public class TileContainer extends TileConnectable implements ISidedInventory {
   }
   @Override
   public boolean isEmpty() {
-    // TODO Auto-generated method stub
+ 
     return false;
   }
   @Override
   public boolean isUsableByPlayer(EntityPlayer player) {
-    // TODO Auto-generated method stub
+ 
     return true;
   }
 }

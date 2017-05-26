@@ -2,7 +2,7 @@ package mrriegel.storagenetwork.proxy;
 import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.cable.TileKabel;
+import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.render.CableRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -41,10 +41,9 @@ public class ClientProxy extends CommonProxy {
     for (int i = 0; i < 2; i++) {
       ModelLoader.setCustomModelResourceLocation(ModItems.remote, i, new ModelResourceLocation(StorageNetwork.MODID + ":remote_" + i, "inventory"));
     }
-    ModelLoader.setCustomModelResourceLocation(ModItems.duplicator, 0, new ModelResourceLocation(StorageNetwork.MODID + ":duplicator", "inventory"));
-    //		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.toggler), 0, new ModelResourceLocation(StorageNetwork.MODID + ":toggler", "inventory"));
+ 
   }
   public void registerRenderers() {
-    ClientRegistry.bindTileEntitySpecialRenderer(TileKabel.class, new CableRenderer());
+    ClientRegistry.bindTileEntitySpecialRenderer(TileCable.class, new CableRenderer());
   }
 }

@@ -10,8 +10,6 @@ public class FilterItem {
     this(stack, stack != null ? stack.getItemDamage() != OreDictionary.WILDCARD_VALUE : true, false, false);
   }
   public FilterItem(ItemStack stack, boolean meta, boolean ore, boolean nbt) {
-    if (stack == null)
-      throw new NullPointerException();
     this.stack = stack;
     this.meta = meta;
     this.ore = ore;
@@ -70,7 +68,7 @@ public class FilterItem {
     return fil.getStack() != null && fil.getStack().getItem() != null ? fil : null;
   }
   public boolean match(ItemStack s) {
-    if (s == null)
+    if (s == null || s.isEmpty())
       return false;
     if (ore && Util.equalOreDict(s, stack))
       return true;

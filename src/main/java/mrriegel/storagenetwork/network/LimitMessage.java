@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.cable.TileKabel;
+import mrriegel.storagenetwork.cable.TileCable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +27,7 @@ public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMe
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        TileKabel tile = (TileKabel) ctx.getServerHandler().playerEntity.world.getTileEntity(message.pos);
+        TileCable tile = (TileCable) ctx.getServerHandler().playerEntity.world.getTileEntity(message.pos);
         tile.setLimit(message.limit);
         tile.setStack(message.stack);
         tile.markDirty();

@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import mrriegel.storagenetwork.BlockConnectable;
+import mrriegel.storagenetwork.AbstractBlockConnectable;
 import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.GuiHandler;
@@ -13,7 +13,7 @@ import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.cable.TileKabel.Kind;
+import mrriegel.storagenetwork.cable.TileCable.Kind;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.master.TileMaster;
@@ -41,7 +41,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockKabel extends BlockConnectable {
+public class BlockCable extends AbstractBlockConnectable {
   public static enum EnumConnectType implements IStringSerializable {
     CONNECT("connect"), STORAGE("storage"), NULL("null");
     String name;
@@ -53,7 +53,7 @@ public class BlockKabel extends BlockConnectable {
       return name;
     }
   }
-  public BlockKabel() {
+  public BlockCable() {
     super(Material.IRON);
     this.setHardness(1.4F);
     this.setCreativeTab(CreativeTab.tab);
@@ -86,15 +86,14 @@ public class BlockKabel extends BlockConnectable {
   }
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    ItemStack heldItem = playerIn.getHeldItem(hand);
-    if (!(worldIn.getTileEntity(pos) instanceof TileKabel))
+  //  ItemStack heldItem = playerIn.getHeldItem(hand);
+    if (!(worldIn.getTileEntity(pos) instanceof TileCable))
       return false;
     if (worldIn.isRemote)
       return true;
-    TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-    if (/* tile.getMaster() == null || */(heldItem != null && !heldItem.isEmpty() && (heldItem.getItem() == ModItems.duplicator)))
-      return false;
-    else if (tile.getKind() == Kind.exKabel || tile.getKind() == Kind.imKabel || tile.getKind() == Kind.storageKabel) {
+    TileCable tile = (TileCable) worldIn.getTileEntity(pos);
+
+    if (tile.getKind() == Kind.exKabel || tile.getKind() == Kind.imKabel || tile.getKind() == Kind.storageKabel) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }
@@ -117,9 +116,9 @@ public class BlockKabel extends BlockConnectable {
     return InvHelper.hasItemHandler(worldIn, pos, side);
   }
   IBlockState getNewState(IBlockAccess world, BlockPos pos) {
-    if (!(world.getTileEntity(pos) instanceof TileKabel))
+    if (!(world.getTileEntity(pos) instanceof TileCable))
       return world.getBlockState(pos);
-    TileKabel tile = (TileKabel) world.getTileEntity(pos);
+    TileCable tile = (TileCable) world.getTileEntity(pos);
     EnumFacing face = null;
     BlockPos con = null;
     Map<EnumFacing, EnumConnectType> oldMap = tile.getConnects();
@@ -202,15 +201,15 @@ public class BlockKabel extends BlockConnectable {
       return super.getActualState(state, worldIn, pos);
     }
   }
-  private boolean oo(TileKabel tile) {
-    boolean a = connected(tile.north) && connected(tile.south) && !connected(tile.west) && !connected(tile.east) && !connected(tile.up) && !connected(tile.down);
-    boolean b = !connected(tile.north) && !connected(tile.south) && connected(tile.west) && connected(tile.east) && !connected(tile.up) && !connected(tile.down);
-    boolean c = !connected(tile.north) && !connected(tile.south) && !connected(tile.west) && !connected(tile.east) && connected(tile.up) && connected(tile.down);
-    return (a ^ b ^ c) && tile.getKind() == Kind.kabel;
-  }
-  private boolean connected(EnumConnectType c) {
-    return c == EnumConnectType.STORAGE || c == EnumConnectType.CONNECT;
-  }
+//  private boolean oo(TileKabel tile) {
+//    boolean a = connected(tile.north) && connected(tile.south) && !connected(tile.west) && !connected(tile.east) && !connected(tile.up) && !connected(tile.down);
+//    boolean b = !connected(tile.north) && !connected(tile.south) && connected(tile.west) && connected(tile.east) && !connected(tile.up) && !connected(tile.down);
+//    boolean c = !connected(tile.north) && !connected(tile.south) && !connected(tile.west) && !connected(tile.east) && connected(tile.up) && connected(tile.down);
+//    return (a ^ b ^ c) && tile.getKind() == Kind.kabel;
+//  }
+//  private boolean connected(EnumConnectType c) {
+//    return c == EnumConnectType.STORAGE || c == EnumConnectType.CONNECT;
+//  }
   public static EnumFacing get(BlockPos a, BlockPos b) {
     if (a.up().equals(b))
       return EnumFacing.DOWN;
@@ -228,17 +227,17 @@ public class BlockKabel extends BlockConnectable {
   }
   @Override
   public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
-    if (!(worldIn.getTileEntity(pos) instanceof TileKabel))
+    if (!(worldIn.getTileEntity(pos) instanceof TileCable))
       return;
     state = state.getActualState(worldIn, pos);
-    TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-    if (tile != null && tile.getCover() != null) {
-      if (tile.getCover() != Blocks.GLASS)
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
-      else if (ConfigHandler.untouchable)
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, NULL_AABB);
-      return;
-    }
+    TileCable tile = (TileCable) worldIn.getTileEntity(pos);
+//    if (tile != null && tile.getCover() != null) {
+//      if (tile.getCover() != Blocks.GLASS)
+//        addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
+//      else if (ConfigHandler.untouchable)
+//        addCollisionBoxToList(pos, entityBox, collidingBoxes, NULL_AABB);
+//      return;
+//    }
     float f = 0.3125F;
     float f1 = 0.6875F;
     float f2 = 0.3125F;
@@ -273,10 +272,10 @@ public class BlockKabel extends BlockConnectable {
   }
   @Override
   public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-    if (!(source.getTileEntity(pos) instanceof TileKabel))
+    if (!(source.getTileEntity(pos) instanceof TileCable))
       return FULL_BLOCK_AABB;
     state = state.getActualState(source, pos);
-    TileKabel tile = (TileKabel) source.getTileEntity(pos);
+    TileCable tile = (TileCable) source.getTileEntity(pos);
     float f = 0.3125F;
     float f1 = 0.6875F;
     float f2 = 0.3125F;
@@ -285,7 +284,7 @@ public class BlockKabel extends BlockConnectable {
     float f5 = 0.6875F;
     if (tile == null)
       return new AxisAlignedBB(f, f4, f2, f1, f5, f3);
-    if (tile != null && tile.getCover() != null && tile.getCover() != Blocks.GLASS) { return FULL_BLOCK_AABB; }
+//    if (tile != null && tile.getCover() != null && tile.getCover() != Blocks.GLASS) { return FULL_BLOCK_AABB; }
     AxisAlignedBB res = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
     if (tile.north != EnumConnectType.NULL) {
       f2 = 0f;
@@ -322,8 +321,8 @@ public class BlockKabel extends BlockConnectable {
   @Override
   public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
     TileEntity tileentity = worldIn.getTileEntity(pos);
-    if (tileentity instanceof TileKabel) {
-      TileKabel tile = (TileKabel) tileentity;
+    if (tileentity instanceof TileCable) {
+      TileCable tile = (TileCable) tileentity;
       for (int i = 0; i < tile.getUpgrades().size(); i++) {
         Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getUpgrades().get(i));
       }
@@ -334,7 +333,7 @@ public class BlockKabel extends BlockConnectable {
   }
   @Override
   public TileEntity createNewTileEntity(World worldIn, int meta) {
-    return new TileKabel();
+    return new TileCable();
   }
   public static class Item extends ItemBlock {
     public Item(Block block) {

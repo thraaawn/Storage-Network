@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import mrriegel.storagenetwork.ModBlocks;
-import mrriegel.storagenetwork.cable.BlockKabel.EnumConnectType;
+import mrriegel.storagenetwork.cable.BlockCable.EnumConnectType;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.items.ItemUpgrade;
@@ -22,7 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class TileKabel extends AbstractFilterTile {
+public class TileCable extends AbstractFilterTile {
   private BlockPos connectedInventory;
   private EnumFacing inventoryFace;
   private NonNullList<ItemStack> upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
@@ -30,8 +30,7 @@ public class TileKabel extends AbstractFilterTile {
   private int limit = 0;
   // public Map<EnumFacing, Connect> connections = Maps.newHashMap();
   public EnumConnectType north, south, east, west, up, down;
-  private Block cover;
-  private int coverMeta;
+ 
   ItemStack stack = null;
   public enum Kind {
     kabel, exKabel, imKabel, storageKabel;//, vacuumKabel, fexKabel, fimKabel, fstorageKabel;
@@ -39,10 +38,10 @@ public class TileKabel extends AbstractFilterTile {
     //      return this == Kind.fexKabel || this == Kind.fimKabel || this == Kind.fstorageKabel;
     //    }
   }
-  public int elements(int num) {
+  public int getUpgradesOfType(int num) {
     int res = 0;
     for (ItemStack s : upgrades) {
-      if (s != null && s.getItemDamage() == num) {
+      if (s != null && !s.isEmpty() && s.getItemDamage() == num) {
         res += s.getCount();
         break;
       }
@@ -83,11 +82,9 @@ public class TileKabel extends AbstractFilterTile {
     down = map.get(EnumFacing.DOWN);
   }
   public boolean status() {
-    if (elements(ItemUpgrade.OP) < 1)
-      return true;
+    if (getUpgradesOfType(ItemUpgrade.OP) < 1) { return true; }
     TileMaster m = (TileMaster) world.getTileEntity(getMaster());
-    if (getStack() == null)
-      return true;
+    if (getStack() == null || getStack().isEmpty()) { return true; }
     int amount = m.getAmount(new FilterItem(getStack()));
     if (isMode()) {
       return amount > getLimit();
@@ -101,7 +98,7 @@ public class TileKabel extends AbstractFilterTile {
     super.readFromNBT(compound);
     connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {}.getType());
     inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
-    coverMeta = compound.getInteger("coverMeta");
+   
     mode = compound.getBoolean("mode");
     limit = compound.getInteger("limit");
     if (compound.hasKey("stack", 10))
@@ -120,13 +117,7 @@ public class TileKabel extends AbstractFilterTile {
       up = EnumConnectType.valueOf(compound.getString("up"));
     if (compound.hasKey("down"))
       down = EnumConnectType.valueOf(compound.getString("down"));
-    String fs = compound.getString("cover");
-    if (fs == null || "null".equals(fs)) {
-      cover = null;
-    }
-    else {
-      cover = Block.getBlockFromName(fs);
-    }
+   
     NBTTagList nbttaglist = compound.getTagList("Items", 10);
     upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
     for (int i = 0; i < nbttaglist.tagCount(); ++i) {
@@ -143,7 +134,7 @@ public class TileKabel extends AbstractFilterTile {
     compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
     if (inventoryFace != null)
       compound.setString("inventoryFace", inventoryFace.toString());
-    compound.setInteger("coverMeta", coverMeta);
+ 
     compound.setBoolean("mode", mode);
     compound.setInteger("limit", limit);
     if (stack != null)
@@ -160,12 +151,7 @@ public class TileKabel extends AbstractFilterTile {
       compound.setString("up", up.toString());
     if (down != null)
       compound.setString("down", down.toString());
-    if (cover != null) {
-      compound.setString("cover", Block.REGISTRY.getNameForObject(cover).toString());
-    }
-    else {
-      compound.setString("cover", "null");
-    }
+  
     NBTTagList nbttaglist = new NBTTagList();
     for (int i = 0; i < upgrades.size(); ++i) {
       if (upgrades.get(i) != null) {
@@ -232,25 +218,7 @@ public class TileKabel extends AbstractFilterTile {
   public void setStack(ItemStack stack) {
     this.stack = stack;
   }
-  public Block getCover() {
-    return cover;
-  }
-  public void setCover(Block cover) {
-    this.cover = cover;
-  }
-  public int getCoverMeta() {
-    return coverMeta;
-  }
-  public void setCoverMeta(int coverMeta) {
-    this.coverMeta = coverMeta;
-  }
-  @Override
-  public IFluidHandler getFluidTank() {
-    // WARNIGN getopposite
-    if (getConnectedInventory() != null)
-      return InvHelper.getFluidHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
-    return null;
-  }
+ 
   @Override
   public IItemHandler getInventory() {
     if (getConnectedInventory() != null)

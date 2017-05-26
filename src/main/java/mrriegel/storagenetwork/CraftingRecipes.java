@@ -26,31 +26,30 @@ public class CraftingRecipes {
     GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 3), "c", "i", "c", 'c', Items.COMPARATOR, 'i', Items.IRON_INGOT);
     GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 0), " c ", "eie", " c ", 'c', Items.GOLD_INGOT, 'i', ModBlocks.kabel, 'e', Items.ENDER_PEARL);
     GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 1), "c", "i", "d", 'c', Items.NETHER_STAR, 'i', ModItems.remote, 'd', Items.DIAMOND);
-    class Foo extends ShapelessRecipes {
-      public Foo(ItemStack output, List<ItemStack> inputList) {
-        super(output, inputList);
-      }
-      @Override
-      public ItemStack getCraftingResult(InventoryCrafting inv) {
-        ItemStack rem = null;
-        ItemStack frem = super.getCraftingResult(inv);
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-          if (inv.getStackInSlot(i) != null && inv.getStackInSlot(i).getItem() == ModItems.remote) {
-            rem = inv.getStackInSlot(i);
-            break;
-          }
-        }
-        if (rem == null)
-          return frem;
-        else {
-          if (rem.getTagCompound() != null)
-            ItemRemote.copyTag(rem, frem);
-          return frem;
-        }
-      }
-    }
-    RecipeSorter.register("storagenetwork:foo", Foo.class, Category.SHAPED, "after:minecraft:shaped before:minecraft:shapeless");
-    GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.duplicator), "  t", " s ", "i  ", 'i', Items.IRON_INGOT, 't', Items.PAPER, 's', "stickWood"));
-    GameRegistry.addShapelessRecipe(new ItemStack(ModItems.duplicator), ModItems.duplicator);
+//    class Foo extends ShapelessRecipes {
+//      public Foo(ItemStack output, List<ItemStack> inputList) {
+//        super(output, inputList);
+//      }
+//      @Override
+//      public ItemStack getCraftingResult(InventoryCrafting inv) {
+//        ItemStack rem = null;
+//        ItemStack frem = super.getCraftingResult(inv);
+//        for (int i = 0; i < inv.getSizeInventory(); i++) {
+//          if (inv.getStackInSlot(i) != null && inv.getStackInSlot(i).getItem() == ModItems.remote) {
+//            rem = inv.getStackInSlot(i);
+//            break;
+//          }
+//        }
+//        if (rem == null)
+//          return frem;
+//        else {
+//          if (rem.getTagCompound() != null)
+//            ItemRemote.copyTag(rem, frem);
+//          return frem;
+//        }
+//      }
+//    }
+//    RecipeSorter.register("storagenetwork:foo", Foo.class, Category.SHAPED, "after:minecraft:shaped before:minecraft:shapeless");
+
   }
 }

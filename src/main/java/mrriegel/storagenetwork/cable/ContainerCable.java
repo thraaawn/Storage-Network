@@ -24,9 +24,9 @@ public class ContainerCable extends Container {
         return 4;
       }
     };
-    if (tile instanceof TileKabel && ((TileKabel) tile).isUpgradeable()) {
-      for (int i = 0; i < ((TileKabel) tile).getUpgrades().size(); i++) {
-        upgrades.setInventorySlotContents(i, ((TileKabel) tile).getUpgrades().get(i));
+    if (tile instanceof TileCable && ((TileCable) tile).isUpgradeable()) {
+      for (int i = 0; i < ((TileCable) tile).getUpgrades().size(); i++) {
+        upgrades.setInventorySlotContents(i, ((TileCable) tile).getUpgrades().get(i));
       }
       for (int ii = 0; ii < 4; ii++) {
         this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
@@ -63,10 +63,11 @@ public class ContainerCable extends Container {
     return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
   }
   public void slotChanged() {
-    if (tile instanceof TileKabel) {
-      ((TileKabel) tile).setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
-      for (int i = 0; i < upgrades.getSizeInventory(); i++)
-        ((TileKabel) tile).getUpgrades().set(i, upgrades.getStackInSlot(i));
+    if (tile instanceof TileCable) {
+      ((TileCable) tile).setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
+      for (int i = 0; i < upgrades.getSizeInventory(); i++) {
+        ((TileCable) tile).getUpgrades().set(i, upgrades.getStackInSlot(i));
+      }
     }
   }
   @Override
@@ -74,8 +75,8 @@ public class ContainerCable extends Container {
     Slot slot = this.inventorySlots.get(slotIndex);
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
-      if (itemstack1 == null)
-        return null;
+      if (itemstack1.isEmpty())
+        return ItemStack.EMPTY;
       for (int i = 0; i < 18; i++) {
         if (tile.getFilter().get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
           tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.getCount()));
@@ -84,7 +85,7 @@ public class ContainerCable extends Container {
         }
       }
     }
-    return null;
+    return ItemStack.EMPTY;
   }
   public boolean in(StackWrapper stack) {
     for (int i = 0; i < 18; i++) {

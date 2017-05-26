@@ -27,7 +27,7 @@ public class ContainerRequest extends Container {
   public InventoryCraftResult result;
   public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
   public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
-    System.out.println("!new ContainerRequest");
+
     this.tile = tile;
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
@@ -38,7 +38,7 @@ public class ContainerRequest extends Container {
     SlotCrafting x = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
-        System.out.println("ONTAKE crafting in containerrequest");
+
         if (playerIn.world.isRemote) { return stack; }
         List<ItemStack> lis = Lists.newArrayList();
         for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
@@ -47,8 +47,7 @@ public class ContainerRequest extends Container {
         TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
         detectAndSendChanges();
         for (int i = 0; i < craftMatrix.getSizeInventory(); i++){
-
-          System.out.println("creaftin refil requesatt"+lis.get(i));
+ 
           if (craftMatrix.getStackInSlot(i) == null || craftMatrix.getStackInSlot(i).isEmpty()) {
             ItemStack req = t.request(
                 !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
@@ -95,7 +94,7 @@ public class ContainerRequest extends Container {
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-    System.out.println("!transferStackInSlot ContainerRequest");
+ 
     if (playerIn.world.isRemote) { return ItemStack.EMPTY; }
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);

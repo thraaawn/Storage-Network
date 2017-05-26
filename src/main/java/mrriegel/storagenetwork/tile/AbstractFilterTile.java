@@ -137,7 +137,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
         if (getFilter().get(i) == null)
           continue;
         ItemStack s = getFilter().get(i).getStack();
-        if (s == null)
+        if (s == null||s.isEmpty())
           continue;
         boolean ore = getOre(i);
         boolean meta = getMeta(i);
@@ -149,41 +149,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
       return tmp;
     }
   }
-  public boolean canTransfer(Fluid fluid, Direction way) {
-    if (isStorage() && !this.way.match(way))
-      return false;
-    if (isWhite()) {
-      boolean tmp = false;
-      for (int i = 0; i < 18; i++) {
-        if (getFilter().get(i) == null)
-          continue;
-        ItemStack s = getFilter().get(i).getStack();
-        if (s == null)
-          continue;
-        if (Util.getFluid(s) != null && Util.getFluid(s).getFluid() == fluid) {
-          tmp = true;
-          break;
-        }
-      }
-      return tmp;
-    }
-    else {
-      boolean tmp = true;
-      for (int i = 0; i < 18; i++) {
-        if (getFilter().get(i) == null)
-          continue;
-        ItemStack s = getFilter().get(i).getStack();
-        if (s == null)
-          continue;
-        if (Util.getFluid(s) != null && Util.getFluid(s).getFluid() == fluid) {
-          tmp = false;
-          break;
-        }
-      }
-      return tmp;
-    }
-  }
-  public abstract IFluidHandler getFluidTank();
+
   public abstract IItemHandler getInventory();
   public abstract BlockPos getSource();
   //	public abstract boolean isFluid();

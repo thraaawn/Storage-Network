@@ -60,17 +60,7 @@ public class Util {
     // return m.getName();
     return modName;
   }
-  @Nonnull
-  public static String getModNameForFluid(@Nonnull Fluid fluid) {
-    return getModNameForItem(fluid.getBlock());
-    // ModContainer m =
-    // Loader.instance().getIndexedModList().get(fluid.getBlock().getRegistryName().getResourceDomain());
-    // if (m == null)
-    // return "Minecraft";
-    // else
-    // return m.getName();
-    // return modName;
-  }
+ 
   public static boolean equalOreDict(ItemStack a, ItemStack b) {
     int[] ar = OreDictionary.getOreIDs(a);
     int[] br = OreDictionary.getOreIDs(b);
@@ -86,25 +76,7 @@ public class Util {
         return true;
     return false;
   }
-  public static FluidStack getFluid(ItemStack s) {
-    if (s == null || s.getItem() == null)
-      return null;
-    if (FluidUtil.getFluidContained(s) != null)
-      return FluidUtil.getFluidContained(s);
-    FluidStack a = null;
-    IFluidHandler f = s.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-    if (f != null && f.getTankProperties() != null) {
-      for (IFluidTankProperties p : f.getTankProperties())
-        if (p.getContents() != null)
-          return p.getContents().copy();
-    }
-    //		a = FluidContainerRegistry.getFluidForFilledItem(s);
-    //		if (a != null)
-    //			return a;
-    //		if (s.getItem() instanceof IFluidContainerItem)
-    //			a = ((IFluidContainerItem) s.getItem()).getFluid(s);
-    return a;
-  }
+ 
   public static void spawnItemStack(World worldIn, double x, double y, double z, ItemStack stack) {
     if (stack == null || worldIn.isRemote)
       return;

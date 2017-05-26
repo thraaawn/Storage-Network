@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.request;
 import java.util.List;
-import mrriegel.storagenetwork.BlockConnectable;
+import mrriegel.storagenetwork.AbstractBlockConnectable;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.GuiHandler;
 import mrriegel.storagenetwork.IConnectable;
@@ -24,7 +24,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockRequest extends BlockConnectable {
+public class BlockRequest extends AbstractBlockConnectable {
   public static final PropertyDirection FACING = PropertyDirection.create("facing");
   public BlockRequest() {
     super(Material.IRON);
