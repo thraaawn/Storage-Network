@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.request;
+ package mrriegel.storagenetwork.request;
 import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.helper.FilterItem;
@@ -38,20 +38,23 @@ public class ContainerRequest extends Container {
     SlotCrafting x = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
+        System.out.println("ONTAKE crafting in containerrequest");
         if (playerIn.world.isRemote) { return stack; }
         List<ItemStack> lis = Lists.newArrayList();
         for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
-          lis.add(craftMatrix.getStackInSlot(i));
+          lis.add(craftMatrix.getStackInSlot(i).copy());
         super.onTake(playerIn, stack);
         TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
         detectAndSendChanges();
-        for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
-          if (craftMatrix.getStackInSlot(i) == null && !craftMatrix.getStackInSlot(i).isEmpty()) {
+        for (int i = 0; i < craftMatrix.getSizeInventory(); i++){
+
+          System.out.println("creaftin refil requesatt"+lis.get(i));
+          if (craftMatrix.getStackInSlot(i) == null || craftMatrix.getStackInSlot(i).isEmpty()) {
             ItemStack req = t.request(
                 !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
             if (!req.isEmpty())
               craftMatrix.setInventorySlotContents(i, req);
-          }
+          }}
         List<StackWrapper> list = t.getStacks();
         PacketHandler.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
         detectAndSendChanges();

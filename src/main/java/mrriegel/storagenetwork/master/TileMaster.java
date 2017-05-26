@@ -598,7 +598,6 @@ public class TileMaster extends TileEntity implements ITickable {
   //    }
   //  }
   public ItemStack request(FilterItem fil, final int size, boolean simulate) {
-    System.out.println("!TileMaster request " + size + "_");
     if (size == 0 || fil == null)
       return ItemStack.EMPTY;
     List<AbstractFilterTile> invs = Lists.newArrayList();
@@ -610,6 +609,7 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
     }
+    System.out.println("!TileMaster request " + size + "_"+fil.getStack());
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
     for (AbstractFilterTile t : invs) {
