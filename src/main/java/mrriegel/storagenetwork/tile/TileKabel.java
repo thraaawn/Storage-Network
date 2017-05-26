@@ -34,10 +34,10 @@ public class TileKabel extends AbstractFilterTile {
   private int coverMeta;
   ItemStack stack = null;
   public enum Kind {
-    kabel, exKabel, imKabel, storageKabel, vacuumKabel, fexKabel, fimKabel, fstorageKabel;
-    public boolean isFluid() {
-      return this == Kind.fexKabel || this == Kind.fimKabel || this == Kind.fstorageKabel;
-    }
+    kabel, exKabel, imKabel, storageKabel;//, vacuumKabel, fexKabel, fimKabel, fstorageKabel;
+//    public boolean isFluid() {
+//      return this == Kind.fexKabel || this == Kind.fimKabel || this == Kind.fstorageKabel;
+//    }
   }
   public int elements(int num) {
     int res = 0;
@@ -49,13 +49,10 @@ public class TileKabel extends AbstractFilterTile {
     }
     return res;
   }
-  @Override
-  public boolean isFluid() {
-    return getKind().isFluid();
-  }
+ 
   public boolean isUpgradeable() {
     Kind kind = getKind();
-    return kind == Kind.exKabel || kind == Kind.imKabel || kind == Kind.fexKabel || kind == Kind.fimKabel;
+    return kind == Kind.exKabel || kind == Kind.imKabel ;
   }
   public static Kind getKind(Block b) {
     if (b == ModBlocks.kabel)
@@ -66,14 +63,7 @@ public class TileKabel extends AbstractFilterTile {
       return Kind.imKabel;
     if (b == ModBlocks.storageKabel)
       return Kind.storageKabel;
-    if (b == ModBlocks.vacuumKabel)
-      return Kind.vacuumKabel;
-    //		if (b == ModBlocks.fexKabel)
-    //			return Kind.fexKabel;
-    //		if (b == ModBlocks.fimKabel)
-    //			return Kind.fimKabel;
-    //		if (b == ModBlocks.fstorageKabel)
-    //			return Kind.fstorageKabel;
+ 
     return null;
   }
   public Map<EnumFacing, Connect> getConnects() {
@@ -97,7 +87,7 @@ public class TileKabel extends AbstractFilterTile {
   public boolean status() {
     if (elements(ItemUpgrade.OP) < 1)
       return true;
-    if (!isFluid()) {
+  
       TileMaster m = (TileMaster) world.getTileEntity(getMaster());
       if (getStack() == null)
         return true;
@@ -108,19 +98,8 @@ public class TileKabel extends AbstractFilterTile {
       else {
         return amount <= getLimit();
       }
-    }
-    else {
-      TileMaster m = (TileMaster) world.getTileEntity(getMaster());
-      if (Util.getFluid(getStack()) == null)
-        return true;
-      int amount = m.getAmount(Util.getFluid(getStack()).getFluid());
-      if (isMode()) {
-        return amount > getLimit();
-      }
-      else {
-        return amount <= getLimit();
-      }
-    }
+  
+ 
   }
   @Override
   public void readFromNBT(NBTTagCompound compound) {
@@ -289,6 +268,6 @@ public class TileKabel extends AbstractFilterTile {
   }
   @Override
   public boolean isStorage() {
-    return getKind() == Kind.storageKabel || getKind() == Kind.fstorageKabel;
+    return getKind() == Kind.storageKabel ;
   }
 }

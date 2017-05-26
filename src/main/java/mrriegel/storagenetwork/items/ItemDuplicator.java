@@ -35,17 +35,18 @@ public class ItemDuplicator extends Item {
 			if (sneak) {
 				stack.setTagCompound(new NBTTagCompound());
 				tile.writeSettings(stack.getTagCompound());
-				NBTHelper.setBoolean(stack, "fluid", tile.isFluid());
+		 
 
 				playerIn.sendMessage(new TextComponentString("Saved Data to " + getItemStackDisplayName(stack)));
-			} else {
-				if (stack.getTagCompound() != null)
-					if ((NBTHelper.getBoolean(stack, "fluid") && tile.isFluid()) || (!NBTHelper.getBoolean(stack, "fluid") && !tile.isFluid())) {
-						tile.readSettings(stack.getTagCompound());
-						worldIn.markChunkDirty(tile.getPos(), tile);
-						playerIn.sendMessage(new TextComponentString("Saved Data to " + worldIn.getBlockState(pos).getBlock().getLocalizedName()));
-					}
 			}
+//			else {
+//				if (stack.getTagCompound() != null)
+//					if ((NBTHelper.getBoolean(stack, "fluid") && tile.isFluid()) || (!NBTHelper.getBoolean(stack, "fluid") && !tile.isFluid())) {
+//						tile.readSettings(stack.getTagCompound());
+//						worldIn.markChunkDirty(tile.getPos(), tile);
+//						playerIn.sendMessage(new TextComponentString("Saved Data to " + worldIn.getBlockState(pos).getBlock().getLocalizedName()));
+//					}
+//			}
 		}
 		return EnumActionResult.PASS;
 	}

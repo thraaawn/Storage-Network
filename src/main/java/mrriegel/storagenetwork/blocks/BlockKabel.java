@@ -352,7 +352,7 @@ public class BlockKabel extends BlockConnectable {
 		Block ori = worldIn.getBlockState(orig).getBlock();
 		if (worldIn.getTileEntity(pos) instanceof IConnectable || worldIn.getTileEntity(pos) instanceof TileMaster)
 			return Connect.CONNECT;
-		if (ori == ModBlocks.kabel || ori == ModBlocks.vacuumKabel)
+		if (ori == ModBlocks.kabel  )
 			return Connect.NULL;
 		EnumFacing face = get(orig, pos);
 		if (!validInventory(worldIn, pos, face))
@@ -395,8 +395,8 @@ public class BlockKabel extends BlockConnectable {
 				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_I"));
 			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.storageKabel))
 				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_S"));
-			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.vacuumKabel))
-				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_V"));
+//			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.vacuumKabel))
+//				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_V"));
 			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.kabel))
 				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_L"));
 			tooltip.add(I18n.format("tooltip.storagenetwork.networkNeeded"));

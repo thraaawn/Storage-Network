@@ -4,8 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.cable.ContainerCable;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.tile.AbstractFilterTile;
-import mrriegel.storagenetwork.tile.TileIndicator;
+import mrriegel.storagenetwork.tile.AbstractFilterTile; 
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -77,11 +76,12 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
 						break;
 					}
 					tile.markDirty();
-				} else if (t instanceof TileIndicator) {
-					TileIndicator tile = (TileIndicator) t;
-					tile.setMore(!tile.isMore());
-					tile.markDirty();
-				}
+				} 
+//				else if (t instanceof TileIndicator) {
+//					TileIndicator tile = (TileIndicator) t;
+//					tile.setMore(!tile.isMore());
+//					tile.markDirty();
+//				}
 				Util.updateTile(t.getWorld(), t.getPos());
 			}
 		});

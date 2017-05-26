@@ -29,10 +29,7 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 	private final ResourceLocation ex = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/ex.png");
 	private final ResourceLocation im = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/im.png");
 	private final ResourceLocation storage = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/storage.png");
-	private final ResourceLocation vacuum = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/vacuum.png");
-	private final ResourceLocation fex = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/fex.png");
-	private final ResourceLocation fim = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/fim.png");
-	private final ResourceLocation fstorage = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/fstorage.png");
+ 
 
 	public CableRenderer() {
 		model = new ModelCable();
@@ -92,18 +89,18 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 		case storageKabel:
 			Minecraft.getMinecraft().renderEngine.bindTexture(storage);
 			break;
-		case vacuumKabel:
-			Minecraft.getMinecraft().renderEngine.bindTexture(vacuum);
-			break;
-		case fexKabel:
-			Minecraft.getMinecraft().renderEngine.bindTexture(fex);
-			break;
-		case fimKabel:
-			Minecraft.getMinecraft().renderEngine.bindTexture(fim);
-			break;
-		case fstorageKabel:
-			Minecraft.getMinecraft().renderEngine.bindTexture(fstorage);
-			break;
+//		case vacuumKabel:
+//			Minecraft.getMinecraft().renderEngine.bindTexture(vacuum);
+//			break;
+//		case fexKabel:
+//			Minecraft.getMinecraft().renderEngine.bindTexture(fex);
+//			break;
+//		case fimKabel:
+//			Minecraft.getMinecraft().renderEngine.bindTexture(fim);
+//			break;
+//		case fstorageKabel:
+//			Minecraft.getMinecraft().renderEngine.bindTexture(fstorage);
+//			break;
 		default:
 			break;
 

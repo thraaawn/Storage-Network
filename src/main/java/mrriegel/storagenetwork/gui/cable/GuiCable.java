@@ -14,8 +14,7 @@ import mrriegel.storagenetwork.network.ButtonMessage;
 import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
-import mrriegel.storagenetwork.tile.AbstractFilterTile;
-import mrriegel.storagenetwork.tile.TileItemBox;
+import mrriegel.storagenetwork.tile.AbstractFilterTile; 
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.client.Minecraft;
@@ -151,7 +150,7 @@ public class GuiCable extends MyGuiContainer {
 			buttonList.add(way);
 		}
 
-		if (tile instanceof TileItemBox || kind == Kind.imKabel || kind == Kind.storageKabel) {
+		if ( kind == Kind.imKabel || kind == Kind.storageKabel) {//tile instanceof TileItemBox ||
 			white = new Button(3, guiLeft + 70, guiTop + 5, "");
 			buttonList.add(white);
 		}

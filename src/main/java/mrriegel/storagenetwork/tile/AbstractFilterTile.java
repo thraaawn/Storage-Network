@@ -203,7 +203,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 
 	public abstract BlockPos getSource();
 
-	public abstract boolean isFluid();
+//	public abstract boolean isFluid();
 
 	public abstract boolean isStorage();
 
