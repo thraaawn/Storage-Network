@@ -57,7 +57,7 @@ public class ContainerRemote extends Container {
         detectAndSendChanges();
         List<StackWrapper> list = tile.getStacks();
         PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
-        return null;
+        return ItemStack.EMPTY;
       }
     }
     return itemstack;

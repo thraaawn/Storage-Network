@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.cable.TileKabel;
 import mrriegel.storagenetwork.cable.TileKabel.Kind;
@@ -32,44 +33,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class TileMaster extends TileEntity implements ITickable {
   public Set<BlockPos> connectables;
   public List<BlockPos> storageInventorys, fstorageInventorys;
-  //  public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, Integer.MAX_VALUE, 0);
-//  public List<CraftingTask> tasks = Lists.newArrayList();
-  public List<FluidStack> getFluids() {
-    List<FluidStack> stacks = Lists.newArrayList();
-    List<AbstractFilterTile> invs = Lists.newArrayList();
-    if (connectables == null)
-      refreshNetwork();
-    for (BlockPos p : connectables) {
-      if (world.getTileEntity(p) instanceof AbstractFilterTile) {
-        AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(p);
-        if (tile.isStorage() && tile.getFluidTank() != null) {
-          invs.add(tile);
-        }
-      }
-    }
-    for (AbstractFilterTile t : invs) {
-      IFluidHandler inv = t.getFluidTank();
-      if (inv == null)
-        continue;
-      if (inv.getTankProperties() == null)
-        continue;
-      for (IFluidTankProperties i : inv.getTankProperties()) {
-        if (i != null && i.getContents() != null && t.canTransfer(i.getContents().getFluid(), Direction.BOTH))
-          addToList(stacks, i.getContents().getFluid(), i.getContents().amount);
-      }
-    }
-    return stacks;
-  }
+
   public List<StackWrapper> getStacks() {
     List<StackWrapper> stacks = Lists.newArrayList();
     List<AbstractFilterTile> invs = Lists.newArrayList();
@@ -86,7 +56,7 @@ public class TileMaster extends TileEntity implements ITickable {
     for (AbstractFilterTile t : invs) {
       IItemHandler inv = t.getInventory();
       for (int i = 0; i < inv.getSlots(); i++) {
-        if (inv.getStackInSlot(i) != null && t.canTransfer(inv.getStackInSlot(i), Direction.BOTH))
+        if (inv.getStackInSlot(i) != null && !inv.getStackInSlot(i).isEmpty() && t.canTransfer(inv.getStackInSlot(i), Direction.BOTH))
           addToList(stacks, inv.getStackInSlot(i).copy(), inv.getStackInSlot(i).getCount());
       }
     }
@@ -94,7 +64,7 @@ public class TileMaster extends TileEntity implements ITickable {
   }
   public int emptySlots() {
     int res = 0;
-    List<StackWrapper> stacks = Lists.newArrayList();
+//    List<StackWrapper> stacks = Lists.newArrayList();
     List<AbstractFilterTile> invs = Lists.newArrayList();
     for (BlockPos p : connectables) {
       if (world.getTileEntity(p) instanceof AbstractFilterTile) {
@@ -107,7 +77,7 @@ public class TileMaster extends TileEntity implements ITickable {
     for (AbstractFilterTile t : invs) {
       IItemHandler inv = t.getInventory();
       for (int i = 0; i < inv.getSlots(); i++) {
-        if (inv.getStackInSlot(i) == null)
+        if (inv.getStackInSlot(i) == null || inv.getStackInSlot(i).isEmpty())
           res++;
       }
     }
@@ -151,18 +121,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (!added)
       lis.add(new StackWrapper(s, num));
   }
-  private void addToList(List<FluidStack> lis, Fluid s, int num) {
-    boolean added = false;
-    for (int i = 0; i < lis.size(); i++) {
-      FluidStack stack = lis.get(i);
-      if (stack.getFluid() == s) {
-        lis.get(i).amount += num;
-        added = true;
-      }
-    }
-    if (!added)
-      lis.add(new FluidStack(s, num));
-  }
+ 
   public int getAmount(FilterItem fil) {
     if (fil == null)
       return 0;
@@ -174,16 +133,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return size;
   }
-  public int getAmount(Fluid fluid) {
-    if (fluid == null)
-      return 0;
-    int size = 0;
-    for (FluidStack w : getFluids()) {
-      if (w.getFluid() == fluid)
-        size += w.amount;
-    }
-    return size;
-  }
+ 
   public List<TileContainer> getContainers() {
     List<TileContainer> lis = Lists.newArrayList();
     for (BlockPos p : connectables) {
@@ -704,53 +654,7 @@ public class TileMaster extends TileEntity implements ITickable {
     //    System.out.println("!TileMaster copy result " + result);
     return ItemHandlerHelper.copyStackWithSize(res, result);
   }
-  public FluidStack frequest(Fluid fluid, final int size, boolean simulate) {
-    if (size == 0 || fluid == null)
-      return null;
-    List<AbstractFilterTile> invs = Lists.newArrayList();
-    for (BlockPos p : connectables) {
-      if (world.getTileEntity(p) instanceof AbstractFilterTile) {
-        AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(p);
-        if (tile.isStorage() && tile.getFluidTank() != null) {
-          invs.add(tile);
-        }
-      }
-    }
-    Fluid res = null;
-    int result = 0;
-    for (AbstractFilterTile t : invs) {
-      IFluidHandler inv = t.getFluidTank();
-      if (inv.getTankProperties() == null)
-        continue;
-      for (IFluidTankProperties i : inv.getTankProperties()) {
-        FluidStack s = i.getContents();
-        if (s == null)
-          continue;
-        if (res != null && s.getFluid() != res)
-          continue;
-        if (s.getFluid() != fluid)
-          continue;
-        if (!t.canTransfer(fluid, Direction.OUT))
-          continue;
-        if (inv.drain(s, false) == null || inv.drain(s, false).amount <= 0)
-          continue;
-        int miss = size - result;
-        result += Math.min(s.amount, miss);
-        int rest = s.amount - miss;
-        if (!simulate)
-          inv.drain(new FluidStack(s.getFluid(), miss), true);
-        world.markChunkDirty(pos, this);
-        if (res == null)
-          res = s.getFluid();
-        if (result == size)
-          return new FluidStack(res, size);
-        // break;
-      }
-    }
-    if (result == 0)
-      return null;
-    return new FluidStack(res, result);
-  }
+   
   @Override
   public void update() {
     if (world == null || world.isRemote)
@@ -758,7 +662,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (storageInventorys == null || fstorageInventorys == null || connectables == null) {
       refreshNetwork();
     }
-    if (world.getTotalWorldTime() % (200) == 0) {
+    if (world.getTotalWorldTime() % (ConfigHandler.refreshTicks) == 0) {
       refreshNetwork();
     }
     //    vacuum();
@@ -767,30 +671,7 @@ public class TileMaster extends TileEntity implements ITickable {
     //    fimpor();
     //    fexport();
     // craft();
-  }
-  //  private void craft() {
-  //    Iterator<CraftingTask> it = tasks.iterator();
-  //    while (it.hasNext()) {
-  //      CraftingTask t = it.next();
-  //      if (t.getDone() >= t.getOutputSize())
-  //        it.remove();
-  //    }
-  //    for (CraftingTask t : tasks) {
-  //      if (t.progress(this))
-  //        break;
-  //    }
-  //  }
-  //  boolean consumeRF(int num, boolean simulate) {
-  //    if (!ConfigHandler.energyNeeded)
-  //      return true;
-  //    int value = num * ConfigHandler.energyMultiplier + (connectables.size() / 15);
-  //    if (en.getEnergyStored() < value)
-  //      return false;
-  //    if (!simulate) {
-  //      en.modifyEnergyStored(-value);
-  //    }
-  //    return true;
-  //  }
+  } 
   @Override
   public SPacketUpdateTileEntity getUpdatePacket() {
     NBTTagCompound syncData = new NBTTagCompound();
@@ -801,22 +682,7 @@ public class TileMaster extends TileEntity implements ITickable {
   public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
     readFromNBT(pkt.getNbtCompound());
   }
-  //  @Override
-  //  public int getEnergyStored(EnumFacing from) {
-  //    return en.getEnergyStored();
-  //  }
-  //  @Override
-  //  public int getMaxEnergyStored(EnumFacing from) {
-  //    return en.getMaxEnergyStored();
-  //  }
-  //  @Override
-  //  public boolean canConnectEnergy(EnumFacing from) {
-  //    return true;
-  //  }
-  //  @Override
-  //  public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-  //    return en.receiveEnergy(maxReceive, simulate);
-  //  }
+ 
   @Override
   public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
     return oldState.getBlock() != newSate.getBlock();
