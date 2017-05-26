@@ -59,7 +59,7 @@ public class CraftingRecipes {
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.duplicator), "  t", " s ", "i  ", 'i', Items.IRON_INGOT, 't', Items.PAPER, 's', "stickWood"));
 		GameRegistry.addShapelessRecipe(new ItemStack(ModItems.duplicator), ModItems.duplicator);
-		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.toggler), " k ", "iti", " k ", 'k', ModBlocks.kabel, 'i', Items.IRON_INGOT, 't', Blocks.REDSTONE_TORCH);
+ 
 	}
 
 }

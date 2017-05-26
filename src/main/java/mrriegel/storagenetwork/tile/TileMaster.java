@@ -15,8 +15,7 @@ import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.items.ItemTemplate;
+import mrriegel.storagenetwork.helper.Util; 
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.AbstractFilterTile.Direction;
 import net.minecraft.block.state.IBlockState;
@@ -201,16 +200,16 @@ public class TileMaster extends TileEntity implements ITickable  {
   }
   public List<ItemStack> getTemplates(FilterItem fil) {
     List<ItemStack> templates = Lists.newArrayList();
-    for (TileContainer tile : getContainers()) {
-      for (ItemStack s : tile.getTemplates()) {
-        ItemStack result = ItemTemplate.getOutput(s);
-        if (fil.match(result)) {
-          ItemStack a = s;
-          a.setCount(result.getCount());
-          templates.add(s);
-        }
-      }
-    }
+//    for (TileContainer tile : getContainers()) {
+//      for (ItemStack s : tile.getTemplates()) {
+//        ItemStack result = ItemTemplate.getOutput(s);
+//        if (fil.match(result)) {
+//          ItemStack a = s;
+//          a.setCount(result.getCount());
+//          templates.add(s);
+//        }
+//      }
+//    }
     return templates;
   }
   public List<FilterItem> getIngredients(ItemStack template) {
@@ -278,8 +277,8 @@ public class TileMaster extends TileEntity implements ITickable  {
         continue;
       }
       if (world.getTileEntity(bl) != null && world.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl)) {
-        if (world.getTileEntity(bl) instanceof TileToggler && ((TileToggler) world.getTileEntity(bl)).isDisabled())
-          continue;
+//        if (world.getTileEntity(bl) instanceof TileToggler && ((TileToggler) world.getTileEntity(bl)).isDisabled())
+//          continue;
         connectables.add(bl);
         ((IConnectable) world.getTileEntity(bl)).setMaster(this.pos);
         chunk.setChunkModified();

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import mrriegel.storagenetwork.items.ItemTemplate;
 import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
@@ -73,8 +72,8 @@ public class CraftingTask {
 	public boolean progress(TileMaster tile) {
 		List<ItemStack> templates = tile.getTemplates(new FilterItem(output));
 		for (ItemStack template : templates) {
-			Map<Integer, ItemStack> ing = ItemTemplate.getInput(template);
-			TileContainer con = (TileContainer) tile.getWorld().getTileEntity(ItemTemplate.getPos(template));
+//			Map<Integer, ItemStack> ing = ItemTemplate.getInput(template);
+//			TileContainer con = (TileContainer) tile.getWorld().getTileEntity(ItemTemplate.getPos(template));
 		}
 		return false;
 	}

@@ -1,8 +1,0 @@
-{
-    "parent" : "storagenetwork:model/topdown", 
-    "textures" : {
-        "top" : "storagenetwork:blocks/fannexer_break", 
-        "rest" : "storagenetwork:blocks/fannexer_rest",
-        "down" : "storagenetwork:blocks/fluid_rest"
-    }
-}

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
-import mrriegel.storagenetwork.gui.template.ContainerTemplate;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
@@ -95,30 +94,31 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 					con.slotChanged();
 					List<StackWrapper> list = tile.getStacks();
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
-				} else if (message.index == 1) {
-					if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerTemplate))
-						return;
-					ContainerTemplate con = (ContainerTemplate) ctx.getServerHandler().playerEntity.openContainer;
-					for (int j = 1; j < 10; j++) {
-						con.craftMatrix.setInventorySlotContents(j - 1, null);
-						Map<Integer, ItemStack> lis = new HashMap<Integer, ItemStack>();
-						if (message.nbt.hasKey("s" + j, Constants.NBT.TAG_STRING)) {
-							List<ItemStack> l = OreDictionary.getOres(message.nbt.getString("s" + j));
-							for (int i = 0; i < l.size(); i++)
-								lis.put(i, l.get(i));
-						} else {
-							NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
-							for (int i = 0; i < invList.tagCount(); i++) {
-								NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-								lis.put(i,new ItemStack(stackTag));
-							}
-						}
-						ItemStack s = lis.get(0);
-						con.craftMatrix.setInventorySlotContents(j - 1, s);
-					}
-					con.slotChanged(true);
-					con.detectAndSendChanges();
 				}
+//				else if (message.index == 1) {
+//					if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerTemplate))
+//						return;
+//					ContainerTemplate con = (ContainerTemplate) ctx.getServerHandler().playerEntity.openContainer;
+//					for (int j = 1; j < 10; j++) {
+//						con.craftMatrix.setInventorySlotContents(j - 1, null);
+//						Map<Integer, ItemStack> lis = new HashMap<Integer, ItemStack>();
+//						if (message.nbt.hasKey("s" + j, Constants.NBT.TAG_STRING)) {
+//							List<ItemStack> l = OreDictionary.getOres(message.nbt.getString("s" + j));
+//							for (int i = 0; i < l.size(); i++)
+//								lis.put(i, l.get(i));
+//						} else {
+//							NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
+//							for (int i = 0; i < invList.tagCount(); i++) {
+//								NBTTagCompound stackTag = invList.getCompoundTagAt(i);
+//								lis.put(i,new ItemStack(stackTag));
+//							}
+//						}
+//						ItemStack s = lis.get(0);
+//						con.craftMatrix.setInventorySlotContents(j - 1, s);
+//					}
+//					con.slotChanged(true);
+//					con.detectAndSendChanges();
+//				}
 
 			}
 		});

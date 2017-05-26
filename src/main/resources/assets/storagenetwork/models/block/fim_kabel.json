@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "storagenetwork:blocks/fim_kabel_n"
-  }
-}
