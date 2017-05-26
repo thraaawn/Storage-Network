@@ -93,6 +93,7 @@ public class ContainerRequest extends Container {
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
+    System.out.println("!transferStackInSlot ContainerRequest");
     if (playerIn.world.isRemote){
       return ItemStack.EMPTY;}
     ItemStack itemstack =  ItemStack.EMPTY;
@@ -112,7 +113,7 @@ public class ContainerRequest extends Container {
         TileMaster tile = (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster());
         if (tile != null) {
           int rest = tile.insertStack(itemstack1, null, false);
-          ItemStack stack = rest == 0 ? null : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
+          ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
           slot.putStack(stack);
           detectAndSendChanges();
           List<StackWrapper> list = tile.getStacks();
