@@ -1,12 +1,13 @@
 package mrriegel.storagenetwork.cable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import com.google.common.collect.Maps;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.cable.BlockKabel.EnumConnectType;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
-import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
@@ -20,9 +21,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import com.google.common.collect.Maps;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 
 public class TileKabel extends AbstractFilterTile {
   private BlockPos connectedInventory;
@@ -37,9 +35,9 @@ public class TileKabel extends AbstractFilterTile {
   ItemStack stack = null;
   public enum Kind {
     kabel, exKabel, imKabel, storageKabel;//, vacuumKabel, fexKabel, fimKabel, fstorageKabel;
-//    public boolean isFluid() {
-//      return this == Kind.fexKabel || this == Kind.fimKabel || this == Kind.fstorageKabel;
-//    }
+    //    public boolean isFluid() {
+    //      return this == Kind.fexKabel || this == Kind.fimKabel || this == Kind.fstorageKabel;
+    //    }
   }
   public int elements(int num) {
     int res = 0;
@@ -51,10 +49,9 @@ public class TileKabel extends AbstractFilterTile {
     }
     return res;
   }
- 
   public boolean isUpgradeable() {
     Kind kind = getKind();
-    return kind == Kind.exKabel || kind == Kind.imKabel ;
+    return kind == Kind.exKabel || kind == Kind.imKabel;
   }
   public static Kind getKind(Block b) {
     if (b == ModBlocks.kabel)
@@ -65,7 +62,6 @@ public class TileKabel extends AbstractFilterTile {
       return Kind.imKabel;
     if (b == ModBlocks.storageKabel)
       return Kind.storageKabel;
- 
     return null;
   }
   public Map<EnumFacing, EnumConnectType> getConnects() {
@@ -89,19 +85,16 @@ public class TileKabel extends AbstractFilterTile {
   public boolean status() {
     if (elements(ItemUpgrade.OP) < 1)
       return true;
-  
-      TileMaster m = (TileMaster) world.getTileEntity(getMaster());
-      if (getStack() == null)
-        return true;
-      int amount = m.getAmount(new FilterItem(getStack()));
-      if (isMode()) {
-        return amount > getLimit();
-      }
-      else {
-        return amount <= getLimit();
-      }
-  
- 
+    TileMaster m = (TileMaster) world.getTileEntity(getMaster());
+    if (getStack() == null)
+      return true;
+    int amount = m.getAmount(new FilterItem(getStack()));
+    if (isMode()) {
+      return amount > getLimit();
+    }
+    else {
+      return amount <= getLimit();
+    }
   }
   @Override
   public void readFromNBT(NBTTagCompound compound) {
@@ -270,6 +263,6 @@ public class TileKabel extends AbstractFilterTile {
   }
   @Override
   public boolean isStorage() {
-    return getKind() == Kind.storageKabel ;
+    return getKind() == Kind.storageKabel;
   }
 }

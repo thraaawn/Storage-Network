@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.request;
 import java.util.List;
+import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
@@ -19,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
-import com.google.common.collect.Lists;
 
 public class ContainerRequest extends Container {
   public InventoryPlayer playerInv;
@@ -93,19 +93,18 @@ public class ContainerRequest extends Container {
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
     System.out.println("!transferStackInSlot ContainerRequest");
-    if (playerIn.world.isRemote){
-      return ItemStack.EMPTY;}
-    ItemStack itemstack =  ItemStack.EMPTY;
+    if (playerIn.world.isRemote) { return ItemStack.EMPTY; }
+    ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       itemstack = itemstack1.copy();
       if (slotIndex == 0) {
         craftShift(playerIn, (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster()));
-        return  ItemStack.EMPTY;
+        return ItemStack.EMPTY;
       }
       if (slotIndex <= 9) {
-        if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) { return  ItemStack.EMPTY; }
+        if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) { return ItemStack.EMPTY; }
         slot.onSlotChange(itemstack1, itemstack);
       }
       else {
@@ -118,18 +117,18 @@ public class ContainerRequest extends Container {
           List<StackWrapper> list = tile.getStacks();
           PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
           if (stack.isEmpty())
-            return  ItemStack.EMPTY;
+            return ItemStack.EMPTY;
           slot.onTake(playerIn, itemstack1);
-          return  ItemStack.EMPTY;
+          return ItemStack.EMPTY;
         }
       }
       if (itemstack1.getCount() == 0) {
-        slot.putStack( ItemStack.EMPTY);
+        slot.putStack(ItemStack.EMPTY);
       }
       else {
         slot.onSlotChanged();
       }
-      if (itemstack1.getCount() == itemstack.getCount()) { return  ItemStack.EMPTY; }
+      if (itemstack1.getCount() == itemstack.getCount()) { return ItemStack.EMPTY; }
       slot.onTake(playerIn, itemstack1);
     }
     return itemstack;

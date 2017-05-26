@@ -1,36 +1,34 @@
 package mrriegel.storagenetwork.master;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.cable.TileKabel;
 import mrriegel.storagenetwork.cable.TileKabel.Kind;
-import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.CraftingTask;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.helper.Util; 
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
-import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.AbstractFilterTile.Direction;
+import mrriegel.storagenetwork.tile.TileContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -41,15 +39,11 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
- 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
-public class TileMaster extends TileEntity implements ITickable  {
+public class TileMaster extends TileEntity implements ITickable {
   public Set<BlockPos> connectables;
   public List<BlockPos> storageInventorys, fstorageInventorys;
-//  public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, Integer.MAX_VALUE, 0);
+  //  public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, Integer.MAX_VALUE, 0);
   public List<CraftingTask> tasks = Lists.newArrayList();
   public List<FluidStack> getFluids() {
     List<FluidStack> stacks = Lists.newArrayList();
@@ -202,16 +196,16 @@ public class TileMaster extends TileEntity implements ITickable  {
   }
   public List<ItemStack> getTemplates(FilterItem fil) {
     List<ItemStack> templates = Lists.newArrayList();
-//    for (TileContainer tile : getContainers()) {
-//      for (ItemStack s : tile.getTemplates()) {
-//        ItemStack result = ItemTemplate.getOutput(s);
-//        if (fil.match(result)) {
-//          ItemStack a = s;
-//          a.setCount(result.getCount());
-//          templates.add(s);
-//        }
-//      }
-//    }
+    //    for (TileContainer tile : getContainers()) {
+    //      for (ItemStack s : tile.getTemplates()) {
+    //        ItemStack result = ItemTemplate.getOutput(s);
+    //        if (fil.match(result)) {
+    //          ItemStack a = s;
+    //          a.setCount(result.getCount());
+    //          templates.add(s);
+    //        }
+    //      }
+    //    }
     return templates;
   }
   public List<FilterItem> getIngredients(ItemStack template) {
@@ -244,7 +238,7 @@ public class TileMaster extends TileEntity implements ITickable  {
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
-//    en.readFromNBT(compound);
+    //    en.readFromNBT(compound);
     NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
     tasks = Lists.newArrayList();
     for (int i = 0; i < tasksList.tagCount(); i++) {
@@ -255,7 +249,7 @@ public class TileMaster extends TileEntity implements ITickable  {
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
-//    en.writeToNBT(compound);
+    //    en.writeToNBT(compound);
     NBTTagList tasksList = new NBTTagList();
     for (CraftingTask t : tasks) {
       NBTTagCompound stackTag = new NBTTagCompound();
@@ -279,8 +273,8 @@ public class TileMaster extends TileEntity implements ITickable  {
         continue;
       }
       if (world.getTileEntity(bl) != null && world.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl)) {
-//        if (world.getTileEntity(bl) instanceof TileToggler && ((TileToggler) world.getTileEntity(bl)).isDisabled())
-//          continue;
+        //        if (world.getTileEntity(bl) instanceof TileToggler && ((TileToggler) world.getTileEntity(bl)).isDisabled())
+        //          continue;
         connectables.add(bl);
         ((IConnectable) world.getTileEntity(bl)).setMaster(this.pos);
         chunk.setChunkModified();
@@ -320,36 +314,36 @@ public class TileMaster extends TileEntity implements ITickable  {
     addInventorys();
     world.getChunkFromBlockCoords(pos).setChunkModified();
   }
-//  public void vacuum() {
-//    if ((world.getTotalWorldTime() + 0) % 30 != 0)
-//      return;
-//    for (BlockPos p : connectables) {
-//      if (world.getTileEntity(p) != null && world.getTileEntity(p) instanceof TileKabel && ((TileKabel) world.getTileEntity(p)).getKind() == Kind.vacuumKabel) {
-//        double range = 2.5;
-//        double x = p.getX() + .5;
-//        double y = p.getY();
-//        double z = p.getZ() + .5;
-//        List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(x - range, y - range, z - range, x + range + 1, y + range + 1, z + range + 1));
-//        for (EntityItem item : items) {
-//          if (item.ticksExisted < 40 || item.isDead || !consumeRF(item.getEntityItem().getCount(), true))
-//            continue;
-//          ItemStack stack = item.getEntityItem().copy();
-//          int rest = insertStack(stack, null, false);
-//          ItemStack r = stack.copy();
-//          r.setCount(rest);
-//          stack.shrink(rest);
-//          consumeRF(stack.getCount(), false);
-//          if (rest <= 0)
-//            item.setDead();
-//          else
-//            item.setEntityItemStack(r);
-//          break;
-//        }
-//      }
-//    }
-//  }
+  //  public void vacuum() {
+  //    if ((world.getTotalWorldTime() + 0) % 30 != 0)
+  //      return;
+  //    for (BlockPos p : connectables) {
+  //      if (world.getTileEntity(p) != null && world.getTileEntity(p) instanceof TileKabel && ((TileKabel) world.getTileEntity(p)).getKind() == Kind.vacuumKabel) {
+  //        double range = 2.5;
+  //        double x = p.getX() + .5;
+  //        double y = p.getY();
+  //        double z = p.getZ() + .5;
+  //        List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(x - range, y - range, z - range, x + range + 1, y + range + 1, z + range + 1));
+  //        for (EntityItem item : items) {
+  //          if (item.ticksExisted < 40 || item.isDead || !consumeRF(item.getEntityItem().getCount(), true))
+  //            continue;
+  //          ItemStack stack = item.getEntityItem().copy();
+  //          int rest = insertStack(stack, null, false);
+  //          ItemStack r = stack.copy();
+  //          r.setCount(rest);
+  //          stack.shrink(rest);
+  //          consumeRF(stack.getCount(), false);
+  //          if (rest <= 0)
+  //            item.setDead();
+  //          else
+  //            item.setEntityItemStack(r);
+  //          break;
+  //        }
+  //      }
+  //    }
+  //  }
   public int insertStack(ItemStack stack, BlockPos source, boolean simulate) {
-    if (stack == null||stack.isEmpty())
+    if (stack == null || stack.isEmpty())
       return 0;
     List<AbstractFilterTile> invs = Lists.newArrayList();
     if (connectables == null)
@@ -392,68 +386,68 @@ public class TileMaster extends TileEntity implements ITickable  {
       if (t.getSource().equals(source))
         continue;
       ItemStack remain = ItemHandlerHelper.insertItem(inv, in, simulate);
-      if (remain == null  ||remain.isEmpty() )
+      if (remain == null || remain.isEmpty())
         return 0;
       in = ItemHandlerHelper.copyStackWithSize(in, remain.getCount());
       world.markChunkDirty(t.getSource(), world.getTileEntity(t.getSource()));
     }
     return in.getCount();
   }
-//  public int insertFluid(FluidStack stack, BlockPos source, boolean simulate) {
-//    if (stack == null)
-//      return 0;
-//    List<AbstractFilterTile> invs = Lists.newArrayList();
-//    if (connectables == null)
-//      refreshNetwork();
-//    for (BlockPos p : connectables) {
-//      if (world.getTileEntity(p) instanceof AbstractFilterTile) {
-//        AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(p);
-//        if (tile.isStorage() && tile.getFluidTank() != null) {
-//          invs.add(tile);
-//        }
-//      }
-//    }
-//    Collections.sort(invs, new Comparator<AbstractFilterTile>() {
-//      @Override
-//      public int compare(AbstractFilterTile o1, AbstractFilterTile o2) {
-//        return Integer.compare(o2.getPriority(), o1.getPriority());
-//      }
-//    });
-//    FluidStack in = stack.copy();
-//    for (AbstractFilterTile t : invs) {
-//      IFluidHandler inv = t.getFluidTank();
-//      if (inv != null) {
-//        if (!InvHelper.contains(inv, in))
-//          continue;
-//        if (!t.canTransfer(stack.getFluid(), Direction.IN))
-//          continue;
-//        if (t.getSource().equals(source))
-//          continue;
-//        int remain = in.amount - inv.fill(in, !simulate);
-//        if (remain <= 0)
-//          return 0;
-//        in = new FluidStack(in.getFluid(), remain);
-//        world.markChunkDirty(pos, this);
-//      }
-//    }
-//    for (AbstractFilterTile t : invs) {
-//      IFluidHandler inv = t.getFluidTank();
-//      if (inv != null) {
-//        if (InvHelper.contains(inv, in))
-//          continue;
-//        if (!t.canTransfer(stack.getFluid(), Direction.IN))
-//          continue;
-//        if (t.getSource().equals(source))
-//          continue;
-//        int remain = in.amount - inv.fill(in, !simulate);
-//        if (remain <= 0)
-//          return 0;
-//        in = new FluidStack(in.getFluid(), remain);
-//        world.markChunkDirty(pos, this);
-//      }
-//    }
-//    return in.amount;
-//  }
+  //  public int insertFluid(FluidStack stack, BlockPos source, boolean simulate) {
+  //    if (stack == null)
+  //      return 0;
+  //    List<AbstractFilterTile> invs = Lists.newArrayList();
+  //    if (connectables == null)
+  //      refreshNetwork();
+  //    for (BlockPos p : connectables) {
+  //      if (world.getTileEntity(p) instanceof AbstractFilterTile) {
+  //        AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(p);
+  //        if (tile.isStorage() && tile.getFluidTank() != null) {
+  //          invs.add(tile);
+  //        }
+  //      }
+  //    }
+  //    Collections.sort(invs, new Comparator<AbstractFilterTile>() {
+  //      @Override
+  //      public int compare(AbstractFilterTile o1, AbstractFilterTile o2) {
+  //        return Integer.compare(o2.getPriority(), o1.getPriority());
+  //      }
+  //    });
+  //    FluidStack in = stack.copy();
+  //    for (AbstractFilterTile t : invs) {
+  //      IFluidHandler inv = t.getFluidTank();
+  //      if (inv != null) {
+  //        if (!InvHelper.contains(inv, in))
+  //          continue;
+  //        if (!t.canTransfer(stack.getFluid(), Direction.IN))
+  //          continue;
+  //        if (t.getSource().equals(source))
+  //          continue;
+  //        int remain = in.amount - inv.fill(in, !simulate);
+  //        if (remain <= 0)
+  //          return 0;
+  //        in = new FluidStack(in.getFluid(), remain);
+  //        world.markChunkDirty(pos, this);
+  //      }
+  //    }
+  //    for (AbstractFilterTile t : invs) {
+  //      IFluidHandler inv = t.getFluidTank();
+  //      if (inv != null) {
+  //        if (InvHelper.contains(inv, in))
+  //          continue;
+  //        if (!t.canTransfer(stack.getFluid(), Direction.IN))
+  //          continue;
+  //        if (t.getSource().equals(source))
+  //          continue;
+  //        int remain = in.amount - inv.fill(in, !simulate);
+  //        if (remain <= 0)
+  //          return 0;
+  //        in = new FluidStack(in.getFluid(), remain);
+  //        world.markChunkDirty(pos, this);
+  //      }
+  //    }
+  //    return in.amount;
+  //  }
   public void impor() {
     List<TileKabel> invs = Lists.newArrayList();
     for (BlockPos p : connectables) {
@@ -487,8 +481,8 @@ public class TileMaster extends TileEntity implements ITickable  {
         ItemStack extracted = inv.extractItem(i, insert, true);
         if (extracted == null || extracted.getCount() < insert)
           continue;
-//        if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
-//          continue;
+        //        if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
+        //          continue;
         int rest = insertStack(ItemHandlerHelper.copyStackWithSize(s, insert), t.getConnectedInventory(), false);
         inv.extractItem(i, insert - rest, false);
         world.markChunkDirty(pos, this);
@@ -496,54 +490,54 @@ public class TileMaster extends TileEntity implements ITickable  {
       }
     }
   }
-//  public void fimpor() {
-//    List<TileKabel> invs = Lists.newArrayList();
-//    for (BlockPos p : connectables) {
-//      if (!(world.getTileEntity(p) instanceof TileKabel))
-//        continue;
-//      TileKabel tile = (TileKabel) world.getTileEntity(p);
-//      if (tile.getKind() == Kind.fimKabel && tile.getFluidTank() != null) {
-//        invs.add(tile);
-//      }
-//    }
-//    Collections.sort(invs, new Comparator<TileKabel>() {
-//      @Override
-//      public int compare(TileKabel o1, TileKabel o2) {
-//        return Integer.compare(o2.getPriority(), o1.getPriority());
-//      }
-//    });
-//    for (TileKabel t : invs) {
-//      IFluidHandler inv = t.getFluidTank();
-//      if (inv != null) {
-//        if ((world.getTotalWorldTime() + 10) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
-//          continue;
-//        if (inv.getTankProperties() == null)
-//          continue;
-//        for (IFluidTankProperties i : inv.getTankProperties()) {
-//          FluidStack s = i.getContents();
-//          if (s == null)
-//            continue;
-//          if (!t.canTransfer(s.getFluid(), Direction.OUT))
-//            continue;
-//          if (!t.status())
-//            continue;
-//          FluidStack canDrain = inv.drain(s, false);
-//          if (canDrain == null || canDrain.amount <= 0)
-//            continue;
-//          int num = s.amount;
-//          int insert = Math.min(s.amount, 200 + t.elements(ItemUpgrade.STACK) * 200);
-//          if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
-//            continue;
-//          int rest = insertFluid(new FluidStack(s, insert), t.getSource(), false);
-//          if (insert == rest)
-//            continue;
-//          inv.drain(new FluidStack(s.getFluid(), insert - rest), true);
-//          world.markChunkDirty(pos, this);
-//          break;
-//        }
-//      }
-//    }
-//  }
+  //  public void fimpor() {
+  //    List<TileKabel> invs = Lists.newArrayList();
+  //    for (BlockPos p : connectables) {
+  //      if (!(world.getTileEntity(p) instanceof TileKabel))
+  //        continue;
+  //      TileKabel tile = (TileKabel) world.getTileEntity(p);
+  //      if (tile.getKind() == Kind.fimKabel && tile.getFluidTank() != null) {
+  //        invs.add(tile);
+  //      }
+  //    }
+  //    Collections.sort(invs, new Comparator<TileKabel>() {
+  //      @Override
+  //      public int compare(TileKabel o1, TileKabel o2) {
+  //        return Integer.compare(o2.getPriority(), o1.getPriority());
+  //      }
+  //    });
+  //    for (TileKabel t : invs) {
+  //      IFluidHandler inv = t.getFluidTank();
+  //      if (inv != null) {
+  //        if ((world.getTotalWorldTime() + 10) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
+  //          continue;
+  //        if (inv.getTankProperties() == null)
+  //          continue;
+  //        for (IFluidTankProperties i : inv.getTankProperties()) {
+  //          FluidStack s = i.getContents();
+  //          if (s == null)
+  //            continue;
+  //          if (!t.canTransfer(s.getFluid(), Direction.OUT))
+  //            continue;
+  //          if (!t.status())
+  //            continue;
+  //          FluidStack canDrain = inv.drain(s, false);
+  //          if (canDrain == null || canDrain.amount <= 0)
+  //            continue;
+  //          int num = s.amount;
+  //          int insert = Math.min(s.amount, 200 + t.elements(ItemUpgrade.STACK) * 200);
+  //          if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
+  //            continue;
+  //          int rest = insertFluid(new FluidStack(s, insert), t.getSource(), false);
+  //          if (insert == rest)
+  //            continue;
+  //          inv.drain(new FluidStack(s.getFluid(), insert - rest), true);
+  //          world.markChunkDirty(pos, this);
+  //          break;
+  //        }
+  //      }
+  //    }
+  //  }
   public void export() {
     List<TileKabel> invs = Lists.newArrayList();
     for (BlockPos p : connectables) {
@@ -588,13 +582,13 @@ public class TileMaster extends TileEntity implements ITickable  {
         insert = Math.min(insert, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2));
         if (!t.status())
           continue;
-//        if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), true))
-//          continue;
+        //        if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), true))
+        //          continue;
         ItemStack rec = request(new FilterItem(g, meta, ore, false), insert, false);
         if (rec == null)
           continue;
         rec.shrink(t.elements(ItemUpgrade.SPEED));
-//        consumeRF(rec.getCount(), false);
+        //        consumeRF(rec.getCount(), false);
         //				consumeRF(rec.stackSize + t.elements(ItemUpgrade.SPEED), false);
         ItemHandlerHelper.insertItemStacked(inv, rec, false);
         world.markChunkDirty(pos, this);
@@ -602,61 +596,61 @@ public class TileMaster extends TileEntity implements ITickable  {
       }
     }
   }
-//  public void fexport() {
-//    List<TileKabel> invs = Lists.newArrayList();
-//    for (BlockPos p : connectables) {
-//      if (!(world.getTileEntity(p) instanceof TileKabel))
-//        continue;
-//      TileKabel tile = (TileKabel) world.getTileEntity(p);
-//      if (tile.getKind() == Kind.fexKabel && tile.getFluidTank() != null) {
-//        invs.add(tile);
-//      }
-//    }
-//    Collections.sort(invs, new Comparator<TileKabel>() {
-//      @Override
-//      public int compare(TileKabel o1, TileKabel o2) {
-//        return Integer.compare(o1.getPriority(), o2.getPriority());
-//      }
-//    });
-//    for (TileKabel t : invs) {
-//      IFluidHandler inv = t.getFluidTank();
-//      if ((world.getTotalWorldTime() + 20) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
-//        continue;
-//      for (int i = 0; i < 18; i++) {
-//        if (t.getFilter().get(i) == null)
-//          continue;
-//        ItemStack fil = t.getFilter().get(i).getStack();
-//        if (fil == null)
-//          continue;
-//        FluidStack fs = Util.getFluid(fil);
-//        if (fs == null || fs.getFluid() == null)
-//          continue;
-//        Fluid f = fs.getFluid();
-//        if (fstorageInventorys.contains(t.getPos()))
-//          continue;
-//        if (inv.fill(fs, false) <= 0)
-//          continue;
-//        if (!t.status())
-//          continue;
-//        int num = 200 + t.elements(ItemUpgrade.STACK) * 200;
-//        num = Math.min(num, inv.fill(new FluidStack(f, num), false));
-//        if (num <= 0)
-//          continue;
-//        FluidStack recs = frequest(f, num, true);
-//        if (recs == null)
-//          continue;
-//        if (!consumeRF(num + t.elements(ItemUpgrade.SPEED), true))
-//          continue;
-//        FluidStack rec = frequest(f, num, false);
-//        if (rec == null)
-//          continue;
-//        consumeRF(num + t.elements(ItemUpgrade.SPEED), false);
-//        inv.fill(rec, true);
-//        world.markChunkDirty(pos, this);
-//        break;
-//      }
-//    }
-//  }
+  //  public void fexport() {
+  //    List<TileKabel> invs = Lists.newArrayList();
+  //    for (BlockPos p : connectables) {
+  //      if (!(world.getTileEntity(p) instanceof TileKabel))
+  //        continue;
+  //      TileKabel tile = (TileKabel) world.getTileEntity(p);
+  //      if (tile.getKind() == Kind.fexKabel && tile.getFluidTank() != null) {
+  //        invs.add(tile);
+  //      }
+  //    }
+  //    Collections.sort(invs, new Comparator<TileKabel>() {
+  //      @Override
+  //      public int compare(TileKabel o1, TileKabel o2) {
+  //        return Integer.compare(o1.getPriority(), o2.getPriority());
+  //      }
+  //    });
+  //    for (TileKabel t : invs) {
+  //      IFluidHandler inv = t.getFluidTank();
+  //      if ((world.getTotalWorldTime() + 20) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
+  //        continue;
+  //      for (int i = 0; i < 18; i++) {
+  //        if (t.getFilter().get(i) == null)
+  //          continue;
+  //        ItemStack fil = t.getFilter().get(i).getStack();
+  //        if (fil == null)
+  //          continue;
+  //        FluidStack fs = Util.getFluid(fil);
+  //        if (fs == null || fs.getFluid() == null)
+  //          continue;
+  //        Fluid f = fs.getFluid();
+  //        if (fstorageInventorys.contains(t.getPos()))
+  //          continue;
+  //        if (inv.fill(fs, false) <= 0)
+  //          continue;
+  //        if (!t.status())
+  //          continue;
+  //        int num = 200 + t.elements(ItemUpgrade.STACK) * 200;
+  //        num = Math.min(num, inv.fill(new FluidStack(f, num), false));
+  //        if (num <= 0)
+  //          continue;
+  //        FluidStack recs = frequest(f, num, true);
+  //        if (recs == null)
+  //          continue;
+  //        if (!consumeRF(num + t.elements(ItemUpgrade.SPEED), true))
+  //          continue;
+  //        FluidStack rec = frequest(f, num, false);
+  //        if (rec == null)
+  //          continue;
+  //        consumeRF(num + t.elements(ItemUpgrade.SPEED), false);
+  //        inv.fill(rec, true);
+  //        world.markChunkDirty(pos, this);
+  //        break;
+  //      }
+  //    }
+  //  }
   public ItemStack request(FilterItem fil, final int size, boolean simulate) {
     if (size == 0 || fil == null)
       return null;
@@ -675,7 +669,7 @@ public class TileMaster extends TileEntity implements ITickable  {
       IItemHandler inv = t.getInventory();
       for (int i = 0; i < inv.getSlots(); i++) {
         ItemStack s = inv.getStackInSlot(i);
-        if (s == null || s.isEmpty() )
+        if (s == null || s.isEmpty())
           continue;
         if (res != null && !res.isEmpty() && !ItemHandlerHelper.canItemStacksStack(s, res))
           continue;
@@ -683,29 +677,24 @@ public class TileMaster extends TileEntity implements ITickable  {
           continue;
         if (!t.canTransfer(s, Direction.OUT))
           continue;
-        
-        
-//        System.out.println("!TileMaster IS NOT EMPTY" + s + "_" + s.getCount());
-        
+        //        System.out.println("!TileMaster IS NOT EMPTY" + s + "_" + s.getCount());
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
         world.markChunkDirty(pos, this);
         result += Math.min((extracted == null || extracted.isEmpty()) ? 0 : extracted.getCount(), miss);
-
-//        System.out.println("!TileMaster extracted " + extracted);
-//        //so we wan to take out 32 from s
-//        System.out.println("!TileMaster SHRINK S BY THIS before" + s.getCount()+"    "+miss);
+        //        System.out.println("!TileMaster extracted " + extracted);
+        //        //so we wan to take out 32 from s
+        //        System.out.println("!TileMaster SHRINK S BY THIS before" + s.getCount()+"    "+miss);
         res = extracted.copy();
         s.shrink(miss);
         int rest = s.getCount();
-//        System.out.println("!TileMaster rest" + rest);
-//        System.out.println("!TileMaster result" + result);
-//        System.out.println("!TileMaster res+++++" + res);
+        //        System.out.println("!TileMaster rest" + rest);
+        //        System.out.println("!TileMaster result" + result);
+        //        System.out.println("!TileMaster res+++++" + res);
         //				int rest = s.stackSize - miss;
- 
-//          System.out.println("!TileMaster COPY");
-//          System.out.println("!TileMaster AFTER COPY" + res);
-//        }
+        //          System.out.println("!TileMaster COPY");
+        //          System.out.println("!TileMaster AFTER COPY" + res);
+        //        }
         //				inv.notifyAll();
         if (result == size)
           return ItemHandlerHelper.copyStackWithSize(res, size);
@@ -713,7 +702,7 @@ public class TileMaster extends TileEntity implements ITickable  {
     }
     if (result == 0)
       return ItemStack.EMPTY;
-//    System.out.println("!TileMaster copy result " + result);
+    //    System.out.println("!TileMaster copy result " + result);
     return ItemHandlerHelper.copyStackWithSize(res, result);
   }
   public FluidStack frequest(Fluid fluid, final int size, boolean simulate) {
@@ -773,36 +762,36 @@ public class TileMaster extends TileEntity implements ITickable  {
     if (world.getTotalWorldTime() % (200) == 0) {
       refreshNetwork();
     }
-//    vacuum();
+    //    vacuum();
     impor();
     export();
-//    fimpor();
-//    fexport();
+    //    fimpor();
+    //    fexport();
     // craft();
   }
-//  private void craft() {
-//    Iterator<CraftingTask> it = tasks.iterator();
-//    while (it.hasNext()) {
-//      CraftingTask t = it.next();
-//      if (t.getDone() >= t.getOutputSize())
-//        it.remove();
-//    }
-//    for (CraftingTask t : tasks) {
-//      if (t.progress(this))
-//        break;
-//    }
-//  }
-//  boolean consumeRF(int num, boolean simulate) {
-//    if (!ConfigHandler.energyNeeded)
-//      return true;
-//    int value = num * ConfigHandler.energyMultiplier + (connectables.size() / 15);
-//    if (en.getEnergyStored() < value)
-//      return false;
-//    if (!simulate) {
-//      en.modifyEnergyStored(-value);
-//    }
-//    return true;
-//  }
+  //  private void craft() {
+  //    Iterator<CraftingTask> it = tasks.iterator();
+  //    while (it.hasNext()) {
+  //      CraftingTask t = it.next();
+  //      if (t.getDone() >= t.getOutputSize())
+  //        it.remove();
+  //    }
+  //    for (CraftingTask t : tasks) {
+  //      if (t.progress(this))
+  //        break;
+  //    }
+  //  }
+  //  boolean consumeRF(int num, boolean simulate) {
+  //    if (!ConfigHandler.energyNeeded)
+  //      return true;
+  //    int value = num * ConfigHandler.energyMultiplier + (connectables.size() / 15);
+  //    if (en.getEnergyStored() < value)
+  //      return false;
+  //    if (!simulate) {
+  //      en.modifyEnergyStored(-value);
+  //    }
+  //    return true;
+  //  }
   @Override
   public SPacketUpdateTileEntity getUpdatePacket() {
     NBTTagCompound syncData = new NBTTagCompound();
@@ -813,22 +802,22 @@ public class TileMaster extends TileEntity implements ITickable  {
   public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
     readFromNBT(pkt.getNbtCompound());
   }
-//  @Override
-//  public int getEnergyStored(EnumFacing from) {
-//    return en.getEnergyStored();
-//  }
-//  @Override
-//  public int getMaxEnergyStored(EnumFacing from) {
-//    return en.getMaxEnergyStored();
-//  }
-//  @Override
-//  public boolean canConnectEnergy(EnumFacing from) {
-//    return true;
-//  }
-//  @Override
-//  public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-//    return en.receiveEnergy(maxReceive, simulate);
-//  }
+  //  @Override
+  //  public int getEnergyStored(EnumFacing from) {
+  //    return en.getEnergyStored();
+  //  }
+  //  @Override
+  //  public int getMaxEnergyStored(EnumFacing from) {
+  //    return en.getMaxEnergyStored();
+  //  }
+  //  @Override
+  //  public boolean canConnectEnergy(EnumFacing from) {
+  //    return true;
+  //  }
+  //  @Override
+  //  public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+  //    return en.receiveEnergy(maxReceive, simulate);
+  //  }
   @Override
   public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
     return oldState.getBlock() != newSate.getBlock();
