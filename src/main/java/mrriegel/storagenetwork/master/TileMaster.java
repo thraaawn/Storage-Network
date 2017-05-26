@@ -39,7 +39,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class TileMaster extends TileEntity implements ITickable {
   public Set<BlockPos> connectables;
   public List<BlockPos> storageInventorys, fstorageInventorys;
-
   public List<StackWrapper> getStacks() {
     List<StackWrapper> stacks = Lists.newArrayList();
     List<AbstractFilterTile> invs = Lists.newArrayList();
@@ -64,7 +63,7 @@ public class TileMaster extends TileEntity implements ITickable {
   }
   public int emptySlots() {
     int res = 0;
-//    List<StackWrapper> stacks = Lists.newArrayList();
+    //    List<StackWrapper> stacks = Lists.newArrayList();
     List<AbstractFilterTile> invs = Lists.newArrayList();
     for (BlockPos p : connectables) {
       if (world.getTileEntity(p) instanceof AbstractFilterTile) {
@@ -121,7 +120,6 @@ public class TileMaster extends TileEntity implements ITickable {
     if (!added)
       lis.add(new StackWrapper(s, num));
   }
- 
   public int getAmount(FilterItem fil) {
     if (fil == null)
       return 0;
@@ -133,7 +131,6 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return size;
   }
- 
   public List<TileContainer> getContainers() {
     List<TileContainer> lis = Lists.newArrayList();
     for (BlockPos p : connectables) {
@@ -188,24 +185,24 @@ public class TileMaster extends TileEntity implements ITickable {
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
     //    en.readFromNBT(compound);
-//    NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
-//    tasks = Lists.newArrayList();
-//    for (int i = 0; i < tasksList.tagCount(); i++) {
-//      NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
-//      tasks.add(CraftingTask.loadCraftingTaskFromNBT(stackTag));
-//    }
+    //    NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
+    //    tasks = Lists.newArrayList();
+    //    for (int i = 0; i < tasksList.tagCount(); i++) {
+    //      NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
+    //      tasks.add(CraftingTask.loadCraftingTaskFromNBT(stackTag));
+    //    }
   }
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
     //    en.writeToNBT(compound);
-//    NBTTagList tasksList = new NBTTagList();
-//    for (CraftingTask t : tasks) {
-//      NBTTagCompound stackTag = new NBTTagCompound();
-//      t.writeToNBT(stackTag);
-//      tasksList.appendTag(stackTag);
-//    }
-//    compound.setTag("tasks", tasksList);
+    //    NBTTagList tasksList = new NBTTagList();
+    //    for (CraftingTask t : tasks) {
+    //      NBTTagCompound stackTag = new NBTTagCompound();
+    //      t.writeToNBT(stackTag);
+    //      tasksList.appendTag(stackTag);
+    //    }
+    //    compound.setTag("tasks", tasksList);
     return compound;
   }
   private void addConnectables(final BlockPos pos) {
@@ -601,8 +598,9 @@ public class TileMaster extends TileEntity implements ITickable {
   //    }
   //  }
   public ItemStack request(FilterItem fil, final int size, boolean simulate) {
+    System.out.println("!TileMaster request " + size + "_");
     if (size == 0 || fil == null)
-      return null;
+      return ItemStack.EMPTY;
     List<AbstractFilterTile> invs = Lists.newArrayList();
     for (BlockPos p : connectables) {
       if (world.getTileEntity(p) instanceof AbstractFilterTile) {
@@ -626,35 +624,36 @@ public class TileMaster extends TileEntity implements ITickable {
           continue;
         if (!t.canTransfer(s, Direction.OUT))
           continue;
-        //        System.out.println("!TileMaster IS NOT EMPTY" + s + "_" + s.getCount());
+        System.out.println("!TileMaster IS NOT EMPTY" + s + "_" + s.getCount());
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
         world.markChunkDirty(pos, this);
         result += Math.min((extracted == null || extracted.isEmpty()) ? 0 : extracted.getCount(), miss);
-        //        System.out.println("!TileMaster extracted " + extracted);
+        System.out.println("!TileMaster extracted " + extracted + " new result "+result);
         //        //so we wan to take out 32 from s
-        //        System.out.println("!TileMaster SHRINK S BY THIS before" + s.getCount()+"    "+miss);
+        System.out.println("!TileMaster SHRINK S BY THIS before" + s.getCount() + "    " + miss);
         res = extracted.copy();
-        s.shrink(miss);
+//        s.shrink(miss);
+        System.out.println("!TileMaster SHRINK after" + s.getCount());
         int rest = s.getCount();
-        //        System.out.println("!TileMaster rest" + rest);
-        //        System.out.println("!TileMaster result" + result);
-        //        System.out.println("!TileMaster res+++++" + res);
+        System.out.println("!TileMaster rest" + rest);
+        System.out.println("!TileMaster result" + result);
+        System.out.println("!TileMaster res+++++" + res);
         //				int rest = s.stackSize - miss;
         //          System.out.println("!TileMaster COPY");
         //          System.out.println("!TileMaster AFTER COPY" + res);
         //        }
         //				inv.notifyAll();
-        if (result == size)
+        if (result == size) {
+          System.out.println("!TileMaster SHORTCUT result " + result);
           return ItemHandlerHelper.copyStackWithSize(res, size);
+        }
       }
     }
-    if (result == 0)
-      return ItemStack.EMPTY;
-    //    System.out.println("!TileMaster copy result " + result);
+    if (result == 0) { return ItemStack.EMPTY; }
+    System.out.println("!TileMaster copy result " + result);
     return ItemHandlerHelper.copyStackWithSize(res, result);
   }
-   
   @Override
   public void update() {
     if (world == null || world.isRemote)
@@ -671,7 +670,7 @@ public class TileMaster extends TileEntity implements ITickable {
     //    fimpor();
     //    fexport();
     // craft();
-  } 
+  }
   @Override
   public SPacketUpdateTileEntity getUpdatePacket() {
     NBTTagCompound syncData = new NBTTagCompound();
@@ -682,7 +681,6 @@ public class TileMaster extends TileEntity implements ITickable {
   public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
     readFromNBT(pkt.getNbtCompound());
   }
- 
   @Override
   public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
     return oldState.getBlock() != newSate.getBlock();
