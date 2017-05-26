@@ -44,15 +44,15 @@ public class ContainerRemote extends Container {
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
     if (playerIn.world.isRemote)
-      return null;
-    ItemStack itemstack = null;
+      return ItemStack.EMPTY;
+    ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       itemstack = itemstack1.copy();
       if (tile != null) {
         int rest = tile.insertStack(itemstack1, null, false);
-        ItemStack stack = rest == 0 ? null : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
+        ItemStack stack = (rest == 0) ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
         slot.putStack(stack);
         detectAndSendChanges();
         List<StackWrapper> list = tile.getStacks();

@@ -28,7 +28,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ItemRemote extends Item {
   public ItemRemote() {
     super();
-    this.setCreativeTab(CreativeTab.tab1);
+    this.setCreativeTab(CreativeTab.tab);
     this.setHasSubtypes(true);
   }
   @Override

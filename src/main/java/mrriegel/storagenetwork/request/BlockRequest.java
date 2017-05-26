@@ -29,7 +29,7 @@ public class BlockRequest extends BlockConnectable {
   public BlockRequest() {
     super(Material.IRON);
     this.setHardness(3.0F);
-    this.setCreativeTab(CreativeTab.tab1);
+    this.setCreativeTab(CreativeTab.tab);
     this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     this.setRegistryName("request");
     this.setUnlocalizedName(getRegistryName().toString());

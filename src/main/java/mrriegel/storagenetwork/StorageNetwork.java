@@ -12,20 +12,11 @@ import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.VERSION /*
-                                                                                                    * ,
-                                                                                                    * guiFactory
-                                                                                                    * =
-                                                                                                    * "mrriegel.storagenetwork.config.GuiFactory"
-                                                                                                    * ,
-                                                                                                    * dependencies
-                                                                                                    * =
-                                                                                                    * "required-after:Forge@[12.17.0.1957,);"
-                                                                                                    */)
+@Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.VERSION )
 public class StorageNetwork {
   public static final String MODID = "storagenetwork";
   public static final String VERSION = "1.12.10";
-  public static final String MODNAME = "Storage Network";
+  public static final String MODNAME = "Simple Storage Network";
   @Instance(StorageNetwork.MODID)
   public static StorageNetwork instance;
   @SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")

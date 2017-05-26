@@ -3,7 +3,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 
 public class CreativeTab {
-  public static CreativeTabs tab1 = new CreativeTabs(StorageNetwork.MODID) {
+  public static CreativeTabs tab = new CreativeTabs(StorageNetwork.MODID) {
     @Override
     public ItemStack getTabIconItem() {
       return new ItemStack(ModBlocks.request);

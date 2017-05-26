@@ -27,14 +27,14 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
             if (w.getTileEntity(c.tile.getMaster()) == null)
               break;
             ItemStack s = c.craftMatrix.getStackInSlot(i);
-            if (s == null)
+            if (s == null||s.isEmpty())
               continue;
             int num = s.getCount();
             int rest = ((TileMaster) w.getTileEntity(c.tile.getMaster())).insertStack(s.copy(), null, false);
             if (num == rest)
               continue;
             if (rest == 0)
-              c.craftMatrix.setInventorySlotContents(i, null);
+              c.craftMatrix.setInventorySlotContents(i, ItemStack.EMPTY);
             else
               c.craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(s, rest));
           }

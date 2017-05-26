@@ -32,7 +32,7 @@ public class BlockMaster extends BlockContainer {
   public BlockMaster() {
     super(Material.IRON);
     this.setHardness(3.0F);
-    this.setCreativeTab(CreativeTab.tab1);
+    this.setCreativeTab(CreativeTab.tab);
     this.setRegistryName("master");
     this.setUnlocalizedName(getRegistryName().toString());
   }

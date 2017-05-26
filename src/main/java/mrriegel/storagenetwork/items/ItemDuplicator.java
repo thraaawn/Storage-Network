@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 public class ItemDuplicator extends Item {
   public ItemDuplicator() {
     super();
-    this.setCreativeTab(CreativeTab.tab1);
+    this.setCreativeTab(CreativeTab.tab);
     this.setRegistryName("duplicator");
     this.setUnlocalizedName(getRegistryName().toString());
   }

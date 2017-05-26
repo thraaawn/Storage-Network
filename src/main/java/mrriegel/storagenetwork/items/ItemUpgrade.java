@@ -18,7 +18,7 @@ public class ItemUpgrade extends Item {
   public static final int STOCK = 3;
   public ItemUpgrade() {
     super();
-    this.setCreativeTab(CreativeTab.tab1);
+    this.setCreativeTab(CreativeTab.tab);
     this.setHasSubtypes(true);
     this.setRegistryName("upgrade");
     this.setUnlocalizedName(getRegistryName().toString());

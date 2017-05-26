@@ -56,12 +56,8 @@ public class BlockKabel extends BlockConnectable {
   public BlockKabel() {
     super(Material.IRON);
     this.setHardness(1.4F);
-    this.setCreativeTab(CreativeTab.tab1);
-    // this.setDefaultState(blockState.getBaseState().withProperty(NORTH,
-    // Connect.NULL).withProperty(SOUTH, Connect.NULL).withProperty(WEST,
-    // Connect.NULL).withProperty(EAST, Connect.NULL).withProperty(UP,
-    // Connect.NULL).withProperty(DOWN, Connect.NULL).withProperty(STRAIGHT,
-    // false));
+    this.setCreativeTab(CreativeTab.tab);
+ 
   }
   @Override
   public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
@@ -184,13 +180,7 @@ public class BlockKabel extends BlockConnectable {
     tile.setInventoryFace(face);
     tile.setConnectedInventory(con);
     Map<EnumFacing, EnumConnectType> map = tile.getConnects();
-    // return world.getBlockState(pos).withProperty(NORTH,
-    // map.get(EnumFacing.NORTH)).withProperty(SOUTH,
-    // map.get(EnumFacing.SOUTH)).withProperty(EAST,
-    // map.get(EnumFacing.EAST)).withProperty(WEST,
-    // map.get(EnumFacing.WEST)).withProperty(UP,
-    // map.get(EnumFacing.UP)).withProperty(DOWN,
-    // map.get(EnumFacing.DOWN)).withProperty(STRAIGHT, oo(tile));
+ 
     return world.getBlockState(pos);
   }
   @Override

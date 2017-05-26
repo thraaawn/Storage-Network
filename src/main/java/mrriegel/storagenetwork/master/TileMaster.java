@@ -11,7 +11,6 @@ import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.cable.TileKabel;
 import mrriegel.storagenetwork.cable.TileKabel.Kind;
-import mrriegel.storagenetwork.helper.CraftingTask;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.NBTHelper;
@@ -44,7 +43,7 @@ public class TileMaster extends TileEntity implements ITickable {
   public Set<BlockPos> connectables;
   public List<BlockPos> storageInventorys, fstorageInventorys;
   //  public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, Integer.MAX_VALUE, 0);
-  public List<CraftingTask> tasks = Lists.newArrayList();
+//  public List<CraftingTask> tasks = Lists.newArrayList();
   public List<FluidStack> getFluids() {
     List<FluidStack> stacks = Lists.newArrayList();
     List<AbstractFilterTile> invs = Lists.newArrayList();
@@ -239,24 +238,24 @@ public class TileMaster extends TileEntity implements ITickable {
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
     //    en.readFromNBT(compound);
-    NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
-    tasks = Lists.newArrayList();
-    for (int i = 0; i < tasksList.tagCount(); i++) {
-      NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
-      tasks.add(CraftingTask.loadCraftingTaskFromNBT(stackTag));
-    }
+//    NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
+//    tasks = Lists.newArrayList();
+//    for (int i = 0; i < tasksList.tagCount(); i++) {
+//      NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
+//      tasks.add(CraftingTask.loadCraftingTaskFromNBT(stackTag));
+//    }
   }
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
     //    en.writeToNBT(compound);
-    NBTTagList tasksList = new NBTTagList();
-    for (CraftingTask t : tasks) {
-      NBTTagCompound stackTag = new NBTTagCompound();
-      t.writeToNBT(stackTag);
-      tasksList.appendTag(stackTag);
-    }
-    compound.setTag("tasks", tasksList);
+//    NBTTagList tasksList = new NBTTagList();
+//    for (CraftingTask t : tasks) {
+//      NBTTagCompound stackTag = new NBTTagCompound();
+//      t.writeToNBT(stackTag);
+//      tasksList.appendTag(stackTag);
+//    }
+//    compound.setTag("tasks", tasksList);
     return compound;
   }
   private void addConnectables(final BlockPos pos) {
