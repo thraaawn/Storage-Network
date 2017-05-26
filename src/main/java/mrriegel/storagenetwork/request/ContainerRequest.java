@@ -153,14 +153,7 @@ public class ContainerRequest extends Container {
       for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
         if (craftMatrix.getStackInSlot(i).isEmpty()) {
           ItemStack req = tile.request(!lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
-          // if (req == null)
-          // req = t.request(lis.get(i) != null ? new
-          // FilterItem(lis.get(i), false, false, false) : null,
-          // 1, false);
-          // if (req == null)
-          // req = t.request(lis.get(i) != null ? new
-          // FilterItem(lis.get(i), false, true, false) : null, 1,
-          // false);
+ 
           craftMatrix.setInventorySlotContents(i, req);
         }
       onCraftMatrixChanged(craftMatrix);
