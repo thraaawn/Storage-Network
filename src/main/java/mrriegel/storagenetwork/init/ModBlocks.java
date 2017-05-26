@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.init;
  
-import mrriegel.storagenetwork.blocks.BlockContainer;
+ 
 
 import mrriegel.storagenetwork.blocks.BlockKabel;
 import mrriegel.storagenetwork.blocks.BlockMaster;

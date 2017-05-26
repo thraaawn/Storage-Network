@@ -39,16 +39,15 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyReceiver;
+ 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver {
+public class TileMaster extends TileEntity implements ITickable  {
   public Set<BlockPos> connectables;
   public List<BlockPos> storageInventorys, fstorageInventorys;
-  public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, Integer.MAX_VALUE, 0);
+//  public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, Integer.MAX_VALUE, 0);
   public List<CraftingTask> tasks = Lists.newArrayList();
   public List<FluidStack> getFluids() {
     List<FluidStack> stacks = Lists.newArrayList();
@@ -243,7 +242,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
-    en.readFromNBT(compound);
+//    en.readFromNBT(compound);
     NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
     tasks = Lists.newArrayList();
     for (int i = 0; i < tasksList.tagCount(); i++) {
@@ -254,7 +253,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
-    en.writeToNBT(compound);
+//    en.writeToNBT(compound);
     NBTTagList tasksList = new NBTTagList();
     for (CraftingTask t : tasks) {
       NBTTagCompound stackTag = new NBTTagCompound();
@@ -486,8 +485,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
         ItemStack extracted = inv.extractItem(i, insert, true);
         if (extracted == null || extracted.getCount() < insert)
           continue;
-        if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
-          continue;
+//        if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
+//          continue;
         int rest = insertStack(ItemHandlerHelper.copyStackWithSize(s, insert), t.getConnectedInventory(), false);
         inv.extractItem(i, insert - rest, false);
         world.markChunkDirty(pos, this);
@@ -587,13 +586,13 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
         insert = Math.min(insert, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2));
         if (!t.status())
           continue;
-        if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), true))
-          continue;
+//        if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), true))
+//          continue;
         ItemStack rec = request(new FilterItem(g, meta, ore, false), insert, false);
         if (rec == null)
           continue;
         rec.shrink(t.elements(ItemUpgrade.SPEED));
-        consumeRF(rec.getCount(), false);
+//        consumeRF(rec.getCount(), false);
         //				consumeRF(rec.stackSize + t.elements(ItemUpgrade.SPEED), false);
         ItemHandlerHelper.insertItemStacked(inv, rec, false);
         world.markChunkDirty(pos, this);
@@ -791,17 +790,17 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 //        break;
 //    }
 //  }
-  boolean consumeRF(int num, boolean simulate) {
-    if (!ConfigHandler.energyNeeded)
-      return true;
-    int value = num * ConfigHandler.energyMultiplier + (connectables.size() / 15);
-    if (en.getEnergyStored() < value)
-      return false;
-    if (!simulate) {
-      en.modifyEnergyStored(-value);
-    }
-    return true;
-  }
+//  boolean consumeRF(int num, boolean simulate) {
+//    if (!ConfigHandler.energyNeeded)
+//      return true;
+//    int value = num * ConfigHandler.energyMultiplier + (connectables.size() / 15);
+//    if (en.getEnergyStored() < value)
+//      return false;
+//    if (!simulate) {
+//      en.modifyEnergyStored(-value);
+//    }
+//    return true;
+//  }
   @Override
   public SPacketUpdateTileEntity getUpdatePacket() {
     NBTTagCompound syncData = new NBTTagCompound();
@@ -812,22 +811,22 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
   public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
     readFromNBT(pkt.getNbtCompound());
   }
-  @Override
-  public int getEnergyStored(EnumFacing from) {
-    return en.getEnergyStored();
-  }
-  @Override
-  public int getMaxEnergyStored(EnumFacing from) {
-    return en.getMaxEnergyStored();
-  }
-  @Override
-  public boolean canConnectEnergy(EnumFacing from) {
-    return true;
-  }
-  @Override
-  public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-    return en.receiveEnergy(maxReceive, simulate);
-  }
+//  @Override
+//  public int getEnergyStored(EnumFacing from) {
+//    return en.getEnergyStored();
+//  }
+//  @Override
+//  public int getMaxEnergyStored(EnumFacing from) {
+//    return en.getMaxEnergyStored();
+//  }
+//  @Override
+//  public boolean canConnectEnergy(EnumFacing from) {
+//    return true;
+//  }
+//  @Override
+//  public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+//    return en.receiveEnergy(maxReceive, simulate);
+//  }
   @Override
   public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
     return oldState.getBlock() != newSate.getBlock();

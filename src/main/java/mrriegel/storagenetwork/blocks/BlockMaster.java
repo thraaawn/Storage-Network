@@ -88,8 +88,8 @@ public class BlockMaster extends BlockContainer {
 			return false;
 		TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
 		if (!worldIn.isRemote) {
-			if (ConfigHandler.energyNeeded)
-				playerIn.sendMessage(new TextComponentString(TextFormatting.RED + "RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
+//			if (ConfigHandler.energyNeeded)
+//				playerIn.sendMessage(new TextComponentString(TextFormatting.RED + "RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
 			playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "(Potential) Empty Slots: " + tile.emptySlots()));
 			playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + "Connectables: " + tile.connectables.size()));
 			Map<String, Integer> map = new HashMap<String, Integer>();
@@ -125,8 +125,8 @@ public class BlockMaster extends BlockContainer {
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 			super.addInformation(stack, playerIn, tooltip, advanced);
 			tooltip.add(I18n.format("tooltip.storagenetwork.master"));
-			if (ConfigHandler.energyNeeded)
-				tooltip.add(I18n.format("tooltip.storagenetwork.RFNeeded"));
+//			if (ConfigHandler.energyNeeded)
+//				tooltip.add(I18n.format("tooltip.storagenetwork.RFNeeded"));
 		}
 
 	}
