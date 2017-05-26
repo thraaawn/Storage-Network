@@ -624,34 +624,34 @@ public class TileMaster extends TileEntity implements ITickable {
           continue;
         if (!t.canTransfer(s, Direction.OUT))
           continue;
-        System.out.println("!TileMaster IS NOT EMPTY" + s + "_" + s.getCount());
+       // System.out.println("!TileMaster IS NOT EMPTY" + s + "_" + s.getCount());
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
         world.markChunkDirty(pos, this);
         result += Math.min((extracted == null || extracted.isEmpty()) ? 0 : extracted.getCount(), miss);
-        System.out.println("!TileMaster extracted " + extracted + " new result "+result);
+      //  System.out.println("!TileMaster extracted " + extracted + " new result "+result);
         //        //so we wan to take out 32 from s
-        System.out.println("!TileMaster SHRINK S BY THIS before" + s.getCount() + "    " + miss);
+  //      System.out.println("!TileMaster SHRINK S BY THIS before" + s.getCount() + "    " + miss);
         res = extracted.copy();
 //        s.shrink(miss);
-        System.out.println("!TileMaster SHRINK after" + s.getCount());
+       // System.out.println("!TileMaster SHRINK after" + s.getCount());
         int rest = s.getCount();
-        System.out.println("!TileMaster rest" + rest);
-        System.out.println("!TileMaster result" + result);
-        System.out.println("!TileMaster res+++++" + res);
+//        System.out.println("!TileMaster rest" + rest);
+//        System.out.println("!TileMaster result" + result);
+//        System.out.println("!TileMaster res+++++" + res);
         //				int rest = s.stackSize - miss;
         //          System.out.println("!TileMaster COPY");
         //          System.out.println("!TileMaster AFTER COPY" + res);
         //        }
         //				inv.notifyAll();
         if (result == size) {
-          System.out.println("!TileMaster SHORTCUT result " + result);
+        //  System.out.println("!TileMaster SHORTCUT result " + result);
           return ItemHandlerHelper.copyStackWithSize(res, size);
         }
       }
     }
     if (result == 0) { return ItemStack.EMPTY; }
-    System.out.println("!TileMaster copy result " + result);
+  //  System.out.println("!TileMaster copy result " + result);
     return ItemHandlerHelper.copyStackWithSize(res, result);
   }
   @Override

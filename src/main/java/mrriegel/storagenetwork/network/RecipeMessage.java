@@ -63,20 +63,22 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
               NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
               for (int i = 0; i < invList.tagCount(); i++) {
                 NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-                map.put(i, new ItemStack(stackTag));
+                ItemStack s = new ItemStack(stackTag);
+                System.out.println("RECIPE MESSAGE " + s + "   " + i);
+                map.put(i, s);
               }
             }
             for (int i = 0; i < map.size(); i++) {
               ItemStack s = map.get(i);
-              if (s == null)
+              if (s == null || s.isEmpty())
                 continue;
               ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, true);
-              if (ex != null && con.craftMatrix.getStackInSlot(j - 1) == null) {
+              if (ex != null && !ex.isEmpty() && con.craftMatrix.getStackInSlot(j - 1).isEmpty()) {
                 con.craftMatrix.setInventorySlotContents(j - 1, InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, false));
                 break;
               }
-              s = tile.request(map.get(i) != null ? new FilterItem(map.get(i)) : null, 1, false);
-              if (s != null && con.craftMatrix.getStackInSlot(j - 1) == null) {
+              s = tile.request(!map.get(i).isEmpty() ? new FilterItem(map.get(i)) : null, 1, false);
+              if (s != null && con.craftMatrix.getStackInSlot(j - 1).isEmpty()) {
                 con.craftMatrix.setInventorySlotContents(j - 1, s);
                 break;
               }
@@ -86,30 +88,6 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
           List<StackWrapper> list = tile.getStacks();
           PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
         }
-        //				else if (message.index == 1) {
-        //					if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerTemplate))
-        //						return;
-        //					ContainerTemplate con = (ContainerTemplate) ctx.getServerHandler().playerEntity.openContainer;
-        //					for (int j = 1; j < 10; j++) {
-        //						con.craftMatrix.setInventorySlotContents(j - 1, null);
-        //						Map<Integer, ItemStack> lis = new HashMap<Integer, ItemStack>();
-        //						if (message.nbt.hasKey("s" + j, Constants.NBT.TAG_STRING)) {
-        //							List<ItemStack> l = OreDictionary.getOres(message.nbt.getString("s" + j));
-        //							for (int i = 0; i < l.size(); i++)
-        //								lis.put(i, l.get(i));
-        //						} else {
-        //							NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
-        //							for (int i = 0; i < invList.tagCount(); i++) {
-        //								NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-        //								lis.put(i,new ItemStack(stackTag));
-        //							}
-        //						}
-        //						ItemStack s = lis.get(0);
-        //						con.craftMatrix.setInventorySlotContents(j - 1, s);
-        //					}
-        //					con.slotChanged(true);
-        //					con.detectAndSendChanges();
-        //				}
       }
     });
     return null;

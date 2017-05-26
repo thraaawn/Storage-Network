@@ -53,7 +53,7 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
           else {
             NBTTagList invList = new NBTTagList();
             for (int i = 0; i < map.get(j).size(); i++) {
-              if (map.get(j).get(i) != null) {
+              if (!map.get(j).get(i).isEmpty()) {
                 NBTTagCompound stackTag = new NBTTagCompound();
                 map.get(j).get(i).writeToNBT(stackTag);
                 invList.appendTag(stackTag);
@@ -68,7 +68,7 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
     return null;
   }
   private String getOreDict(List<ItemStack> lis) {
-    if (lis.size() < 2 || lis.get(0) == null)
+    if (lis.size() < 2 || lis.get(0).isEmpty())
       return null;
     for (int i : OreDictionary.getOreIDs(lis.get(0))) {
       boolean foo = true;
