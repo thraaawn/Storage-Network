@@ -22,7 +22,7 @@ plugins {
 */
 version = "1.11.2-1.0.0"
 group= "mrriegel.storagenetwork" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "StorageNetwork"
+archivesBaseName = "SimpleStorageNetwork"
 
 minecraft {
     version = "1.11.2-13.20.0.2252"
