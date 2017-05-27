@@ -1,8 +1,8 @@
 [
 {
   "modid": "storagenetwork",
-  "name": "Storage Network",
-  "description": "A simplified version of the abandoned Storage Network mod.  Connect your inventories and manage your items easily.",
+  "name": "Simple Storage Network",
+  "description": "A simplified version of the abandoned Storage Network mod from MrRiegel.  Connect your inventories and manage your items easily.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

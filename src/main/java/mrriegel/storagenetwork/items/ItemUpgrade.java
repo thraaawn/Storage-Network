@@ -22,6 +22,7 @@ public class ItemUpgrade extends Item {
     this.setHasSubtypes(true);
     this.setRegistryName("upgrade");
     this.setUnlocalizedName(getRegistryName().toString());
+    this.setMaxStackSize(1);
   }
   @Override
   @SideOnly(Side.CLIENT)
