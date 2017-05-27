@@ -1,32 +1,19 @@
-tile.storagenetwork:kabel.name=Link Cable
-tile.storagenetwork:storage_kabel.name=Item Storage Cable
-tile.storagenetwork:ex_kabel.name=Item Export Cable
-tile.storagenetwork:im_kabel.name=Item Import Cable
-tile.storagenetwork:vacuum_kabel.name=Item Vacuum Cable
-tile.storagenetwork:fstorage_kabel.name=Fluid Storage Cable
-tile.storagenetwork:fex_kabel.name=Fluid Export Cable
-tile.storagenetwork:fim_kabel.name=Fluid Import Cable
+tile.storagenetwork:kabel.name=Storage Cable
+tile.storagenetwork:storage_kabel.name=Storage Link Cable
+tile.storagenetwork:ex_kabel.name=Storage Export Cable
+tile.storagenetwork:im_kabel.name=Storage Import Cable
 
-tile.storagenetwork:master.name=Cable Master
-tile.storagenetwork:request.name=Item Request Table
-tile.storagenetwork:cover.name=Cable Cover
-tile.storagenetwork:indicator.name=Item Indicator
-
-tile.storagenetwork:itemBox.name=Item Box
-tile.storagenetwork:fluidBox.name=Fluid Box
-tile.storagenetwork:toggler.name=Toggle Unit
+tile.storagenetwork:master.name=Storage Network Master
+tile.storagenetwork:request.name=Storage Request Table
 
 item.storagenetwork:upgrade_0.name=Speed Upgrade
 item.storagenetwork:upgrade_1.name=Operation Upgrade
 item.storagenetwork:upgrade_2.name=Stack Upgrade
 item.storagenetwork:upgrade_3.name=Stock Upgrade
 
-item.storagenetwork:remote_0.name=Item Wireless Accessor
-item.storagenetwork:remote_1.name=Item Advanced Wireless Accessor
+item.storagenetwork:remote_0.name=Storage Remote
+item.storagenetwork:remote_1.name=Advanced Storage Remote
 
-
-item.storagenetwork:coverstick.name=Cover Staff
-item.storagenetwork:duplicator.name=Setting Duplicator
 
 gui.storagenetwork.operate.tooltip=%s is active if %s than %d %s are in the network.
 gui.storagenetwork.operate.tooltip.more=more
@@ -42,16 +29,9 @@ gui.storagenetwork.fil.tooltip_IN=Only input
 gui.storagenetwork.fil.tooltip_OUT=Only output
 gui.storagenetwork.fil.tooltip_BOTH=Input and output
 
-tooltip.storagenetwork.networkNeeded=Needs to be connected to the network.
-tooltip.storagenetwork.RFNeeded=Needs RF to operate.
-tooltip.storagenetwork.annexer=Breaks the block in front of it and inserts the drops into the network.
-tooltip.storagenetwork.cover=Used to cover cables (Cover Staff is needed).
-tooltip.storagenetwork.crafter=Crafts items automatically.
 
-tooltip.storagenetwork.fluidbox=Stores fluids.
-tooltip.storagenetwork.frequest=Used to overview and request fluids from the network.
 tooltip.storagenetwork.indicator=Gives a redstone signal if more/less items are in the network.
-tooltip.storagenetwork.itembox=Stores items.
+
 tooltip.storagenetwork.kabel_S=Used to connect inventory to the network.
 tooltip.storagenetwork.kabel_E=Exports items from the network into attached inventory.
 tooltip.storagenetwork.kabel_I=Imports items from attached inventory into the network.
@@ -60,11 +40,10 @@ tooltip.storagenetwork.kabel_V=Inserts dropped items around into the network.
 tooltip.storagenetwork.master=The heart of the network. Only ONE per network.
 tooltip.storagenetwork.request=Used to overview and request items from the network.
 tooltip.storagenetwork.coverstaff=Used to cover cables with the block right next in the hotbar.
-tooltip.storagenetwork.remote_0=Used to overview and request items from the network from short distance.
-tooltip.storagenetwork.remote_1=Used to overview and request items from the network from far distance.
-tooltip.storagenetwork.toggler=Can disable parts of the network when powered with redstone.
+tooltip.storagenetwork.remote_0=Used to access the network 64 blocks distance.
+tooltip.storagenetwork.remote_1=Used to access the network from unlimited distance and across dimensions.
+
 tooltip.storagenetwork.upgrade_0=Increases the speed of importing/exporting.
 tooltip.storagenetwork.upgrade_1=Activity of the cable depends on the amount of items.
 tooltip.storagenetwork.upgrade_2=Increases the stack size of task.
 tooltip.storagenetwork.upgrade_3=Keeps a specific amount of items in the attached inventory (only in export cable).
-tooltip.storagenetwork.duplicator=Shift right click a cable to save settings. Right click another cable to copy the settings.

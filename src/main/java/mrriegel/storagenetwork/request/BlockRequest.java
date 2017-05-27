@@ -94,7 +94,6 @@ public class BlockRequest extends AbstractBlockConnectable {
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
       super.addInformation(stack, playerIn, tooltip, advanced);
       tooltip.add(I18n.format("tooltip.storagenetwork.request"));
-      tooltip.add(I18n.format("tooltip.storagenetwork.networkNeeded"));
     }
   }
 }

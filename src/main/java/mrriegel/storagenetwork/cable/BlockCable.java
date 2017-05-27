@@ -348,11 +348,9 @@ public class BlockCable extends AbstractBlockConnectable {
         tooltip.add(I18n.format("tooltip.storagenetwork.kabel_I"));
       else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.storageKabel))
         tooltip.add(I18n.format("tooltip.storagenetwork.kabel_S"));
-      //			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.vacuumKabel))
-      //				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_V"));
+
       else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.kabel))
         tooltip.add(I18n.format("tooltip.storagenetwork.kabel_L"));
-      tooltip.add(I18n.format("tooltip.storagenetwork.networkNeeded"));
     }
   }
   public static class PropertyConnection extends PropertyEnum<EnumConnectType> {
