@@ -1,14 +1,14 @@
 [
 {
   "modid": "storagenetwork",
-  "name": "Storage Network",
-  "description": "Connect your inventories and manage your items easily.",
+  "name": "Simple Storage Network",
+  "description": "A simplified version of the abandoned Storage Network mod from MrRiegel.  Connect your inventories and manage your items easily.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["MrRiegel"],
-  "credits": "The Forge and FML guys",
+  "authorList": ["MrRiegel","Lothrazar"],
+  "credits": "The Forge and FML developers",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

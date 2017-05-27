@@ -1,7 +1,0 @@
-{
-    "parent" : "storagenetwork:model/stamm", 
-    "textures" : {
-        "deck" : "storagenetwork:blocks/fluid_rest", 
-        "side" : "storagenetwork:blocks/fluidBox_side"
-    }
-}
