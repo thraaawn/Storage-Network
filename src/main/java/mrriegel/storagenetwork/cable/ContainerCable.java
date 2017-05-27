@@ -78,7 +78,7 @@ public class ContainerCable extends Container {
       if (itemstack1.isEmpty())
         return ItemStack.EMPTY;
       for (int i = 0; i < 18; i++) {
-        if (tile.getFilter().get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
+        if (tile.getFilter().get(i) == null && !isInFilter(new StackWrapper(itemstack1, 1))) {
           tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.getCount()));
           tile.getOres().put(i, false);
           break;
@@ -87,10 +87,9 @@ public class ContainerCable extends Container {
     }
     return ItemStack.EMPTY;
   }
-  public boolean in(StackWrapper stack) {
+  public boolean isInFilter(StackWrapper stack) {
     for (int i = 0; i < 18; i++) {
-      if (tile.getFilter().get(i) != null && tile.getFilter().get(i).getStack().isItemEqual(stack.getStack()))
-        return true;
+      if (tile.getFilter().get(i) != null && tile.getFilter().get(i).getStack().isItemEqual(stack.getStack())) { return true; }
     }
     return false;
   }

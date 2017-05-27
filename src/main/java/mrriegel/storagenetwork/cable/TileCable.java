@@ -28,15 +28,12 @@ public class TileCable extends AbstractFilterTile {
   private NonNullList<ItemStack> upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
   private boolean mode = true;
   private int limit = 0;
-  // public Map<EnumFacing, Connect> connections = Maps.newHashMap();
   public EnumConnectType north, south, east, west, up, down;
  
   ItemStack stack = null;
   public enum Kind {
-    kabel, exKabel, imKabel, storageKabel;//, vacuumKabel, fexKabel, fimKabel, fstorageKabel;
-    //    public boolean isFluid() {
-    //      return this == Kind.fexKabel || this == Kind.fimKabel || this == Kind.fstorageKabel;
-    //    }
+    kabel, exKabel, imKabel, storageKabel;
+ 
   }
   public int getUpgradesOfType(int num) {
     int res = 0;

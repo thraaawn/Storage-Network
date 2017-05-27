@@ -34,7 +34,7 @@ import net.minecraftforge.oredict.OreDictionary;
 public class GuiCable extends RigelNetworkGuiContainer {
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
   Kind kind;
-  Button pPlus, pMinus, white, acti, impor, way;
+  Button btnPlus, btnMinus, btnWhite, acti, impor, way;
   AbstractFilterTile tile;
   private GuiTextField searchBar;
   List<ItemSlot> list;
@@ -61,10 +61,11 @@ public class GuiCable extends RigelNetworkGuiContainer {
         this.drawTexturedModalRect(i + 7 + ii * 18, j + 25 + 18 * jj, 176, 34, 18, 18);
     }
     if (tile instanceof TileCable) {
-      if (((TileCable) tile).isUpgradeable())
+      if (((TileCable) tile).isUpgradeable()) {
         for (int ii = 0; ii < 4; ii++) {
-        this.drawTexturedModalRect(i + 97 + ii * 18, j + 5, 176, 34, 18, 18);
+          this.drawTexturedModalRect(i + 97 + ii * 18, j + 5, 176, 34, 18, 18);
         }
+      }
       if (((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1) {
         acti.enabled = true;
         acti.visible = true;
@@ -86,13 +87,15 @@ public class GuiCable extends RigelNetworkGuiContainer {
         ItemStack s = wrap == null ? null : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
         boolean numShow = tile instanceof TileCable ? ((TileCable) tile).getUpgradesOfType(ItemUpgrade.STOCK) > 0 : false;
+     //   System.out.println("FILTER EH "+s);
         list.add(new ItemSlot(s, guiLeft + 8 + ii * 18, guiTop + 26 + jj * 18, num, guiLeft, guiTop, numShow, true, false, true));
       }
     }
     for (ItemSlot s : list)
       s.drawSlot(mouseX, mouseY);
-    if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1)
+    if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1) {
       operation.drawSlot(mouseX, mouseY);
+    }
     fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
   }
   @Override
@@ -124,16 +127,16 @@ public class GuiCable extends RigelNetworkGuiContainer {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX - guiLeft, mouseY - guiTop);
     if (mouseX > guiLeft + 29 && mouseX < guiLeft + 37 && mouseY > guiTop + 10 && mouseY < guiTop + 20)
       this.drawHoveringText(Lists.newArrayList("Priority"), mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
-    if (white != null && white.isMouseOver())
+    if (btnWhite != null && btnWhite.isMouseOver())
       this.drawHoveringText(Lists.newArrayList(tile.isWhite() ? "Whitelist" : "Blacklist"), mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
   }
   @Override
   public void initGui() {
     super.initGui();
-    pMinus = new Button(0, guiLeft + 7, guiTop + 5, "-");
-    buttonList.add(pMinus);
-    pPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
-    buttonList.add(pPlus);
+    btnMinus = new Button(0, guiLeft + 7, guiTop + 5, "-");
+    buttonList.add(btnMinus);
+    btnPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
+    buttonList.add(btnPlus);
     if (tile.isStorage()) {
       impor = new Button(5, guiLeft + 95, guiTop + 5, "I");
       buttonList.add(impor);
@@ -141,8 +144,8 @@ public class GuiCable extends RigelNetworkGuiContainer {
       buttonList.add(way);
     }
     if (kind == Kind.imKabel || kind == Kind.storageKabel) {//tile instanceof TileItemBox ||
-      white = new Button(3, guiLeft + 70, guiTop + 5, "");
-      buttonList.add(white);
+      btnWhite = new Button(3, guiLeft + 70, guiTop + 5, "");
+      buttonList.add(btnWhite);
     }
     if (tile instanceof TileCable) {
       Keyboard.enableRepeatEvents(true);
@@ -175,7 +178,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
         ContainerCable con = (ContainerCable) inventorySlots;
         StackWrapper x = con.tile.getFilter().get(i);
         if (mc.player.inventory.getItemStack() != null) {
-          if (!con.in(new StackWrapper(mc.player.inventory.getItemStack(), 1))) {
+          if (!con.isInFilter(new StackWrapper(mc.player.inventory.getItemStack(), 1))) {
             con.tile.getFilter().put(i, new StackWrapper(mc.player.inventory.getItemStack(), mc.player.inventory.getItemStack().getCount()));
             con.tile.getOres().put(i, false);
             con.tile.getMetas().put(i, true);

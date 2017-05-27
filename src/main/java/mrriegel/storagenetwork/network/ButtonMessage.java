@@ -55,10 +55,11 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
                   tile.getFilter().put(i, null);
                 for (int i = 0; i < inv.getSlots() && index < 9; i++) {
                   ItemStack s = inv.getStackInSlot(i);
-                  if (s == null)
+                  if (s == null || s.isEmpty()) {
                     continue;
+                  }
                   else {
-                    if (!new ContainerCable(tile, ctx.getServerHandler().playerEntity.inventory).in(new StackWrapper(s, 1))) {
+                    if (!new ContainerCable(tile, ctx.getServerHandler().playerEntity.inventory).isInFilter(new StackWrapper(s, 1))) {
                       tile.getFilter().put(index, new StackWrapper(s, 1));
                       index++;
                     }

@@ -7,8 +7,9 @@ public class StackWrapper {
   int size;
   public StackWrapper(ItemStack stack, int size) {
     super();
-    if (stack == null)
-      throw new NullPointerException();
+    if (stack == null) {
+      stack = ItemStack.EMPTY;
+    }
     this.stack = stack;
     this.size = size;
   }
@@ -31,8 +32,7 @@ public class StackWrapper {
   }
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof StackWrapper))
-      return false;
+    if (!(obj instanceof StackWrapper)) { return false; }
     StackWrapper o = (StackWrapper) obj;
     return o.stack.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(o.stack, stack);
   }

@@ -19,8 +19,7 @@ import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
-import mrriegel.storagenetwork.tile.AbstractFilterTile.Direction;
-import mrriegel.storagenetwork.tile.TileContainer;
+import mrriegel.storagenetwork.tile.AbstractFilterTile.Direction; 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -86,29 +85,29 @@ public class TileMaster extends TileEntity implements ITickable {
   }
   public List<StackWrapper> getCraftableStacks(List<StackWrapper> stacks) {
     List<StackWrapper> craftableStacks = Lists.newArrayList();
-    List<TileContainer> invs = Lists.newArrayList();
-    for (BlockPos p : connectables) {
-      if (!(world.getTileEntity(p) instanceof TileContainer))
-        continue;
-      TileContainer tile = (TileContainer) world.getTileEntity(p);
-      invs.add(tile);
-    }
-    for (TileContainer t : invs) {
-      for (int i = 0; i < t.getSizeInventory(); i++) {
-        if (t.getStackInSlot(i) != null && !t.getStackInSlot(i).isEmpty()) {
-          NBTTagCompound res = (NBTTagCompound) t.getStackInSlot(i).getTagCompound().getTag("res");
-          if (!Util.contains(stacks, new StackWrapper(new ItemStack(res), 0), new Comparator<StackWrapper>() {
-            @Override
-            public int compare(StackWrapper o1, StackWrapper o2) {
-              if (ItemHandlerHelper.canItemStacksStack(o1.getStack(), o2.getStack())) { return 0; }
-              return 1;
-            }
-          })) {
-            addToList(craftableStacks, new ItemStack(res), 0);
-          }
-        }
-      }
-    }
+//    List<AbstractTileContainer> invs = Lists.newArrayList();
+//    for (BlockPos p : connectables) {
+//      if (!(world.getTileEntity(p) instanceof AbstractTileContainer))
+//        continue;
+////      AbstractTileContainer tile = (AbstractTileContainer) world.getTileEntity(p);
+////      invs.add(tile);
+//    }
+//    for (AbstractTileContainer t : invs) {
+//      for (int i = 0; i < t.getSizeInventory(); i++) {
+//        if (t.getStackInSlot(i) != null && !t.getStackInSlot(i).isEmpty()) {
+//          NBTTagCompound res = (NBTTagCompound) t.getStackInSlot(i).getTagCompound().getTag("res");
+//          if (!Util.contains(stacks, new StackWrapper(new ItemStack(res), 0), new Comparator<StackWrapper>() {
+//            @Override
+//            public int compare(StackWrapper o1, StackWrapper o2) {
+//              if (ItemHandlerHelper.canItemStacksStack(o1.getStack(), o2.getStack())) { return 0; }
+//              return 1;
+//            }
+//          })) {
+//            addToList(craftableStacks, new ItemStack(res), 0);
+//          }
+//        }
+//      }
+//    }
     return craftableStacks;
   }
   private void addToList(List<StackWrapper> lis, ItemStack s, int num) {
@@ -134,16 +133,16 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return size;
   }
-  public List<TileContainer> getContainers() {
-    List<TileContainer> lis = Lists.newArrayList();
-    for (BlockPos p : connectables) {
-      if (!(world.getTileEntity(p) instanceof TileContainer)) {
-        continue;
-      }
-      lis.add((TileContainer) world.getTileEntity(p));
-    }
-    return lis;
-  }
+//  public List<AbstractTileContainer> getContainers() {
+//    List<AbstractTileContainer> lis = Lists.newArrayList();
+//    for (BlockPos p : connectables) {
+//      if (!(world.getTileEntity(p) instanceof AbstractTileContainer)) {
+//        continue;
+//      }
+//      lis.add((AbstractTileContainer) world.getTileEntity(p));
+//    }
+//    return lis;
+//  }
   public List<FilterItem> getIngredients(ItemStack template) {
     Map<Integer, ItemStack> stacks = Maps.<Integer, ItemStack> newHashMap();
     Map<Integer, Boolean> metas = Maps.<Integer, Boolean> newHashMap();
@@ -378,6 +377,7 @@ public class TileMaster extends TileEntity implements ITickable {
         }
         int m = g.getMaxStackSize();
         if ((t.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
+          
           m = Math.min(m, t.getFilter().get(i).getSize() - InvHelper.getAmount(inv, new FilterItem(g, meta, ore, false)));
         }
         if (m <= 0) {

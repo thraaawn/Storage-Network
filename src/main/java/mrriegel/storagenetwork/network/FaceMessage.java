@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.tile.TileContainer;
+//import mrriegel.storagenetwork.tile.AbstractTileContainer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -22,7 +22,7 @@ public class FaceMessage implements IMessage, IMessageHandler<FaceMessage, IMess
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        TileContainer tile = (TileContainer) ctx.getServerHandler().playerEntity.world.getTileEntity(message.pos);
+       // AbstractTileContainer tile = (AbstractTileContainer) ctx.getServerHandler().playerEntity.world.getTileEntity(message.pos);
         switch (message.id) {
           //				case 0:
           //					tile.setInput(GuiContainer.next(tile.getInput()));
@@ -31,7 +31,7 @@ public class FaceMessage implements IMessage, IMessageHandler<FaceMessage, IMess
           //					tile.setOutput(GuiContainer.next(tile.getOutput()));
           //					break;
         }
-        tile.markDirty();
+       // tile.markDirty();
       }
     });
     return null;

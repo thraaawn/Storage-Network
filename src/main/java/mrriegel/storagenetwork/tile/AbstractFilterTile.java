@@ -160,6 +160,10 @@ public abstract class AbstractFilterTile extends TileConnectable {
   public boolean getMeta(int i) {
     return getMetas().get(i) == null ? true : getMetas().get(i);
   }
+  /**
+   * the whitelist / blacklist (ghost stacks in gui)
+   * @return
+   */
   public Map<Integer, StackWrapper> getFilter() {
     return filter;
   }
