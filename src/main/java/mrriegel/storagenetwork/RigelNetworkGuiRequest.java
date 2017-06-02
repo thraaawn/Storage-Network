@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
-import mezz.jei.Internal;
 import mrriegel.storagenetwork.helper.Settings;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
@@ -207,7 +206,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     if (jei != null && jei.isMouseOver())
       drawHoveringText(Lists.newArrayList(Settings.jeiSearch ? "JEI search enabled" : "JEI search disabled"), mouseX - guiLeft, mouseY - guiTop);
     if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
-      Internal.getRuntime().getItemListOverlay().setFilterText(searchBar.getText());
+      JeiHooks.setFilterText(searchBar.getText());
     }
   }
   @Override

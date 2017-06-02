@@ -20,7 +20,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.fml.common.Optional;
 
+@Optional.Interface(iface = "mezz.jei.api.recipe.transfer.IRecipeTransferHandler", modid = "jei", striprefs = true)
 public class RequestRecipeTransferHandler<C extends Container> implements IRecipeTransferHandler {
   @Override
   public Class<? extends Container> getContainerClass() {
