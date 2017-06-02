@@ -12,6 +12,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import mrriegel.storagenetwork.helper.Settings;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.jei.JeiHooks;
 import mrriegel.storagenetwork.network.ClearMessage;
 import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.PacketHandler;

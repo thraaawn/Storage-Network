@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork;
+package mrriegel.storagenetwork.jei;
 import net.minecraftforge.fml.common.Optional;
 
 public class JeiHooks {
