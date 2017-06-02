@@ -11,6 +11,11 @@ public class JeiHooks {
   }
   @Optional.Method( modid = "jei")
   private static void _setFilterText(String s){
+    try{
     mezz.jei.Internal.getRuntime().getItemListOverlay().setFilterText(s);
+    }
+    catch(Exception e){
+      e.printStackTrace();
+    }
   }
 }

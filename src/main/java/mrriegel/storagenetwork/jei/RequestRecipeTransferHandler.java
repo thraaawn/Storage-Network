@@ -41,9 +41,14 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
       for (int j = 0; j < container.inventorySlots.size(); j++) {
         Slot slot = container.inventorySlots.get(j);
         if ((slot.inventory instanceof InventoryCrafting)) {
-          GuiIngredient ingredient = (GuiIngredient) inputs.get(slot.getSlotIndex() + 1);
-          if (ingredient != null) {
-            map.put(j, ingredient.getAllIngredients());
+          try {
+            GuiIngredient ingredient = (GuiIngredient) inputs.get(slot.getSlotIndex() + 1);
+            if (ingredient != null) {
+              map.put(j, ingredient.getAllIngredients());
+            }
+          }
+          catch (Exception e) {
+            e.printStackTrace();
           }
         }
       }
