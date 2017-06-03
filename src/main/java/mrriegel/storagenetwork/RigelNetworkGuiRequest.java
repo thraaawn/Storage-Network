@@ -36,11 +36,12 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   protected ResourceLocation texture;
   protected int page = 1, maxPage = 1;
   public List<StackWrapper> stacks, craftableStacks;
-  protected ItemStack over;
+  protected ItemStack over = ItemStack.EMPTY;
   protected GuiTextField searchBar;
   protected Button direction, sort, /* left, right, */jei;
   protected List<ItemSlot> slots;
   protected long lastClick;
+  private Button clear;
   public RigelNetworkGuiRequest(Container inventorySlotsIn) {
     super(inventorySlotsIn);
     this.xSize = 176;
@@ -52,6 +53,30 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   }
   protected boolean canClick() {
     return System.currentTimeMillis() > lastClick + 100L;
+  }
+  @Override
+  public void initGui() {
+    super.initGui();
+    Keyboard.enableRepeatEvents(true);
+    searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81, guiTop + 96, 85, fontRendererObj.FONT_HEIGHT);
+    searchBar.setMaxStringLength(30);
+    searchBar.setEnableBackgroundDrawing(false);
+    searchBar.setVisible(true);
+    searchBar.setTextColor(16777215);
+    direction = new Button(0, guiLeft + 7, guiTop + 93, "");
+    buttonList.add(direction);
+    sort = new Button(1, guiLeft + 21, guiTop + 93, "");
+    buttonList.add(sort);
+    // left = new Button(2, guiLeft + 44, guiTop + 93, "<");
+    // buttonList.add(left);
+    // right = new Button(3, guiLeft + 58, guiTop + 93, ">");
+    // buttonList.add(right);
+    jei = new Button(4, guiLeft + 169, guiTop + 93, "");
+    if (ConfigHandler.jeiLoaded) {
+      buttonList.add(jei);
+    }
+    clear = new Button(5, guiLeft + 64, guiTop + 93, "X");
+    buttonList.add(clear);
   }
   public abstract int getLines();
   public abstract int getColumns();
@@ -141,20 +166,6 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
       page = 1;
     if (page > maxPage)
       page = maxPage;
-    // if (page == 1) {
-    // left.visible = false;
-    // left.enabled = false;
-    // } else {
-    // left.visible = true;
-    // left.enabled = true;
-    // }
-    // if (page == maxPage) {
-    // right.visible = false;
-    // right.enabled = false;
-    // } else {
-    // right.visible = true;
-    // right.enabled = true;
-    // }
     searchBar.drawTextBox();
     slots = Lists.newArrayList();
     int index = (page - 1) * (getColumns());
@@ -191,21 +202,25 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     // drawHoveringText(Lists.newArrayList("Clear the crafting grid."),
     // mouseX - guiLeft, mouseY - guiTop);
     if (inSearchbar(mouseX, mouseY)) {
-      List<String> lis = Lists.newArrayList("Right click to clear the search bar.");
+      List<String> lis = Lists.newArrayList();
       if (!isShiftKeyDown())
-        lis.add(ChatFormatting.ITALIC + "Hold shift for more information.");
+        lis.add(I18n.format("gui.storagenetwork.shift"));
       else {
-        lis.add("Prefix @: Search for mod.");
-        lis.add("Prefix #: Search for tooltip.");
-        lis.add("Prefix $: Search for OreDict.");
-        lis.add("Prefix %: Search for creative tab.");
+        lis.add(I18n.format("gui.storagenetwork.fil.tooltip_0"));
+        lis.add(I18n.format("gui.storagenetwork.fil.tooltip_1"));
+        lis.add(I18n.format("gui.storagenetwork.fil.tooltip_2"));
+        lis.add(I18n.format("gui.storagenetwork.fil.tooltip_3"));
       }
       drawHoveringText(lis, mouseX - guiLeft, mouseY - guiTop);
     }
+    if (clear.isMouseOver())
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX - guiLeft, mouseY - guiTop);
     if (sort.isMouseOver())
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX - guiLeft, mouseY - guiTop);
     if (jei != null && jei.isMouseOver())
-      drawHoveringText(Lists.newArrayList(Settings.jeiSearch ? "JEI search enabled" : "JEI search disabled"), mouseX - guiLeft, mouseY - guiTop);
+    {
+      String s = I18n.format(Settings.jeiSearch ? "gui.storagenetwork.fil.tooltip_jei_on" : "gui.storagenetwork.fil.tooltip_jei_off");
+      drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop);}
     if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
       JeiHooks.setFilterText(searchBar.getText());
     }
@@ -228,6 +243,8 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
       setSort(getSort().next());
     else if (button.id == 4)
       Settings.jeiSearch = !Settings.jeiSearch;
+    else if (button.id == 5)
+      this.searchBar.setText("");
     PacketHandler.INSTANCE.sendToServer(new SortMessage(getPos(), getDownwards(), getSort()));
   }
   @Override
@@ -235,8 +252,8 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     super.mouseClicked(mouseX, mouseY, mouseButton);
     searchBar.setFocused(false);
     if (inSearchbar(mouseX, mouseY)) {
-      if (mouseButton == 1)
-        searchBar.setText("");
+      //      if (mouseButton == 1)
+      //       searchBar.setText("");
       searchBar.setFocused(true);
     }
     else if (inX(mouseX, mouseY)) {
@@ -256,18 +273,19 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   public void keyTyped(char typedChar, int keyCode) throws IOException {
     if (!this.checkHotbarKeys(keyCode)) {
       Keyboard.enableRepeatEvents(true);
-      if (over != null && ConfigHandler.jeiLoaded && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U)) {
-        //				if (keyCode == Keyboard.KEY_R)
-        //					Internal.getRuntime().getRecipesGui().show(over);
-        //				else
-        //					Internal.getRuntime().getRecipesGui().showUses(over);
-      }
-      else if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
+      if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
         PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
       }
       else {
         super.keyTyped(typedChar, keyCode);
       }
+    }
+  }
+  @Override
+  public void updateScreen() {
+    super.updateScreen();
+    if (searchBar != null) {
+      searchBar.updateCursorCounter();
     }
   }
   @Override
@@ -286,21 +304,24 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     }
   }
   public class Button extends GuiButton {
-    public Button(int p_i1021_1_, int p_i1021_2_, int p_i1021_3_, String p_i1021_6_) {
-      super(p_i1021_1_, p_i1021_2_, p_i1021_3_, 14, 14, p_i1021_6_);
+    public Button(int id, int x, int y, String str) {
+      super(id, x, y, 14, 14, str);
+    }
+    public Button(int id, int x, int y, int width, String str) {
+      super(id, x, y, width, 14, str);
     }
     @Override
-    public void drawButton(Minecraft p_146112_1_, int p_146112_2_, int p_146112_3_) {
+    public void drawButton(Minecraft mc, int x, int y) {
       if (this.visible) {
-        FontRenderer fontrenderer = p_146112_1_.fontRendererObj;
-        p_146112_1_.getTextureManager().bindTexture(texture);
+        FontRenderer fontrenderer = mc.fontRendererObj;
+        mc.getTextureManager().bindTexture(texture);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.hovered = p_146112_2_ >= this.xPosition && p_146112_3_ >= this.yPosition && p_146112_2_ < this.xPosition + this.width && p_146112_3_ < this.yPosition + this.height;
+        this.hovered = x >= this.xPosition && y >= this.yPosition && x < this.xPosition + this.width && y < this.yPosition + this.height;
         int k = this.getHoverState(this.hovered);
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.blendFunc(770, 771);
-        this.drawTexturedModalRect(this.xPosition, this.yPosition, 162 + 14 * k, 0, 14, 14);
+        this.drawTexturedModalRect(this.xPosition, this.yPosition, 162 + 14 * k, 0, width, height);
         if (id == 0) {
           this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (getDownwards() ? 6 : 0), 14, 6, 8);
         }
@@ -310,7 +331,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
         if (id == 4) {
           this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (Settings.jeiSearch ? 0 : 6), 22, 6, 8);
         }
-        this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);
+        this.mouseDragged(mc, x, y);
         int l = 14737632;
         if (packedFGColour != 0) {
           l = packedFGColour;

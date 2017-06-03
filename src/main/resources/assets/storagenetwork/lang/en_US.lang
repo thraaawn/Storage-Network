@@ -29,6 +29,16 @@ gui.storagenetwork.fil.tooltip_IN=Only input
 gui.storagenetwork.fil.tooltip_OUT=Only output
 gui.storagenetwork.fil.tooltip_BOTH=Input and output
 
+gui.storagenetwork.shift=Hold shift for more information.
+
+gui.storagenetwork.fil.tooltip_0=Prefix @: Search for mod.
+gui.storagenetwork.fil.tooltip_1=Prefix #: Search for tooltip.
+gui.storagenetwork.fil.tooltip_2=Prefix $: Search for OreDict.
+gui.storagenetwork.fil.tooltip_3=Prefix %: Search for creative tab.
+
+gui.storagenetwork.tooltip_clear=Clear Search
+gui.storagenetwork.fil.tooltip_jei_on=JEI search enabled
+gui.storagenetwork.fil.tooltip_jei_off=JEI search disabled
 
 tooltip.storagenetwork.indicator=Gives a redstone signal if more/less items are in the network.
 

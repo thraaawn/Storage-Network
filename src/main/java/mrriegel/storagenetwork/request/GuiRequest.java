@@ -1,10 +1,7 @@
 package mrriegel.storagenetwork.request;
-import org.lwjgl.input.Keyboard;
-import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -15,27 +12,6 @@ public class GuiRequest extends RigelNetworkGuiRequest {
     super(inventorySlotsIn);
     tile = ((ContainerRequest) inventorySlots).tile;
     texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
-  }
-  @Override
-  public void initGui() {
-    super.initGui();
-    Keyboard.enableRepeatEvents(true);
-    searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81, guiTop + 96, 85, fontRendererObj.FONT_HEIGHT);
-    searchBar.setMaxStringLength(30);
-    searchBar.setEnableBackgroundDrawing(false);
-    searchBar.setVisible(true);
-    searchBar.setTextColor(16777215);
-    direction = new Button(0, guiLeft + 7, guiTop + 93, "");
-    buttonList.add(direction);
-    sort = new Button(1, guiLeft + 21, guiTop + 93, "");
-    buttonList.add(sort);
-    // left = new Button(2, guiLeft + 44, guiTop + 93, "<");
-    // buttonList.add(left);
-    // right = new Button(3, guiLeft + 58, guiTop + 93, ">");
-    // buttonList.add(right);
-    jei = new Button(4, guiLeft + 169, guiTop + 93, "");
-    if (ConfigHandler.jeiLoaded)
-      buttonList.add(jei);
   }
   @Override
   public int getLines() {
@@ -65,10 +41,7 @@ public class GuiRequest extends RigelNetworkGuiRequest {
   public BlockPos getPos() {
     return tile.getPos();
   }
-  // @Override
-  // protected BlockPos getMaster() {
-  // return tile.getMaster();
-  // }
+ 
   @Override
   protected int getDim() {
     return tile.getWorld().provider.getDimension();

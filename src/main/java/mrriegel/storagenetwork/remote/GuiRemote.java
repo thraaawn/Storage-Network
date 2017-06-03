@@ -1,11 +1,8 @@
 package mrriegel.storagenetwork.remote;
-import org.lwjgl.input.Keyboard;
-import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -15,27 +12,7 @@ public class GuiRemote extends RigelNetworkGuiRequest {
     super(inventorySlotsIn);
     texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/remote.png");
   }
-  @Override
-  public void initGui() {
-    super.initGui();
-    Keyboard.enableRepeatEvents(true);
-    searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81, guiTop + 96 + 64, 85, fontRendererObj.FONT_HEIGHT);
-    searchBar.setMaxStringLength(30);
-    searchBar.setEnableBackgroundDrawing(false);
-    searchBar.setVisible(true);
-    searchBar.setTextColor(16777215);
-    direction = new Button(0, guiLeft + 7, guiTop + 93 + 64, "");
-    buttonList.add(direction);
-    sort = new Button(1, guiLeft + 21, guiTop + 93 + 64, "");
-    buttonList.add(sort);
-    // left = new Button(2, guiLeft + 44, guiTop + 93 + 64, "<");
-    // buttonList.add(left);
-    // right = new Button(3, guiLeft + 58, guiTop + 93 + 64, ">");
-    // buttonList.add(right);
-    jei = new Button(4, guiLeft + 169, guiTop + 93 + 64, "");
-    if (ConfigHandler.jeiLoaded)
-      buttonList.add(jei);
-  }
+
   @Override
   public int getLines() {
     return 8;
@@ -64,12 +41,7 @@ public class GuiRemote extends RigelNetworkGuiRequest {
   public BlockPos getPos() {
     return BlockPos.ORIGIN;
   }
-  // @Override
-  // protected BlockPos getMaster() {
-  // ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
-  // return new BlockPos(NBTHelper.getInteger(stack, "x"),
-  // NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z"));
-  // }
+
   @Override
   protected int getDim() {
     return NBTHelper.getInteger(mc.player.inventory.getCurrentItem(), "dim");
