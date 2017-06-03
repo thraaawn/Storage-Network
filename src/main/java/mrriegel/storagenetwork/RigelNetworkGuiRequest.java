@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
-import mrriegel.storagenetwork.RigelNetworkGuiRequest.Button;
 import mrriegel.storagenetwork.helper.Settings;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
@@ -203,23 +202,25 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     // drawHoveringText(Lists.newArrayList("Clear the crafting grid."),
     // mouseX - guiLeft, mouseY - guiTop);
     if (inSearchbar(mouseX, mouseY)) {
-      List<String> lis = Lists.newArrayList("Right click to clear the search bar.");
+      List<String> lis = Lists.newArrayList();
       if (!isShiftKeyDown())
-        lis.add(ChatFormatting.ITALIC + "Hold shift for more information.");
+        lis.add(I18n.format("gui.storagenetwork.shift"));
       else {
-        lis.add("Prefix @: Search for mod.");
-        lis.add("Prefix #: Search for tooltip.");
-        lis.add("Prefix $: Search for OreDict.");
-        lis.add("Prefix %: Search for creative tab.");
+        lis.add(I18n.format("gui.storagenetwork.fil.tooltip_0"));
+        lis.add(I18n.format("gui.storagenetwork.fil.tooltip_1"));
+        lis.add(I18n.format("gui.storagenetwork.fil.tooltip_2"));
+        lis.add(I18n.format("gui.storagenetwork.fil.tooltip_3"));
       }
       drawHoveringText(lis, mouseX - guiLeft, mouseY - guiTop);
     }
     if (clear.isMouseOver())
-      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_clear")), mouseX - guiLeft, mouseY - guiTop);
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX - guiLeft, mouseY - guiTop);
     if (sort.isMouseOver())
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX - guiLeft, mouseY - guiTop);
     if (jei != null && jei.isMouseOver())
-      drawHoveringText(Lists.newArrayList(Settings.jeiSearch ? "JEI search enabled" : "JEI search disabled"), mouseX - guiLeft, mouseY - guiTop);
+    {
+      String s = I18n.format(Settings.jeiSearch ? "gui.storagenetwork.fil.tooltip_jei_on" : "gui.storagenetwork.fil.tooltip_jei_off");
+      drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop);}
     if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
       JeiHooks.setFilterText(searchBar.getText());
     }
