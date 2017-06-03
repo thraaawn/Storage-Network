@@ -36,7 +36,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   protected ResourceLocation texture;
   protected int page = 1, maxPage = 1;
   public List<StackWrapper> stacks, craftableStacks;
-  protected ItemStack over;
+  protected ItemStack over = ItemStack.EMPTY;
   protected GuiTextField searchBar;
   protected Button direction, sort, /* left, right, */jei;
   protected List<ItemSlot> slots;
@@ -236,7 +236,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     searchBar.setFocused(false);
     if (inSearchbar(mouseX, mouseY)) {
       if (mouseButton == 1)
-        searchBar.setText("");
+       searchBar.setText("");
       searchBar.setFocused(true);
     }
     else if (inX(mouseX, mouseY)) {
@@ -256,18 +256,22 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   public void keyTyped(char typedChar, int keyCode) throws IOException {
     if (!this.checkHotbarKeys(keyCode)) {
       Keyboard.enableRepeatEvents(true);
-      if (over != null && ConfigHandler.jeiLoaded && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U)) {
-        //				if (keyCode == Keyboard.KEY_R)
-        //					Internal.getRuntime().getRecipesGui().show(over);
-        //				else
-        //					Internal.getRuntime().getRecipesGui().showUses(over);
-      }
-      else if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
+      if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
         PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
       }
       else {
         super.keyTyped(typedChar, keyCode);
       }
+    }
+  }
+  
+  
+  
+  @Override
+  public void updateScreen() {
+    super.updateScreen();
+    if (searchBar != null) {
+      searchBar.updateCursorCounter();
     }
   }
   @Override
