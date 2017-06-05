@@ -27,7 +27,7 @@ public class ContainerRemote extends Container {
   public TileMaster tile;
   public InventoryCraftResult result;
   public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
-  ItemStack remote;
+  public ItemStack remote;
 
   //TODO: ClearMessage,REcipeMessage ETC are hardcoded for ContainerRequest, need base class and update
   
