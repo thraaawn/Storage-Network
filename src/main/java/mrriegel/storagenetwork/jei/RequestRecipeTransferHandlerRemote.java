@@ -45,6 +45,7 @@ public class RequestRecipeTransferHandlerRemote<C extends Container> implements 
           try {
             GuiIngredient ingredient = (GuiIngredient) inputs.get(slot.getSlotIndex() + 1);
             if (ingredient != null) {
+              System.out.println("remote recipe try "+j+"__"+ingredient.getAllIngredients());
               map.put(j, ingredient.getAllIngredients());
             }
           }

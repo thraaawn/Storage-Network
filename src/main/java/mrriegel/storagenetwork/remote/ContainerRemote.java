@@ -28,6 +28,7 @@ public class ContainerRemote extends Container {
   public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
   
 
+  //TODO: ClearMessage,REcipeMessage ETC are hardcoded for ContainerRequest, need base class and update
   
   public ContainerRemote(final InventoryPlayer playerInv) {
     this.playerInv = playerInv;
