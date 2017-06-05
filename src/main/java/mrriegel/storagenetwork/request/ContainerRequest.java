@@ -35,7 +35,7 @@ public class ContainerRequest extends Container {
       if (tile.matrix.get(i) != null && tile.matrix.get(i).isEmpty() == false)
         craftMatrix.setInventorySlotContents(i, tile.matrix.get(i));
     }
-    SlotCrafting x = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
+    SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
 
@@ -60,7 +60,9 @@ public class ContainerRequest extends Container {
         return stack;
       }
     };
-    this.addSlotToContainer(x);
+    this.addSlotToContainer(slotCraftOutput);
+    
+    
     int index = 0;
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {

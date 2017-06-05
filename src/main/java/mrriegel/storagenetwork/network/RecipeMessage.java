@@ -64,7 +64,6 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
               for (int i = 0; i < invList.tagCount(); i++) {
                 NBTTagCompound stackTag = invList.getCompoundTagAt(i);
                 ItemStack s = new ItemStack(stackTag);
-                System.out.println("RECIPE MESSAGE " + s + "   " + i);
                 map.put(i, s);
               }
             }
