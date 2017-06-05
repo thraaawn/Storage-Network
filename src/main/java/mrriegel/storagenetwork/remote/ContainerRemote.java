@@ -3,6 +3,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.helper.FilterItem;
+import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.master.TileMaster;
@@ -26,19 +27,23 @@ public class ContainerRemote extends Container {
   public TileMaster tile;
   public InventoryCraftResult result;
   public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
-  
+  ItemStack remote;
 
   //TODO: ClearMessage,REcipeMessage ETC are hardcoded for ContainerRequest, need base class and update
   
   public ContainerRemote(final InventoryPlayer playerInv) {
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
+     remote = playerInv.getCurrentItem();
     if (!playerInv.player.world.isRemote)
-      tile = ItemRemote.getTile(playerInv.getCurrentItem());
+      tile = ItemRemote.getTile(remote);
     
 
     for (int i = 0; i < 9; i++) {
-      System.out.println("todo LOAD item eh "+i);
+      craftMatrix.setInventorySlotContents(i,  NBTHelper.getItemStack(remote, "c"+i));
+
+     
+  //    System.out.println("todo LOAD item eh "+i);
     }
     
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
@@ -134,7 +139,8 @@ public class ContainerRemote extends Container {
 
   public void slotChanged() {
     for (int i = 0; i < 9; i++) {
-      System.out.println("todo save stack in item eh "+craftMatrix.getStackInSlot(i));
+      NBTHelper.setItemStack(remote, "c"+i, craftMatrix.getStackInSlot(i));
+   //   System.out.println("todo save stack in item eh "+craftMatrix.getStackInSlot(i));
     }
   }
   @Override
