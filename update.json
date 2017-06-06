@@ -8,6 +8,6 @@
 	"1.0.0":"First Release",
 	"1.0.1":"JEI integration is now optional, not required dependency. so it will not crash if JEI not installed.  Fixed JEI integration to work with new versions (4.4.x) of JEI.  Added safety checks so if JEI integration fails in future it will simply log error safely and not crash game",
 	"1.0.2":"Fix some keys that are bound to JEI keys not getting passed through to search bar (R/U).  Added new button to clear search bar, mouse click no longer auto clicks search bar.   Several magic strings embedded in code are now in the .lang file for future translators.  "
-	"1.0.3":"Remove some console spam debug messages.  Both remotes now have a 3x3 crafting grid built in.  "
+	"1.0.3":"Remove some console spam debug messages.  Both remotes now have a 3x3 crafting grid built in.  Remotes now correctly have max stack size 1.  "
  } 
 }
