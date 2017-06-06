@@ -143,7 +143,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
       way = new Button(6, guiLeft + 115, guiTop + 5, "");
       buttonList.add(way);
     }
-    if (kind == Kind.imKabel || kind == Kind.storageKabel) {//tile instanceof TileItemBox ||
+    if (kind == Kind.imKabel || kind == Kind.exKabel) {//tile instanceof TileItemBox ||
       btnWhite = new Button(3, guiLeft + 70, guiTop + 5, "");
       buttonList.add(btnWhite);
     }
