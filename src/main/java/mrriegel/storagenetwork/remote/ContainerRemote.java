@@ -24,12 +24,13 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRemote extends ContainerNetworkBase {
-  public InventoryPlayer playerInv;
+//  public InventoryPlayer playerInv;
   public TileMaster tile;
-  public InventoryCraftResult result;
-  public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
+//  public InventoryCraftResult result;
+//  public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
   public ItemStack remote;
   public ContainerRemote(final InventoryPlayer playerInv) {
+    craftMatrix = new InventoryCrafting(this, 3, 3);
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
     remote = playerInv.getCurrentItem();
@@ -102,12 +103,12 @@ public class ContainerRemote extends ContainerNetworkBase {
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       itemstack = itemstack1.copy();
-//
-//      if (slotIndex == 0) {
-//        craftShift(playerIn, (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster()));
-//        return ItemStack.EMPTY;
-//      }
-      if (tile != null) {
+
+      if (slotIndex == 0) {
+        craftShift(playerIn,  this.getTileMaster()  );
+        return ItemStack.EMPTY;
+      }
+      else if (tile != null) {
         int rest = tile.insertStack(itemstack1, null, false);
         ItemStack stack = (rest == 0) ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
         slot.putStack(stack);
