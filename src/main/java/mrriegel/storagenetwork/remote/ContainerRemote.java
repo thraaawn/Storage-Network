@@ -29,21 +29,15 @@ public class ContainerRemote extends ContainerNetworkBase {
   public InventoryCraftResult result;
   public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
   public ItemStack remote;
- 
   public ContainerRemote(final InventoryPlayer playerInv) {
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
-     remote = playerInv.getCurrentItem();
+    remote = playerInv.getCurrentItem();
     if (!playerInv.player.world.isRemote)
       tile = ItemRemote.getTile(remote);
-    
-
     for (int i = 0; i < 9; i++) {
-      craftMatrix.setInventorySlotContents(i,  NBTHelper.getItemStack(remote, "c"+i));
-
-     
+      craftMatrix.setInventorySlotContents(i, NBTHelper.getItemStack(remote, "c" + i));
     }
-    
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
@@ -71,15 +65,12 @@ public class ContainerRemote extends ContainerNetworkBase {
       }
     };
     this.addSlotToContainer(slotCraftOutput);
-
     int index = 0;
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
         this.addSlotToContainer(new Slot(craftMatrix, index++, 8 + j * 18, 110 + i * 18));
       }
     }
-    
-    
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 9; ++j) {
         this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 174 + i * 18));
@@ -100,18 +91,22 @@ public class ContainerRemote extends ContainerNetworkBase {
       else
         this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
     }
-
     this.onCraftMatrixChanged(this.craftMatrix);
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-    if (playerIn.world.isRemote)
-      return ItemStack.EMPTY;
+    if (playerIn.world.isRemote){
+      return ItemStack.EMPTY;}
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       itemstack = itemstack1.copy();
+//
+//      if (slotIndex == 0) {
+//        craftShift(playerIn, (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster()));
+//        return ItemStack.EMPTY;
+//      }
       if (tile != null) {
         int rest = tile.insertStack(itemstack1, null, false);
         ItemStack stack = (rest == 0) ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
@@ -126,19 +121,16 @@ public class ContainerRemote extends ContainerNetworkBase {
   }
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {
-    if (tile == null)
-      return false;
+    if (tile == null) { return false; }
     if (!playerIn.world.isRemote && playerIn.world.getTotalWorldTime() % 40 == 0) {
       List<StackWrapper> list = tile.getStacks();
       PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
     }
     return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.remote;
   }
-
   public void slotChanged() {
     for (int i = 0; i < 9; i++) {
-      NBTHelper.setItemStack(remote, "c"+i, craftMatrix.getStackInSlot(i));
- 
+      NBTHelper.setItemStack(remote, "c" + i, craftMatrix.getStackInSlot(i));
     }
   }
   @Override
@@ -146,7 +138,6 @@ public class ContainerRemote extends ContainerNetworkBase {
     slotChanged();
     super.onContainerClosed(playerIn);
   }
-
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     this.result.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(craftMatrix, this.playerInv.player.world));
@@ -157,6 +148,6 @@ public class ContainerRemote extends ContainerNetworkBase {
   }
   @Override
   public TileMaster getTileMaster() {
-    return  ItemRemote.getTile(remote);
+    return ItemRemote.getTile(remote);
   }
 }

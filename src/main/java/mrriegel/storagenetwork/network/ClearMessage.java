@@ -27,7 +27,7 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
       public void run() {
         Container c = ctx.getServerHandler().playerEntity.openContainer;
  
-        if (c instanceof ContainerRequest) {
+        if (c instanceof ContainerNetworkBase) {
           ContainerNetworkBase ctr = (ContainerNetworkBase) c;
           TileMaster m = ctr.getTileMaster();
           InventoryCrafting craftMatrix = ctr.getCraftMatrix();
