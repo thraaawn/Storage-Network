@@ -10,12 +10,12 @@ import net.minecraft.util.math.BlockPos;
 public class GuiRemote extends RigelNetworkGuiRequest {
   public GuiRemote(Container inventorySlotsIn) {
     super(inventorySlotsIn);
-    texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/remote.png");
+    texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
   }
 
   @Override
   public int getLines() {
-    return 8;
+    return 4;
   }
   @Override
   public int getColumns() {
@@ -48,14 +48,14 @@ public class GuiRemote extends RigelNetworkGuiRequest {
   }
   @Override
   protected boolean inField(int mouseX, int mouseY) {
-    return mouseX > (guiLeft + 7) && mouseX < (guiLeft + xSize - 7) && mouseY > (guiTop + 7) && mouseY < (guiTop + 90 + 64);
-  }
+    return mouseX > (guiLeft + 7) && mouseX < (guiLeft + xSize - 7) && mouseY > (guiTop + 7) && mouseY < (guiTop + 90);
+    }
   @Override
   protected boolean inSearchbar(int mouseX, int mouseY) {
-    return isPointInRegion(81, 96 + 64, 85, fontRendererObj.FONT_HEIGHT, mouseX, mouseY);
-  }
+
+    return isPointInRegion(81, 96, 85, fontRendererObj.FONT_HEIGHT, mouseX, mouseY); }
   @Override
   protected boolean inX(int mouseX, int mouseY) {
-    return false;
+    return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
   }
 }

@@ -23,8 +23,7 @@ public class GuiHandler implements IGuiHandler {
     if (ID == CABLE) { return new ContainerCable((AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z)), player.inventory); }
     if (ID == REQUEST) { return new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory); }
     if (ID == REMOTE) { return new ContainerRemote(player.inventory); }
-    //    if (ID == TEMPLATE) { return new ContainerTemplate(player.inventory); }
-    //    if (ID == CONTAINER) { return new ContainerContainer((TileContainer) world.getTileEntity(new BlockPos(x, y, z)), player.inventory); }
+
     return null;
   }
   @Override
@@ -35,8 +34,8 @@ public class GuiHandler implements IGuiHandler {
     }
     if (ID == REQUEST) { return new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory)); }
     if (ID == REMOTE) { return new GuiRemote(new ContainerRemote(player.inventory)); }
-    //    if (ID == TEMPLATE) { return new GuiTemplate(new ContainerTemplate(player.inventory)); }
-    //    if (ID == CONTAINER) { return new GuiContainer(new ContainerContainer((TileContainer) world.getTileEntity(new BlockPos(x, y, z)), player.inventory)); }
+
+
     return null;
   }
 }
