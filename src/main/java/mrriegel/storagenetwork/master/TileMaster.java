@@ -85,29 +85,29 @@ public class TileMaster extends TileEntity implements ITickable {
   }
   public List<StackWrapper> getCraftableStacks(List<StackWrapper> stacks) {
     List<StackWrapper> craftableStacks = Lists.newArrayList();
-//    List<AbstractTileContainer> invs = Lists.newArrayList();
-//    for (BlockPos p : connectables) {
-//      if (!(world.getTileEntity(p) instanceof AbstractTileContainer))
-//        continue;
-////      AbstractTileContainer tile = (AbstractTileContainer) world.getTileEntity(p);
-////      invs.add(tile);
-//    }
-//    for (AbstractTileContainer t : invs) {
-//      for (int i = 0; i < t.getSizeInventory(); i++) {
-//        if (t.getStackInSlot(i) != null && !t.getStackInSlot(i).isEmpty()) {
-//          NBTTagCompound res = (NBTTagCompound) t.getStackInSlot(i).getTagCompound().getTag("res");
-//          if (!Util.contains(stacks, new StackWrapper(new ItemStack(res), 0), new Comparator<StackWrapper>() {
-//            @Override
-//            public int compare(StackWrapper o1, StackWrapper o2) {
-//              if (ItemHandlerHelper.canItemStacksStack(o1.getStack(), o2.getStack())) { return 0; }
-//              return 1;
-//            }
-//          })) {
-//            addToList(craftableStacks, new ItemStack(res), 0);
-//          }
-//        }
-//      }
-//    }
+    //    List<AbstractTileContainer> invs = Lists.newArrayList();
+    //    for (BlockPos p : connectables) {
+    //      if (!(world.getTileEntity(p) instanceof AbstractTileContainer))
+    //        continue;
+    ////      AbstractTileContainer tile = (AbstractTileContainer) world.getTileEntity(p);
+    ////      invs.add(tile);
+    //    }
+    //    for (AbstractTileContainer t : invs) {
+    //      for (int i = 0; i < t.getSizeInventory(); i++) {
+    //        if (t.getStackInSlot(i) != null && !t.getStackInSlot(i).isEmpty()) {
+    //          NBTTagCompound res = (NBTTagCompound) t.getStackInSlot(i).getTagCompound().getTag("res");
+    //          if (!Util.contains(stacks, new StackWrapper(new ItemStack(res), 0), new Comparator<StackWrapper>() {
+    //            @Override
+    //            public int compare(StackWrapper o1, StackWrapper o2) {
+    //              if (ItemHandlerHelper.canItemStacksStack(o1.getStack(), o2.getStack())) { return 0; }
+    //              return 1;
+    //            }
+    //          })) {
+    //            addToList(craftableStacks, new ItemStack(res), 0);
+    //          }
+    //        }
+    //      }
+    //    }
     return craftableStacks;
   }
   private void addToList(List<StackWrapper> lis, ItemStack s, int num) {
@@ -133,16 +133,16 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return size;
   }
-//  public List<AbstractTileContainer> getContainers() {
-//    List<AbstractTileContainer> lis = Lists.newArrayList();
-//    for (BlockPos p : connectables) {
-//      if (!(world.getTileEntity(p) instanceof AbstractTileContainer)) {
-//        continue;
-//      }
-//      lis.add((AbstractTileContainer) world.getTileEntity(p));
-//    }
-//    return lis;
-//  }
+  //  public List<AbstractTileContainer> getContainers() {
+  //    List<AbstractTileContainer> lis = Lists.newArrayList();
+  //    for (BlockPos p : connectables) {
+  //      if (!(world.getTileEntity(p) instanceof AbstractTileContainer)) {
+  //        continue;
+  //      }
+  //      lis.add((AbstractTileContainer) world.getTileEntity(p));
+  //    }
+  //    return lis;
+  //  }
   public List<FilterItem> getIngredients(ItemStack template) {
     Map<Integer, ItemStack> stacks = Maps.<Integer, ItemStack> newHashMap();
     Map<Integer, Boolean> metas = Maps.<Integer, Boolean> newHashMap();
@@ -354,7 +354,13 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     });
     for (TileCable t : invs) {
+      if (t == null) {
+        continue;
+      }
       IItemHandler inv = t.getInventory();
+      if (inv == null) {
+        continue;
+      }
       if ((world.getTotalWorldTime() + 20) % (30 / (t.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
         continue;
       }
@@ -371,26 +377,25 @@ public class TileMaster extends TileEntity implements ITickable {
         if (storageInventorys.contains(t.getPos())) {
           continue;
         }
-        ItemStack g = request(new FilterItem(fil, meta, ore, false), 1, true);
-        if (g == null || g.isEmpty()) {
+        ItemStack stackCurrent = request(new FilterItem(fil, meta, ore, false), 1, true);
+        if (stackCurrent == null || stackCurrent.isEmpty()) {
           continue;
         }
-        int m = g.getMaxStackSize();
+        int maxStackSize = stackCurrent.getMaxStackSize();
         if ((t.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
-          
-          m = Math.min(m, t.getFilter().get(i).getSize() - InvHelper.getAmount(inv, new FilterItem(g, meta, ore, false)));
+          maxStackSize = Math.min(maxStackSize, t.getFilter().get(i).getSize() - InvHelper.getAmount(inv, new FilterItem(stackCurrent, meta, ore, false)));
         }
-        if (m <= 0) {
+        if (maxStackSize <= 0) {
           continue;
         }
-        ItemStack max = ItemHandlerHelper.copyStackWithSize(g, m);
+        ItemStack max = ItemHandlerHelper.copyStackWithSize(stackCurrent, maxStackSize);
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, max, true);
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
         insert = Math.min(insert, (int) Math.pow(2, t.getUpgradesOfType(ItemUpgrade.STACK) + 2));
         if (!t.status()) {
           continue;
         }
-        ItemStack rec = request(new FilterItem(g, meta, ore, false), insert, false);
+        ItemStack rec = request(new FilterItem(stackCurrent, meta, ore, false), insert, false);
         if (rec == null || rec.isEmpty()) {
           continue;
         }
@@ -447,12 +452,18 @@ public class TileMaster extends TileEntity implements ITickable {
   public void update() {
     if (world == null || world.isRemote) { return; }
     //refresh time in config, default 200 ticks
-    if (storageInventorys == null || connectables == null
-        || (world.getTotalWorldTime() % (ConfigHandler.refreshTicks) == 0)) {
-      refreshNetwork();
+    try {
+      if (storageInventorys == null || connectables == null
+          || (world.getTotalWorldTime() % (ConfigHandler.refreshTicks) == 0)) {
+        refreshNetwork();
+      }
+      updateImports();
+      updateExports();
     }
-    updateImports();
-    updateExports();
+    catch (Exception e) {
+      System.out.println("Simple Storage Network error: Maybe something was removed from the network during processing");
+      e.printStackTrace();
+    }
   }
   @Override
   public SPacketUpdateTileEntity getUpdatePacket() {
