@@ -5,6 +5,7 @@ import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.remote.ContainerRemote;
 import mrriegel.storagenetwork.request.ContainerRequest;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
@@ -34,10 +35,11 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
       public void run() {
         World w = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(message.dim);
         TileEntity t = null;
-        if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest)
-          t = w.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
+        Container c = ctx.getServerHandler().playerEntity.openContainer;
+        if ( c instanceof ContainerRequest)
+          t = w.getTileEntity(((ContainerRequest)  c).tile.getMaster());
         else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote)
-          t = ((ContainerRemote) ctx.getServerHandler().playerEntity.openContainer).tile;
+          t = ((ContainerRemote)  c).tile;
         if (t instanceof TileMaster) {
           TileMaster tile = (TileMaster) t;
           int rest;
@@ -59,7 +61,7 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
           PacketHandler.INSTANCE.sendTo(new StackMessage(send), ctx.getServerHandler().playerEntity);
           List<StackWrapper> list = tile.getStacks();
           PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
-          ctx.getServerHandler().playerEntity.openContainer.detectAndSendChanges();
+          c.detectAndSendChanges();
         }
       }
     });

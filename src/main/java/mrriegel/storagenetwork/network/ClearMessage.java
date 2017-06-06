@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.network;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.ContainerNetworkBase;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.remote.ContainerRemote;
@@ -24,41 +25,36 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        Container ctr = ctx.getServerHandler().playerEntity.openContainer;
-        World w = ctx.getServerHandler().playerEntity.world;
-        TileMaster m = null;
-        InventoryCrafting craftMatrix = null;
-        if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
-          ContainerRequest c = (ContainerRequest) ctr;
-          m = (TileMaster) w.getTileEntity(c.tile.getMaster());
-          craftMatrix = c.craftMatrix;
+        Container c = ctx.getServerHandler().playerEntity.openContainer;
+ 
+        if (c instanceof ContainerRequest) {
+          ContainerNetworkBase ctr = (ContainerNetworkBase) c;
+          TileMaster m = ctr.getTileMaster();
+          InventoryCrafting craftMatrix = ctr.getCraftMatrix();
+          for (int i = 0; i < 9; i++) {
+            if (m == null) {
+              break;
+            }
+            ItemStack s = craftMatrix.getStackInSlot(i);
+            if (s == null || s.isEmpty()) {
+              continue;
+            }
+            int num = s.getCount();
+            int rest = m.insertStack(s.copy(), null, false);
+            if (num == rest) {
+              continue;
+            }
+            if (rest == 0)
+              craftMatrix.setInventorySlotContents(i, ItemStack.EMPTY);
+            else
+              craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(s, rest));
+          }
+          //      ctr.slotChanged();
+          List<StackWrapper> list = m.getStacks();
+          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
+          ctr.detectAndSendChanges();
+          // }
         }
-        if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
-          ContainerRemote c = (ContainerRemote) ctr;
-          m = ItemRemote.getTile(c.remote);
-          craftMatrix = c.craftMatrix;
-        }
-        // if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
-        //          ContainerRequest c = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
-        for (int i = 0; i < 9; i++) {
-          if (m == null)
-            break;
-          ItemStack s = craftMatrix.getStackInSlot(i);
-          if (s == null || s.isEmpty())
-            continue;
-          int num = s.getCount();
-          int rest = m.insertStack(s.copy(), null, false);
-          if (num == rest)
-            continue;
-          if (rest == 0)
-            craftMatrix.setInventorySlotContents(i, ItemStack.EMPTY);
-          else
-            craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(s, rest));
-        }
-        List<StackWrapper> list = m.getStacks();
-        PacketHandler.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
-        ctr.detectAndSendChanges();
-        // }
       }
     });
     return null;

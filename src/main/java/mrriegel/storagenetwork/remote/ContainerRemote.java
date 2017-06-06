@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.remote;
 import java.util.List;
 import com.google.common.collect.Lists;
+import mrriegel.storagenetwork.ContainerNetworkBase;
 import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.NBTHelper;
@@ -22,15 +23,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class ContainerRemote extends Container {
+public class ContainerRemote extends ContainerNetworkBase {
   public InventoryPlayer playerInv;
   public TileMaster tile;
   public InventoryCraftResult result;
   public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
   public ItemStack remote;
-
-  //TODO: ClearMessage,REcipeMessage ETC are hardcoded for ContainerRequest, need base class and update
-  
+ 
   public ContainerRemote(final InventoryPlayer playerInv) {
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
@@ -43,7 +42,6 @@ public class ContainerRemote extends Container {
       craftMatrix.setInventorySlotContents(i,  NBTHelper.getItemStack(remote, "c"+i));
 
      
-  //    System.out.println("todo LOAD item eh "+i);
     }
     
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
@@ -140,7 +138,7 @@ public class ContainerRemote extends Container {
   public void slotChanged() {
     for (int i = 0; i < 9; i++) {
       NBTHelper.setItemStack(remote, "c"+i, craftMatrix.getStackInSlot(i));
-   //   System.out.println("todo save stack in item eh "+craftMatrix.getStackInSlot(i));
+ 
     }
   }
   @Override
@@ -152,5 +150,13 @@ public class ContainerRemote extends Container {
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     this.result.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(craftMatrix, this.playerInv.player.world));
+  }
+  @Override
+  public InventoryCrafting getCraftMatrix() {
+    return this.craftMatrix;
+  }
+  @Override
+  public TileMaster getTileMaster() {
+    return  ItemRemote.getTile(remote);
   }
 }

@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.ContainerNetworkBase;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
@@ -50,29 +51,19 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        Container ctr = ctx.getServerHandler().playerEntity.openContainer;
-        World w = ctx.getServerHandler().playerEntity.world;
-        TileMaster m = null;
-        InventoryCrafting craftMatrix = null;
-        if (ctr instanceof ContainerRequest) {
-          ContainerRequest c = (ContainerRequest) ctr;
-          m = (TileMaster) w.getTileEntity(c.tile.getMaster());
-          craftMatrix = c.craftMatrix;
-        }
-        if (ctr instanceof ContainerRemote) {
-          ContainerRemote c = (ContainerRemote) ctr;
-          m = ItemRemote.getTile(c.remote);
-          craftMatrix = c.craftMatrix;
-        }
-        
-        
-       // if (message.index == 0) {
-//          if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest))
-//            return;
-       //   ContainerRequest con = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
-        //  TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.world.getTileEntity(con.tile.getMaster());
-          if (m == null)
-            return;
+        Container c = ctx.getServerHandler().playerEntity.openContainer;
+        //        World w = ctx.getServerHandler().playerEntity.world;
+        if (c instanceof ContainerNetworkBase) {
+          ContainerNetworkBase ctr = (ContainerNetworkBase) c;
+          TileMaster m = ctr.getTileMaster();
+          InventoryCrafting craftMatrix = ctr.getCraftMatrix();
+          // if (message.index == 0) {
+          //          if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest))
+          //            return;
+          //   ContainerRequest con = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
+          //  TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.world.getTileEntity(con.tile.getMaster());
+          if (m == null){
+            return;}
           for (int j = 1; j < 10; j++) {
             Map<Integer, ItemStack> map = new HashMap<Integer, ItemStack>();
             if (message.nbt.hasKey("s" + j, Constants.NBT.TAG_STRING)) {
@@ -90,8 +81,9 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
             }
             for (int i = 0; i < map.size(); i++) {
               ItemStack s = map.get(i);
-              if (s == null || s.isEmpty())
+              if (s == null || s.isEmpty()) {
                 continue;
+              }
               ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, true);
               if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(j - 1).isEmpty()) {
                 craftMatrix.setInventorySlotContents(j - 1, InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, false));
@@ -104,11 +96,11 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
               }
             }
           }
-          //TODO: INTERACE OR BASE CLASS
           ctr.slotChanged();
           List<StackWrapper> list = m.getStacks();
           PacketHandler.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
         }
+      }
       //}
     });
     return null;

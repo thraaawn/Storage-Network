@@ -1,6 +1,7 @@
  package mrriegel.storagenetwork.request;
 import java.util.List;
 import com.google.common.collect.Lists;
+import mrriegel.storagenetwork.ContainerNetworkBase;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
@@ -21,7 +22,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
-public class ContainerRequest extends Container {
+public class ContainerRequest extends ContainerNetworkBase {
   public InventoryPlayer playerInv;
   public TileRequest tile;
   public InventoryCraftResult result;
@@ -181,5 +182,13 @@ public class ContainerRequest extends Container {
   @Override
   public boolean canMergeSlot(ItemStack stack, Slot slot) {
     return slot.inventory != this.result && super.canMergeSlot(stack, slot);
+  }
+  @Override
+  public InventoryCrafting getCraftMatrix() {
+    return this.craftMatrix;
+  }
+  @Override
+  public TileMaster getTileMaster() {
+    return  (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
   }
 }

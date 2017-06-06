@@ -56,7 +56,6 @@ public class GuiRemote extends RigelNetworkGuiRequest {
     return isPointInRegion(81, 96, 85, fontRendererObj.FONT_HEIGHT, mouseX, mouseY); }
   @Override
   protected boolean inX(int mouseX, int mouseY) {
-    return false;
-    //return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
+    return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
   }
 }
