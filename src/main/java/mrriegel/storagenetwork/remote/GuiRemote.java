@@ -12,7 +12,6 @@ public class GuiRemote extends RigelNetworkGuiRequest {
     super(inventorySlotsIn);
     texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
   }
-
   @Override
   public int getLines() {
     return 4;
@@ -41,7 +40,6 @@ public class GuiRemote extends RigelNetworkGuiRequest {
   public BlockPos getPos() {
     return BlockPos.ORIGIN;
   }
-
   @Override
   protected int getDim() {
     return NBTHelper.getInteger(mc.player.inventory.getCurrentItem(), "dim");
@@ -49,11 +47,11 @@ public class GuiRemote extends RigelNetworkGuiRequest {
   @Override
   protected boolean inField(int mouseX, int mouseY) {
     return mouseX > (guiLeft + 7) && mouseX < (guiLeft + xSize - 7) && mouseY > (guiTop + 7) && mouseY < (guiTop + 90);
-    }
+  }
   @Override
   protected boolean inSearchbar(int mouseX, int mouseY) {
-
-    return isPointInRegion(81, 96, 85, fontRendererObj.FONT_HEIGHT, mouseX, mouseY); }
+    return isPointInRegion(81, 96, 85, fontRendererObj.FONT_HEIGHT, mouseX, mouseY);
+  }
   @Override
   protected boolean inX(int mouseX, int mouseY) {
     return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);

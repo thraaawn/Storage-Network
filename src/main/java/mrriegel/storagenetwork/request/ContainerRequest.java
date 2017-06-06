@@ -1,4 +1,4 @@
- package mrriegel.storagenetwork.request;
+package mrriegel.storagenetwork.request;
 import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.ContainerNetworkBase;
@@ -11,7 +11,6 @@ import mrriegel.storagenetwork.network.StacksMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
@@ -20,14 +19,13 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 public class ContainerRequest extends ContainerNetworkBase {
-//  public InventoryPlayer playerInv;
+  //  public InventoryPlayer playerInv;
   public TileRequest tile;
-//  public InventoryCraftResult result;
-//  public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
-//  
+  //  public InventoryCraftResult result;
+  //  public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
+  //  
   public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
     craftMatrix = new InventoryCrafting(this, 3, 3);
     this.tile = tile;
@@ -40,7 +38,6 @@ public class ContainerRequest extends ContainerNetworkBase {
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
-
         if (playerIn.world.isRemote) { return stack; }
         List<ItemStack> lis = Lists.newArrayList();
         for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
@@ -48,14 +45,14 @@ public class ContainerRequest extends ContainerNetworkBase {
         super.onTake(playerIn, stack);
         TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
         detectAndSendChanges();
-        for (int i = 0; i < craftMatrix.getSizeInventory(); i++){
- 
+        for (int i = 0; i < craftMatrix.getSizeInventory(); i++) {
           if (craftMatrix.getStackInSlot(i) == null || craftMatrix.getStackInSlot(i).isEmpty()) {
             ItemStack req = t.request(
                 !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
             if (!req.isEmpty())
               craftMatrix.setInventorySlotContents(i, req);
-          }}
+          }
+        }
         List<StackWrapper> list = t.getStacks();
         PacketHandler.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
         detectAndSendChanges();
@@ -63,8 +60,6 @@ public class ContainerRequest extends ContainerNetworkBase {
       }
     };
     this.addSlotToContainer(slotCraftOutput);
-    
-    
     int index = 0;
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
@@ -98,7 +93,6 @@ public class ContainerRequest extends ContainerNetworkBase {
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
- 
     if (playerIn.world.isRemote) { return ItemStack.EMPTY; }
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
@@ -160,6 +154,6 @@ public class ContainerRequest extends ContainerNetworkBase {
   }
   @Override
   public TileMaster getTileMaster() {
-    return  (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
+    return (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
   }
 }

@@ -8,16 +8,12 @@ import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
-import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.remote.ItemRemote;
-import mrriegel.storagenetwork.request.ContainerRequest;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -62,8 +58,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
           //            return;
           //   ContainerRequest con = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
           //  TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.world.getTileEntity(con.tile.getMaster());
-          if (m == null){
-            return;}
+          if (m == null) { return; }
           for (int j = 1; j < 10; j++) {
             Map<Integer, ItemStack> map = new HashMap<Integer, ItemStack>();
             if (message.nbt.hasKey("s" + j, Constants.NBT.TAG_STRING)) {

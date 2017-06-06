@@ -36,10 +36,10 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
         World w = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(message.dim);
         TileEntity t = null;
         Container c = ctx.getServerHandler().playerEntity.openContainer;
-        if ( c instanceof ContainerRequest)
-          t = w.getTileEntity(((ContainerRequest)  c).tile.getMaster());
+        if (c instanceof ContainerRequest)
+          t = w.getTileEntity(((ContainerRequest) c).tile.getMaster());
         else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote)
-          t = ((ContainerRemote)  c).tile;
+          t = ((ContainerRemote) c).tile;
         if (t instanceof TileMaster) {
           TileMaster tile = (TileMaster) t;
           int rest;

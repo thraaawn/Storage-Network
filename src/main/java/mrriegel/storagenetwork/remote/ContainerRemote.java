@@ -6,14 +6,12 @@ import mrriegel.storagenetwork.ModItems;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
@@ -24,10 +22,10 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRemote extends ContainerNetworkBase {
-//  public InventoryPlayer playerInv;
+  //  public InventoryPlayer playerInv;
   public TileMaster tile;
-//  public InventoryCraftResult result;
-//  public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
+  //  public InventoryCraftResult result;
+  //  public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
   public ItemStack remote;
   public ContainerRemote(final InventoryPlayer playerInv) {
     craftMatrix = new InventoryCrafting(this, 3, 3);
@@ -96,16 +94,14 @@ public class ContainerRemote extends ContainerNetworkBase {
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-    if (playerIn.world.isRemote){
-      return ItemStack.EMPTY;}
+    if (playerIn.world.isRemote) { return ItemStack.EMPTY; }
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       itemstack = itemstack1.copy();
-
       if (slotIndex == 0) {
-        craftShift(playerIn,  this.getTileMaster()  );
+        craftShift(playerIn, this.getTileMaster());
         return ItemStack.EMPTY;
       }
       else if (tile != null) {

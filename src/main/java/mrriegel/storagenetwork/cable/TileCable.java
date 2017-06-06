@@ -28,11 +28,9 @@ public class TileCable extends AbstractFilterTile {
   private boolean mode = true;
   private int limit = 0;
   public EnumConnectType north, south, east, west, up, down;
- 
   ItemStack stack = null;
   public enum Kind {
     kabel, exKabel, imKabel, storageKabel;
- 
   }
   public int getUpgradesOfType(int num) {
     int res = 0;
@@ -94,7 +92,6 @@ public class TileCable extends AbstractFilterTile {
     super.readFromNBT(compound);
     connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {}.getType());
     inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
-   
     mode = compound.getBoolean("mode");
     limit = compound.getInteger("limit");
     if (compound.hasKey("stack", 10))
@@ -113,7 +110,6 @@ public class TileCable extends AbstractFilterTile {
       up = EnumConnectType.valueOf(compound.getString("up"));
     if (compound.hasKey("down"))
       down = EnumConnectType.valueOf(compound.getString("down"));
-   
     NBTTagList nbttaglist = compound.getTagList("Items", 10);
     upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
     for (int i = 0; i < nbttaglist.tagCount(); ++i) {
@@ -130,7 +126,6 @@ public class TileCable extends AbstractFilterTile {
     compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
     if (inventoryFace != null)
       compound.setString("inventoryFace", inventoryFace.toString());
- 
     compound.setBoolean("mode", mode);
     compound.setInteger("limit", limit);
     if (stack != null)
@@ -147,7 +142,6 @@ public class TileCable extends AbstractFilterTile {
       compound.setString("up", up.toString());
     if (down != null)
       compound.setString("down", down.toString());
-  
     NBTTagList nbttaglist = new NBTTagList();
     for (int i = 0; i < upgrades.size(); ++i) {
       if (upgrades.get(i) != null) {
@@ -214,7 +208,6 @@ public class TileCable extends AbstractFilterTile {
   public void setStack(ItemStack stack) {
     this.stack = stack;
   }
- 
   @Override
   public IItemHandler getInventory() {
     if (getConnectedInventory() != null)

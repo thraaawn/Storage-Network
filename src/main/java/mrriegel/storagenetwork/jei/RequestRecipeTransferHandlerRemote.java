@@ -12,7 +12,6 @@ import mrriegel.storagenetwork.network.ClearMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RecipeMessage;
 import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.request.ContainerRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;

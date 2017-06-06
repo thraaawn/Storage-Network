@@ -41,7 +41,6 @@ public class ClientProxy extends CommonProxy {
     for (int i = 0; i < 2; i++) {
       ModelLoader.setCustomModelResourceLocation(ModItems.remote, i, new ModelResourceLocation(StorageNetwork.MODID + ":remote_" + i, "inventory"));
     }
- 
   }
   public void registerRenderers() {
     ClientRegistry.bindTileEntitySpecialRenderer(TileCable.class, new CableRenderer());

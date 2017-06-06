@@ -4,14 +4,10 @@ import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.ContainerNetworkBase;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
-import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.remote.ItemRemote;
-import mrriegel.storagenetwork.request.ContainerRequest;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -26,7 +22,6 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
       @Override
       public void run() {
         Container c = ctx.getServerHandler().playerEntity.openContainer;
- 
         if (c instanceof ContainerNetworkBase) {
           ContainerNetworkBase ctr = (ContainerNetworkBase) c;
           TileMaster m = ctr.getTileMaster();

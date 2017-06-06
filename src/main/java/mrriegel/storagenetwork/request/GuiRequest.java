@@ -41,7 +41,6 @@ public class GuiRequest extends RigelNetworkGuiRequest {
   public BlockPos getPos() {
     return tile.getPos();
   }
- 
   @Override
   protected int getDim() {
     return tile.getWorld().provider.getDimension();
