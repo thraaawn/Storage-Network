@@ -30,11 +30,11 @@ public class ItemRemote extends Item {
     super();
     this.setCreativeTab(CreativeTab.tab);
     this.setHasSubtypes(true);
+    this.setMaxStackSize(1);
   }
   @Override
   @SideOnly(Side.CLIENT)
   public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
-    //	   super.getSubItems(itemIn, tab, subItems);
     for (int i = 0; i < 2; i++) {
       list.add(new ItemStack(item, 1, i));
     }

@@ -52,7 +52,6 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
                 new FilterItem(message.stack, true, false, true),
                 ss, false);
           }
-          //    System.out.println("!RequestMessage request"+stack);
           if (!stack.isEmpty()) {
             if (message.shift) {
               ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().playerEntity, stack);

@@ -87,7 +87,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
         ItemStack s = wrap == null ? null : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
         boolean numShow = tile instanceof TileCable ? ((TileCable) tile).getUpgradesOfType(ItemUpgrade.STOCK) > 0 : false;
-     //   System.out.println("FILTER EH "+s);
+        //   System.out.println("FILTER EH "+s);
         list.add(new ItemSlot(s, guiLeft + 8 + ii * 18, guiTop + 26 + jj * 18, num, guiLeft, guiTop, numShow, true, false, true));
       }
     }
@@ -143,7 +143,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
       way = new Button(6, guiLeft + 115, guiTop + 5, "");
       buttonList.add(way);
     }
-    if (kind == Kind.imKabel || kind == Kind.storageKabel) {//tile instanceof TileItemBox ||
+    if (kind == Kind.imKabel || kind == Kind.exKabel) {//tile instanceof TileItemBox ||
       btnWhite = new Button(3, guiLeft + 70, guiTop + 5, "");
       buttonList.add(btnWhite);
     }

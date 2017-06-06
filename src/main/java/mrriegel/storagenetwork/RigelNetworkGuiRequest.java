@@ -217,10 +217,10 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX - guiLeft, mouseY - guiTop);
     if (sort.isMouseOver())
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX - guiLeft, mouseY - guiTop);
-    if (jei != null && jei.isMouseOver())
-    {
+    if (jei != null && jei.isMouseOver()) {
       String s = I18n.format(Settings.jeiSearch ? "gui.storagenetwork.fil.tooltip_jei_on" : "gui.storagenetwork.fil.tooltip_jei_off");
-      drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop);}
+      drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop);
+    }
     if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
       JeiHooks.setFilterText(searchBar.getText());
     }

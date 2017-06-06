@@ -46,8 +46,7 @@ public class InvHelper {
     return false;
   }
   public static int getAmount(IItemHandler inv, FilterItem fil) {
-    if (inv == null || fil == null){
-      return 0;}
+    if (inv == null || fil == null) { return 0; }
     int amount = 0;
     for (int i = 0; i < inv.getSlots(); i++) {
       ItemStack slot = inv.getStackInSlot(i);
@@ -57,8 +56,7 @@ public class InvHelper {
     return amount;
   }
   public static ItemStack extractItem(IItemHandler inv, FilterItem fil, int num, boolean simulate) {
-    if (inv == null || fil == null){
-      return null;}
+    if (inv == null || fil == null) { return null; }
     int extracted = 0;
     for (int i = 0; i < inv.getSlots(); i++) {
       ItemStack slot = inv.getStackInSlot(i);
@@ -75,5 +73,4 @@ public class InvHelper {
     }
     return null;
   }
- 
 }

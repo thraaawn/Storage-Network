@@ -135,7 +135,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
         if (getFilter().get(i) == null)
           continue;
         ItemStack s = getFilter().get(i).getStack();
-        if (s == null||s.isEmpty())
+        if (s == null || s.isEmpty())
           continue;
         boolean ore = getOre(i);
         boolean meta = getMeta(i);
@@ -147,7 +147,6 @@ public abstract class AbstractFilterTile extends TileConnectable {
       return tmp;
     }
   }
-
   public abstract IItemHandler getInventory();
   public abstract BlockPos getSource();
   //	public abstract boolean isFluid();
@@ -160,6 +159,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
   }
   /**
    * the whitelist / blacklist (ghost stacks in gui)
+   * 
    * @return
    */
   public Map<Integer, StackWrapper> getFilter() {

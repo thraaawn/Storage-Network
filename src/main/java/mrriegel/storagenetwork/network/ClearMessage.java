@@ -1,12 +1,13 @@
 package mrriegel.storagenetwork.network;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.ContainerNetworkBase;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
-import mrriegel.storagenetwork.request.ContainerRequest;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -20,28 +21,34 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
-          ContainerRequest c = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
-          World w = ctx.getServerHandler().playerEntity.world;
+        Container c = ctx.getServerHandler().playerEntity.openContainer;
+        if (c instanceof ContainerNetworkBase) {
+          ContainerNetworkBase ctr = (ContainerNetworkBase) c;
+          TileMaster m = ctr.getTileMaster();
+          InventoryCrafting craftMatrix = ctr.getCraftMatrix();
           for (int i = 0; i < 9; i++) {
-            if (w.getTileEntity(c.tile.getMaster()) == null)
+            if (m == null) {
               break;
-            ItemStack s = c.craftMatrix.getStackInSlot(i);
-            if (s == null||s.isEmpty())
+            }
+            ItemStack s = craftMatrix.getStackInSlot(i);
+            if (s == null || s.isEmpty()) {
               continue;
+            }
             int num = s.getCount();
-            int rest = ((TileMaster) w.getTileEntity(c.tile.getMaster())).insertStack(s.copy(), null, false);
-            if (num == rest)
+            int rest = m.insertStack(s.copy(), null, false);
+            if (num == rest) {
               continue;
+            }
             if (rest == 0)
-              c.craftMatrix.setInventorySlotContents(i, ItemStack.EMPTY);
+              craftMatrix.setInventorySlotContents(i, ItemStack.EMPTY);
             else
-              c.craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(s, rest));
+              craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(s, rest));
           }
-          TileMaster tile = (TileMaster) w.getTileEntity(c.tile.getMaster());
-          List<StackWrapper> list = tile.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
-          c.detectAndSendChanges();
+          //      ctr.slotChanged();
+          List<StackWrapper> list = m.getStacks();
+          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
+          ctr.detectAndSendChanges();
+          // }
         }
       }
     });

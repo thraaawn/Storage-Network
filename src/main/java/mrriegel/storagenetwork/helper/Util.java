@@ -54,7 +54,6 @@ public class Util {
     // return m.getName();
     return modName;
   }
- 
   public static boolean equalOreDict(ItemStack a, ItemStack b) {
     int[] ar = OreDictionary.getOreIDs(a);
     int[] br = OreDictionary.getOreIDs(b);
@@ -70,7 +69,6 @@ public class Util {
         return true;
     return false;
   }
- 
   public static void spawnItemStack(World worldIn, double x, double y, double z, ItemStack stack) {
     if (stack == null || worldIn.isRemote)
       return;

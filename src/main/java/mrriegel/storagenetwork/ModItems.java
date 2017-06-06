@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork; 
+package mrriegel.storagenetwork;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.remote.ItemRemote;
 import net.minecraft.item.Item;
