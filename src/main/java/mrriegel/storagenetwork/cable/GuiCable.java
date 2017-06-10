@@ -34,7 +34,7 @@ import net.minecraftforge.oredict.OreDictionary;
 public class GuiCable extends RigelNetworkGuiContainer {
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
   Kind kind;
-  Button btnPlus, btnMinus, btnWhite, acti, impor, way;
+  Button btnPlus, btnMinus, btnWhite, btnActi, btnImport, btnWay;
   AbstractFilterTile tile;
   private GuiTextField searchBar;
   List<ItemSlot> list;
@@ -67,16 +67,16 @@ public class GuiCable extends RigelNetworkGuiContainer {
         }
       }
       if (((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1) {
-        acti.enabled = true;
-        acti.visible = true;
+        btnActi.enabled = true;
+        btnActi.visible = true;
         this.mc.getTextureManager().bindTexture(texture);
         this.drawTexturedModalRect(i + 7, j + 65, 176, 34, 18, 18);
         this.drawTexturedModalRect(i + 30, j + 67, 0, 171, 90, 12);
         searchBar.drawTextBox();
       }
       else {
-        acti.enabled = false;
-        acti.visible = false;
+        btnActi.enabled = false;
+        btnActi.visible = false;
       }
     }
     list = Lists.newArrayList();
@@ -121,9 +121,9 @@ public class GuiCable extends RigelNetworkGuiContainer {
       s.drawTooltip(mouseX, mouseY);
     if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1)
       operation.drawTooltip(mouseX, mouseY);
-    if (impor != null && impor.isMouseOver())
+    if (btnImport != null && btnImport.isMouseOver())
       drawHoveringText(Lists.newArrayList("Import Filter"), mouseX - guiLeft, mouseY - guiTop);
-    if (way != null && way.isMouseOver())
+    if (btnWay != null && btnWay.isMouseOver())
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX - guiLeft, mouseY - guiTop);
     if (mouseX > guiLeft + 29 && mouseX < guiLeft + 37 && mouseY > guiTop + 10 && mouseY < guiTop + 20)
       this.drawHoveringText(Lists.newArrayList("Priority"), mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
@@ -138,15 +138,13 @@ public class GuiCable extends RigelNetworkGuiContainer {
     btnPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
     buttonList.add(btnPlus);
     if (tile.isStorage()) {
-      impor = new Button(5, guiLeft + 95, guiTop + 5, "I");
-      buttonList.add(impor);
-      way = new Button(6, guiLeft + 115, guiTop + 5, "");
-      buttonList.add(way);
+      btnImport = new Button(5, guiLeft + 95, guiTop + 5, "I");
+      buttonList.add(btnImport);
+      btnWay = new Button(6, guiLeft + 115, guiTop + 5, "");
+      buttonList.add(btnWay);
     }
-    if (kind == Kind.imKabel || kind == Kind.exKabel) {//tile instanceof TileItemBox ||
-      btnWhite = new Button(3, guiLeft + 70, guiTop + 5, "");
-      buttonList.add(btnWhite);
-    }
+    btnWhite = new Button(3, guiLeft + 70, guiTop + 5, "");
+    buttonList.add(btnWhite);
     if (tile instanceof TileCable) {
       Keyboard.enableRepeatEvents(true);
       searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 34, guiTop + 69, 85, fontRendererObj.FONT_HEIGHT);
@@ -157,8 +155,8 @@ public class GuiCable extends RigelNetworkGuiContainer {
       searchBar.setCanLoseFocus(false);
       searchBar.setFocused(true);
       searchBar.setText(((TileCable) tile).getLimit() + "");
-      acti = new Button(4, guiLeft + 127, guiTop + 65, "");
-      buttonList.add(acti);
+      btnActi = new Button(4, guiLeft + 127, guiTop + 65, "");
+      buttonList.add(btnActi);
       operation = new ItemSlot(((TileCable) tile).getStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
     }
   }
