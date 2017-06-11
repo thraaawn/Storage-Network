@@ -19,8 +19,8 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileCable> {
   }
   //renderTileEntityAt
   @Override
-  public void renderTileEntityFast(TileCable te, double x, double y, double z, float partialTicks, int destroyStage
-      , float partial, net.minecraft.client.renderer.BufferBuilder buffer) {
+  public void func_192841_a(TileCable te, double x, double y, double z, float partialTicks, int destroyStage
+      , float partial) {
     // if(true)return;
     // boolean show = Minecraft.getMinecraft().player.inventory.getCurrentItem() != null && Block.getBlockFromItem(Minecraft.getMinecraft().player.inventory.getCurrentItem().getItem()) instanceof BlockKabel;
     if (te == null || te.getKind() == null || !(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockCable)) { return; }
