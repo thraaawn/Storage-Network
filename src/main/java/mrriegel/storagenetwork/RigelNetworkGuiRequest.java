@@ -25,6 +25,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -110,7 +111,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
         }
         else if (search.startsWith("#")) {
           String tooltipString;
-          List<String> tooltip = s.getStack().getTooltip(mc.player, false);
+          List<String> tooltip = s.getStack().getTooltip(mc.player, TooltipFlags.NORMAL);
           tooltipString = Joiner.on(' ').join(tooltip).toLowerCase();
           tooltipString = ChatFormatting.stripFormatting(tooltipString);
           if (tooltipString.toLowerCase().contains(search.toLowerCase().substring(1)))
@@ -333,7 +334,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
       super(id, x, y, width, 14, str);
     }
     @Override
-    public void drawButton(Minecraft mc, int x, int y) {
+    public void func_191745_a(Minecraft mc, int x, int y,float pticks) {// drawButton
       if (this.visible) {
         FontRenderer fontrenderer = mc.fontRendererObj;
         mc.getTextureManager().bindTexture(texture);

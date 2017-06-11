@@ -283,7 +283,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
       super(p_i1021_1_, p_i1021_2_, p_i1021_3_, 16, 16, p_i1021_6_);
     }
     @Override
-    public void drawButton(Minecraft p_146112_1_, int p_146112_2_, int p_146112_3_) {
+    public void func_191745_a(Minecraft p_146112_1_, int p_146112_2_, int p_146112_3_, float p_191745_4_) {//drawButon
       if (this.visible) {
         FontRenderer fontrenderer = p_146112_1_.fontRendererObj;
         p_146112_1_.getTextureManager().bindTexture(texture);

@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.remote;
 import java.util.List;
+import javax.annotation.Nullable;
 import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.GuiHandler;
@@ -8,6 +9,7 @@ import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -34,9 +36,9 @@ public class ItemRemote extends Item {
   }
   @Override
   @SideOnly(Side.CLIENT)
-  public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
+  public void getSubItems( CreativeTabs tab, NonNullList<ItemStack> list) {
     for (int i = 0; i < 2; i++) {
-      list.add(new ItemStack(item, 1, i));
+      list.add(new ItemStack(this, 1, i));
     }
   }
   @Override
@@ -44,7 +46,7 @@ public class ItemRemote extends Item {
     return this.getUnlocalizedName() + "_" + stack.getItemDamage();
   }
   @Override
-  public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+  public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
     tooltip.add(I18n.format("tooltip.storagenetwork.remote_" + stack.getItemDamage()));
     if (stack.hasTagCompound() && NBTHelper.getBoolean(stack, "bound")) {
       tooltip.add("Dimension: " + NBTHelper.getInteger(stack, "dim") + ", x: " + NBTHelper.getInteger(stack, "x") + ", y: " + NBTHelper.getInteger(stack, "y") + ", z: " + NBTHelper.getInteger(stack, "z"));

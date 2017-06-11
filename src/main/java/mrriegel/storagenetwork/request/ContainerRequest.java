@@ -78,7 +78,8 @@ public class ContainerRequest extends ContainerNetworkBase {
   }
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
-    this.result.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(craftMatrix, tile.getWorld()));
+    //.getInstance()
+    this.result.setInventorySlotContents(0, CraftingManager.findMatchingRecipe(craftMatrix, tile.getWorld()));
   }
   @Override
   public void onContainerClosed(EntityPlayer playerIn) {

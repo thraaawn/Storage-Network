@@ -7,7 +7,7 @@ import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.gui.ingredients.GuiIngredient;
+//import mezz.jei.gui.ingredients.GuiIngredient;
 import mrriegel.storagenetwork.network.ClearMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RecipeMessage;
@@ -42,7 +42,7 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
         Slot slot = container.inventorySlots.get(j);
         if ((slot.inventory instanceof InventoryCrafting)) {
           try {
-            GuiIngredient ingredient = (GuiIngredient) inputs.get(slot.getSlotIndex() + 1);
+            IGuiIngredient ingredient =   inputs.get(slot.getSlotIndex() + 1);
             if (ingredient != null) {
               map.put(j, ingredient.getAllIngredients());
             }
