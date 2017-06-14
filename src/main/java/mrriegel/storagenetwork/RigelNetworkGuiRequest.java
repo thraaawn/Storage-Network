@@ -41,7 +41,8 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   protected Button direction, sort, /* left, right, */jei;
   protected List<ItemSlot> slots;
   protected long lastClick;
-  private Button clear;
+  private Button clearTextBtn;
+  private boolean forceFocus;
   public RigelNetworkGuiRequest(Container inventorySlotsIn) {
     super(inventorySlotsIn);
     this.xSize = 176;
@@ -63,6 +64,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     searchBar.setEnableBackgroundDrawing(false);
     searchBar.setVisible(true);
     searchBar.setTextColor(16777215);
+    searchBar.setFocused(true);
     direction = new Button(0, guiLeft + 7, guiTop + 93, "");
     buttonList.add(direction);
     sort = new Button(1, guiLeft + 21, guiTop + 93, "");
@@ -75,8 +77,8 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     if (ConfigHandler.jeiLoaded) {
       buttonList.add(jei);
     }
-    clear = new Button(5, guiLeft + 64, guiTop + 93, "X");
-    buttonList.add(clear);
+    clearTextBtn = new Button(5, guiLeft + 64, guiTop + 93, "X");
+    buttonList.add(clearTextBtn);
   }
   public abstract int getLines();
   public abstract int getColumns();
@@ -203,8 +205,9 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     // mouseX - guiLeft, mouseY - guiTop);
     if (inSearchbar(mouseX, mouseY)) {
       List<String> lis = Lists.newArrayList();
-      if (!isShiftKeyDown())
+      if (!isShiftKeyDown()) {
         lis.add(I18n.format("gui.storagenetwork.shift"));
+      }
       else {
         lis.add(I18n.format("gui.storagenetwork.fil.tooltip_0"));
         lis.add(I18n.format("gui.storagenetwork.fil.tooltip_1"));
@@ -213,16 +216,24 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
       }
       drawHoveringText(lis, mouseX - guiLeft, mouseY - guiTop);
     }
-    if (clear.isMouseOver())
+    if (clearTextBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX - guiLeft, mouseY - guiTop);
-    if (sort.isMouseOver())
+    }
+    if (sort.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX - guiLeft, mouseY - guiTop);
+    }
     if (jei != null && jei.isMouseOver()) {
       String s = I18n.format(Settings.jeiSearch ? "gui.storagenetwork.fil.tooltip_jei_on" : "gui.storagenetwork.fil.tooltip_jei_off");
       drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop);
     }
     if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
       JeiHooks.setFilterText(searchBar.getText());
+    }
+    if (forceFocus) {
+      this.searchBar.setFocused(true);
+      if (this.searchBar.isFocused()) {
+        this.forceFocus = false;
+      }
     }
   }
   @Override
@@ -233,27 +244,38 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   @Override
   public void actionPerformed(GuiButton button) throws IOException {
     super.actionPerformed(button);
-    if (button.id == 2 && page > 1)
+    boolean doSort = true;
+    if (button.id == 2 && page > 1) {
       page--;
-    else if (button.id == 3 && page < maxPage)
+    }
+    else if (button.id == 3 && page < maxPage) {
       page++;
-    else if (button.id == 0)
+    }
+    else if (button.id == 0) {
       setDownwards(!getDownwards());
-    else if (button.id == 1)
+    }
+    else if (button.id == 1) {
       setSort(getSort().next());
-    else if (button.id == 4)
+    }
+    else if (button.id == 4) {
+      doSort = false;
       Settings.jeiSearch = !Settings.jeiSearch;
-    else if (button.id == 5)
+    }
+    else if (button.id == this.clearTextBtn.id) {
+      doSort = false;
       this.searchBar.setText("");
-    PacketHandler.INSTANCE.sendToServer(new SortMessage(getPos(), getDownwards(), getSort()));
+//      this.searchBar.setFocused(true);//doesnt work..somethings overriding it?
+      this.forceFocus = true;//we have to force it to go next-tick
+    }
+    if (doSort) {
+      PacketHandler.INSTANCE.sendToServer(new SortMessage(getPos(), getDownwards(), getSort()));
+    }
   }
   @Override
   public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
     searchBar.setFocused(false);
     if (inSearchbar(mouseX, mouseY)) {
-      //      if (mouseButton == 1)
-      //       searchBar.setText("");
       searchBar.setFocused(true);
     }
     else if (inX(mouseX, mouseY)) {
