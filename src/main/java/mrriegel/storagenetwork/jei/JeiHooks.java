@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.jei;
+import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraftforge.fml.common.Optional;
  
 public class JeiHooks {
@@ -13,10 +14,10 @@ public class JeiHooks {
   @Optional.Method(modid = "jei")
   private static void _setFilterText(String s) {
     try {
-       System.out.println("mezz.jei.Internal not found");
-   //  mezz.jei.Internal.getRuntime().getItemListOverlay().setFilterText(s);
+        mezz.jei.Internal.getRuntime().getItemListOverlay().setFilterText(s);
     }
     catch (Exception e) {
+      System.out.println(StorageNetwork.MODID +" : mezz.jei.Internal not found");
       e.printStackTrace();
     }
   }

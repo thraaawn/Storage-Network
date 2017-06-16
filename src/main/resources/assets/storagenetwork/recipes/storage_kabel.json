@@ -8,21 +8,20 @@
   "type": "minecraft:crafting_shaped",
   "group": "random_things",
   "pattern": [
-    "sss",
-    "i i",
-	"sss"
+    " k ",
+    "kpk",
+	" k "
   ],
   "key": {
-    "s": {
-      "item": "minecraft:stone_slab",
-        "data" : 0
+    "k": {
+      "item": "storagenetwork:kabel"
     },
-    "i":  {
-	  "item": "minecraft:iron_ingot"
+    "p":  {
+	  "item": "minecraft:chest"
 	}
   },
   "result": {
-    "item": "storagenetwork:kabel",
-	 "count": 8
+    "item": "storagenetwork:storage_kabel",
+	 "count": 4
   }
 }
