@@ -7,8 +7,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class CraftingRecipes {
   public static void init() {
     
-    System.out.println("TODO: RECIPES");
-  
+  /*
     GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.kabel, 8), "sss", "i i", "sss", 's', new ItemStack(Blocks.STONE_SLAB), 'i', Items.IRON_INGOT);
     GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.exKabel, 4), " k ", "kpk", " k ", 'k', new ItemStack(ModBlocks.kabel), 'p', new ItemStack(Blocks.PISTON));
     GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.imKabel, 4), " k ", "kpk", " k ", 'k', new ItemStack(ModBlocks.kabel), 'p', new ItemStack(Blocks.HOPPER));
@@ -22,7 +21,7 @@ public class CraftingRecipes {
     GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 3), "c", "i", "c", 'c', Items.COMPARATOR, 'i', ModBlocks.kabel);
     GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 0), " c ", "eie", " c ", 'c', Items.GOLD_INGOT, 'i', ModBlocks.kabel, 'e', Items.ENDER_PEARL);
     GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 1), "pcp", "mim", "pdp", 'c', Blocks.EMERALD_ORE, 'i', ModItems.remote, 'd', Blocks.DIAMOND_ORE, 'm', ModBlocks.master, 'p', Items.ENDER_PEARL);
- 
+ */
  
     
     
