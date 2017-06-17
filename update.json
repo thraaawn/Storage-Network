@@ -10,6 +10,6 @@
 	,"1.0.2":"Fix some keys that are bound to JEI keys not getting passed through to search bar (R/U).  Added new button to clear search bar, mouse click no longer auto clicks search bar.   Several magic strings embedded in code are now in the .lang file for future translators.  "
 	,"1.0.3":"Remove some console spam debug messages.  Both remotes now have a 3x3 crafting grid built in.  Remotes now correctly have max stack size one.  Fixed a server crash when something is removed from the network while an import or export node is acting on it.  Fix Export cable no showing its whitelist/blacklist toggle button. "
   	,"1.0.4":"Search bar will now auto focus as soon as the GUI is opened.  Search bar re-focuses when you press the Clear Search (X) button.  Fixed the Import Filter button ignoring the second row of slots.  Add Whitelist/blacklist toggle button to the purple storage link cable.  "
-  	,"1.0.5":"Fix compatibility with new JEI versions"
+  	,"1.0.5":"Fix compatibility with new JEI versions.  Fix crash with Collossal Chests.  Fix a crash when clicking empty slots in the Export Cable GUI.  Added the Import Filter buttons to the import and export cable GUIs.  "
   } 
 }

@@ -96,7 +96,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
     if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1) {
       operation.drawSlot(mouseX, mouseY);
     }
-    fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
+    fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
   }
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
@@ -104,7 +104,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
     for (int i = 0; i < list.size(); i++) {
       ItemSlot e = list.get(i);
       ContainerCable con = (ContainerCable) inventorySlots;
-      if (e.stack != null) {
+      if (e.stack != null && !e.stack.isEmpty()) {
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
@@ -133,18 +133,19 @@ public class GuiCable extends RigelNetworkGuiContainer {
   @Override
   public void initGui() {
     super.initGui();
-    btnMinus = new Button(0, guiLeft + 7, guiTop + 5, "-");
+    btnMinus = new Button(0, guiLeft + 6, guiTop + 5, "-");
     buttonList.add(btnMinus);
-    btnPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
+    btnPlus = new Button(1, guiLeft + 37, guiTop + 5, "+");
     buttonList.add(btnPlus);
-    if (tile.isStorage()) {
-      btnImport = new Button(5, guiLeft + 95, guiTop + 5, "I");
+    btnWhite = new Button(3, guiLeft + 58, guiTop + 5, "");
+    buttonList.add(btnWhite);
+    //if (tile.isStorage()) {
+      btnImport = new Button(5, guiLeft + 78, guiTop + 5, "I");
       buttonList.add(btnImport);
+    if (tile.isStorage()) {
       btnWay = new Button(6, guiLeft + 115, guiTop + 5, "");
       buttonList.add(btnWay);
     }
-    btnWhite = new Button(3, guiLeft + 70, guiTop + 5, "");
-    buttonList.add(btnWhite);
     if (tile instanceof TileCable) {
       Keyboard.enableRepeatEvents(true);
       searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 34, guiTop + 69, 85, fontRendererObj.FONT_HEIGHT);
@@ -283,12 +284,12 @@ public class GuiCable extends RigelNetworkGuiContainer {
       super(p_i1021_1_, p_i1021_2_, p_i1021_3_, 16, 16, p_i1021_6_);
     }
     @Override
-    public void drawButton(Minecraft p_146112_1_, int p_146112_2_, int p_146112_3_) {
+    public void drawButton(Minecraft mcc, int x, int y) {
       if (this.visible) {
-        FontRenderer fontrenderer = p_146112_1_.fontRendererObj;
-        p_146112_1_.getTextureManager().bindTexture(texture);
+        FontRenderer fontrenderer = mcc.fontRendererObj;
+        mcc.getTextureManager().bindTexture(texture);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.hovered = p_146112_2_ >= this.xPosition && p_146112_3_ >= this.yPosition && p_146112_2_ < this.xPosition + this.width && p_146112_3_ < this.yPosition + this.height;
+        this.hovered = x >= this.xPosition && y >= this.yPosition && x < this.xPosition + this.width && y < this.yPosition + this.height;
         int k = this.getHoverState(this.hovered);
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -309,7 +310,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
         if (id == 6) {
           this.drawTexturedModalRect(this.xPosition + 2, this.yPosition + 2, 176 + tile.getWay().ordinal() * 12, 114, 12, 12);
         }
-        this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);
+        this.mouseDragged(mcc, x, y);
         int l = 14737632;
         if (packedFGColour != 0) {
           l = packedFGColour;
@@ -333,7 +334,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
           if (this.hovered && id == 4 && ((TileCable) tile).getStack() != null) {
             GlStateManager.pushMatrix();
             GlStateManager.disableLighting();
-            drawHoveringText(lis, p_146112_2_, p_146112_3_, fontRendererObj);
+            drawHoveringText(lis, x, y, fontRendererObj);
             GlStateManager.enableLighting();
             GlStateManager.popMatrix();
           }
