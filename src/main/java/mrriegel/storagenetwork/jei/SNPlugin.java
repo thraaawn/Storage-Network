@@ -5,6 +5,7 @@ import mezz.jei.api.IModRegistry;
 import mezz.jei.api.ISubtypeRegistry;
 import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.ingredients.IModIngredientRegistration;
+import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mrriegel.storagenetwork.ModBlocks;
 import net.minecraft.item.ItemStack;
@@ -26,5 +27,10 @@ public class SNPlugin implements IModPlugin {
   @Override
   public void registerIngredients(IModIngredientRegistration registry) {
     // TODO Auto-generated method stub
+  }
+  @Override
+  public void registerCategories(IRecipeCategoryRegistration registry) {
+    // TODO Auto-generated method stub
+    
   }
 }
