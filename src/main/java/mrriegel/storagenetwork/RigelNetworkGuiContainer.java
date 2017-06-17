@@ -49,7 +49,7 @@ public abstract class RigelNetworkGuiContainer extends GuiContainer {
     @Override
     public void drawSlot(int mx, int my) {
       GlStateManager.pushMatrix();
-      if (stack != null) {
+      if (stack != null && !stack.isEmpty()) {
         RenderHelper.enableGUIStandardItemLighting();
         mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
         String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
@@ -78,81 +78,20 @@ public abstract class RigelNetworkGuiContainer extends GuiContainer {
     }
     @Override
     public void drawTooltip(int mx, int my) {
-      if (toolTip && this.isMouseOverSlot(mx, my) && stack != null) {
-        GlStateManager.pushMatrix();
-        GlStateManager.disableLighting();
-        if (!isShiftKeyDown())
-          renderToolTip(stack, mx - this.guiLeft, my - this.guiTop);
-        else
-          drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) }), mx - this.guiLeft, my - this.guiTop);
-        GlStateManager.popMatrix();
-        GlStateManager.enableLighting();
-      }
-    }
-  }
-  public class FluidSlot extends AbstractSlot {
-    public Fluid fluid;
-    public FluidSlot(Fluid fluid, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
-      super(x, y, size, guiLeft, guiTop, number, square, smallFont, toolTip);
-      this.fluid = fluid;
-    }
-    @Override
-    public void drawSlot(int mx, int my) {
-      if (fluid != null) {
-        GlStateManager.pushMatrix();
-        TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
-        if (fluidIcon == null)
-          return;
-        int color = fluid.getColor(new FluidStack(fluid, 1));
-        float a = ((color >> 24) & 0xFF) / 255.0F;
-        float r = ((color >> 16) & 0xFF) / 255.0F;
-        float g = ((color >> 8) & 0xFF) / 255.0F;
-        float b = ((color >> 0) & 0xFF) / 255.0F;
-        GlStateManager.color(r, g, b, a);
-        this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
-        drawTexturedModalRect(x, y, fluidIcon, 16, 16);
-        GlStateManager.enableLighting();
-        GlStateManager.enableDepth();
-        GlStateManager.popMatrix();
-        if (number) {
-          String amount = "" + (size < 1000 ? size : size < 1000000 ? size / 1000 : size < 1000000000 ? size / 1000000 : size / 1000000000);
-          amount += size < 1000 ? "mB" : size < 1000000 ? "B" : size < 1000000000 ? "KB" : "MB";
-          if (smallFont) {
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(.5f, .5f, .5f);
-            mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.CHAINMAIL_BOOTS), x * 2 + 16, y * 2 + 16, amount);
-            GlStateManager.popMatrix();
-          }
+      if (toolTip && this.isMouseOverSlot(mx, my) && stack != null && !stack.isEmpty()) {
+        try {
+          GlStateManager.pushMatrix();
+          GlStateManager.disableLighting();
+          if (!isShiftKeyDown())
+            renderToolTip(stack, mx - this.guiLeft, my - this.guiTop);
           else
-            mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.CHAINMAIL_BOOTS), x, y, amount);
+            drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) }), mx - this.guiLeft, my - this.guiTop);
+          GlStateManager.popMatrix();
+          GlStateManager.enableLighting();
         }
-      }
-      if (square && this.isMouseOverSlot(mx, my)) {
-        GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
-        int j1 = x;
-        int k1 = y;
-        GlStateManager.colorMask(true, true, true, false);
-        drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-        GlStateManager.colorMask(true, true, true, true);
-        GlStateManager.enableLighting();
-        GlStateManager.enableDepth();
-      }
-    }
-    @Override
-    public void drawTooltip(int mx, int my) {
-      if (toolTip && this.isMouseOverSlot(mx, my) && fluid != null) {
-        GlStateManager.pushMatrix();
-        GlStateManager.disableLighting();
-        if (!isShiftKeyDown() || !number) {
-          drawHoveringText(Arrays.asList(fluid.getLocalizedName(FluidRegistry.getFluidStack(fluid.getName(), 1))), mx - this.guiLeft, my - this.guiTop);
+        catch (Exception e) {
+          e.printStackTrace();
         }
-        else
-          drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) + " mB" }), mx - this.guiLeft, my - this.guiTop);
-        GlStateManager.popMatrix();
-        GlStateManager.enableLighting();
       }
     }
   }
