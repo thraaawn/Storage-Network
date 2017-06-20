@@ -18,6 +18,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRequest extends ContainerNetworkBase {
@@ -78,7 +79,13 @@ public class ContainerRequest extends ContainerNetworkBase {
   }
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
-    this.result.setInventorySlotContents(0, CraftingManager.findMatchingRecipe(craftMatrix, tile.getWorld()).getRecipeOutput()  )  ;
+    IRecipe r = CraftingManager.findMatchingRecipe(craftMatrix, tile.getWorld());
+    if (r != null) {
+      this.result.setInventorySlotContents(0, r.getRecipeOutput());
+    }
+    else{
+      this.result.setInventorySlotContents(0, ItemStack.EMPTY);
+    }
   }
   @Override
   public void onContainerClosed(EntityPlayer playerIn) {
