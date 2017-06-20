@@ -60,7 +60,7 @@ public class ItemRemote extends Item {
     int x = NBTHelper.getInteger(itemStackIn, "x");
     int y = NBTHelper.getInteger(itemStackIn, "y");
     int z = NBTHelper.getInteger(itemStackIn, "z");
-    World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(NBTHelper.getInteger(itemStackIn, "dim"));
+    World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(itemStackIn, "dim"));
     if (NBTHelper.getBoolean(itemStackIn, "bound") && world.getTileEntity(new BlockPos(x, y, z)) instanceof TileMaster) {
       if ((itemStackIn.getItemDamage() == 0 && NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() && playerIn.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor) || itemStackIn.getItemDamage() == 1) {
         if (world.getChunkFromBlockCoords(new BlockPos(x, y, z)).isLoaded()) {
@@ -95,9 +95,10 @@ public class ItemRemote extends Item {
     return GuiHandler.REMOTE;
   }
   public static TileMaster getTile(ItemStack stack) {
-    if (stack == null)
+    if (stack == null || stack.isEmpty()){
       return null;
-    TileEntity t = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(NBTHelper.getInteger(stack, "dim")).getTileEntity(new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z")));
+    }
+    TileEntity t = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(stack, "dim")).getTileEntity(new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z")));
     return t instanceof TileMaster ? (TileMaster) t : null;
   }
   public static void copyTag(ItemStack from, ItemStack to) {

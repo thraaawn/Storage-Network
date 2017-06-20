@@ -17,11 +17,11 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMessage> {
   @Override
   public IMessage onMessage(final ClearMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
+    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        Container c = ctx.getServerHandler().playerEntity.openContainer;
+        Container c = ctx.getServerHandler().player.openContainer;
         if (c instanceof ContainerNetworkBase) {
           ContainerNetworkBase ctr = (ContainerNetworkBase) c;
           TileMaster m = ctr.getTileMaster();
@@ -46,7 +46,7 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
           }
           //      ctr.slotChanged();
           List<StackWrapper> list = m.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
+          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().player);
           ctr.detectAndSendChanges();
           // }
         }

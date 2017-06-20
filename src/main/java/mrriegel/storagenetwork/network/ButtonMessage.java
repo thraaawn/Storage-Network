@@ -25,11 +25,11 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
   }
   @Override
   public IMessage onMessage(final ButtonMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
+    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        TileEntity t = ctx.getServerHandler().playerEntity.world.getTileEntity(message.pos);
+        TileEntity t = ctx.getServerHandler().player.world.getTileEntity(message.pos);
         if (t instanceof AbstractFilterTile) {
           AbstractFilterTile tile = (AbstractFilterTile) t;
           switch (message.id) {
@@ -61,7 +61,7 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
                     continue;
                   }
                   else {
-                    if (!new ContainerCable(tile, ctx.getServerHandler().playerEntity.inventory).isInFilter(new StackWrapper(s, 1))) {
+                    if (!new ContainerCable(tile, ctx.getServerHandler().player.inventory).isInFilter(new StackWrapper(s, 1))) {
                       tile.getFilter().put(index, new StackWrapper(s, 1));
                       index++;
                     }

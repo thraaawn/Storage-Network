@@ -60,7 +60,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   public void initGui() {
     super.initGui();
     Keyboard.enableRepeatEvents(true);
-    searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81, guiTop + 96, 85, fontRendererObj.FONT_HEIGHT);
+    searchBar = new GuiTextField(0, fontRenderer, guiLeft + 81, guiTop + 96, 85, fontRenderer.FONT_HEIGHT);
     searchBar.setMaxStringLength(30);
     searchBar.setEnableBackgroundDrawing(false);
     searchBar.setVisible(true);
@@ -334,25 +334,25 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
       super(id, x, y, width, 14, str);
     }
     @Override
-    public void func_191745_a(Minecraft mc, int x, int y,float pticks) {// drawButton
+    public void drawButton(Minecraft mc, int x, int y,float pticks) {// drawButton
       if (this.visible) {
-        FontRenderer fontrenderer = mc.fontRendererObj;
+        FontRenderer fontrenderer = mc.fontRenderer;
         mc.getTextureManager().bindTexture(texture);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.hovered = x >= this.xPosition && y >= this.yPosition && x < this.xPosition + this.width && y < this.yPosition + this.height;
+        this.hovered = x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height;
         int k = this.getHoverState(this.hovered);
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.blendFunc(770, 771);
-        this.drawTexturedModalRect(this.xPosition, this.yPosition, 162 + 14 * k, 0, width, height);
+        this.drawTexturedModalRect(this.x, this.y, 162 + 14 * k, 0, width, height);
         if (id == 0) {
-          this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (getDownwards() ? 6 : 0), 14, 6, 8);
+          this.drawTexturedModalRect(this.x + 4, this.y + 3, 176 + (getDownwards() ? 6 : 0), 14, 6, 8);
         }
         if (id == 1) {
-          this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (getSort() == EnumSortType.AMOUNT ? 6 : getSort() == EnumSortType.MOD ? 12 : 0), 14, 6, 8);
+          this.drawTexturedModalRect(this.x + 4, this.y + 3, 188 + (getSort() == EnumSortType.AMOUNT ? 6 : getSort() == EnumSortType.MOD ? 12 : 0), 14, 6, 8);
         }
         if (id == 4) {
-          this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (Settings.jeiSearch ? 0 : 6), 22, 6, 8);
+          this.drawTexturedModalRect(this.x + 4, this.y + 3, 176 + (Settings.jeiSearch ? 0 : 6), 22, 6, 8);
         }
         this.mouseDragged(mc, x, y);
         int l = 14737632;
@@ -365,7 +365,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
         else if (this.hovered) {
           l = 16777120;
         }
-        this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, l);
+        this.drawCenteredString(fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, l);
       }
     }
   }

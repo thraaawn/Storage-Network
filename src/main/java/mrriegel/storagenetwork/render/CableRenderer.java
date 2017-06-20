@@ -19,40 +19,12 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileCable> {
   }
   //renderTileEntityAt
   @Override
-  public void func_192841_a(TileCable te, double x, double y, double z, float partialTicks, int destroyStage
+  public void render(TileCable te, double x, double y, double z, float partialTicks, int destroyStage
       , float partial) {
     // if(true)return;
     // boolean show = Minecraft.getMinecraft().player.inventory.getCurrentItem() != null && Block.getBlockFromItem(Minecraft.getMinecraft().player.inventory.getCurrentItem().getItem()) instanceof BlockKabel;
     if (te == null || te.getKind() == null || !(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockCable)) { return; }
-    //    if (te.getCover() != null && !show) {
-    //      
-    //      
-    //      if (te.getCover() == Blocks.GLASS)
-    //        return;
-    //      this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-    //      BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-    //      World world = te.getWorld();
-    //      BlockPos blockpos = te.getPos();
-    //      IBlockState iblockstate = te.getCover().getStateFromMeta(te.getCoverMeta());
-    //      GlStateManager.pushMatrix();
-    //      RenderHelper.disableStandardItemLighting();
-    //      GlStateManager.translate((float) x, (float) y, (float) z);
-    //      Tessellator tessellator = Tessellator.getInstance();
-    //      VertexBuffer worldrenderer = tessellator.getBuffer();
-    //      worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-    //      int i = blockpos.getX();
-    //      int j = blockpos.getY();
-    //      int k = blockpos.getZ();
-    //      worldrenderer.setTranslation(((-i)), (-j), ((-k)));
-    //      worldrenderer.color(1F, 1F, 1F, 1F);
-    //      IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(iblockstate);
-    //      blockrendererdispatcher.getBlockModelRenderer().renderModel(world, ibakedmodel, iblockstate, blockpos, worldrenderer, true);
-    //      worldrenderer.setTranslation(0.0D, 0.0D, 0.0D);
-    //      tessellator.draw();
-    //      RenderHelper.enableStandardItemLighting();
-    //      GlStateManager.popMatrix();
-    //      return;
-    //    }
+    
     GlStateManager.pushMatrix();
     GlStateManager.enableRescaleNormal();
     GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);

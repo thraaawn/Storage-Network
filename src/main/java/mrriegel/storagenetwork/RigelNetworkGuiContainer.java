@@ -57,11 +57,11 @@ public abstract class RigelNetworkGuiContainer extends GuiContainer {
           if (smallFont) {
           GlStateManager.pushMatrix();
           GlStateManager.scale(.5f, .5f, .5f);
-          mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x * 2 + 16, y * 2 + 16, amount);
+          mc.getRenderItem().renderItemOverlayIntoGUI(fontRenderer, stack, x * 2 + 16, y * 2 + 16, amount);
           GlStateManager.popMatrix();
           }
           else
-            mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
+            mc.getRenderItem().renderItemOverlayIntoGUI(fontRenderer, stack, x, y, amount);
       }
       if (square && this.isMouseOverSlot(mx, my)) {
         GlStateManager.disableLighting();

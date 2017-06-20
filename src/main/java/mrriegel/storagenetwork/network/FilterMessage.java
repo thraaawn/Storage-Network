@@ -23,12 +23,12 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
   }
   @Override
   public IMessage onMessage(final FilterMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
+    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerCable) {
-          ContainerCable con = (ContainerCable) ctx.getServerHandler().playerEntity.openContainer;
+        if (ctx.getServerHandler().player.openContainer instanceof ContainerCable) {
+          ContainerCable con = (ContainerCable) ctx.getServerHandler().player.openContainer;
           con.tile.getFilter().put(message.index, message.wrap);
           con.tile.getOres().put(message.index, message.ore);
           con.tile.getMetas().put(message.index, message.meta);

@@ -23,11 +23,11 @@ public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMe
   }
   @Override
   public IMessage onMessage(final LimitMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
+    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        TileCable tile = (TileCable) ctx.getServerHandler().playerEntity.world.getTileEntity(message.pos);
+        TileCable tile = (TileCable) ctx.getServerHandler().player.world.getTileEntity(message.pos);
         tile.setLimit(message.limit);
         tile.setStack(message.stack);
         tile.markDirty();

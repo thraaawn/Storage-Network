@@ -138,7 +138,7 @@ public class ContainerRemote extends ContainerNetworkBase {
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     //.getInstance() is gone
-    this.result.setInventorySlotContents(0, CraftingManager.findMatchingRecipe(craftMatrix, this.playerInv.player.world));
+    this.result.setInventorySlotContents(0, CraftingManager.findMatchingRecipe(craftMatrix, this.playerInv.player.world).getRecipeOutput());
   }
   @Override
   public InventoryCrafting getCraftMatrix() {

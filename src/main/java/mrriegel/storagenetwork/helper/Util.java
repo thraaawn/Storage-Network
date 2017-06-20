@@ -84,7 +84,7 @@ public class Util {
       stack.shrink(i);
       EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, new ItemStack(stack.getItem(), i, stack.getMetadata()));
       if (stack.hasTagCompound()) {
-        entityitem.getEntityItem().setTagCompound(stack.getTagCompound().copy());
+        entityitem.getItem().setTagCompound(stack.getTagCompound().copy());
       }
       float f3 = 0.05F;
       entityitem.motionX = RANDOM.nextGaussian() * f3;

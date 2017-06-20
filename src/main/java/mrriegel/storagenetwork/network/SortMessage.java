@@ -27,18 +27,18 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
   }
   @Override
   public IMessage onMessage(final SortMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
+    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote
-          ItemStack s = ctx.getServerHandler().playerEntity.inventory.getCurrentItem();
+        if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote
+          ItemStack s = ctx.getServerHandler().player.inventory.getCurrentItem();
           NBTHelper.setBoolean(s, "down", message.direction);
           NBTHelper.setString(s, "sort", message.sort.toString());
           return;
         }
-        if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRequest
-          TileEntity t = ctx.getServerHandler().playerEntity.world.getTileEntity(message.pos);
+        if (ctx.getServerHandler().player.openContainer instanceof ContainerRequest) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRequest
+          TileEntity t = ctx.getServerHandler().player.world.getTileEntity(message.pos);
           if (t instanceof TileRequest) {
             TileRequest tile = (TileRequest) t;
             tile.sort = message.sort;
