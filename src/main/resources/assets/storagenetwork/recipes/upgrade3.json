@@ -5,11 +5,11 @@
   "pattern": [
     "c",
     "i",
-	"c"
+	  "c"
   ],
   "key": {
     "c": {
-      "item": "minecraft:unpowered_comparator"
+      "item": "minecraft:comparator"
     },
     "i":  {
 	  "item": "storagenetwork:kabel"
