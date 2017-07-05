@@ -2,11 +2,13 @@ package mrriegel.storagenetwork.items;
 import java.util.List;
 import mrriegel.storagenetwork.CreativeTab;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -26,9 +28,9 @@ public class ItemUpgrade extends Item {
   }
   @Override
   @SideOnly(Side.CLIENT)
-  public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
+  public void getSubItems( CreativeTabs tab, NonNullList<ItemStack> list) {
     for (int i = 0; i < NUM; i++) {
-      list.add(new ItemStack(item, 1, i));
+      list.add(new ItemStack(this, 1, i));
     }
   }
   @Override
@@ -36,7 +38,7 @@ public class ItemUpgrade extends Item {
     return this.getUnlocalizedName() + "_" + stack.getItemDamage();
   }
   @Override
-  public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+  public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
     super.addInformation(stack, playerIn, tooltip, advanced);
     tooltip.add(I18n.format("tooltip.storagenetwork.upgrade_" + stack.getItemDamage()));
   }

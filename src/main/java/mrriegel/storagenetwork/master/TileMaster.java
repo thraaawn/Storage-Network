@@ -211,7 +211,8 @@ public class TileMaster extends TileEntity implements ITickable {
       if (world.getTileEntity(bl) != null && world.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl)) {
         connectables.add(bl);
         ((IConnectable) world.getTileEntity(bl)).setMaster(this.pos);
-        chunk.setChunkModified();
+        chunk.setModified(true);
+//        chunk.setChunkModified();
         addConnectables(bl);
       }
     }
@@ -239,7 +240,7 @@ public class TileMaster extends TileEntity implements ITickable {
       e.printStackTrace();
     }
     addInventorys();
-    world.getChunkFromBlockCoords(pos).setChunkModified();
+    world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
   }
   public int insertStack(ItemStack stack, BlockPos source, boolean simulate) {
     if (stack == null || stack.isEmpty()) { return 0; }

@@ -43,11 +43,11 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
   }
   @Override
   public IMessage onMessage(final RecipeMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
+    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        Container c = ctx.getServerHandler().playerEntity.openContainer;
+        Container c = ctx.getServerHandler().player.openContainer;
         //        World w = ctx.getServerHandler().playerEntity.world;
         if (c instanceof ContainerNetworkBase) {
           ContainerNetworkBase ctr = (ContainerNetworkBase) c;
@@ -79,9 +79,9 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
               if (s == null || s.isEmpty()) {
                 continue;
               }
-              ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, true);
+              ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), new FilterItem(s), 1, true);
               if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(j - 1).isEmpty()) {
-                craftMatrix.setInventorySlotContents(j - 1, InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, false));
+                craftMatrix.setInventorySlotContents(j - 1, InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), new FilterItem(s), 1, false));
                 break;
               }
               s = m.request(!map.get(i).isEmpty() ? new FilterItem(map.get(i)) : null, 1, false);
@@ -93,7 +93,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
           }
           ctr.slotChanged();
           List<StackWrapper> list = m.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
+          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().player);
         }
       }
       //}

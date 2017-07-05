@@ -17,10 +17,6 @@ public class CommonProxy {
   public void preInit(FMLPreInitializationEvent event) {
     ConfigHandler.refreshConfig(event.getSuggestedConfigurationFile());
     PacketHandler.init();
-    ModBlocks.init();
-    GameRegistry.register(ModItems.upgrade);
-    GameRegistry.register(ModItems.remote.setUnlocalizedName(ModItems.remote.getRegistryName().toString()));
-    CraftingRecipes.init();
   }
   public void init(FMLInitializationEvent event) {
     NetworkRegistry.INSTANCE.registerGuiHandler(StorageNetwork.instance, new GuiHandler());

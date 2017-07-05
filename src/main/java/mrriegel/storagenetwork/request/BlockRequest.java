@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.request;
 import java.util.List;
+import javax.annotation.Nullable;
 import mrriegel.storagenetwork.AbstractBlockConnectable;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.GuiHandler;
@@ -13,6 +14,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -91,7 +93,7 @@ public class BlockRequest extends AbstractBlockConnectable {
       super(block);
     }
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack,  @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
       super.addInformation(stack, playerIn, tooltip, advanced);
       tooltip.add(I18n.format("tooltip.storagenetwork.request"));
     }

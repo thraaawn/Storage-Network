@@ -29,12 +29,12 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
   }
   @Override
   public IMessage onMessage(final RequestMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
+    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
-          TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.world.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
+        if (ctx.getServerHandler().player.openContainer instanceof ContainerRequest) {
+          TileMaster tile = (TileMaster) ctx.getServerHandler().player.world.getTileEntity(((ContainerRequest) ctx.getServerHandler().player.openContainer).tile.getMaster());
           if (tile == null)
             return;
           // System.out.println("!RequestMessage message.stack == "+message.stack);
@@ -54,35 +54,35 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
           }
           if (!stack.isEmpty()) {
             if (message.shift) {
-              ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().playerEntity, stack);
+              ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().player, stack);
             }
             else {
-              ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);
-              PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
+              ctx.getServerHandler().player.inventory.setItemStack(stack);
+              PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().player);
             }
           }
           List<StackWrapper> list = tile.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
-          ctx.getServerHandler().playerEntity.openContainer.detectAndSendChanges();
+          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
+          ctx.getServerHandler().player.openContainer.detectAndSendChanges();
         }
-        else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
-          TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.inventory.getCurrentItem());
+        else if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote) {
+          TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().player.inventory.getCurrentItem());
           if (tile == null)
             return;
           int in = message.stack.isEmpty() ? 0 : tile.getAmount(new FilterItem(message.stack, true, false, true));
           ItemStack stack = message.stack.isEmpty() ? ItemStack.EMPTY : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(Math.min(message.stack.getMaxStackSize() / 2, in / 2), 1), false);
           if (!stack.isEmpty()) {
             if (message.shift) {
-              ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().playerEntity, stack);
+              ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().player, stack);
             }
             else {
-              ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);
-              PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
+              ctx.getServerHandler().player.inventory.setItemStack(stack);
+              PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().player);
             }
           }
           List<StackWrapper> list = tile.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
-          ctx.getServerHandler().playerEntity.openContainer.detectAndSendChanges();
+          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
+          ctx.getServerHandler().player.openContainer.detectAndSendChanges();
         }
       }
     });

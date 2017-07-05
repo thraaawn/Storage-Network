@@ -19,6 +19,6 @@ public class PacketHandler {
     INSTANCE.registerMessage(InsertMessage.class, InsertMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(StackMessage.class, StackMessage.class, id++, Side.CLIENT);
     INSTANCE.registerMessage(FilterMessage.class, FilterMessage.class, id++, Side.SERVER);
-    INSTANCE.registerMessage(FaceMessage.class, FaceMessage.class, id++, Side.SERVER);
+//    INSTANCE.registerMessage(FaceMessage.class, FaceMessage.class, id++, Side.SERVER);
   }
 }

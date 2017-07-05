@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl;
+import net.minecraftforge.registries.IForgeRegistryEntry.Impl;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class Util {
@@ -84,7 +84,7 @@ public class Util {
       stack.shrink(i);
       EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, new ItemStack(stack.getItem(), i, stack.getMetadata()));
       if (stack.hasTagCompound()) {
-        entityitem.getEntityItem().setTagCompound(stack.getTagCompound().copy());
+        entityitem.getItem().setTagCompound(stack.getTagCompound().copy());
       }
       float f3 = 0.05F;
       entityitem.motionX = RANDOM.nextGaussian() * f3;

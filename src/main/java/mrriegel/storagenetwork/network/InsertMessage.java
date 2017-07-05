@@ -29,16 +29,16 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
   }
   @Override
   public IMessage onMessage(final InsertMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.world;
+    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        World w = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(message.dim);
+        World w = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
         TileEntity t = null;
-        Container c = ctx.getServerHandler().playerEntity.openContainer;
+        Container c = ctx.getServerHandler().player.openContainer;
         if (c instanceof ContainerRequest)
           t = w.getTileEntity(((ContainerRequest) c).tile.getMaster());
-        else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote)
+        else if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote)
           t = ((ContainerRemote) c).tile;
         if (t instanceof TileMaster) {
           TileMaster tile = (TileMaster) t;
@@ -57,10 +57,10 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
             if (rest != 0)
               send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
           }
-          ctx.getServerHandler().playerEntity.inventory.setItemStack(send);
-          PacketHandler.INSTANCE.sendTo(new StackMessage(send), ctx.getServerHandler().playerEntity);
+          ctx.getServerHandler().player.inventory.setItemStack(send);
+          PacketHandler.INSTANCE.sendTo(new StackMessage(send), ctx.getServerHandler().player);
           List<StackWrapper> list = tile.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
+          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
           c.detectAndSendChanges();
         }
       }

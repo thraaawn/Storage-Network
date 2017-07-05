@@ -1,0 +1,32 @@
+{
+
+  "type": "minecraft:crafting_shaped",
+  "group": "random_things",
+  "pattern": [
+    "pcp",
+    "mim",
+	"pdp"
+  ],
+  "key": {
+    "c": {
+      "item": "minecraft:emerald_ore"
+    },
+    "i":  {
+	  "item": "storagenetwork:remote",
+	   "data":0
+	},
+    "m":  {
+	  "item": "storagenetwork:master"
+	},
+    "d":  {
+	  "item": "minecraft:diamond_ore"
+	},
+    "p":  {
+	  "item": "minecraft:ender_pearl"
+	}
+  },
+  "result": {
+    "item": "storagenetwork:remote",
+	"data":1
+  }
+}

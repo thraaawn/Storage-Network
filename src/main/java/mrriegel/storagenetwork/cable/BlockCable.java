@@ -20,6 +20,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -334,7 +335,7 @@ public class BlockCable extends AbstractBlockConnectable {
       super(block);
     }
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
       super.addInformation(stack, playerIn, tooltip, advanced);
       if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.exKabel))
         tooltip.add(I18n.format("tooltip.storagenetwork.kabel_E"));

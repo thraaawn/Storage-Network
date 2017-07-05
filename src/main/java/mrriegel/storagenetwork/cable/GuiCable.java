@@ -96,7 +96,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
     if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OP) >= 1) {
       operation.drawSlot(mouseX, mouseY);
     }
-    fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
+    fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
   }
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
@@ -104,15 +104,15 @@ public class GuiCable extends RigelNetworkGuiContainer {
     for (int i = 0; i < list.size(); i++) {
       ItemSlot e = list.get(i);
       ContainerCable con = (ContainerCable) inventorySlots;
-      if (e.stack != null) {
+      if (e.stack != null && !e.stack.isEmpty()) {
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
         GlStateManager.disableBlend();
         if (con.tile.getOres().get(i) != null && con.tile.getOres().get(i))
-          mc.fontRendererObj.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
+          mc.fontRenderer.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
         if (con.tile.getMetas().get(i) == null || !con.tile.getMetas().get(i))
-          mc.fontRendererObj.drawStringWithShadow("M", e.x + 1, e.y, 0xff4040);
+          mc.fontRenderer.drawStringWithShadow("M", e.x + 1, e.y, 0xff4040);
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
       }
@@ -126,28 +126,29 @@ public class GuiCable extends RigelNetworkGuiContainer {
     if (btnWay != null && btnWay.isMouseOver())
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX - guiLeft, mouseY - guiTop);
     if (mouseX > guiLeft + 29 && mouseX < guiLeft + 37 && mouseY > guiTop + 10 && mouseY < guiTop + 20)
-      this.drawHoveringText(Lists.newArrayList("Priority"), mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
+      this.drawHoveringText(Lists.newArrayList("Priority"), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
     if (btnWhite != null && btnWhite.isMouseOver())
-      this.drawHoveringText(Lists.newArrayList(tile.isWhite() ? "Whitelist" : "Blacklist"), mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
+      this.drawHoveringText(Lists.newArrayList(tile.isWhite() ? "Whitelist" : "Blacklist"), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
   }
   @Override
   public void initGui() {
     super.initGui();
-    btnMinus = new Button(0, guiLeft + 7, guiTop + 5, "-");
+    btnMinus = new Button(0, guiLeft + 6, guiTop + 5, "-");
     buttonList.add(btnMinus);
-    btnPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
+    btnPlus = new Button(1, guiLeft + 37, guiTop + 5, "+");
     buttonList.add(btnPlus);
-    if (tile.isStorage()) {
-      btnImport = new Button(5, guiLeft + 95, guiTop + 5, "I");
+    btnWhite = new Button(3, guiLeft + 58, guiTop + 5, "");
+    buttonList.add(btnWhite);
+    //if (tile.isStorage()) {
+      btnImport = new Button(5, guiLeft + 78, guiTop + 5, "I");
       buttonList.add(btnImport);
+    if (tile.isStorage()) {
       btnWay = new Button(6, guiLeft + 115, guiTop + 5, "");
       buttonList.add(btnWay);
     }
-    btnWhite = new Button(3, guiLeft + 70, guiTop + 5, "");
-    buttonList.add(btnWhite);
     if (tile instanceof TileCable) {
       Keyboard.enableRepeatEvents(true);
-      searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 34, guiTop + 69, 85, fontRendererObj.FONT_HEIGHT);
+      searchBar = new GuiTextField(0, fontRenderer, guiLeft + 34, guiTop + 69, 85, fontRenderer.FONT_HEIGHT);
       searchBar.setMaxStringLength(30);
       searchBar.setEnableBackgroundDrawing(false);
       searchBar.setVisible(true);
@@ -283,33 +284,33 @@ public class GuiCable extends RigelNetworkGuiContainer {
       super(p_i1021_1_, p_i1021_2_, p_i1021_3_, 16, 16, p_i1021_6_);
     }
     @Override
-    public void drawButton(Minecraft p_146112_1_, int p_146112_2_, int p_146112_3_) {
+    public void drawButton(Minecraft mcc, int x, int y, float p) {//drawButon
       if (this.visible) {
-        FontRenderer fontrenderer = p_146112_1_.fontRendererObj;
-        p_146112_1_.getTextureManager().bindTexture(texture);
+        FontRenderer fontrenderer = mcc.fontRenderer;
+        mcc.getTextureManager().bindTexture(texture);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.hovered = p_146112_2_ >= this.xPosition && p_146112_3_ >= this.yPosition && p_146112_2_ < this.xPosition + this.width && p_146112_3_ < this.yPosition + this.height;
+        this.hovered = x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height;
         int k = this.getHoverState(this.hovered);
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.blendFunc(770, 771);
-        this.drawTexturedModalRect(this.xPosition, this.yPosition, 160 + 16 * k, 52, 16, 16);
+        this.drawTexturedModalRect(this.x, this.y, 160 + 16 * k, 52, 16, 16);
         if (id == 3) {
           if (tile.isWhite())
-            this.drawTexturedModalRect(this.xPosition + 1, this.yPosition + 3, 176, 83, 13, 10);
+            this.drawTexturedModalRect(this.x + 1, this.y + 3, 176, 83, 13, 10);
           else
-            this.drawTexturedModalRect(this.xPosition + 1, this.yPosition + 3, 190, 83, 13, 10);
+            this.drawTexturedModalRect(this.x + 1, this.y + 3, 190, 83, 13, 10);
         }
         if (id == 4) {
           if (((TileCable) tile).isMode())
-            this.drawTexturedModalRect(this.xPosition + 0, this.yPosition + 0, 176, 94, 16, 15);
+            this.drawTexturedModalRect(this.x + 0, this.y + 0, 176, 94, 16, 15);
           else
-            this.drawTexturedModalRect(this.xPosition + 0, this.yPosition + 0, 176 + 16, 94, 16, 15);
+            this.drawTexturedModalRect(this.x + 0, this.y + 0, 176 + 16, 94, 16, 15);
         }
         if (id == 6) {
-          this.drawTexturedModalRect(this.xPosition + 2, this.yPosition + 2, 176 + tile.getWay().ordinal() * 12, 114, 12, 12);
+          this.drawTexturedModalRect(this.x + 2, this.y + 2, 176 + tile.getWay().ordinal() * 12, 114, 12, 12);
         }
-        this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);
+        this.mouseDragged(mcc, x, y);
         int l = 14737632;
         if (packedFGColour != 0) {
           l = packedFGColour;
@@ -333,12 +334,12 @@ public class GuiCable extends RigelNetworkGuiContainer {
           if (this.hovered && id == 4 && ((TileCable) tile).getStack() != null) {
             GlStateManager.pushMatrix();
             GlStateManager.disableLighting();
-            drawHoveringText(lis, p_146112_2_, p_146112_3_, fontRendererObj);
+            drawHoveringText(lis, x, y, fontRenderer);
             GlStateManager.enableLighting();
             GlStateManager.popMatrix();
           }
         }
-        this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, l);
+        this.drawCenteredString(fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, l);
       }
     }
   }

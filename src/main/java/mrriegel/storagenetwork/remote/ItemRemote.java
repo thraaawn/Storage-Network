@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.remote;
 import java.util.List;
+import javax.annotation.Nullable;
 import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.GuiHandler;
@@ -8,6 +9,7 @@ import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -34,9 +36,9 @@ public class ItemRemote extends Item {
   }
   @Override
   @SideOnly(Side.CLIENT)
-  public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
+  public void getSubItems( CreativeTabs tab, NonNullList<ItemStack> list) {
     for (int i = 0; i < 2; i++) {
-      list.add(new ItemStack(item, 1, i));
+      list.add(new ItemStack(this, 1, i));
     }
   }
   @Override
@@ -44,7 +46,7 @@ public class ItemRemote extends Item {
     return this.getUnlocalizedName() + "_" + stack.getItemDamage();
   }
   @Override
-  public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+  public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
     tooltip.add(I18n.format("tooltip.storagenetwork.remote_" + stack.getItemDamage()));
     if (stack.hasTagCompound() && NBTHelper.getBoolean(stack, "bound")) {
       tooltip.add("Dimension: " + NBTHelper.getInteger(stack, "dim") + ", x: " + NBTHelper.getInteger(stack, "x") + ", y: " + NBTHelper.getInteger(stack, "y") + ", z: " + NBTHelper.getInteger(stack, "z"));
@@ -58,7 +60,7 @@ public class ItemRemote extends Item {
     int x = NBTHelper.getInteger(itemStackIn, "x");
     int y = NBTHelper.getInteger(itemStackIn, "y");
     int z = NBTHelper.getInteger(itemStackIn, "z");
-    World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(NBTHelper.getInteger(itemStackIn, "dim"));
+    World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(itemStackIn, "dim"));
     if (NBTHelper.getBoolean(itemStackIn, "bound") && world.getTileEntity(new BlockPos(x, y, z)) instanceof TileMaster) {
       if ((itemStackIn.getItemDamage() == 0 && NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() && playerIn.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor) || itemStackIn.getItemDamage() == 1) {
         if (world.getChunkFromBlockCoords(new BlockPos(x, y, z)).isLoaded()) {
@@ -93,9 +95,10 @@ public class ItemRemote extends Item {
     return GuiHandler.REMOTE;
   }
   public static TileMaster getTile(ItemStack stack) {
-    if (stack == null)
+    if (stack == null || stack.isEmpty()){
       return null;
-    TileEntity t = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(NBTHelper.getInteger(stack, "dim")).getTileEntity(new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z")));
+    }
+    TileEntity t = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(stack, "dim")).getTileEntity(new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z")));
     return t instanceof TileMaster ? (TileMaster) t : null;
   }
   public static void copyTag(ItemStack from, ItemStack to) {

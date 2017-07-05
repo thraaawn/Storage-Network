@@ -1,0 +1,22 @@
+{
+
+  "type": "minecraft:crafting_shaped",
+  "group": "random_things",
+  "pattern": [
+    "c",
+    "i",
+	  "c"
+  ],
+  "key": {
+    "c": {
+      "item": "minecraft:comparator"
+    },
+    "i":  {
+	  "item": "storagenetwork:kabel"
+	}
+  },
+  "result": {
+    "item": "storagenetwork:upgrade",
+	"data":3
+  }
+}
