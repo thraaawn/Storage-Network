@@ -81,7 +81,7 @@ public class ContainerRequest extends ContainerNetworkBase {
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     IRecipe r = CraftingManager.findMatchingRecipe(craftMatrix, tile.getWorld());
     if (r != null) {
-      this.result.setInventorySlotContents(0, r.getRecipeOutput());
+      this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
     }
     else{
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);

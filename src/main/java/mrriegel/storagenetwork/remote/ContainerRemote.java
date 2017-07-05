@@ -140,7 +140,7 @@ public class ContainerRemote extends ContainerNetworkBase {
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     IRecipe r = CraftingManager.findMatchingRecipe(craftMatrix, this.playerInv.player.world);
     if (r != null) {
-      this.result.setInventorySlotContents(0, r.getRecipeOutput());
+      this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
     }
     else{
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
