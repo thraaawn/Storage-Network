@@ -22,11 +22,9 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRequest extends ContainerNetworkBase {
-  //  public InventoryPlayer playerInv;
+
   public TileRequest tile;
-  //  public InventoryCraftResult result;
-  //  public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
-  //  
+
   public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
     craftMatrix = new InventoryCrafting(this, 3, 3);
     this.tile = tile;

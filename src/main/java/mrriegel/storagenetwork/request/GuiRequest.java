@@ -2,16 +2,27 @@ package mrriegel.storagenetwork.request;
 import mrriegel.storagenetwork.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
-import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 public class GuiRequest extends RigelNetworkGuiRequest {
   TileRequest tile;
-  public GuiRequest(Container inventorySlotsIn) {
+  public GuiRequest(ContainerRequest inventorySlotsIn) {
     super(inventorySlotsIn);
     tile = ((ContainerRequest) inventorySlots).tile;
     texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
+  }
+  @Override
+  public void initGui() {
+    super.initGui();
+    searchBar.setText(tile.search);
+  }
+  @Override
+  public void updateScreen() {
+    super.updateScreen();
+    if (searchBar != null) {
+      tile.search = searchBar.getText();
+    }
   }
   @Override
   public int getLines() {

@@ -3,14 +3,26 @@ import mrriegel.storagenetwork.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
-import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 public class GuiRemote extends RigelNetworkGuiRequest {
-  public GuiRemote(Container inventorySlotsIn) {
+  public GuiRemote(ContainerRemote inventorySlotsIn) {
     super(inventorySlotsIn);
     texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
+  }
+  @Override
+  public void initGui() {
+    super.initGui();
+    searchBar.setText(NBTHelper.getString(getItemRemote(), NBT_SEARCH));
+  }
+  @Override
+  public void updateScreen() {
+    super.updateScreen();
+    if (searchBar != null) {
+      NBTHelper.setString(getItemRemote(), NBT_SEARCH, searchBar.getText());
+    }
   }
   @Override
   public int getLines() {
@@ -22,19 +34,22 @@ public class GuiRemote extends RigelNetworkGuiRequest {
   }
   @Override
   public boolean getDownwards() {
-    return NBTHelper.getBoolean(mc.player.inventory.getCurrentItem(), "down");
+    return NBTHelper.getBoolean(getItemRemote(), "down");
   }
   @Override
   public void setDownwards(boolean d) {
-    NBTHelper.setBoolean(mc.player.inventory.getCurrentItem(), "down", d);
+    NBTHelper.setBoolean(getItemRemote(), "down", d);
   }
   @Override
   public EnumSortType getSort() {
-    return EnumSortType.valueOf(NBTHelper.getString(mc.player.inventory.getCurrentItem(), "sort"));
+    return EnumSortType.valueOf(NBTHelper.getString(getItemRemote(), "sort"));
+  }
+  public ItemStack getItemRemote() {
+    return mc.player.inventory.getCurrentItem();
   }
   @Override
   public void setSort(EnumSortType s) {
-    NBTHelper.setString(mc.player.inventory.getCurrentItem(), "sort", s.toString());
+    NBTHelper.setString(getItemRemote(), "sort", s.toString());
   }
   @Override
   public BlockPos getPos() {
@@ -42,7 +57,7 @@ public class GuiRemote extends RigelNetworkGuiRequest {
   }
   @Override
   protected int getDim() {
-    return NBTHelper.getInteger(mc.player.inventory.getCurrentItem(), "dim");
+    return NBTHelper.getInteger(getItemRemote(), "dim");
   }
   @Override
   protected boolean inField(int mouseX, int mouseY) {

@@ -20,7 +20,6 @@
 	}
   },
   "result": {
-    "item": "storagenetwork:master",
-	 "count": 4
+    "item": "storagenetwork:master"
   }
 }

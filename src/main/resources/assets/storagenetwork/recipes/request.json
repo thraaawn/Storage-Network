@@ -20,7 +20,6 @@
 	}
   },
   "result": {
-    "item": "storagenetwork:request",
-	 "count": 4
+    "item": "storagenetwork:request"
   }
 }

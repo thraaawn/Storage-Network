@@ -2,7 +2,9 @@
   "homepage": "https://mods.curse.com/mc-mods/minecraft/268495-simple-storage-network",
   "promos": {
     "1.11.2-latest": "1.0.5",
-    "1.11.2-recommended": "1.0.5"
+    "1.11.2-recommended": "1.0.5",
+    "1.12-latest": "1.0.8",
+    "1.12-recommended": "1.0.8"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -11,5 +13,11 @@
 	,"1.0.3":"Remove some console spam debug messages.  Both remotes now have a 3x3 crafting grid built in.  Remotes now correctly have max stack size one.  Fixed a server crash when something is removed from the network while an import or export node is acting on it.  Fix Export cable no showing its whitelist/blacklist toggle button. "
   	,"1.0.4":"Search bar will now auto focus as soon as the GUI is opened.  Search bar re-focuses when you press the Clear Search (X) button.  Fixed the Import Filter button ignoring the second row of slots.  Add Whitelist/blacklist toggle button to the purple storage link cable.  "
   	,"1.0.5":"Fix compatibility with new JEI versions.  Fix crash with Collossal Chests.  Fix a crash when clicking empty slots in the Export Cable GUI.  Added the Import Filter buttons to the import and export cable GUIs.  "
+  },
+  "1.12":{   
+  	"1.0.5":"Initial port to 1.12, still in alpha state"
+  	,"1.0.6":"Update to work with new forge registry system"
+  	,"1.0.7":"Fix recipes sometimes being disabled until game restart after a very specific setup (see issue #13 for details). "
+  	,"1.0.8":"Fix Master and Request recipes giving out 4 instead of 1.  Fix items sometimes being deleted when using JEI to set a recipe into request table, while also having some items only on your hotbar and not in the network ( issue #16 ).  Search text box will no longer auto-clear its value when using JEI for a recipe and coming back.  "
   } 
 }

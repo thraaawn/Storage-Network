@@ -27,13 +27,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
 
 public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
+  public static final String NBT_SEARCH = "storagenetwork_search";
   protected ResourceLocation texture;
   protected int page = 1, maxPage = 1;
   public List<StackWrapper> stacks, craftableStacks;
@@ -44,7 +44,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   protected long lastClick;
   private Button clearTextBtn;
   private boolean forceFocus;
-  public RigelNetworkGuiRequest(Container inventorySlotsIn) {
+  public RigelNetworkGuiRequest(ContainerNetworkBase inventorySlotsIn) {
     super(inventorySlotsIn);
     this.xSize = 176;
     this.ySize = 256;
@@ -199,8 +199,13 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     for (ItemSlot s : slots) {
-      s.drawTooltip(mouseX, mouseY);
+      if(s.isMouseOverSlot(mouseX, mouseY)){
+        s.drawTooltip(mouseX, mouseY);
+      }
     }
+  
+    
+    
     // if (inX(mouseX, mouseY))
     // drawHoveringText(Lists.newArrayList("Clear the crafting grid."),
     // mouseX - guiLeft, mouseY - guiTop);
