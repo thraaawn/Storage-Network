@@ -19,8 +19,6 @@ gui.storagenetwork.operate.tooltip=%s is active if %s than %d %s are in the netw
 gui.storagenetwork.operate.tooltip.more=more
 gui.storagenetwork.operate.tooltip.less=less
 
-gui.storagenetwork.indi.tooltip=%s gives a redstone signal if %s than %d %s are in the network.
-
 gui.storagenetwork.req.tooltip_NAME=Sort by name
 gui.storagenetwork.req.tooltip_MOD=Sort by mod
 gui.storagenetwork.req.tooltip_AMOUNT=Sort by amount
@@ -40,16 +38,13 @@ gui.storagenetwork.tooltip_clear=Clear Search
 gui.storagenetwork.fil.tooltip_jei_on=JEI search enabled
 gui.storagenetwork.fil.tooltip_jei_off=JEI search disabled
 
-tooltip.storagenetwork.indicator=Gives a redstone signal if more/less items are in the network.
 
 tooltip.storagenetwork.kabel_S=Used to connect inventory to the network.
 tooltip.storagenetwork.kabel_E=Exports items from the network into attached inventory.
 tooltip.storagenetwork.kabel_I=Imports items from attached inventory into the network.
 tooltip.storagenetwork.kabel_L=Default cable to connect parts of your network.
-tooltip.storagenetwork.kabel_V=Inserts dropped items around into the network.
 tooltip.storagenetwork.master=The heart of the network. Only ONE per network.
 tooltip.storagenetwork.request=Used to overview and request items from the network.
-tooltip.storagenetwork.coverstaff=Used to cover cables with the block right next in the hotbar.
 tooltip.storagenetwork.remote_0=Used to access the network 64 blocks distance.
 tooltip.storagenetwork.remote_1=Used to access the network from unlimited distance and across dimensions.
 

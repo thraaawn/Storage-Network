@@ -19,6 +19,6 @@
   	,"1.0.6":"Update to work with new forge registry system"
   	,"1.0.7":"Fix recipes sometimes being disabled until game restart after a very specific setup (see issue #13 for details). "
   	,"1.0.8":"Fix Master and Request recipes giving out 4 instead of 1.  Fix items sometimes being deleted when using JEI to set a recipe into request table, while also having some items only on your hotbar and not in the network ( issue #16 ).  Search text box will no longer auto-clear its value when using JEI for a recipe and coming back.  "
-  	,"1.0.9":"Increase output of upgrade recipes.  Fix Storage Network items sometimes showing up in creative tab of other mods.  Add StorageRemoteRange to config file.  "
+  	,"1.0.9":"Increase output of upgrade recipes.  Fix Storage Network items sometimes showing up in creative tab of other mods.  Add StorageRemoteRange to config file.  Optimization: cleaned up some code; Removed unused textures and models.  "
   } 
 }
