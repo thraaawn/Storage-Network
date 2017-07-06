@@ -17,14 +17,9 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileCable> {
   public CableRenderer() {
     model = new ModelCable();
   }
-  //renderTileEntityAt
   @Override
-  public void render(TileCable te, double x, double y, double z, float partialTicks, int destroyStage
-      , float partial) {
-    // if(true)return;
-    // boolean show = Minecraft.getMinecraft().player.inventory.getCurrentItem() != null && Block.getBlockFromItem(Minecraft.getMinecraft().player.inventory.getCurrentItem().getItem()) instanceof BlockKabel;
+  public void render(TileCable te, double x, double y, double z, float partialTicks, int destroyStage, float partial) {
     if (te == null || te.getKind() == null || !(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockCable)) { return; }
-    
     GlStateManager.pushMatrix();
     GlStateManager.enableRescaleNormal();
     GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);

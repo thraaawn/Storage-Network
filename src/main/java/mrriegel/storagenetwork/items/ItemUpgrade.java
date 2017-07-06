@@ -4,7 +4,6 @@ import mrriegel.storagenetwork.CreativeTab;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -28,7 +27,7 @@ public class ItemUpgrade extends Item {
   }
   @Override
   @SideOnly(Side.CLIENT)
-  public void getSubItems( CreativeTabs tab, NonNullList<ItemStack> list) {
+  public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list) {
     for (int i = 0; i < NUM; i++) {
       list.add(new ItemStack(this, 1, i));
     }

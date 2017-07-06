@@ -126,23 +126,13 @@ public class TileMaster extends TileEntity implements ITickable {
   public int getAmount(FilterItem fil) {
     if (fil == null) { return 0; }
     int size = 0;
-    ItemStack s = fil.getStack();
+    //ItemStack s = fil.getStack();
     for (StackWrapper w : getStacks()) {
       if (fil.match(w.getStack()))
         size += w.getSize();
     }
     return size;
   }
-  //  public List<AbstractTileContainer> getContainers() {
-  //    List<AbstractTileContainer> lis = Lists.newArrayList();
-  //    for (BlockPos p : connectables) {
-  //      if (!(world.getTileEntity(p) instanceof AbstractTileContainer)) {
-  //        continue;
-  //      }
-  //      lis.add((AbstractTileContainer) world.getTileEntity(p));
-  //    }
-  //    return lis;
-  //  }
   public List<FilterItem> getIngredients(ItemStack template) {
     Map<Integer, ItemStack> stacks = Maps.<Integer, ItemStack> newHashMap();
     Map<Integer, Boolean> metas = Maps.<Integer, Boolean> newHashMap();
@@ -170,30 +160,6 @@ public class TileMaster extends TileEntity implements ITickable {
   public NBTTagCompound getUpdateTag() {
     return writeToNBT(new NBTTagCompound());
   }
-  //  @Override
-  //  public void readFromNBT(NBTTagCompound compound) {
-  //    super.readFromNBT(compound);
-  //    //    en.readFromNBT(compound);
-  //    //    NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
-  //    //    tasks = Lists.newArrayList();
-  //    //    for (int i = 0; i < tasksList.tagCount(); i++) {
-  //    //      NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
-  //    //      tasks.add(CraftingTask.loadCraftingTaskFromNBT(stackTag));
-  //    //    }
-  //  }
-  //  @Override
-  //  public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-  //    super.writeToNBT(compound);
-  //    //    en.writeToNBT(compound);
-  //    //    NBTTagList tasksList = new NBTTagList();
-  //    //    for (CraftingTask t : tasks) {
-  //    //      NBTTagCompound stackTag = new NBTTagCompound();
-  //    //      t.writeToNBT(stackTag);
-  //    //      tasksList.appendTag(stackTag);
-  //    //    }
-  //    //    compound.setTag("tasks", tasksList);
-  //    return compound;
-  //  }
   private void addConnectables(final BlockPos pos) {
     if (pos == null || world == null)
       return;
@@ -212,7 +178,7 @@ public class TileMaster extends TileEntity implements ITickable {
         connectables.add(bl);
         ((IConnectable) world.getTileEntity(bl)).setMaster(this.pos);
         chunk.setModified(true);
-//        chunk.setChunkModified();
+        //        chunk.setChunkModified();
         addConnectables(bl);
       }
     }
@@ -324,7 +290,7 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!t.status()) {
           continue;
         }
-        int num = s.getCount();
+        // int num = s.getCount();
         int insert = Math.min(s.getCount(), (int) Math.pow(2, t.getUpgradesOfType(ItemUpgrade.STACK) + 2));
         ItemStack extracted = inv.extractItem(i, insert, true);
         if (extracted == null || extracted.getCount() < insert) {

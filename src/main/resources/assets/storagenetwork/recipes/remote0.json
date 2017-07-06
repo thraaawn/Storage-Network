@@ -1,7 +1,7 @@
 {
 
   "type": "minecraft:crafting_shaped",
-  "group": "random_things",
+  "group": "storagenetwork",
   "pattern": [
     " c ",
     "eie",
@@ -15,7 +15,7 @@
 	  "item": "storagenetwork:kabel"
 	},
     "e":  {
-	  "item": "minecraft:obsidian"
+	  "item": "minecraft:ender_pearl"
 	}
   },
   "result": {

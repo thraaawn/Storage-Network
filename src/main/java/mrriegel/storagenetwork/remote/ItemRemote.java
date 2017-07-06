@@ -36,7 +36,7 @@ public class ItemRemote extends Item {
   }
   @Override
   @SideOnly(Side.CLIENT)
-  public void getSubItems( CreativeTabs tab, NonNullList<ItemStack> list) {
+  public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list) {
     for (int i = 0; i < 2; i++) {
       list.add(new ItemStack(this, 1, i));
     }
@@ -95,9 +95,7 @@ public class ItemRemote extends Item {
     return GuiHandler.REMOTE;
   }
   public static TileMaster getTile(ItemStack stack) {
-    if (stack == null || stack.isEmpty()){
-      return null;
-    }
+    if (stack == null || stack.isEmpty()) { return null; }
     TileEntity t = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(stack, "dim")).getTileEntity(new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z")));
     return t instanceof TileMaster ? (TileMaster) t : null;
   }

@@ -23,7 +23,7 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
     catch (Exception e) {
       replaceable = true;
     }
-    if (!blockIn.hasTileEntity() && blockIn != Blocks.AIR && !replaceable)
+    if (!blockIn.hasTileEntity(state) && blockIn != Blocks.AIR && !replaceable)
       return;
     for (BlockPos p : Util.getSides(pos)) {
       if (worldIn.getTileEntity(p) instanceof IConnectable) {

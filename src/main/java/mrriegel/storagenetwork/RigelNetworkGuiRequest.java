@@ -199,13 +199,10 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     for (ItemSlot s : slots) {
-      if(s.isMouseOverSlot(mouseX, mouseY)){
+      if (s.isMouseOverSlot(mouseX, mouseY)) {
         s.drawTooltip(mouseX, mouseY);
       }
     }
-  
-    
-    
     // if (inX(mouseX, mouseY))
     // drawHoveringText(Lists.newArrayList("Clear the crafting grid."),
     // mouseX - guiLeft, mouseY - guiTop);
@@ -270,7 +267,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     else if (button.id == this.clearTextBtn.id) {
       doSort = false;
       this.searchBar.setText("");
-//      this.searchBar.setFocused(true);//doesnt work..somethings overriding it?
+      //      this.searchBar.setFocused(true);//doesnt work..somethings overriding it?
       this.forceFocus = true;//we have to force it to go next-tick
     }
     if (doSort) {
@@ -339,7 +336,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
       super(id, x, y, width, 14, str);
     }
     @Override
-    public void drawButton(Minecraft mc, int x, int y,float pticks) {// drawButton
+    public void drawButton(Minecraft mc, int x, int y, float pticks) {// drawButton
       if (this.visible) {
         FontRenderer fontrenderer = mc.fontRenderer;
         mc.getTextureManager().bindTexture(texture);

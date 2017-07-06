@@ -22,9 +22,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRequest extends ContainerNetworkBase {
-
   public TileRequest tile;
-
   public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
     craftMatrix = new InventoryCrafting(this, 3, 3);
     this.tile = tile;
@@ -81,7 +79,7 @@ public class ContainerRequest extends ContainerNetworkBase {
     if (r != null) {
       this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
     }
-    else{
+    else {
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
     }
   }

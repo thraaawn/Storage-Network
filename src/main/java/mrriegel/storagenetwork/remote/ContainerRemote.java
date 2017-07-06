@@ -142,7 +142,7 @@ public class ContainerRemote extends ContainerNetworkBase {
     if (r != null) {
       this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
     }
-    else{
+    else {
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
     }
   }

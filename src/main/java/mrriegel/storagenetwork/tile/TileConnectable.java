@@ -17,6 +17,7 @@ public class TileConnectable extends TileEntity implements IConnectable {
   public NBTTagCompound getUpdateTag() {
     return writeToNBT(new NBTTagCompound());
   }
+  @SuppressWarnings("serial")
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);

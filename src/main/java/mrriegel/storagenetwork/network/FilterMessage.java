@@ -35,17 +35,7 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
           con.tile.markDirty();
           con.slotChanged();
         }
-        //				else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFCable) {
-        //					ContainerFCable con = (ContainerFCable) ctx.getServerHandler().playerEntity.openContainer;
-        //					con.tile.getFilter().put(message.index, message.wrap);
-        //					con.tile.markDirty();
-        //					con.slotChanged();
-        //				} 
-        //				else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerIndicator) {
-        //					ContainerIndicator con = (ContainerIndicator) ctx.getServerHandler().playerEntity.openContainer;
-        //					con.setFilter(message.wrap);
-        //					con.slotChanged();
-        //				}
+    
       }
     });
     return null;

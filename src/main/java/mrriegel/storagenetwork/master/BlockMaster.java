@@ -74,13 +74,9 @@ public class BlockMaster extends BlockContainer {
   }
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    ItemStack heldItem = playerIn.getHeldItem(hand);
-    if (!(worldIn.getTileEntity(pos) instanceof TileMaster))
-      return false;
+    if (!(worldIn.getTileEntity(pos) instanceof TileMaster)) { return false; }
     TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
     if (!worldIn.isRemote) {
-      //			if (ConfigHandler.energyNeeded)
-      //				playerIn.sendMessage(new TextComponentString(TextFormatting.RED + "RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
       playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "(Potential) Empty Slots: " + tile.emptySlots()));
       playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + "Connectables: " + tile.connectables.size()));
       Map<String, Integer> map = new HashMap<String, Integer>();

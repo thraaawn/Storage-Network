@@ -17,12 +17,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.registries.IForgeRegistryEntry.Impl;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class Util {
@@ -36,9 +34,17 @@ public class Util {
     }
   }
   @Nonnull
-  public static String getModNameForItem(@Nonnull Impl object) {
-    RegistryNamespaced registry = object instanceof Item ? Item.REGISTRY : object instanceof Block ? Block.REGISTRY : null;
-    ResourceLocation itemResourceLocation = (ResourceLocation) registry.getNameForObject(object);
+  public static String getModNameForItem(@Nonnull Object object) {
+    ResourceLocation itemResourceLocation;
+    if (object instanceof Item) {
+      itemResourceLocation = Item.REGISTRY.getNameForObject((Item) object);
+    }
+    else if (object instanceof Block) {
+      itemResourceLocation = Block.REGISTRY.getNameForObject((Block) object);
+    }
+    else {
+      return null;
+    }
     String modId = itemResourceLocation.getResourceDomain();
     String lowercaseModId = modId.toLowerCase(Locale.ENGLISH);
     String modName = modNamesForIds.get(lowercaseModId);
@@ -46,12 +52,6 @@ public class Util {
       modName = WordUtils.capitalize(modId);
       modNamesForIds.put(lowercaseModId, modName);
     }
-    // ModContainer m =
-    // Loader.instance().getIndexedModList().get(item.getRegistryName().getResourceDomain());
-    // if (m == null)
-    // return "Minecraft";
-    // else
-    // return m.getName();
     return modName;
   }
   public static boolean equalOreDict(ItemStack a, ItemStack b) {

@@ -22,16 +22,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.oredict.OreDictionary;
 
+@SuppressWarnings("rawtypes")
 @Optional.Interface(iface = "mezz.jei.api.recipe.transfer.IRecipeTransferHandler", modid = "jei", striprefs = true)
 public class RequestRecipeTransferHandlerRemote<C extends Container> implements IRecipeTransferHandler {
   @Override
   public Class<? extends Container> getContainerClass() {
     return ContainerRemote.class;
   }
-  //	@Override
-  //	public String getRecipeCategoryUid() {
-  //		return VanillaRecipeCategoryUid.CRAFTING;
-  //	}
   @Override
   public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
     if (doTransfer) {
@@ -42,7 +39,7 @@ public class RequestRecipeTransferHandlerRemote<C extends Container> implements 
         Slot slot = container.inventorySlots.get(j);
         if ((slot.inventory instanceof InventoryCrafting)) {
           try {
-            IGuiIngredient ingredient =  inputs.get(slot.getSlotIndex() + 1);
+            IGuiIngredient<ItemStack> ingredient = inputs.get(slot.getSlotIndex() + 1);
             if (ingredient != null) {
               map.put(j, ingredient.getAllIngredients());
             }

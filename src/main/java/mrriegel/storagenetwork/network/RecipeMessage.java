@@ -80,11 +80,11 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
                 continue;
               }
               ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), new FilterItem(s), 1, true);
-              int slot = j-1;
+              int slot = j - 1;
               if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(slot).isEmpty()) {
                 //System.out.println("extractedItem "+slot+"_" +ex.getUnlocalizedName());
                 InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), new FilterItem(s), 1, false);
-               // System.out.println("extractedItem.simulated is false "+slot+"_" +ex.getUnlocalizedName());
+                // System.out.println("extractedItem.simulated is false "+slot+"_" +ex.getUnlocalizedName());
                 //make sure to add the real item after the nonsimulated withdrawl is complete https://github.com/PrinceOfAmber/Storage-Network/issues/16
                 craftMatrix.setInventorySlotContents(slot, ex);
                 break;

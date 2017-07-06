@@ -1,12 +1,8 @@
 package mrriegel.storagenetwork;
 import mrriegel.storagenetwork.cable.BlockCable;
-import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.master.BlockMaster;
-import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.request.BlockRequest;
-import mrriegel.storagenetwork.request.TileRequest;
 import net.minecraft.block.Block;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
   public static final Block master = new BlockMaster();//network center
@@ -15,5 +11,4 @@ public class ModBlocks {
   public static final Block storageKabel = new BlockCable().setRegistryName("storage_kabel");//cable that connects to chest
   public static final Block exKabel = new BlockCable().setRegistryName("ex_kabel");//import
   public static final Block imKabel = new BlockCable().setRegistryName("im_kabel");//export
- 
 }

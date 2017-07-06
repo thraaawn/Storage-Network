@@ -140,8 +140,8 @@ public class GuiCable extends RigelNetworkGuiContainer {
     btnWhite = new Button(3, guiLeft + 58, guiTop + 5, "");
     buttonList.add(btnWhite);
     //if (tile.isStorage()) {
-      btnImport = new Button(5, guiLeft + 78, guiTop + 5, "I");
-      buttonList.add(btnImport);
+    btnImport = new Button(5, guiLeft + 78, guiTop + 5, "I");
+    buttonList.add(btnImport);
     if (tile.isStorage()) {
       btnWay = new Button(6, guiLeft + 115, guiTop + 5, "");
       buttonList.add(btnWay);

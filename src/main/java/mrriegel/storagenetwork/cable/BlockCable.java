@@ -3,7 +3,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.Nullable;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import mrriegel.storagenetwork.AbstractBlockConnectable;
 import mrriegel.storagenetwork.CreativeTab;
@@ -17,13 +16,13 @@ import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.master.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -174,17 +173,17 @@ public class BlockCable extends AbstractBlockConnectable {
     }
     tile.setInventoryFace(face);
     tile.setConnectedInventory(con);
-    Map<EnumFacing, EnumConnectType> map = tile.getConnects();
     return world.getBlockState(pos);
   }
   @Override
   public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
     state = getNewState(worldIn, pos);
     super.setConnections(worldIn, pos, state, refresh);
-    if (refresh)
+    if (refresh) {
       Util.updateTile(worldIn, pos);
-    // worldIn.setBlockState(pos, state);
+    }
   }
+  @SuppressWarnings("deprecation")
   @Override
   public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
     try {
@@ -196,15 +195,6 @@ public class BlockCable extends AbstractBlockConnectable {
       return super.getActualState(state, worldIn, pos);
     }
   }
-  //  private boolean oo(TileKabel tile) {
-  //    boolean a = connected(tile.north) && connected(tile.south) && !connected(tile.west) && !connected(tile.east) && !connected(tile.up) && !connected(tile.down);
-  //    boolean b = !connected(tile.north) && !connected(tile.south) && connected(tile.west) && connected(tile.east) && !connected(tile.up) && !connected(tile.down);
-  //    boolean c = !connected(tile.north) && !connected(tile.south) && !connected(tile.west) && !connected(tile.east) && connected(tile.up) && connected(tile.down);
-  //    return (a ^ b ^ c) && tile.getKind() == Kind.kabel;
-  //  }
-  //  private boolean connected(EnumConnectType c) {
-  //    return c == EnumConnectType.STORAGE || c == EnumConnectType.CONNECT;
-  //  }
   public static EnumFacing get(BlockPos a, BlockPos b) {
     if (a.up().equals(b))
       return EnumFacing.DOWN;
@@ -222,17 +212,9 @@ public class BlockCable extends AbstractBlockConnectable {
   }
   @Override
   public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
-    if (!(worldIn.getTileEntity(pos) instanceof TileCable))
-      return;
+    if (!(worldIn.getTileEntity(pos) instanceof TileCable)) { return; }
     state = state.getActualState(worldIn, pos);
     TileCable tile = (TileCable) worldIn.getTileEntity(pos);
-    //    if (tile != null && tile.getCover() != null) {
-    //      if (tile.getCover() != Blocks.GLASS)
-    //        addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
-    //      else if (ConfigHandler.untouchable)
-    //        addCollisionBoxToList(pos, entityBox, collidingBoxes, NULL_AABB);
-    //      return;
-    //    }
     float f = 0.3125F;
     float f1 = 0.6875F;
     float f2 = 0.3125F;
@@ -280,7 +262,7 @@ public class BlockCable extends AbstractBlockConnectable {
     if (tile == null)
       return new AxisAlignedBB(f, f4, f2, f1, f5, f3);
     //    if (tile != null && tile.getCover() != null && tile.getCover() != Blocks.GLASS) { return FULL_BLOCK_AABB; }
-    AxisAlignedBB res = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
+    //AxisAlignedBB res = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
     if (tile.north != EnumConnectType.NULL) {
       f2 = 0f;
     }
@@ -302,7 +284,7 @@ public class BlockCable extends AbstractBlockConnectable {
     return new AxisAlignedBB(f, f4, f2, f1, f5, f3);
   }
   protected EnumConnectType getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
-    Block block = worldIn.getBlockState(pos).getBlock();
+   // Block block = worldIn.getBlockState(pos).getBlock();
     Block ori = worldIn.getBlockState(orig).getBlock();
     if (worldIn.getTileEntity(pos) instanceof IConnectable || worldIn.getTileEntity(pos) instanceof TileMaster)
       return EnumConnectType.CONNECT;
@@ -321,8 +303,6 @@ public class BlockCable extends AbstractBlockConnectable {
       for (int i = 0; i < tile.getUpgrades().size(); i++) {
         Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getUpgrades().get(i));
       }
-      //			if (tile.getCover() != null)
-      //				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ModBlocks.cover));
     }
     super.breakBlock(worldIn, pos, state);
   }
@@ -330,35 +310,35 @@ public class BlockCable extends AbstractBlockConnectable {
   public TileEntity createNewTileEntity(World worldIn, int meta) {
     return new TileCable();
   }
-  public static class Item extends ItemBlock {
-    public Item(Block block) {
+  public static class ItemCable extends ItemBlock {
+    public ItemCable(Block block) {
       super(block);
     }
     @Override
     public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
       super.addInformation(stack, playerIn, tooltip, advanced);
-      if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.exKabel))
+      if (stack.getItem() == Item.getItemFromBlock(ModBlocks.exKabel))
         tooltip.add(I18n.format("tooltip.storagenetwork.kabel_E"));
-      else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.imKabel))
+      else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.imKabel))
         tooltip.add(I18n.format("tooltip.storagenetwork.kabel_I"));
-      else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.storageKabel))
+      else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.storageKabel))
         tooltip.add(I18n.format("tooltip.storagenetwork.kabel_S"));
-      else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.kabel))
+      else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.kabel))
         tooltip.add(I18n.format("tooltip.storagenetwork.kabel_L"));
     }
   }
-  public static class PropertyConnection extends PropertyEnum<EnumConnectType> {
-    String name;
-    public PropertyConnection(String name2) {
-      super(name2, EnumConnectType.class, Lists.newArrayList(EnumConnectType.values()));
-      this.name = name2;
-    }
-    public static PropertyConnection create(String name) {
-      return new PropertyConnection(name);
-    }
-    @Override
-    public String getName() {
-      return name;
-    }
-  }
+//  public static class PropertyConnection extends PropertyEnum<EnumConnectType> {
+//    String name;
+//    public PropertyConnection(String name2) {
+//      super(name2, EnumConnectType.class, Lists.newArrayList(EnumConnectType.values()));
+//      this.name = name2;
+//    }
+////    public static PropertyConnection create(String name) {
+////      return new PropertyConnection(name);
+////    }
+//    @Override
+//    public String getName() {
+//      return name;
+//    }
+//  }
 }

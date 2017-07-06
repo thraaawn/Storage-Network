@@ -6,12 +6,10 @@ import mrriegel.storagenetwork.master.BlockMaster;
 import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import mrriegel.storagenetwork.request.BlockRequest;
-import mrriegel.storagenetwork.request.ContainerRequest;
 import mrriegel.storagenetwork.request.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,7 +19,6 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -40,58 +37,38 @@ public class StorageNetwork {
   public void preInit(FMLPreInitializationEvent event) {
     proxy.preInit(event);
     MinecraftForge.EVENT_BUS.register(this);
-    
   }
   @EventHandler
   public void init(FMLInitializationEvent event) {
     proxy.init(event);
-    
-    
-    
-    NBTTagCompound tagCompound = new NBTTagCompound();
-    tagCompound.setString("ContainerClass", ContainerRequest.class.getName());
-    tagCompound.setBoolean("PhantomItems", false);
-    tagCompound.setString("AlignToGrid", "left");
-    FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
-
   }
   @EventHandler
   public void postInit(FMLPostInitializationEvent event) {
     proxy.postInit(event);
   }
-
   @SubscribeEvent
   public void onRegistryBlock(RegistryEvent.Register<Block> event) {
-
     event.getRegistry().register(ModBlocks.master);
     event.getRegistry().register(ModBlocks.request);
     event.getRegistry().register(ModBlocks.kabel.setUnlocalizedName(ModBlocks.kabel.getRegistryName().toString()));
     event.getRegistry().register(ModBlocks.storageKabel.setUnlocalizedName(ModBlocks.storageKabel.getRegistryName().toString()));
     event.getRegistry().register(ModBlocks.exKabel.setUnlocalizedName(ModBlocks.exKabel.getRegistryName().toString()));
     event.getRegistry().register(ModBlocks.imKabel.setUnlocalizedName(ModBlocks.imKabel.getRegistryName().toString()));
- 
   }
-  
-
   @SubscribeEvent
   public void onRegistryEvent(RegistryEvent.Register<Item> event) {
-   event.getRegistry().register(new BlockMaster.Item(ModBlocks.master).setRegistryName(ModBlocks.master.getRegistryName()));
+    event.getRegistry().register(new BlockMaster.Item(ModBlocks.master).setRegistryName(ModBlocks.master.getRegistryName()));
     event.getRegistry().register(new BlockRequest.Item(ModBlocks.request).setRegistryName(ModBlocks.request.getRegistryName()));
-    event.getRegistry().register(new BlockCable.Item(ModBlocks.kabel).setRegistryName(ModBlocks.kabel.getRegistryName()));
-    event.getRegistry().register(new BlockCable.Item(ModBlocks.storageKabel).setRegistryName(ModBlocks.storageKabel.getRegistryName()));
-    event.getRegistry().register(new BlockCable.Item(ModBlocks.exKabel).setRegistryName(ModBlocks.exKabel.getRegistryName()));
-    event.getRegistry().register(new BlockCable.Item(ModBlocks.imKabel).setRegistryName(ModBlocks.imKabel.getRegistryName()));
-    
-
+    event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.kabel).setRegistryName(ModBlocks.kabel.getRegistryName()));
+    event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.storageKabel).setRegistryName(ModBlocks.storageKabel.getRegistryName()));
+    event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.exKabel).setRegistryName(ModBlocks.exKabel.getRegistryName()));
+    event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.imKabel).setRegistryName(ModBlocks.imKabel.getRegistryName()));
     event.getRegistry().register(ModItems.upgrade);
     event.getRegistry().register(ModItems.remote.setUnlocalizedName(ModItems.remote.getRegistryName().toString()));
     GameRegistry.registerTileEntity(TileCable.class, "tileKabel");
     GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
     GameRegistry.registerTileEntity(TileRequest.class, "tileRequest");
-    
-    
   }
-
   @SubscribeEvent
   public void registerModels(ModelRegistryEvent event) {
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.kabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":kabel", "inventory"));
