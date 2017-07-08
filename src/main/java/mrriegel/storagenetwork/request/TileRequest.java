@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.request;
 import java.util.HashMap;
 import java.util.Map;
+import mrriegel.storagenetwork.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.tile.TileConnectable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,7 +12,7 @@ public class TileRequest extends TileConnectable {
   public Map<Integer, ItemStack> matrix = new HashMap<Integer, ItemStack>();
   public boolean downwards;
   public EnumSortType sort = EnumSortType.NAME;
-  public String search;
+  public String search = "";
   public enum EnumSortType {
     AMOUNT, NAME, MOD;
     private static EnumSortType[] vals = values();
@@ -23,7 +24,7 @@ public class TileRequest extends TileConnectable {
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
     downwards = compound.getBoolean("dir");
-    search = compound.getString("search");
+    search = compound.getString(RigelNetworkGuiRequest.NBT_SEARCH);
     sort = EnumSortType.valueOf(compound.getString("sort"));
     NBTTagList invList = compound.getTagList("matrix", Constants.NBT.TAG_COMPOUND);
     matrix = new HashMap<Integer, ItemStack>();
@@ -39,7 +40,10 @@ public class TileRequest extends TileConnectable {
     super.writeToNBT(compound);
     compound.setBoolean("dir", downwards);
     compound.setString("sort", sort.toString());
-    compound.setString("search", search);
+    if (search == null) {
+      search = "";
+    }
+    compound.setString(RigelNetworkGuiRequest.NBT_SEARCH, search);
     NBTTagList invList = new NBTTagList();
     invList = new NBTTagList();
     for (int i = 0; i < 9; i++) {

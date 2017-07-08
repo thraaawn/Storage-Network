@@ -15,12 +15,15 @@ public class GuiRemote extends RigelNetworkGuiRequest {
   @Override
   public void initGui() {
     super.initGui();
-    searchBar.setText(NBTHelper.getString(getItemRemote(), NBT_SEARCH));
+    String savedSearch = NBTHelper.getString(getItemRemote(), NBT_SEARCH);
+    if (savedSearch != null) {
+      searchBar.setText(savedSearch);
+    }
   }
   @Override
   public void updateScreen() {
     super.updateScreen();
-    if (searchBar != null) {
+    if (searchBar != null && searchBar.getText() != null) {
       NBTHelper.setString(getItemRemote(), NBT_SEARCH, searchBar.getText());
     }
   }
