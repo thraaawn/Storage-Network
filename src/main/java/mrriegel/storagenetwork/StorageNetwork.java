@@ -33,9 +33,12 @@ public class StorageNetwork {
   public static StorageNetwork instance;
   @SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")
   public static CommonProxy proxy;
+  public static void log(String s){
+    System.out.println(s);
+  }
   @EventHandler
   public void preInit(FMLPreInitializationEvent event) {
-    proxy.preInit(event);
+    proxy.preInit(event); 
     MinecraftForge.EVENT_BUS.register(this);
   }
   @EventHandler

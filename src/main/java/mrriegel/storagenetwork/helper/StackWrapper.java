@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.helper;
+import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -21,14 +22,17 @@ public class StackWrapper {
   }
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     NBTTagCompound c = new NBTTagCompound();
-    stack.writeToNBT(c);
+    ItemStack copy = stack.copy();
+    //this fixes the first half of https://github.com/PrinceOfAmber/Storage-Network/issues/19, items not rendering
+    copy.setCount(1);//count outside of [1,64] gets set to EMPTY STACK, breaking things like Storage Drawers
+    copy.writeToNBT(c);
     compound.setTag("stack", c);
-    compound.setInteger("size", size);
+    compound.setInteger("size", size); 
     return compound;
   }
   @Override
   public String toString() {
-    return "StackWrapper [stack=" + stack + ", size=" + size + "]";
+    return "StackWrapper [stack=" + stack.getDisplayName() + ", size=" + size + "]";
   }
   @Override
   public boolean equals(Object obj) {
@@ -56,6 +60,8 @@ public class StackWrapper {
   public static StackWrapper loadStackWrapperFromNBT(NBTTagCompound nbt) {
     StackWrapper wrap = new StackWrapper();
     wrap.readFromNBT(nbt);
-    return wrap.getStack() != null && wrap.getStack().getItem() != null ? wrap : null;
+    if (wrap.getStack() == null || wrap.getStack().getItem() == null) { return null; }
+ 
+    return wrap;
   }
 }

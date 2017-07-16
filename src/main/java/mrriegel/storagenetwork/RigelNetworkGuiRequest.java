@@ -100,10 +100,10 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     int i = (this.width - this.xSize) / 2;
     int j = (this.height - this.ySize) / 2;
     this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
-    String search = searchBar.getText();
+    String search = searchBar.getText(); 
     List<StackWrapper> tmp = search.equals("") ? Lists.newArrayList(stacks) : Lists.<StackWrapper> newArrayList();
     if (!search.equals("")) {
-      for (StackWrapper s : stacks)
+      for (StackWrapper s : stacks) {
         if (search.startsWith("@")) {
           String name = Util.getModNameForItem(s.getStack().getItem());
           if (name.toLowerCase().contains(search.toLowerCase().substring(1)))
@@ -141,6 +141,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
           if (s.getStack().getDisplayName().toLowerCase().contains(search.toLowerCase()))
             tmp.add(s);
         }
+      }
     }
     // for (StackWrapper s : craftableStacks)
     // tmp.add(s);

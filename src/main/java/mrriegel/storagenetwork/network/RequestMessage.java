@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.network;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
@@ -35,8 +36,8 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
       public void run() {
         if (ctx.getServerHandler().player.openContainer instanceof ContainerRequest) {
           TileMaster tile = (TileMaster) ctx.getServerHandler().player.world.getTileEntity(((ContainerRequest) ctx.getServerHandler().player.openContainer).tile.getMaster());
-          if (tile == null)
-            return;
+          if (tile == null){
+            return;}
           // System.out.println("!RequestMessage message.stack == "+message.stack);
           int in = message.stack.isEmpty() ? 0 : tile.getAmount(new FilterItem(message.stack, true, false, true));
           //   System.out.println("!RequestMessage in == "+in);
@@ -61,6 +62,9 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
               PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().player);
             }
           }
+          
+  StorageNetwork.log("REQUEST message send back the staacks "+tile.getStacks().size() +" isCLIENT " + tile.getWorld().isRemote);
+          
           List<StackWrapper> list = tile.getStacks();
           PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
           ctx.getServerHandler().player.openContainer.detectAndSendChanges();

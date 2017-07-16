@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.apache.logging.log4j.Level;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.IConnectable;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.cable.TileCable.Kind;
 import mrriegel.storagenetwork.helper.FilterItem;
@@ -38,8 +40,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class TileMaster extends TileEntity implements ITickable {
   public Set<BlockPos> connectables;
   public List<BlockPos> storageInventorys;
-  public List<StackWrapper> getStacks() {
-    List<StackWrapper> stacks = Lists.newArrayList();
+  public List<StackWrapper> getStacks() { 
+    List<StackWrapper> stacks = Lists.newArrayList(); 
     List<AbstractFilterTile> invs = Lists.newArrayList();
     if (connectables == null) {
       refreshNetwork();
@@ -47,18 +49,22 @@ public class TileMaster extends TileEntity implements ITickable {
     for (BlockPos p : connectables) {
       if (world.getTileEntity(p) instanceof AbstractFilterTile) {
         AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(p);
-        if (tile.isStorage() && tile.getInventory() != null) {
+        if (tile.isStorage() && tile.getInventory() != null) { 
           invs.add(tile);
         }
       }
     }
     for (AbstractFilterTile t : invs) {
       IItemHandler inv = t.getInventory();
+      //StorageNetwork.log(" inventory size  " + inv.getSlots());
       for (int i = 0; i < inv.getSlots(); i++) {
         if (inv.getStackInSlot(i) != null && !inv.getStackInSlot(i).isEmpty() && t.canTransfer(inv.getStackInSlot(i), Direction.BOTH))
           addToList(stacks, inv.getStackInSlot(i).copy(), inv.getStackInSlot(i).getCount());
+//        else
+//          StorageNetwork.log(" reject   " + inv.getStackInSlot(i).getDisplayName());
       }
     }
+    
     return stacks;
   }
   public int emptySlots() {
@@ -116,7 +122,11 @@ public class TileMaster extends TileEntity implements ITickable {
       ItemStack stack = lis.get(i).getStack();
       if (ItemHandlerHelper.canItemStacksStack(s, stack)) {
         lis.get(i).setSize(lis.get(i).getSize() + num);
+      
         added = true;
+      }
+      else{
+//        lis.add(new StackWrapper(stack,stack.getCount()));
       }
     }
     if (!added) {
@@ -402,7 +412,6 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!t.canTransfer(s, Direction.OUT)) {
           continue;
         }
-        // System.out.println("!TileMaster IS NOT EMPTY" + s + "_" + s.getCount());
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
         world.markChunkDirty(pos, this);
@@ -428,7 +437,6 @@ public class TileMaster extends TileEntity implements ITickable {
       updateExports();
     }
     catch (Exception e) {
-      System.out.println("Simple Storage Network error: Maybe something was removed from the network during processing");
       e.printStackTrace();
     }
   }
