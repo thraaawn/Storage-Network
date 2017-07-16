@@ -196,6 +196,11 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
       over = ItemStack.EMPTY;
   }
   @Override
+  public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    super.drawScreen(mouseX, mouseY, partialTicks);
+    super.renderHoveredToolTip(mouseX, mouseY);
+  }
+  @Override
   public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     for (ItemSlot s : slots) {

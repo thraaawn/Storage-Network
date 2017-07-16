@@ -3,8 +3,8 @@
   "promos": {
     "1.11.2-latest": "1.0.5",
     "1.11.2-recommended": "1.0.5",
-    "1.12-latest": "1.0.10",
-    "1.12-recommended": "1.0.10"
+    "1.12-latest": "1.0.11",
+    "1.12-recommended": "1.0.11"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -21,5 +21,6 @@
   	,"1.0.8":"Fix Master and Request recipes giving out 4 instead of 1.  Fix items sometimes being deleted when using JEI to set a recipe into request table, while also having some items only on your hotbar and not in the network ( issue #16 ).  Search text box will no longer auto-clear its value when using JEI for a recipe and coming back.  "
   	,"1.0.9":"Increase output of upgrade recipes.  Fix Storage Network items sometimes showing up in creative tab of other mods.  Add StorageRemoteRange to config file.  Optimization: cleaned up some code; Removed unused textures and models.  "
  	,"1.0.10":"Fix crash that can sometimes happen when placing down request table"
+	,"1.0.11":"Fix item tooltip rendering.  "
   } 
 }

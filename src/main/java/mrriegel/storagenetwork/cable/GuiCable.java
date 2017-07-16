@@ -50,6 +50,11 @@ public class GuiCable extends RigelNetworkGuiContainer {
     list = Lists.newArrayList();
   }
   @Override
+  public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    super.drawScreen(mouseX, mouseY, partialTicks);
+    super.renderHoveredToolTip(mouseX, mouseY);
+  }
+  @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     this.mc.getTextureManager().bindTexture(texture);

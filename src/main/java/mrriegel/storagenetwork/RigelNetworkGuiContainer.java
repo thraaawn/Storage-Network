@@ -76,10 +76,7 @@ public abstract class RigelNetworkGuiContainer extends GuiContainer {
         try {
           GlStateManager.pushMatrix();
           GlStateManager.disableLighting();
-          if (!isShiftKeyDown())
-            renderToolTip(stack, mx - this.guiLeft, my - this.guiTop);
-          else
-            drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) }), mx - this.guiLeft, my - this.guiTop);
+          renderToolTip(stack, mx - this.guiLeft, my - this.guiTop);
           GlStateManager.popMatrix();
           GlStateManager.enableLighting();
         }
