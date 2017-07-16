@@ -46,24 +46,31 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
             stack = ItemStack.EMPTY;
           }
           else {
+            StorageNetwork.log("message.stack HUNTIN eh "+message.stack );
             //   System.out.println("!RequestMessage  message.id = == "+ message.id );
             int ss = message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(Math.min(message.stack.getMaxStackSize() / 2, in / 2), 1);
             // System.out.println("!RequestMessage  ssssssss "+ ss );
             stack = tile.request(
                 new FilterItem(message.stack, true, false, true),
                 ss, false);
+            StorageNetwork.log("!stack AFTER filter "+ stack );
           }
           if (!stack.isEmpty()) {
             if (message.shift) {
               ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().player, stack);
             }
             else {
+              //when player TAKES an item, go here
               ctx.getServerHandler().player.inventory.setItemStack(stack);
+              StorageNetwork.log("REQUEST message sStack Single??? "+stack +" isCLIENT " + tile.getWorld().isRemote);
               PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().player);
             }
           }
+          else{
+
+            StorageNetwork.log("WAT how did we get empty stack  "+stack +" isCLIENT " + tile.getWorld().isRemote);
+          }
           
-  StorageNetwork.log("REQUEST message send back the staacks "+tile.getStacks().size() +" isCLIENT " + tile.getWorld().isRemote);
           
           List<StackWrapper> list = tile.getStacks();
           PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
@@ -96,13 +103,16 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
   public void fromBytes(ByteBuf buf) {
     this.id = buf.readInt();
     this.stack = ByteBufUtils.readItemStack(buf);
+    StorageNetwork.log("RequestMessage readItemStack  "+stack  );
     this.shift = buf.readBoolean();
     this.ctrl = buf.readBoolean();
   }
   @Override
   public void toBytes(ByteBuf buf) {
     buf.writeInt(this.id);
-    ByteBufUtils.writeItemStack(buf, this.stack);
+    ByteBufUtils.writeItemStack(buf, stack);
+    //when i extract an item, we go through here
+    StorageNetwork.log("RequestMessage writeItemStack  "+stack  );
     buf.writeBoolean(this.shift);
     buf.writeBoolean(this.ctrl);
   }

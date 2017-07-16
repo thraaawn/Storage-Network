@@ -40,8 +40,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class TileMaster extends TileEntity implements ITickable {
   public Set<BlockPos> connectables;
   public List<BlockPos> storageInventorys;
-  public List<StackWrapper> getStacks() { 
-    List<StackWrapper> stacks = Lists.newArrayList(); 
+  public List<StackWrapper> getStacks() {
+    List<StackWrapper> stacks = Lists.newArrayList();
     List<AbstractFilterTile> invs = Lists.newArrayList();
     if (connectables == null) {
       refreshNetwork();
@@ -49,7 +49,7 @@ public class TileMaster extends TileEntity implements ITickable {
     for (BlockPos p : connectables) {
       if (world.getTileEntity(p) instanceof AbstractFilterTile) {
         AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(p);
-        if (tile.isStorage() && tile.getInventory() != null) { 
+        if (tile.isStorage() && tile.getInventory() != null) {
           invs.add(tile);
         }
       }
@@ -60,11 +60,10 @@ public class TileMaster extends TileEntity implements ITickable {
       for (int i = 0; i < inv.getSlots(); i++) {
         if (inv.getStackInSlot(i) != null && !inv.getStackInSlot(i).isEmpty() && t.canTransfer(inv.getStackInSlot(i), Direction.BOTH))
           addToList(stacks, inv.getStackInSlot(i).copy(), inv.getStackInSlot(i).getCount());
-//        else
-//          StorageNetwork.log(" reject   " + inv.getStackInSlot(i).getDisplayName());
+        //        else
+        //          StorageNetwork.log(" reject   " + inv.getStackInSlot(i).getDisplayName());
       }
     }
-    
     return stacks;
   }
   public int emptySlots() {
@@ -122,11 +121,10 @@ public class TileMaster extends TileEntity implements ITickable {
       ItemStack stack = lis.get(i).getStack();
       if (ItemHandlerHelper.canItemStacksStack(s, stack)) {
         lis.get(i).setSize(lis.get(i).getSize() + num);
-      
         added = true;
       }
-      else{
-//        lis.add(new StackWrapper(stack,stack.getCount()));
+      else {
+        //        lis.add(new StackWrapper(stack,stack.getCount()));
       }
     }
     if (!added) {
@@ -399,26 +397,36 @@ public class TileMaster extends TileEntity implements ITickable {
     for (AbstractFilterTile t : invs) {
       IItemHandler inv = t.getInventory();
       for (int i = 0; i < inv.getSlots(); i++) {
-        ItemStack s = inv.getStackInSlot(i);
-        if (s == null || s.isEmpty()) {
+        ItemStack stackCurrent = inv.getStackInSlot(i);
+        if (stackCurrent == null || stackCurrent.isEmpty()) {
           continue;
         }
-        if (res != null && !res.isEmpty() && !ItemHandlerHelper.canItemStacksStack(s, res)) {
+        if (res != null && !res.isEmpty() && !ItemHandlerHelper.canItemStacksStack(stackCurrent, res)) {
           continue;
         }
-        if (!fil.match(s)) {
+        if (!fil.match(stackCurrent)) {
           continue;
         }
-        if (!t.canTransfer(s, Direction.OUT)) {
+        if (!t.canTransfer(stackCurrent, Direction.OUT)) {
           continue;
         }
+        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
+        StorageNetwork.log("sss" + stackCurrent + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
+        StorageNetwork.log("extracted" + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());
         world.markChunkDirty(pos, this);
-        result += Math.min((extracted == null || extracted.isEmpty()) ? 0 : extracted.getCount(), miss);
-        res = extracted.copy();
+        //the other KEY fix for https://github.com/PrinceOfAmber/Storage-Network/issues/19, where it 
+        //voided stuff when you took all from storage drawer: extracted can have a >0 stacksize, but still be air,
+        //so the getCount overrides the 16, and gives zero instead, so i di my own override of, if empty then it got all so use source
+        result += Math.min(extracted.isEmpty() ? stackCurrent.getCount() : extracted.getCount(), miss);
+        res = stackCurrent.copy();
+        StorageNetwork.log("TileMaster request: yes actually remove items from source now " + res + "__" + result);
         //  int rest = s.getCount();
-        if (result == size) { return ItemHandlerHelper.copyStackWithSize(res, size); }
+        if (result == size) {
+          StorageNetwork.log("and done since result==size");
+          return ItemHandlerHelper.copyStackWithSize(res, size);
+        }
       }
     }
     if (result == 0) { return ItemStack.EMPTY; }

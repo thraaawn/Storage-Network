@@ -138,6 +138,7 @@ public class ContainerRequest extends ContainerNetworkBase {
         slot.onSlotChanged();
       }
       if (itemstack1.getCount() == itemstack.getCount()) { return ItemStack.EMPTY; }
+//      StorageNetwork.log("on take eh "+itemstack1);
       slot.onTake(playerIn, itemstack1);
     }
     return itemstack;
