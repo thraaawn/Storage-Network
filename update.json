@@ -22,5 +22,6 @@
   	,"1.0.9":"Increase output of upgrade recipes.  Fix Storage Network items sometimes showing up in creative tab of other mods.  Add StorageRemoteRange to config file.  Optimization: cleaned up some code; Removed unused textures and models.  "
  	,"1.0.10":"Fix crash that can sometimes happen when placing down request table"
 	,"1.0.11":"Fix item tooltip rendering.  Fix compatibility issue when connecting to Tinkers Construct machines.  Fixed items not rendering in grid and extracting correctly when connected to Storage Drawers.  "
+  	,"1.0.12":"Fix items getting deleted when you withdraw them from a network that has zero Storage Drawers.  "
   } 
 }
