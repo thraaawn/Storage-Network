@@ -93,7 +93,7 @@ public class BlockRequest extends AbstractBlockConnectable {
       super(block);
     }
     @Override
-    public void addInformation(ItemStack stack,  @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
+    public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
       super.addInformation(stack, playerIn, tooltip, advanced);
       tooltip.add(I18n.format("tooltip.storagenetwork.request"));
     }

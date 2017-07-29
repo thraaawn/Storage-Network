@@ -19,22 +19,30 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
     boolean replaceable = false;
     try {
       replaceable = blockIn.isReplaceable(worldIn, pos.up());
+      replaceable = true;
+      //be more careful eh?  java.lang.IllegalArgumentException: Cannot get property PropertyInteger{name=meta, clazz=class java.lang.Integer, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 
+      if (!blockIn.hasTileEntity(state) && blockIn != Blocks.AIR && !replaceable) { return; }
+      if (worldIn.getTileEntity(pos) instanceof IConnectable) {
+        IConnectable conUnitNeedsMaster = (IConnectable) worldIn.getTileEntity(pos);
+        //the new thing needs to find the master of the network. so either my neighbor knows who the master is, 
+        //or my neighbor IS the master
+        for (BlockPos p : Util.getSides(pos)) {
+          if (worldIn.getTileEntity(p) instanceof IConnectable) {
+            IConnectable conUnit = (IConnectable) worldIn.getTileEntity(p);
+            if (conUnit.getMaster() != null) {
+              conUnitNeedsMaster.setMaster((conUnit).getMaster());
+            }
+          }
+          else if (worldIn.getTileEntity(p) instanceof TileMaster) {
+            conUnitNeedsMaster.setMaster(p);
+          }
+        }
+      }
+      setConnections(worldIn, pos, state, true);
     }
     catch (Exception e) {
-      replaceable = true;
+      e.printStackTrace();
     }
-    if (!blockIn.hasTileEntity() && blockIn != Blocks.AIR && !replaceable)
-      return;
-    for (BlockPos p : Util.getSides(pos)) {
-      if (worldIn.getTileEntity(p) instanceof IConnectable) {
-        if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
-          ((IConnectable) worldIn.getTileEntity(pos)).setMaster(((IConnectable) worldIn.getTileEntity(p)).getMaster());
-      }
-      if (worldIn.getTileEntity(p) instanceof TileMaster) {
-        ((IConnectable) worldIn.getTileEntity(pos)).setMaster(p);
-      }
-    }
-    setConnections(worldIn, pos, state, true);
   }
   public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
     IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);

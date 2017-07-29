@@ -51,8 +51,8 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
                 IItemHandler inv = tile.getInventory();
                 int index = 0;
                 tile.setWhite(true);
-                int size = 9*2;
-                for (int i = 0; i < size; i++){
+                int size = 9 * 2;
+                for (int i = 0; i < size; i++) {
                   tile.getFilter().put(i, null);
                 }
                 for (int i = 0; i < inv.getSlots() && index < size; i++) {
@@ -75,7 +75,6 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
           }
           tile.markDirty();
         }
-
         Util.updateTile(t.getWorld(), t.getPos());
       }
     });

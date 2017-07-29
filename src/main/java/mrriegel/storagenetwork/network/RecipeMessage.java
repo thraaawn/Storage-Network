@@ -80,13 +80,19 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
                 continue;
               }
               ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), new FilterItem(s), 1, true);
-              if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(j - 1).isEmpty()) {
-                craftMatrix.setInventorySlotContents(j - 1, InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), new FilterItem(s), 1, false));
+              int slot = j - 1;
+              if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(slot).isEmpty()) {
+                //System.out.println("extractedItem "+slot+"_" +ex.getUnlocalizedName());
+                InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), new FilterItem(s), 1, false);
+                // System.out.println("extractedItem.simulated is false "+slot+"_" +ex.getUnlocalizedName());
+                //make sure to add the real item after the nonsimulated withdrawl is complete https://github.com/PrinceOfAmber/Storage-Network/issues/16
+                craftMatrix.setInventorySlotContents(slot, ex);
                 break;
               }
               s = m.request(!map.get(i).isEmpty() ? new FilterItem(map.get(i)) : null, 1, false);
-              if (s != null && craftMatrix.getStackInSlot(j - 1).isEmpty()) {
-                craftMatrix.setInventorySlotContents(j - 1, s);
+              if (s != null && craftMatrix.getStackInSlot(slot).isEmpty()) {
+                //System.out.println("requested item "+slot+"_" +s.getUnlocalizedName());
+                craftMatrix.setInventorySlotContents(slot, s);
                 break;
               }
             }

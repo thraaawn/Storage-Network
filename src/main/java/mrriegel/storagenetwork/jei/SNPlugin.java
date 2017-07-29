@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 
 @JEIPlugin
 public class SNPlugin implements IModPlugin {
+  @SuppressWarnings({ "rawtypes", "deprecation" })
   @Override
   public void register(IModRegistry registry) {
     registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new RequestRecipeTransferHandler());
@@ -21,16 +22,12 @@ public class SNPlugin implements IModPlugin {
   @Override
   public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {}
   @Override
-  public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {
-    // TODO Auto-generated method stub
+  public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) { 
   }
   @Override
-  public void registerIngredients(IModIngredientRegistration registry) {
-    // TODO Auto-generated method stub
+  public void registerIngredients(IModIngredientRegistration registry) { 
   }
   @Override
-  public void registerCategories(IRecipeCategoryRegistration registry) {
-    // TODO Auto-generated method stub
-    
+  public void registerCategories(IRecipeCategoryRegistration registry) { 
   }
 }

@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.apache.logging.log4j.Level;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.IConnectable;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.cable.TileCable.Kind;
 import mrriegel.storagenetwork.helper.FilterItem;
@@ -54,9 +56,12 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     for (AbstractFilterTile t : invs) {
       IItemHandler inv = t.getInventory();
+      //StorageNetwork.log(" inventory size  " + inv.getSlots());
       for (int i = 0; i < inv.getSlots(); i++) {
         if (inv.getStackInSlot(i) != null && !inv.getStackInSlot(i).isEmpty() && t.canTransfer(inv.getStackInSlot(i), Direction.BOTH))
           addToList(stacks, inv.getStackInSlot(i).copy(), inv.getStackInSlot(i).getCount());
+        //        else
+        //          StorageNetwork.log(" reject   " + inv.getStackInSlot(i).getDisplayName());
       }
     }
     return stacks;
@@ -118,6 +123,9 @@ public class TileMaster extends TileEntity implements ITickable {
         lis.get(i).setSize(lis.get(i).getSize() + num);
         added = true;
       }
+      else {
+        //        lis.add(new StackWrapper(stack,stack.getCount()));
+      }
     }
     if (!added) {
       lis.add(new StackWrapper(s, num));
@@ -126,23 +134,13 @@ public class TileMaster extends TileEntity implements ITickable {
   public int getAmount(FilterItem fil) {
     if (fil == null) { return 0; }
     int size = 0;
-    ItemStack s = fil.getStack();
+    //ItemStack s = fil.getStack();
     for (StackWrapper w : getStacks()) {
       if (fil.match(w.getStack()))
         size += w.getSize();
     }
     return size;
   }
-  //  public List<AbstractTileContainer> getContainers() {
-  //    List<AbstractTileContainer> lis = Lists.newArrayList();
-  //    for (BlockPos p : connectables) {
-  //      if (!(world.getTileEntity(p) instanceof AbstractTileContainer)) {
-  //        continue;
-  //      }
-  //      lis.add((AbstractTileContainer) world.getTileEntity(p));
-  //    }
-  //    return lis;
-  //  }
   public List<FilterItem> getIngredients(ItemStack template) {
     Map<Integer, ItemStack> stacks = Maps.<Integer, ItemStack> newHashMap();
     Map<Integer, Boolean> metas = Maps.<Integer, Boolean> newHashMap();
@@ -170,30 +168,6 @@ public class TileMaster extends TileEntity implements ITickable {
   public NBTTagCompound getUpdateTag() {
     return writeToNBT(new NBTTagCompound());
   }
-  //  @Override
-  //  public void readFromNBT(NBTTagCompound compound) {
-  //    super.readFromNBT(compound);
-  //    //    en.readFromNBT(compound);
-  //    //    NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
-  //    //    tasks = Lists.newArrayList();
-  //    //    for (int i = 0; i < tasksList.tagCount(); i++) {
-  //    //      NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
-  //    //      tasks.add(CraftingTask.loadCraftingTaskFromNBT(stackTag));
-  //    //    }
-  //  }
-  //  @Override
-  //  public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-  //    super.writeToNBT(compound);
-  //    //    en.writeToNBT(compound);
-  //    //    NBTTagList tasksList = new NBTTagList();
-  //    //    for (CraftingTask t : tasks) {
-  //    //      NBTTagCompound stackTag = new NBTTagCompound();
-  //    //      t.writeToNBT(stackTag);
-  //    //      tasksList.appendTag(stackTag);
-  //    //    }
-  //    //    compound.setTag("tasks", tasksList);
-  //    return compound;
-  //  }
   private void addConnectables(final BlockPos pos) {
     if (pos == null || world == null)
       return;
@@ -212,7 +186,7 @@ public class TileMaster extends TileEntity implements ITickable {
         connectables.add(bl);
         ((IConnectable) world.getTileEntity(bl)).setMaster(this.pos);
         chunk.setModified(true);
-//        chunk.setChunkModified();
+        //        chunk.setChunkModified();
         addConnectables(bl);
       }
     }
@@ -324,7 +298,7 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!t.status()) {
           continue;
         }
-        int num = s.getCount();
+        // int num = s.getCount();
         int insert = Math.min(s.getCount(), (int) Math.pow(2, t.getUpgradesOfType(ItemUpgrade.STACK) + 2));
         ItemStack extracted = inv.extractItem(i, insert, true);
         if (extracted == null || extracted.getCount() < insert) {
@@ -423,27 +397,40 @@ public class TileMaster extends TileEntity implements ITickable {
     for (AbstractFilterTile t : invs) {
       IItemHandler inv = t.getInventory();
       for (int i = 0; i < inv.getSlots(); i++) {
-        ItemStack s = inv.getStackInSlot(i);
-        if (s == null || s.isEmpty()) {
+        ItemStack stackCurrent = inv.getStackInSlot(i);
+        if (stackCurrent == null || stackCurrent.isEmpty()) {
           continue;
         }
-        if (res != null && !res.isEmpty() && !ItemHandlerHelper.canItemStacksStack(s, res)) {
+        if (res != null && !res.isEmpty() && !ItemHandlerHelper.canItemStacksStack(stackCurrent, res)) {
           continue;
         }
-        if (!fil.match(s)) {
+        if (!fil.match(stackCurrent)) {
           continue;
         }
-        if (!t.canTransfer(s, Direction.OUT)) {
+        if (!t.canTransfer(stackCurrent, Direction.OUT)) {
           continue;
         }
-        // System.out.println("!TileMaster IS NOT EMPTY" + s + "_" + s.getCount());
+        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
+        StorageNetwork.log("sss" + stackCurrent + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
+        StorageNetwork.log("extracted" + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
         world.markChunkDirty(pos, this);
-        result += Math.min((extracted == null || extracted.isEmpty()) ? 0 : extracted.getCount(), miss);
-        res = extracted.copy();
+        //the other KEY fix for https://github.com/PrinceOfAmber/Storage-Network/issues/19, where it 
+        //voided stuff when you took all from storage drawer: extracted can have a >0 stacksize, but still be air,
+        //so the getCount overrides the 16, and gives zero instead, so i di my own override of, if empty then it got all so use source
+        result += Math.min(extracted.isEmpty() ? stackCurrent.getCount() : extracted.getCount(), miss);
+        res = stackCurrent.copy();
+        if(res.isEmpty()){//workaround for storage drawer and chest thing
+          res = extracted.copy();
+          res.setCount(result);
+        }
+        StorageNetwork.log("!TileMaster request: yes actually remove items from source now " + res + "__" + result);
         //  int rest = s.getCount();
-        if (result == size) { return ItemHandlerHelper.copyStackWithSize(res, size); }
+        if (result == size) {
+          StorageNetwork.log("and done since result==size");
+          return ItemHandlerHelper.copyStackWithSize(res, size);
+        }
       }
     }
     if (result == 0) { return ItemStack.EMPTY; }
@@ -462,7 +449,6 @@ public class TileMaster extends TileEntity implements ITickable {
       updateExports();
     }
     catch (Exception e) {
-      System.out.println("Simple Storage Network error: Maybe something was removed from the network during processing");
       e.printStackTrace();
     }
   }

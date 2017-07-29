@@ -1,7 +1,7 @@
 {
 
   "type": "minecraft:crafting_shaped",
-  "group": "random_things",
+  "group": "storagenetwork",
   "pattern": [
     "dkd",
     "kck",
@@ -20,7 +20,6 @@
 	}
   },
   "result": {
-    "item": "storagenetwork:request",
-	 "count": 4
+    "item": "storagenetwork:request"
   }
 }
