@@ -23,7 +23,12 @@ import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.AbstractFilterTile.Direction;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
@@ -36,6 +41,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class TileMaster extends TileEntity implements ITickable {
   public Set<BlockPos> connectables;
@@ -345,14 +351,26 @@ public class TileMaster extends TileEntity implements ITickable {
         }
         boolean ore = t.getOre(i);
         boolean meta = t.getMeta(i);
-        ItemStack fil = t.getFilter().get(i).getStack();
-        if (fil == null || fil.isEmpty()) {
+        ItemStack stackToFilter = t.getFilter().get(i).getStack().copy();
+//        ItemStack stackToFilter= t.getFilter().get(i).getStack();
+        if(stackToFilter.getItem() instanceof ItemArmor 
+            || stackToFilter.getItem() instanceof ItemTool
+          || stackToFilter.getItem() instanceof ItemSword  
+          || stackToFilter.getItem() instanceof ItemBow    
+          || stackToFilter.getItem() instanceof ItemHoe  ){  
+//          stackToFilter.setItemDamage( OreDictionary.WILDCARD_VALUE);
+          //TODO: SUPER HACK. set this in GUI i guess? 
+          meta = false;
+        }
+        if (stackToFilter == null || stackToFilter.isEmpty()) {
           continue;
         }
         if (storageInventorys.contains(t.getPos())) {
           continue;
         }
-        ItemStack stackCurrent = request(new FilterItem(fil, meta, ore, false), 1, true);
+        FilterItem filter = new FilterItem(stackToFilter, meta, ore, false);
+    
+        ItemStack stackCurrent = request(filter, 1, true);
         if (stackCurrent == null || stackCurrent.isEmpty()) {
           continue;
         }
