@@ -3,8 +3,8 @@
   "promos": {
     "1.11.2-latest": "1.0.5",
     "1.11.2-recommended": "1.0.5",
-    "1.12-latest": "1.0.11",
-    "1.12-recommended": "1.0.13"
+    "1.12-latest": "1.0.14",
+    "1.12-recommended": "1.0.14"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -24,5 +24,6 @@
 	,"1.0.11":"Fix item tooltip rendering.  Fix compatibility issue when connecting to Tinkers Construct machines.  Fixed items not rendering in grid and extracting correctly when connected to Storage Drawers.  "
   	,"1.0.12":"Fix items getting deleted when you withdraw them from a network that has zero Storage Drawers.  "
 	,"1.0.13":"Fix storage network items bleeding out into other creative tabs.  Tools weapons and armor should ignore damage values when inside import/export cable filters.  "
+	,"1.0.14":""
   } 
 }

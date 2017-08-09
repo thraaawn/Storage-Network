@@ -24,10 +24,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.VERSION, updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
+@Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME,  updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
 public class StorageNetwork {
   public static final String MODID = "storagenetwork";
-  public static final String VERSION = "1.0.0";
   public static final String MODNAME = "Simple Storage Network";
   @Instance(StorageNetwork.MODID)
   public static StorageNetwork instance;

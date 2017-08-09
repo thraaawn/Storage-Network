@@ -10,12 +10,13 @@ import net.minecraft.util.math.BlockPos;
 public class GuiRemote extends RigelNetworkGuiRequest {
   public GuiRemote(ContainerRemote inventorySlotsIn) {
     super(inventorySlotsIn);
-    texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
+    texture = new ResourceLocation(StorageNetwork.MODID , "textures/gui/request.png");
   }
   @Override
   public void initGui() {
     super.initGui();
     String savedSearch = NBTHelper.getString(getItemRemote(), NBT_SEARCH);
+  
     if (savedSearch != null) {
       searchBar.setText(savedSearch);
     }
@@ -24,7 +25,7 @@ public class GuiRemote extends RigelNetworkGuiRequest {
   public void updateScreen() {
     super.updateScreen();
     if (searchBar != null && searchBar.getText() != null) {
-      NBTHelper.setString(getItemRemote(), NBT_SEARCH, searchBar.getText());
+      NBTHelper.setString(getItemRemote(), NBT_SEARCH, searchBar.getText()); 
     }
   }
   @Override

@@ -41,6 +41,7 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
       setConnections(worldIn, pos, state, true);
     }
     catch (Exception e) {
+      System.out.println("StorageNetwork: exception thrown while updating neighbours:");
       e.printStackTrace();
     }
   }
