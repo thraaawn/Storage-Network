@@ -10,7 +10,7 @@ public class GuiRequest extends RigelNetworkGuiRequest {
   public GuiRequest(ContainerRequest inventorySlotsIn) {
     super(inventorySlotsIn);
     tile = ((ContainerRequest) inventorySlots).tile;
-    texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
+    texture = new ResourceLocation(StorageNetwork.MODID , "textures/gui/request.png");
   }
   @Override
   public void initGui() {
