@@ -410,6 +410,8 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
     }
+    fil.setOre(true);//TODO: where why this set?. anyway just ALWAYS use ore dictionary. because fuck yeah 
+//    StorageNetwork.log("!TileMaster ATTEMPT to request "  + fil.toString());
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
     for (AbstractFilterTile t : invs) {
@@ -428,11 +430,11 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!t.canTransfer(stackCurrent, Direction.OUT)) {
           continue;
         }
-        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
-        StorageNetwork.log("sss" + stackCurrent + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
+//        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
+//        StorageNetwork.log("sss" + stackCurreint + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
-        StorageNetwork.log("extracted" + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
+        //StorageNetwork.log("extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
         world.markChunkDirty(pos, this);
         //the other KEY fix for https://github.com/PrinceOfAmber/Storage-Network/issues/19, where it 
         //voided stuff when you took all from storage drawer: extracted can have a >0 stacksize, but still be air,
@@ -446,7 +448,6 @@ public class TileMaster extends TileEntity implements ITickable {
         StorageNetwork.log("!TileMaster request: yes actually remove items from source now " + res + "__" + result);
         //  int rest = s.getCount();
         if (result == size) {
-          StorageNetwork.log("and done since result==size");
           return ItemHandlerHelper.copyStackWithSize(res, size);
         }
       }

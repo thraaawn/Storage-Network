@@ -24,6 +24,6 @@
 	,"1.0.11":"Fix item tooltip rendering.  Fix compatibility issue when connecting to Tinkers Construct machines.  Fixed items not rendering in grid and extracting correctly when connected to Storage Drawers.  "
   	,"1.0.12":"Fix items getting deleted when you withdraw them from a network that has zero Storage Drawers.  "
 	,"1.0.13":"Fix storage network items bleeding out into other creative tabs.  Tools weapons and armor should ignore damage values when inside import/export cable filters.  "
-	,"1.0.14":"You can now right click the search bar to clear text (same result as X button).  JEI moved left so its not covered up and hanging offscreen. "
+	,"1.0.14":"You can now right click the search bar to clear text (same result as X button).  JEI moved left so its not covered up and hanging offscreen.  Corrected an ore dictionary issue when finding recipe components using JEI + button (for example, BetterThanMods multiblocks)."
   } 
 }
