@@ -35,7 +35,6 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
           con.tile.markDirty();
           con.slotChanged();
         }
-    
       }
     });
     return null;

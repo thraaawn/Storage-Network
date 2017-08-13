@@ -102,7 +102,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     int i = (this.width - this.xSize) / 2;
     int j = (this.height - this.ySize) / 2;
     this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
-    String search = searchBar.getText(); 
+    String search = searchBar.getText();
     List<StackWrapper> tmp = search.equals("") ? Lists.newArrayList(stacks) : Lists.<StackWrapper> newArrayList();
     if (!search.equals("")) {
       for (StackWrapper s : stacks) {
@@ -223,7 +223,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
         lis.add(I18n.format("gui.storagenetwork.fil.tooltip_0"));
         lis.add(I18n.format("gui.storagenetwork.fil.tooltip_1"));
         lis.add(I18n.format("gui.storagenetwork.fil.tooltip_2"));
-        lis.add(I18n.format("gui.storagenetwork.fil.tooltip_4"));
+        lis.add(I18n.format("gui.storagenetwork.fil.tooltip_3"));
       }
       drawHoveringText(lis, mouseX - guiLeft, mouseY - guiTop);
     }
@@ -285,12 +285,10 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   @Override
   public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
-    
     searchBar.setFocused(false);
     if (inSearchbar(mouseX, mouseY)) {
-      
       searchBar.setFocused(true);
-      if(mouseButton == MOUSE_BTN_RIGHT){
+      if (mouseButton == MOUSE_BTN_RIGHT) {
         searchBar.setText("");
       }
     }

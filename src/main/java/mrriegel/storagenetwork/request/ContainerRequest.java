@@ -125,8 +125,7 @@ public class ContainerRequest extends ContainerNetworkBase {
           detectAndSendChanges();
           List<StackWrapper> list = tile.getStacks();
           PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
-          if (stack.isEmpty()){
-            return ItemStack.EMPTY;}
+          if (stack.isEmpty()) { return ItemStack.EMPTY; }
           slot.onTake(playerIn, itemstack1);
           return ItemStack.EMPTY;
         }
@@ -138,7 +137,7 @@ public class ContainerRequest extends ContainerNetworkBase {
         slot.onSlotChanged();
       }
       if (itemstack1.getCount() == itemstack.getCount()) { return ItemStack.EMPTY; }
-//      StorageNetwork.log("on take eh "+itemstack1);
+      //      StorageNetwork.log("on take eh "+itemstack1);
       slot.onTake(playerIn, itemstack1);
     }
     return itemstack;
@@ -149,7 +148,7 @@ public class ContainerRequest extends ContainerNetworkBase {
       return false;
     TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
     if (!tile.getWorld().isRemote && tile.getWorld().getTotalWorldTime() % 40 == 0) {
-       List<StackWrapper> list = t.getStacks();
+      List<StackWrapper> list = t.getStacks();
       PacketHandler.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
     }
     return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;

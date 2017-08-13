@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME,  updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
+@Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
 public class StorageNetwork {
   public static final String MODID = "storagenetwork";
   public static final String MODNAME = "Simple Storage Network";
@@ -32,12 +32,12 @@ public class StorageNetwork {
   public static StorageNetwork instance;
   @SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")
   public static CommonProxy proxy;
-  public static void log(String s){
-//    System.out.println(s);
+  public static void log(String s) {
+    //    System.out.println(s);
   }
   @EventHandler
   public void preInit(FMLPreInitializationEvent event) {
-    proxy.preInit(event); 
+    proxy.preInit(event);
     MinecraftForge.EVENT_BUS.register(this);
   }
   @EventHandler

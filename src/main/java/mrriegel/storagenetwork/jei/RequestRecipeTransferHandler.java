@@ -29,7 +29,6 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
   public Class<? extends Container> getContainerClass() {
     return ContainerRequest.class;
   }
- 
   @Override
   public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
     if (doTransfer) {

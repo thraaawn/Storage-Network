@@ -27,7 +27,7 @@ public class StackWrapper {
     copy.setCount(1);//count outside of [1,64] gets set to EMPTY STACK, breaking things like Storage Drawers
     copy.writeToNBT(c);
     compound.setTag("stack", c);
-    compound.setInteger("size", size); 
+    compound.setInteger("size", size);
     return compound;
   }
   @Override
@@ -61,7 +61,6 @@ public class StackWrapper {
     StackWrapper wrap = new StackWrapper();
     wrap.readFromNBT(nbt);
     if (wrap.getStack() == null || wrap.getStack().getItem() == null) { return null; }
- 
     return wrap;
   }
 }

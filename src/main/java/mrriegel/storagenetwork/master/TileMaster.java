@@ -352,13 +352,13 @@ public class TileMaster extends TileEntity implements ITickable {
         boolean ore = t.getOre(i);
         boolean meta = t.getMeta(i);
         ItemStack stackToFilter = t.getFilter().get(i).getStack().copy();
-//        ItemStack stackToFilter= t.getFilter().get(i).getStack();
-        if(stackToFilter.getItem() instanceof ItemArmor 
+        //        ItemStack stackToFilter= t.getFilter().get(i).getStack();
+        if (stackToFilter.getItem() instanceof ItemArmor
             || stackToFilter.getItem() instanceof ItemTool
-          || stackToFilter.getItem() instanceof ItemSword  
-          || stackToFilter.getItem() instanceof ItemBow    
-          || stackToFilter.getItem() instanceof ItemHoe  ){  
-//          stackToFilter.setItemDamage( OreDictionary.WILDCARD_VALUE);
+            || stackToFilter.getItem() instanceof ItemSword
+            || stackToFilter.getItem() instanceof ItemBow
+            || stackToFilter.getItem() instanceof ItemHoe) {
+          //          stackToFilter.setItemDamage( OreDictionary.WILDCARD_VALUE);
           //TODO: SUPER HACK. set this in GUI i guess? 
           meta = false;
         }
@@ -369,7 +369,6 @@ public class TileMaster extends TileEntity implements ITickable {
           continue;
         }
         FilterItem filter = new FilterItem(stackToFilter, meta, ore, false);
-    
         ItemStack stackCurrent = request(filter, 1, true);
         if (stackCurrent == null || stackCurrent.isEmpty()) {
           continue;
@@ -411,7 +410,7 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     }
     fil.setOre(true);//TODO: where why this set?. anyway just ALWAYS use ore dictionary. because fuck yeah 
-//    StorageNetwork.log("!TileMaster ATTEMPT to request "  + fil.toString());
+    //    StorageNetwork.log("!TileMaster ATTEMPT to request "  + fil.toString());
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
     for (AbstractFilterTile t : invs) {
@@ -430,8 +429,8 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!t.canTransfer(stackCurrent, Direction.OUT)) {
           continue;
         }
-//        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
-//        StorageNetwork.log("sss" + stackCurreint + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
+        //        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
+        //        StorageNetwork.log("sss" + stackCurreint + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
         //StorageNetwork.log("extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
@@ -441,15 +440,13 @@ public class TileMaster extends TileEntity implements ITickable {
         //so the getCount overrides the 16, and gives zero instead, so i di my own override of, if empty then it got all so use source
         result += Math.min(extracted.isEmpty() ? stackCurrent.getCount() : extracted.getCount(), miss);
         res = stackCurrent.copy();
-        if(res.isEmpty()){//workaround for storage drawer and chest thing
+        if (res.isEmpty()) {//workaround for storage drawer and chest thing
           res = extracted.copy();
           res.setCount(result);
         }
         StorageNetwork.log("!TileMaster request: yes actually remove items from source now " + res + "__" + result);
         //  int rest = s.getCount();
-        if (result == size) {
-          return ItemHandlerHelper.copyStackWithSize(res, size);
-        }
+        if (result == size) { return ItemHandlerHelper.copyStackWithSize(res, size); }
       }
     }
     if (result == 0) { return ItemStack.EMPTY; }

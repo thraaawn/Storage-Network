@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.jei;
 import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraftforge.fml.common.Optional;
- 
+
 public class JeiHooks {
   /**
    * so if JEI is not loaded, this will be called but then its an empty FN
