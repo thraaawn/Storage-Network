@@ -22,12 +22,9 @@ public class SNPlugin implements IModPlugin {
   @Override
   public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {}
   @Override
-  public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) { 
-  }
+  public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {}
   @Override
-  public void registerIngredients(IModIngredientRegistration registry) { 
-  }
+  public void registerIngredients(IModIngredientRegistration registry) {}
   @Override
-  public void registerCategories(IRecipeCategoryRegistration registry) { 
-  }
+  public void registerCategories(IRecipeCategoryRegistration registry) {}
 }

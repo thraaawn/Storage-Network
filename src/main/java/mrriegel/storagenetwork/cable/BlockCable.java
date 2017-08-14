@@ -16,6 +16,8 @@ import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.master.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -98,11 +100,6 @@ public class BlockCable extends AbstractBlockConnectable {
   public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
     setConnections(worldIn, pos, state, false);
   }
-  // @Override
-  // protected BlockStateContainer createBlockState() {
-  // return new BlockStateContainer(this, new IProperty[] { NORTH, SOUTH,
-  // EAST, WEST, UP, DOWN, STRAIGHT });
-  // }
   @Override
   public int getMetaFromState(IBlockState state) {
     return 0;
@@ -284,7 +281,7 @@ public class BlockCable extends AbstractBlockConnectable {
     return new AxisAlignedBB(f, f4, f2, f1, f5, f3);
   }
   protected EnumConnectType getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
-   // Block block = worldIn.getBlockState(pos).getBlock();
+    // Block block = worldIn.getBlockState(pos).getBlock();
     Block ori = worldIn.getBlockState(orig).getBlock();
     if (worldIn.getTileEntity(pos) instanceof IConnectable || worldIn.getTileEntity(pos) instanceof TileMaster)
       return EnumConnectType.CONNECT;
@@ -327,18 +324,18 @@ public class BlockCable extends AbstractBlockConnectable {
         tooltip.add(I18n.format("tooltip.storagenetwork.kabel_L"));
     }
   }
-//  public static class PropertyConnection extends PropertyEnum<EnumConnectType> {
-//    String name;
-//    public PropertyConnection(String name2) {
-//      super(name2, EnumConnectType.class, Lists.newArrayList(EnumConnectType.values()));
-//      this.name = name2;
-//    }
-////    public static PropertyConnection create(String name) {
-////      return new PropertyConnection(name);
-////    }
-//    @Override
-//    public String getName() {
-//      return name;
-//    }
-//  }
+  //  public static class PropertyConnection extends PropertyEnum<EnumConnectType> {
+  //    String name;
+  //    public PropertyConnection(String name2) {
+  //      super(name2, EnumConnectType.class, Lists.newArrayList(EnumConnectType.values()));
+  //      this.name = name2;
+  //    }
+  ////    public static PropertyConnection create(String name) {
+  ////      return new PropertyConnection(name);
+  ////    }
+  //    @Override
+  //    public String getName() {
+  //      return name;
+  //    }
+  //  }
 }

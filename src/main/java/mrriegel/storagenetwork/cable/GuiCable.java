@@ -32,7 +32,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class GuiCable extends RigelNetworkGuiContainer {
-  private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
+  private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
   Kind kind;
   Button btnPlus, btnMinus, btnWhite, btnActi, btnImport, btnWay;
   AbstractFilterTile tile;

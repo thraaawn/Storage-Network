@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.jei;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
+import mrriegel.storagenetwork.StorageNetwork;
 //import mezz.jei.gui.ingredients.GuiIngredient;
 import mrriegel.storagenetwork.network.ClearMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
@@ -29,11 +31,11 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
   public Class<? extends Container> getContainerClass() {
     return ContainerRequest.class;
   }
- 
   @Override
   public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
     if (doTransfer) {
       PacketHandler.INSTANCE.sendToServer(new ClearMessage());
+      StorageNetwork.log(" recipeLayout  " + recipeLayout);
       Map<Integer, ? extends IGuiIngredient<ItemStack>> inputs = recipeLayout.getItemStacks().getGuiIngredients();
       Map<Integer, List<ItemStack>> map = new HashMap<Integer, List<ItemStack>>();
       for (int j = 0; j < container.inventorySlots.size(); j++) {
@@ -42,6 +44,8 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
           try {
             IGuiIngredient<ItemStack> ingredient = inputs.get(slot.getSlotIndex() + 1);
             if (ingredient != null) {
+              StorageNetwork.log(" ingredients at j   " + ingredient.getAllIngredients());//this could be empty array, or something like [1xtile.bwm:wood_siding@5]
+              //or for an ore dict entry it might be    [1xitem.ingotIron@0]
               map.put(j, ingredient.getAllIngredients());
             }
           }
@@ -51,16 +55,23 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
         }
       }
       NBTTagCompound nbt = new NBTTagCompound();
-      for (int j = 1; j < 10; j++) {
-        if (map.get(j) != null) {
-          if (getOreDict(map.get(j)) != null)
-            nbt.setString("s" + j, getOreDict(map.get(j)));
-          else {
+      List<ItemStack> current;
+      for (int j = 1; j < 10; j++) {//its a 3x3 grid eh
+        current = map.get(j);
+        if (current != null) {
+          StorageNetwork.log("TEST SKIP ORE DICT IN HANDLER!! current at j   " + current);
+          //yep this was the issue. dont force oredict here. letJEI recipeIngredients handle it and follow forward
+          List<String> oresForStack = null;//getOresForStack(current);
+          if (oresForStack != null) {
+//            StorageNetwork.log("ORE DIDCT STRING CSV WHA T" + String.join(",", oresForStack));
+            nbt.setString("s" + j, String.join(",", oresForStack));
+          }
+          else {//current is null
             NBTTagList invList = new NBTTagList();
-            for (int i = 0; i < map.get(j).size(); i++) {
-              if (!map.get(j).get(i).isEmpty()) {
+            for (int i = 0; i < current.size(); i++) {
+              if (!current.get(i).isEmpty()) {
                 NBTTagCompound stackTag = new NBTTagCompound();
-                map.get(j).get(i).writeToNBT(stackTag);
+                current.get(i).writeToNBT(stackTag);
                 invList.appendTag(stackTag);
               }
             }
@@ -72,19 +83,37 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
     }
     return null;
   }
-  private String getOreDict(List<ItemStack> lis) {
-    if (lis.size() < 2 || lis.get(0).isEmpty())
-      return null;
-    for (int i : OreDictionary.getOreIDs(lis.get(0))) {
-      boolean foo = true;
-      for (ItemStack stack : lis) {
-        if (!Ints.asList(OreDictionary.getOreIDs(stack)).contains(i)) {
-          foo = false;
-          break;
-        }
+  /**
+   * get all matching ore dictionary strings for these recipe inputs
+   * 
+   * @param lis
+   * @return
+   */
+  private List<String> getOresForStack(List<ItemStack> lis) {
+    if (lis == null) { return null; }
+    List<String> matchingDicts = new ArrayList<String>();
+    //ore dict has no "get keys for stack" ..w ell it does but it gets ids not strings
+    String oreName;
+    for (ItemStack s : lis) {
+      if (s == null || s.isEmpty()) {
+        continue;
       }
-      if (foo) { return OreDictionary.getOreName(i); }
+      for (int i : OreDictionary.getOreIDs(s)) {
+        oreName = OreDictionary.getOreName(i);
+        if (oreName != null && matchingDicts.contains(oreName) == false)
+          matchingDicts.add(oreName);
+      }
     }
-    return null;
+    //    for (int i : OreDictionary.getOreIDs(lis.get(0))) {
+    //      boolean foo = true;
+    //      for (ItemStack stack : lis) {
+    //        if (!Ints.asList(OreDictionary.getOreIDs(stack)).contains(i)) {
+    //          foo = false;
+    //          break;//DONT BREAK: an item could be registered to more than one dictionary!
+    //        }
+    //      }
+    //      if (foo) { return OreDictionary.getOreName(i); }
+    //    }
+    return matchingDicts;
   }
 }

@@ -1,9 +1,11 @@
 package mrriegel.storagenetwork.network;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.ContainerNetworkBase;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
@@ -49,57 +51,88 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
       public void run() {
         Container c = ctx.getServerHandler().player.openContainer;
         //        World w = ctx.getServerHandler().playerEntity.world;
+        StorageNetwork.log("new recipe packet. how do i tell if its an ore dict one " + message.nbt);
+        //NON ore dict entry looks like [{id:"betterwithmods:wood_siding",Count:1b,Damage:0s}]
+        //ore dict entry is a ,s2:"plankWood"
         if (c instanceof ContainerNetworkBase) {
           ContainerNetworkBase ctr = (ContainerNetworkBase) c;
-          TileMaster m = ctr.getTileMaster();
+          TileMaster master = ctr.getTileMaster();
           InventoryCrafting craftMatrix = ctr.getCraftMatrix();
           // if (message.index == 0) {
           //          if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest))
           //            return;
           //   ContainerRequest con = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
           //  TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.world.getTileEntity(con.tile.getMaster());
-          if (m == null) { return; }
+          if (master == null) { return; }
+          String[] oreDictKeys;// = oreDictKey.split(",");
           for (int j = 1; j < 10; j++) {
             Map<Integer, ItemStack> map = new HashMap<Integer, ItemStack>();
+            //if its a string, then ore dict is allowed
+            /*********
+             * parse nbt of the slot, whether its ore dict, itemstack, ore empty
+             **********/
+            boolean isOreDict;
             if (message.nbt.hasKey("s" + j, Constants.NBT.TAG_STRING)) {
-              List<ItemStack> l = OreDictionary.getOres(message.nbt.getString("s" + j));
-              for (int i = 0; i < l.size(); i++)
+              isOreDict = true;
+              /*************
+               * NEW: each item stack could be in MULTIPLE ore dicts. such as
+               * betterthanmods multiblocks
+               **/
+              oreDictKeys = message.nbt.getString("s" + j).split(",");
+              List<ItemStack> l = new ArrayList<ItemStack>();
+              for (String oreKey : oreDictKeys) {
+                l.addAll(OreDictionary.getOres(oreKey));
+              }
+              //              List<ItemStack> l = OreDictionary.getOres(oreKey);
+              for (int i = 0; i < l.size(); i++) {
                 map.put(i, l.get(i));
+              }
+              StorageNetwork.log(message.nbt.getString("s" + j) + " ore dict keyS found  " + l);
             }
-            else {
+            else { // is not string, so just simple item stacks
+              isOreDict = false;
               NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
               for (int i = 0; i < invList.tagCount(); i++) {
                 NBTTagCompound stackTag = invList.getCompoundTagAt(i);
                 ItemStack s = new ItemStack(stackTag);
                 map.put(i, s);
               }
+              StorageNetwork.log(j + "   is ore stacks " + map.keySet());
             }
+            /********* end parse nbt of this current slot ******/
+            /********** now start trying to fill in recipe **/
             for (int i = 0; i < map.size(); i++) {
-              ItemStack s = map.get(i);
-              if (s == null || s.isEmpty()) {
+              ItemStack stackCurrent = map.get(i);
+              if (stackCurrent == null || stackCurrent.isEmpty()) {
                 continue;
               }
-              ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), new FilterItem(s), 1, true);
+              FilterItem filterItem = new FilterItem(stackCurrent);
+              filterItem.setOre(isOreDict);//important: set this for correct matching
+              StorageNetwork.log("CALL exctractItem   " + stackCurrent + " isOreDict " + isOreDict);
+              ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, true);
+              /*********** First try and use the players inventory **/
               int slot = j - 1;
               if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(slot).isEmpty()) {
-                //System.out.println("extractedItem "+slot+"_" +ex.getUnlocalizedName());
-                InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), new FilterItem(s), 1, false);
+                InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, false);
                 // System.out.println("extractedItem.simulated is false "+slot+"_" +ex.getUnlocalizedName());
                 //make sure to add the real item after the nonsimulated withdrawl is complete https://github.com/PrinceOfAmber/Storage-Network/issues/16
                 craftMatrix.setInventorySlotContents(slot, ex);
                 break;
               }
-              s = m.request(!map.get(i).isEmpty() ? new FilterItem(map.get(i)) : null, 1, false);
-              if (s != null && craftMatrix.getStackInSlot(slot).isEmpty()) {
+              /********* now find it from the network ***/
+              stackCurrent = master.request(!stackCurrent.isEmpty() ? filterItem : null, 1, false);
+              if (stackCurrent != null && craftMatrix.getStackInSlot(slot).isEmpty()) {
                 //System.out.println("requested item "+slot+"_" +s.getUnlocalizedName());
-                craftMatrix.setInventorySlotContents(slot, s);
+                craftMatrix.setInventorySlotContents(slot, stackCurrent);
                 break;
               }
             }
+            /************** finished recipe population **/
           }
+          //now make sure client sync happens.
           ctr.slotChanged();
-          List<StackWrapper> list = m.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().player);
+          List<StackWrapper> list = master.getStacks();
+          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, master.getCraftableStacks(list)), ctx.getServerHandler().player);
         }
       }
       //}

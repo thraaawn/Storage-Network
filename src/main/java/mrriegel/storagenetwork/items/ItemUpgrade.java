@@ -28,11 +28,11 @@ public class ItemUpgrade extends Item {
   @Override
   @SideOnly(Side.CLIENT)
   public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list) {
-      if (isInCreativeTab(tab)) {
-          for (int i = 0; i < NUM; i++) {
-              list.add(new ItemStack(this, 1, i));
-          }
+    if (isInCreativeTab(tab)) {
+      for (int i = 0; i < NUM; i++) {
+        list.add(new ItemStack(this, 1, i));
       }
+    }
   }
   @Override
   public String getUnlocalizedName(ItemStack stack) {

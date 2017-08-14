@@ -33,6 +33,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
 
 public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
+  private static final int MOUSE_BTN_RIGHT = 1;
+  private static final int MOUSE_BTN_LEFT = 0;
   public static final String NBT_SEARCH = "storagenetwork_search";
   protected ResourceLocation texture;
   protected int page = 1, maxPage = 1;
@@ -74,7 +76,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     // buttonList.add(left);
     // right = new Button(3, guiLeft + 58, guiTop + 93, ">");
     // buttonList.add(right);
-    jei = new Button(4, guiLeft + 169, guiTop + 93, "");
+    jei = new Button(4, guiLeft + 35, guiTop + 93, "");
     if (ConfigHandler.jeiLoaded) {
       buttonList.add(jei);
     }
@@ -100,7 +102,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     int i = (this.width - this.xSize) / 2;
     int j = (this.height - this.ySize) / 2;
     this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
-    String search = searchBar.getText(); 
+    String search = searchBar.getText();
     List<StackWrapper> tmp = search.equals("") ? Lists.newArrayList(stacks) : Lists.<StackWrapper> newArrayList();
     if (!search.equals("")) {
       for (StackWrapper s : stacks) {
@@ -286,12 +288,15 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     searchBar.setFocused(false);
     if (inSearchbar(mouseX, mouseY)) {
       searchBar.setFocused(true);
+      if (mouseButton == MOUSE_BTN_RIGHT) {
+        searchBar.setText("");
+      }
     }
     else if (inX(mouseX, mouseY)) {
       PacketHandler.INSTANCE.sendToServer(new ClearMessage());
       PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
     }
-    else if (over != null && !over.isEmpty() && (mouseButton == 0 || mouseButton == 1) && mc.player.inventory.getItemStack().isEmpty() && canClick()) {
+    else if (over != null && !over.isEmpty() && (mouseButton == MOUSE_BTN_LEFT || mouseButton == MOUSE_BTN_RIGHT) && mc.player.inventory.getItemStack().isEmpty() && canClick()) {
       PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
       lastClick = System.currentTimeMillis();
     }

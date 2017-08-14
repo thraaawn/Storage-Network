@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos;
 public class GuiRemote extends RigelNetworkGuiRequest {
   public GuiRemote(ContainerRemote inventorySlotsIn) {
     super(inventorySlotsIn);
-    texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
+    texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   }
   @Override
   public void initGui() {
