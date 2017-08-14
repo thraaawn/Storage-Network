@@ -59,9 +59,9 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
       for (int j = 1; j < 10; j++) {//its a 3x3 grid eh
         current = map.get(j);
         if (current != null) {
-          StorageNetwork.log(" current at j   " + current);
-          
-          List<String> oresForStack = getOresForStack(current);
+          StorageNetwork.log("TEST SKIP ORE DICT IN HANDLER!! current at j   " + current);
+          //yep this was the issue. dont force oredict here. letJEI recipeIngredients handle it and follow forward
+          List<String> oresForStack = null;//getOresForStack(current);
           if (oresForStack != null) {
 //            StorageNetwork.log("ORE DIDCT STRING CSV WHA T" + String.join(",", oresForStack));
             nbt.setString("s" + j, String.join(",", oresForStack));
