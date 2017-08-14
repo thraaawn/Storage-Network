@@ -409,8 +409,16 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
     }
-    fil.setOre(true);//TODO: where why this set?. anyway just ALWAYS use ore dictionary. because fuck yeah 
-    //    StorageNetwork.log("!TileMaster ATTEMPT to request "  + fil.toString());
+ //only match meta if NOT wildca rd
+//    if(fil.getStack().getMetadata() == OreDictionary.WILDCARD_VALUE ){
+//     
+//      //fil.setMeta(false);
+//      StorageNetwork.log("!TileMaster ATTEMPT to request IGNORE meta ___ "+fil.getStack());
+//    }
+// 
+   
+    //fil.setOre(fil.getStack().getMetadata() == OreDictionary.WILDCARD_VALUE);
+//    fil.setOre(true);//TODO: where why this set?. anyway just ALWAYS use ore dictionary. because fuck yeah 
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
     for (AbstractFilterTile t : invs) {
