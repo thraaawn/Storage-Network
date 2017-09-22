@@ -16,12 +16,9 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
   }
   @Override
   public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-    boolean replaceable = false;
     try {
-      replaceable = blockIn.isReplaceable(worldIn, pos.up());
-      replaceable = true;
       //be more careful eh?  java.lang.IllegalArgumentException: Cannot get property PropertyInteger{name=meta, clazz=class java.lang.Integer, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 
-      if (!blockIn.hasTileEntity(state) && blockIn != Blocks.AIR && !replaceable) { return; }
+      if (!blockIn.hasTileEntity(state) && blockIn != Blocks.AIR) { return; }
       if (worldIn.getTileEntity(pos) instanceof IConnectable) {
         IConnectable conUnitNeedsMaster = (IConnectable) worldIn.getTileEntity(pos);
         //the new thing needs to find the master of the network. so either my neighbor knows who the master is, 

@@ -95,8 +95,9 @@ public class Util {
   }
   public static List<BlockPos> getSides(BlockPos pos) {
     List<BlockPos> lis = Lists.newArrayList();
-    for (EnumFacing face : EnumFacing.values())
+    for (EnumFacing face : EnumFacing.values()) {
       lis.add(pos.offset(face));
+    }
     return lis;
   }
   public static void updateTile(World world, BlockPos pos) {

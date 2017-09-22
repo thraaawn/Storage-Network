@@ -175,9 +175,11 @@ public class TileMaster extends TileEntity implements ITickable {
     return writeToNBT(new NBTTagCompound());
   }
   private void addConnectables(final BlockPos pos) {
-    if (pos == null || world == null)
-      return;
+    if (pos == null || world == null || this.getWorld().isBlockLoaded(pos) == false) { return; }
     for (BlockPos bl : Util.getSides(pos)) {
+      if (this.getWorld().isBlockLoaded(bl) == false) {
+        continue;
+      }
       Chunk chunk = world.getChunkFromBlockCoords(bl);
       if (chunk == null || !chunk.isLoaded()) {
         continue;
@@ -192,7 +194,6 @@ public class TileMaster extends TileEntity implements ITickable {
         connectables.add(bl);
         ((IConnectable) world.getTileEntity(bl)).setMaster(this.pos);
         chunk.setModified(true);
-        //        chunk.setChunkModified();
         addConnectables(bl);
       }
     }
@@ -409,16 +410,15 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
     }
- //only match meta if NOT wildca rd
-//    if(fil.getStack().getMetadata() == OreDictionary.WILDCARD_VALUE ){
-//     
-//      //fil.setMeta(false);
-//      StorageNetwork.log("!TileMaster ATTEMPT to request IGNORE meta ___ "+fil.getStack());
-//    }
-// 
-   
+    //only match meta if NOT wildca rd
+    //    if(fil.getStack().getMetadata() == OreDictionary.WILDCARD_VALUE ){
+    //     
+    //      //fil.setMeta(false);
+    //      StorageNetwork.log("!TileMaster ATTEMPT to request IGNORE meta ___ "+fil.getStack());
+    //    }
+    // 
     //fil.setOre(fil.getStack().getMetadata() == OreDictionary.WILDCARD_VALUE);
-//    fil.setOre(true);//TODO: where why this set?. anyway just ALWAYS use ore dictionary. because fuck yeah 
+    //    fil.setOre(true);//TODO: where why this set?. anyway just ALWAYS use ore dictionary. because fuck yeah 
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
     for (AbstractFilterTile t : invs) {
