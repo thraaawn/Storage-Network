@@ -25,6 +25,6 @@
   	,"1.0.12":"Fix items getting deleted when you withdraw them from a network that has zero Storage Drawers.  "
 	,"1.0.13":"Fix storage network items bleeding out into other creative tabs.  Tools weapons and armor should ignore damage values when inside import/export cable filters.  "
 	,"1.0.14":"You can now right click the search bar to clear text (same result as X button).  JEI toggle moved left so its not covered up and hanging offscreen.  JEI with the network will now correctly find all recipe ingredients if an item is in more than one Ore Dictionary category (such as BTM multiblock wooden parts)."
-	,"1.0.15":"Attempt to stop lag spikes and crashes by being more careful around chunk unloading.  "
+	,"1.0.15":"Attempt to stop lag spikes and crashes by being more careful around chunk unloading.  Addressed JEI recipe finder useing the wrong ore-dictionary item (such as getting the wrong colour of dye / getting lapis instead of inc sacks).   Compatible with Minecraft 1.12.2.  Minimum forge version is now 14.22.0.2464.  Updated JEI compatibility to 4.7.8.92. "
   } 
 }
