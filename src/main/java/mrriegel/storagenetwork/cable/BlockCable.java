@@ -10,7 +10,7 @@ import mrriegel.storagenetwork.GuiHandler;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.cable.TileCable.Kind;
+import mrriegel.storagenetwork.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.master.TileMaster;
@@ -90,7 +90,7 @@ public class BlockCable extends AbstractBlockConnectable {
     if (worldIn.isRemote)
       return true;
     TileCable tile = (TileCable) worldIn.getTileEntity(pos);
-    if (tile.getKind() == Kind.exKabel || tile.getKind() == Kind.imKabel || tile.getKind() == Kind.storageKabel) {
+    if (tile.getKind() == CableKind.exKabel || tile.getKind() == CableKind.imKabel || tile.getKind() == CableKind.storageKabel) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }

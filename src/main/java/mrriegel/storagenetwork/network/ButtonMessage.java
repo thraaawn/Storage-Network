@@ -40,7 +40,7 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
               tile.setPriority(tile.getPriority() + 1);
             break;
             case 3:
-              tile.setWhite(!tile.isWhite());
+              tile.setWhite(!tile.isWhitelist());
             break;
             case 4:
               if (tile instanceof TileCable)

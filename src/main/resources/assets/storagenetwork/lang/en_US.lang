@@ -15,7 +15,7 @@ item.storagenetwork:remote_0.name=Storage Remote
 item.storagenetwork:remote_1.name=Advanced Storage Remote
 
 
-gui.storagenetwork.operate.tooltip=%s is active if %s than %d %s are in the network.
+gui.storagenetwork.operate.tooltip=Active if %s than %d %s in network
 gui.storagenetwork.operate.tooltip.more=more
 gui.storagenetwork.operate.tooltip.less=less
 

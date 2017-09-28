@@ -13,7 +13,7 @@ import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable;
-import mrriegel.storagenetwork.cable.TileCable.Kind;
+import mrriegel.storagenetwork.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.NBTHelper;
@@ -280,7 +280,7 @@ public class TileMaster extends TileEntity implements ITickable {
       if (!(world.getTileEntity(p) instanceof TileCable))
         continue;
       TileCable tile = (TileCable) world.getTileEntity(p);
-      if (tile.getKind() == Kind.imKabel && tile.getInventory() != null) {
+      if (tile.getKind() == CableKind.imKabel && tile.getInventory() != null) {
         invs.add(tile);
       }
     }
@@ -325,7 +325,7 @@ public class TileMaster extends TileEntity implements ITickable {
         continue;
       }
       TileCable tile = (TileCable) world.getTileEntity(p);
-      if (tile.getKind() == Kind.exKabel && tile.getInventory() != null) {
+      if (tile.getKind() == CableKind.exKabel && tile.getInventory() != null) {
         invs.add(tile);
       }
     }
@@ -335,24 +335,23 @@ public class TileMaster extends TileEntity implements ITickable {
         return Integer.compare(o1.getPriority(), o2.getPriority());
       }
     });
-    for (TileCable t : invs) {
-      if (t == null) {
+    for (TileCable tileCable : invs) {
+      if (tileCable == null || tileCable.getInventory() == null) {
         continue;
       }
-      IItemHandler inv = t.getInventory();
-      if (inv == null) {
+      if ((world.getTotalWorldTime() + 20) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
         continue;
       }
-      if ((world.getTotalWorldTime() + 20) % (30 / (t.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
-        continue;
-      }
-      for (int i = 0; i < 18; i++) {
-        if (t.getFilter().get(i) == null) {
+      IItemHandler inv = tileCable.getInventory();
+
+      boolean isWhitelist =     tileCable.isWhitelist();
+      for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
+        if (tileCable.getFilter().get(i) == null) {
           continue;
         }
-        boolean ore = t.getOre(i);
-        boolean meta = t.getMeta(i);
-        ItemStack stackToFilter = t.getFilter().get(i).getStack().copy();
+        boolean ore = tileCable.getOre(i);
+        boolean meta = tileCable.getMeta(i);
+        ItemStack stackToFilter = tileCable.getFilter().get(i).getStack().copy();
         //        ItemStack stackToFilter= t.getFilter().get(i).getStack();
         if (stackToFilter.getItem() instanceof ItemArmor
             || stackToFilter.getItem() instanceof ItemTool
@@ -366,7 +365,7 @@ public class TileMaster extends TileEntity implements ITickable {
         if (stackToFilter == null || stackToFilter.isEmpty()) {
           continue;
         }
-        if (storageInventorys.contains(t.getPos())) {
+        if (storageInventorys.contains(tileCable.getPos())) {
           continue;
         }
         FilterItem filter = new FilterItem(stackToFilter, meta, ore, false);
@@ -375,8 +374,8 @@ public class TileMaster extends TileEntity implements ITickable {
           continue;
         }
         int maxStackSize = stackCurrent.getMaxStackSize();
-        if ((t.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
-          maxStackSize = Math.min(maxStackSize, t.getFilter().get(i).getSize() - InvHelper.getAmount(inv, new FilterItem(stackCurrent, meta, ore, false)));
+        if ((tileCable.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
+          maxStackSize = Math.min(maxStackSize, tileCable.getFilter().get(i).getSize() - InvHelper.getAmount(inv, new FilterItem(stackCurrent, meta, ore, false)));
         }
         if (maxStackSize <= 0) {
           continue;
@@ -384,15 +383,15 @@ public class TileMaster extends TileEntity implements ITickable {
         ItemStack max = ItemHandlerHelper.copyStackWithSize(stackCurrent, maxStackSize);
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, max, true);
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
-        insert = Math.min(insert, (int) Math.pow(2, t.getUpgradesOfType(ItemUpgrade.STACK) + 2));
-        if (!t.status()) {
+        insert = Math.min(insert, (int) Math.pow(2, tileCable.getUpgradesOfType(ItemUpgrade.STACK) + 2));
+        if (!tileCable.status()) {
           continue;
         }
         ItemStack rec = request(new FilterItem(stackCurrent, meta, ore, false), insert, false);
         if (rec == null || rec.isEmpty()) {
           continue;
         }
-        rec.shrink(t.getUpgradesOfType(ItemUpgrade.SPEED));
+        rec.shrink(tileCable.getUpgradesOfType(ItemUpgrade.SPEED));
         ItemHandlerHelper.insertItemStacked(inv, rec, false);
         world.markChunkDirty(pos, this);
         break;
