@@ -349,8 +349,8 @@ public class TileMaster extends TileEntity implements ITickable {
         if (tileCable.getFilter().get(i) == null) {
           continue;
         }
-        boolean ore = tileCable.getOre(i);
-        boolean meta = tileCable.getMeta(i);
+        boolean ore = tileCable.getOre();
+        boolean meta = tileCable.getMeta();
         ItemStack stackToFilter = tileCable.getFilter().get(i).getStack().copy();
         //        ItemStack stackToFilter= t.getFilter().get(i).getStack();
         if (stackToFilter.getItem() instanceof ItemArmor

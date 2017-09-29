@@ -29,9 +29,11 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
       public void run() {
         if (ctx.getServerHandler().player.openContainer instanceof ContainerCable) {
           ContainerCable con = (ContainerCable) ctx.getServerHandler().player.openContainer;
-          con.tile.getFilter().put(message.index, message.wrap);
-          con.tile.getOres().put(message.index, message.ore);
-          con.tile.getMetas().put(message.index, message.meta);
+          if (message.wrap != null && message.index >= 0) {
+            con.tile.getFilter().put(message.index, message.wrap);
+          }
+          con.tile.setOres(message.ore);
+          con.tile.setMeta(message.meta);
           con.tile.markDirty();
           con.slotChanged();
         }

@@ -41,6 +41,8 @@ public class GuiCable extends RigelNetworkGuiContainer {
   private GuiTextField searchBar;
   List<ItemSlot> list;
   ItemSlot operation;
+  private GuiCheckBox checkOre;
+  private GuiCheckBox checkMeta;
   public GuiCable(ContainerCable inventorySlotsIn) {
     super(inventorySlotsIn);
     this.xSize = 176;
@@ -111,8 +113,6 @@ public class GuiCable extends RigelNetworkGuiContainer {
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-
-    
     for (ItemSlot s : list)
       s.drawTooltip(mouseX, mouseY);
     if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OPERATION) >= 1)
@@ -125,11 +125,10 @@ public class GuiCable extends RigelNetworkGuiContainer {
       this.drawHoveringText(Lists.newArrayList("Priority"), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
     if (btnWhite != null && btnWhite.isMouseOver())
       this.drawHoveringText(Lists.newArrayList(tile.isWhitelist() ? "Whitelist" : "Blacklist"), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
-    if(btnOperationToggle != null && btnOperationToggle.isMouseOver()){
-     String s = I18n.format("gui.storagenetwork.operate.tooltip",  I18n.format("gui.storagenetwork.operate.tooltip." + (((TileCable) tile).isMode() ? "more" : "less")), ((TileCable) tile).getLimit(), ((TileCable) tile).getStack() != null ? ((TileCable) tile).getStack().getDisplayName() : "Items");
-   //   String s = I18n.format("gui.storagenetwork.operate.tooltip");
+    if (btnOperationToggle != null && btnOperationToggle.isMouseOver()) {
+      String s = I18n.format("gui.storagenetwork.operate.tooltip", I18n.format("gui.storagenetwork.operate.tooltip." + (((TileCable) tile).isMode() ? "more" : "less")), ((TileCable) tile).getLimit(), ((TileCable) tile).getStack() != null ? ((TileCable) tile).getStack().getDisplayName() : "Items");
+      //   String s = I18n.format("gui.storagenetwork.operate.tooltip");
       this.drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
-      
     }
   }
   @Override
@@ -162,31 +161,26 @@ public class GuiCable extends RigelNetworkGuiContainer {
       searchBar.setText(cable.getLimit() + "");
       searchBar.width = 20;
       btnOperationToggle = new Button(4, guiLeft + 28, guiTop + 66, "");
-//      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
+      //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
       buttonList.add(btnOperationToggle);
       operation = new ItemSlot(cable.getStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
-   
-//      
-      GuiCheckBox  checkOre = new GuiCheckBox(10,  guiLeft + 78,guiTop + 64,"Ore Dictionary",true);
-
+      //      
+       checkOre = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, "Ore Dictionary", true);
+      checkOre.setIsChecked(tile.getOre());
       buttonList.add(checkOre);
-
-      GuiCheckBox  meta = new GuiCheckBox(11, guiLeft + 78,guiTop + 76,"Meta",true);
-
-      buttonList.add(meta);
-      
-      
-//    RenderHelper.disableStandardItemLighting();
-//    GlStateManager.disableLighting();
-//    GlStateManager.disableDepth();
-//    GlStateManager.disableBlend();
-//   
-//      mc.fontRenderer.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
-// 
-//      mc.fontRenderer.drawStringWithShadow("M", e.x + 1, e.y, 0xff4040);
-//    GlStateManager.enableLighting();
-//    GlStateManager.enableDepth();
-      
+       checkMeta = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, "Meta", true);
+      checkMeta.setIsChecked(tile.getMeta());
+      buttonList.add(checkMeta);
+      //    RenderHelper.disableStandardItemLighting();
+      //    GlStateManager.disableLighting();
+      //    GlStateManager.disableDepth();
+      //    GlStateManager.disableBlend();
+      //   
+      //      mc.fontRenderer.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
+      // 
+      //      mc.fontRenderer.drawStringWithShadow("M", e.x + 1, e.y, 0xff4040);
+      //    GlStateManager.enableLighting();
+      //    GlStateManager.enableDepth();
     }
   }
   @Override
@@ -207,8 +201,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
         if (mc.player.inventory.getItemStack() != null) {
           if (!con.isInFilter(new StackWrapper(mc.player.inventory.getItemStack(), 1))) {
             con.tile.getFilter().put(i, new StackWrapper(mc.player.inventory.getItemStack(), mc.player.inventory.getItemStack().getCount()));
-            con.tile.getOres().put(i, false);
-            con.tile.getMetas().put(i, true);
+ 
           }
         }
         else {
@@ -219,18 +212,16 @@ public class GuiCable extends RigelNetworkGuiContainer {
               x.setSize(x.getSize() - (isShiftKeyDown() ? 10 : 1));
             else if (mouseButton == 2) {
               con.tile.getFilter().put(i, null);
-              con.tile.getOres().put(i, false);
-              con.tile.getMetas().put(i, true);
+ 
             }
             if (x != null && x.getSize() <= 0) {
               con.tile.getFilter().put(i, null);
-              con.tile.getOres().put(i, false);
-              con.tile.getMetas().put(i, true);
+ 
             }
           }
         }
         con.slotChanged();
-        PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(i), tile.getMeta(i)));
+        PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(), tile.getMeta()));
         break;
       }
     }
@@ -239,41 +230,43 @@ public class GuiCable extends RigelNetworkGuiContainer {
   protected void actionPerformed(GuiButton button) throws IOException {
     super.actionPerformed(button);
     PacketHandler.INSTANCE.sendToServer(new ButtonMessage(button.id, tile.getPos()));
-    switch (button.id) {
-      case 0:
-        tile.setPriority(tile.getPriority() - 1);
-      break;
-      case 1:
-        tile.setPriority(tile.getPriority() + 1);
-      break;
-      case 3:
-        tile.setWhite(!tile.isWhitelist());
-      break;
-      case 4:
-        if (tile instanceof TileCable)
-          ((TileCable) tile).setMode(!((TileCable) tile).isMode());
-      break;
+    if (button.id == btnMinus.id) {
+      tile.setPriority(tile.getPriority() - 1);
+    }
+    else if (button.id == btnPlus.id) {
+      tile.setPriority(tile.getPriority() + 1);
+    }
+    else if (button.id == btnWhite.id) {
+      tile.setWhite(!tile.isWhitelist());
+    }
+    else if (button.id == btnOperationToggle.id) {
+      if (tile instanceof TileCable)
+        ((TileCable) tile).setMode(!((TileCable) tile).isMode());
+    }
+    else if(button.id == checkMeta.id || button.id == checkOre.id){
+
+      PacketHandler.INSTANCE.sendToServer(new FilterMessage(-1, null, checkOre.isChecked(), checkMeta.isChecked()));
     }
   }
   @Override
   protected void keyTyped(char typedChar, int keyCode) throws IOException {
-//    if (typedChar == 'o' || typedChar == 'm') {
-//      for (int i = 0; i < list.size(); i++) {
-//        ItemSlot e = list.get(i);
-//        int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
-//        int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-//        ContainerCable con = (ContainerCable) inventorySlots;
-//        if (e.isMouseOverSlot(mouseX, mouseY) && e.stack != null) {
-//          if (typedChar == 'o' && OreDictionary.getOreIDs(e.stack).length > 0)
-//            con.tile.getOres().put(i, !con.tile.getOres().get(i));
-//          else if (typedChar == 'm')
-//            con.tile.getMetas().put(i, !con.tile.getMetas().get(i));
-//          con.slotChanged();
-//          PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(i), tile.getMeta(i)));
-//          break;
-//        }
-//      }
-//    }
+    //    if (typedChar == 'o' || typedChar == 'm') {
+    //      for (int i = 0; i < list.size(); i++) {
+    //        ItemSlot e = list.get(i);
+    //        int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
+    //        int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+    //        ContainerCable con = (ContainerCable) inventorySlots;
+    //        if (e.isMouseOverSlot(mouseX, mouseY) && e.stack != null) {
+    //          if (typedChar == 'o' && OreDictionary.getOreIDs(e.stack).length > 0)
+    //            con.tile.getOres().put(i, !con.tile.getOres().get(i));
+    //          else if (typedChar == 'm')
+    //            con.tile.getMetas().put(i, !con.tile.getMetas().get(i));
+    //          con.slotChanged();
+    //          PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(i), tile.getMeta(i)));
+    //          break;
+    //        }
+    //      }
+    //    }
     if (!(tile instanceof TileCable)) {
       super.keyTyped(typedChar, keyCode);
       return;
@@ -331,7 +324,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
         }
         if (id == 4) {
           if (((TileCable) tile).isMode())
-         this.displayString = ">";//   this.drawTexturedModalRect(this.x + 0, this.y + 0, 176, 94, 16, 15);
+            this.displayString = ">";//   this.drawTexturedModalRect(this.x + 0, this.y + 0, 176, 94, 16, 15);
           else
             this.displayString = "<";//    this.drawTexturedModalRect(this.x + 0, this.y + 0, 176 + 16, 94, 16, 15);
         }
@@ -349,24 +342,24 @@ public class GuiCable extends RigelNetworkGuiContainer {
         else if (this.hovered) {
           l = 16777120;
         }
-//        if (tile instanceof TileCable) {
-//          List<String> lis = new ArrayList<String>();
-//          String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.world.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileCable) tile).isMode() ? "more" : "less")), ((TileCable) tile).getLimit(), ((TileCable) tile).getStack() != null ? ((TileCable) tile).getStack().getDisplayName() : "Items");
-//          List<String> matchList = new ArrayList<String>();
-//          Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
-//          Matcher regexMatcher = regex.matcher(s);
-//          while (regexMatcher.find()) {
-//            matchList.add(regexMatcher.group());
-//          }
-//          lis = new ArrayList<String>(matchList);
-//          if (this.hovered && id == 4 && ((TileCable) tile).getStack() != null) {
-////            GlStateManager.pushMatrix();
-////            GlStateManager.disableLighting();
-//            //drawHoveringText(lis, x, y, fontRenderer);
-////            GlStateManager.enableLighting();
-////            GlStateManager.popMatrix();
-//          }
-//        }
+        //        if (tile instanceof TileCable) {
+        //          List<String> lis = new ArrayList<String>();
+        //          String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.world.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileCable) tile).isMode() ? "more" : "less")), ((TileCable) tile).getLimit(), ((TileCable) tile).getStack() != null ? ((TileCable) tile).getStack().getDisplayName() : "Items");
+        //          List<String> matchList = new ArrayList<String>();
+        //          Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
+        //          Matcher regexMatcher = regex.matcher(s);
+        //          while (regexMatcher.find()) {
+        //            matchList.add(regexMatcher.group());
+        //          }
+        //          lis = new ArrayList<String>(matchList);
+        //          if (this.hovered && id == 4 && ((TileCable) tile).getStack() != null) {
+        ////            GlStateManager.pushMatrix();
+        ////            GlStateManager.disableLighting();
+        //            //drawHoveringText(lis, x, y, fontRenderer);
+        ////            GlStateManager.enableLighting();
+        ////            GlStateManager.popMatrix();
+        //          }
+        //        }
         this.drawCenteredString(fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, l);
       }
     }

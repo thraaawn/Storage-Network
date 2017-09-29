@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.cable;
 import java.util.Arrays;
 import mrriegel.storagenetwork.ModItems;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import net.minecraft.entity.player.EntityPlayer;
@@ -73,14 +74,16 @@ public class ContainerCable extends Container {
   @Override
   public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
     Slot slot = this.inventorySlots.get(slotIndex);
+    StorageNetwork.log("transfer slot in ContainerCable: TODO: upgrades to top right "+ slotIndex);
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
-      if (itemstack1.isEmpty())
+      if (itemstack1.isEmpty()) {
         return ItemStack.EMPTY;
-      for (int i = 0; i < 18; i++) {
+      }
+      for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
         if (tile.getFilter().get(i) == null && !isInFilter(new StackWrapper(itemstack1, 1))) {
           tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.getCount()));
-          tile.getOres().put(i, false);
+           
           break;
         }
       }
@@ -88,8 +91,10 @@ public class ContainerCable extends Container {
     return ItemStack.EMPTY;
   }
   public boolean isInFilter(StackWrapper stack) {
-    for (int i = 0; i < 18; i++) {
-      if (tile.getFilter().get(i) != null && tile.getFilter().get(i).getStack().isItemEqual(stack.getStack())) { return true; }
+    for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
+      if (tile.getFilter().get(i) != null && tile.getFilter().get(i).getStack().isItemEqual(stack.getStack())) {
+        return true;
+      }
     }
     return false;
   }

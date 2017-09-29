@@ -13,8 +13,8 @@ import net.minecraftforge.items.IItemHandler;
 public abstract class AbstractFilterTile extends TileConnectable {
   public static final int FILTER_SIZE = 18;
   private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
-  private Map<Integer, Boolean> ores = new HashMap<Integer, Boolean>();
-  private Map<Integer, Boolean> metas = new HashMap<Integer, Boolean>();
+  private boolean ores = false;
+  private boolean metas = false;
   private boolean isWhitelist;
   private int priority;
   private Direction way = Direction.BOTH;
@@ -44,24 +44,23 @@ public abstract class AbstractFilterTile extends TileConnectable {
       int slot = stackTag.getByte("Slot");
       filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
     }
-    NBTTagList oreList = compound.getTagList("ores", Constants.NBT.TAG_COMPOUND);
-    ores = new HashMap<Integer, Boolean>();
-    for (int i = 0; i < FILTER_SIZE; i++)
-      ores.put(i, false);
-    for (int i = 0; i < oreList.tagCount(); i++) {
-      NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
-      int slot = stackTag.getByte("Slot");
-      ores.put(slot, stackTag.getBoolean("Ore"));
-    }
-    NBTTagList metaList = compound.getTagList("metas", Constants.NBT.TAG_COMPOUND);
-    metas = new HashMap<Integer, Boolean>();
-    for (int i = 0; i < FILTER_SIZE; i++)
-      metas.put(i, true);
-    for (int i = 0; i < metaList.tagCount(); i++) {
-      NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
-      int slot = stackTag.getByte("Slot");
-      metas.put(slot, stackTag.getBoolean("Meta"));
-    }
+    ores = compound.getBoolean("ores");
+    metas = compound.getBoolean("metas");
+    //    NBTTagList oreList = compound.getTagList("ores", Constants.NBT.TAG_COMPOUND);
+    //    for (int i = 0; i < oreList.tagCount(); i++) {
+    //      NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
+    //      int slot = stackTag.getByte("Slot");
+    //      ores.put(slot, stackTag.getBoolean("Ore"));
+    //    }
+    //    NBTTagList metaList = compound.getTagList("metas", Constants.NBT.TAG_COMPOUND);
+    //    metas = new HashMap<Integer, Boolean>();
+    //    for (int i = 0; i < FILTER_SIZE; i++)
+    //      metas.put(i, true);
+    //    for (int i = 0; i < metaList.tagCount(); i++) {
+    //      NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
+    //      int slot = stackTag.getByte("Slot");
+    //      metas.put(slot, stackTag.getBoolean("Meta"));
+    //    }
     try {
       way = Direction.valueOf(compound.getString("way"));
     }
@@ -88,26 +87,9 @@ public abstract class AbstractFilterTile extends TileConnectable {
       }
     }
     compound.setTag("crunchTE", invList);
-    NBTTagList oreList = new NBTTagList();
-    for (int i = 0; i < FILTER_SIZE; i++) {
-      if (ores.get(i) != null) {
-        NBTTagCompound stackTag = new NBTTagCompound();
-        stackTag.setByte("Slot", (byte) i);
-        stackTag.setBoolean("Ore", ores.get(i));
-        oreList.appendTag(stackTag);
-      }
-    }
-    compound.setTag("ores", oreList);
-    NBTTagList metaList = new NBTTagList();
-    for (int i = 0; i < FILTER_SIZE; i++) {
-      if (metas.get(i) != null) {
-        NBTTagCompound stackTag = new NBTTagCompound();
-        stackTag.setByte("Slot", (byte) i);
-        stackTag.setBoolean("Meta", metas.get(i));
-        metaList.appendTag(stackTag);
-      }
-    }
-    compound.setTag("metas", metaList);
+    compound.setBoolean("ores", ores);
+    compound.setBoolean("metas", metas);
+ 
     compound.setString("way", way.toString());
   }
   public boolean canTransfer(ItemStack stack, Direction way) {
@@ -121,9 +103,9 @@ public abstract class AbstractFilterTile extends TileConnectable {
         ItemStack s = getFilter().get(i).getStack();
         if (s == null)
           continue;
-        boolean ore = getOre(i);
-        boolean meta = getMeta(i);
-        if (ore ? Util.equalOreDict(stack, s) : meta ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+       
+   
+        if (ores ? Util.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
           tmp = true;
           break;
         }
@@ -138,9 +120,8 @@ public abstract class AbstractFilterTile extends TileConnectable {
         ItemStack s = getFilter().get(i).getStack();
         if (s == null || s.isEmpty())
           continue;
-        boolean ore = getOre(i);
-        boolean meta = getMeta(i);
-        if (ore ? Util.equalOreDict(stack, s) : meta ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+      
+        if (ores ? Util.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
           tmp = false;
           break;
         }
@@ -150,17 +131,13 @@ public abstract class AbstractFilterTile extends TileConnectable {
   }
   public abstract IItemHandler getInventory();
   public abstract BlockPos getSource();
-/**
- * identical to checking === CableKind.storage
- * @return
- */
+  /**
+   * identical to checking === CableKind.storage
+   * 
+   * @return
+   */
   public abstract boolean isStorage();
-  public boolean getOre(int i) {
-    return getOres().get(i) == null ? false : getOres().get(i);
-  }
-  public boolean getMeta(int i) {
-    return getMetas().get(i) == null ? true : getMetas().get(i);
-  }
+ 
   /**
    * the whitelist / blacklist (ghost stacks in gui)
    * 
@@ -172,18 +149,19 @@ public abstract class AbstractFilterTile extends TileConnectable {
   public void setFilter(Map<Integer, StackWrapper> filter) {
     this.filter = filter;
   }
-  public Map<Integer, Boolean> getOres() {
+  public boolean getOre() {
     return ores;
   }
-//  public void setOres(Map<Integer, Boolean> ores) {
-//    this.ores = ores;
-//  }
-  public Map<Integer, Boolean> getMetas() {
+  public void setOres(boolean ores) {
+    this.ores = ores;
+  }
+  public boolean getMeta() {
     return metas;
   }
-//  public void setMetas(Map<Integer, Boolean> metas) {
-//    this.metas = metas;
-//  }
+  public void setMeta(boolean ores) {
+    this.metas = ores;
+  }
+ 
   public boolean isWhitelist() {
     return isWhitelist;
   }
