@@ -75,11 +75,12 @@ public class TileCable extends AbstractFilterTile {
     up = map.get(EnumFacing.UP);
     down = map.get(EnumFacing.DOWN);
   }
-  public boolean status() {
+  public boolean doesPassOperationFilterLimit() {
     if (getUpgradesOfType(ItemUpgrade.OPERATION) < 1) { return true; }
+    //ok operation upgrade does NOT exist
     TileMaster m = (TileMaster) world.getTileEntity(getMaster());
-    if (getStack() == null || getStack().isEmpty()) { return true; }
-    int amount = m.getAmount(new FilterItem(getStack()));
+    if (getOperationStack() == null || getOperationStack().isEmpty()) { return true; }
+    int amount = m.getAmount(new FilterItem(getOperationStack()));
     if (isMode()) {
       return amount > getLimit();
     }
@@ -202,10 +203,10 @@ public class TileCable extends AbstractFilterTile {
   public void setLimit(int limit) {
     this.limit = limit;
   }
-  public ItemStack getStack() {
+  public ItemStack getOperationStack() {
     return stack;
   }
-  public void setStack(ItemStack stack) {
+  public void setOperationStack(ItemStack stack) {
     this.stack = stack;
   }
   @Override

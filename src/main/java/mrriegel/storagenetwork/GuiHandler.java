@@ -20,9 +20,15 @@ public class GuiHandler implements IGuiHandler {
   @Override
   public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
     Util.updateTile(world, new BlockPos(x, y, z));
-    if (ID == CABLE) { return new ContainerCable((AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z)), player.inventory); }
-    if (ID == REQUEST) { return new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory); }
-    if (ID == REMOTE) { return new ContainerRemote(player.inventory); }
+    if (ID == CABLE) {
+      return new ContainerCable((AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+    }
+    if (ID == REQUEST) {
+      return new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+    }
+    if (ID == REMOTE) {
+      return new ContainerRemote(player.inventory);
+    }
     return null;
   }
   @Override
@@ -31,8 +37,12 @@ public class GuiHandler implements IGuiHandler {
       AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z));
       return new GuiCable(new ContainerCable(tile, player.inventory));
     }
-    if (ID == REQUEST) { return new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory)); }
-    if (ID == REMOTE) { return new GuiRemote(new ContainerRemote(player.inventory)); }
+    if (ID == REQUEST) {
+      return new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
+    }
+    if (ID == REMOTE) {
+      return new GuiRemote(new ContainerRemote(player.inventory));
+    }
     return null;
   }
 }

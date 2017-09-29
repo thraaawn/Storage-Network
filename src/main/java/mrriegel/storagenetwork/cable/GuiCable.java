@@ -9,6 +9,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import com.google.common.collect.Lists;
+import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.RigelNetworkGuiContainer;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
@@ -126,7 +127,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
     if (btnWhite != null && btnWhite.isMouseOver())
       this.drawHoveringText(Lists.newArrayList(tile.isWhitelist() ? "Whitelist" : "Blacklist"), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
     if (btnOperationToggle != null && btnOperationToggle.isMouseOver()) {
-      String s = I18n.format("gui.storagenetwork.operate.tooltip", I18n.format("gui.storagenetwork.operate.tooltip." + (((TileCable) tile).isMode() ? "more" : "less")), ((TileCable) tile).getLimit(), ((TileCable) tile).getStack() != null ? ((TileCable) tile).getStack().getDisplayName() : "Items");
+      String s = I18n.format("gui.storagenetwork.operate.tooltip", I18n.format("gui.storagenetwork.operate.tooltip." + (((TileCable) tile).isMode() ? "more" : "less")), ((TileCable) tile).getLimit(), ((TileCable) tile).getOperationStack() != null ? ((TileCable) tile).getOperationStack().getDisplayName() : "Items");
       //   String s = I18n.format("gui.storagenetwork.operate.tooltip");
       this.drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
     }
@@ -140,7 +141,9 @@ public class GuiCable extends RigelNetworkGuiContainer {
     buttonList.add(btnPlus);
     btnWhite = new Button(3, guiLeft + 58, guiTop + 5, "");
     buttonList.add(btnWhite);
-    //if (tile.isStorage()) {
+    btnWhite.visible = tile.getBlockType() == ModBlocks.imKabel;
+        
+        //if (tile.isStorage()) {
     btnImport = new Button(5, guiLeft + 78, guiTop + 5, "I");
     buttonList.add(btnImport);
     if (tile.isStorage()) {
@@ -163,7 +166,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
       btnOperationToggle = new Button(4, guiLeft + 28, guiTop + 66, "");
       //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
       buttonList.add(btnOperationToggle);
-      operation = new ItemSlot(cable.getStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
+      operation = new ItemSlot(cable.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
       //      
        checkOre = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, "Ore Dictionary", true);
       checkOre.setIsChecked(tile.getOre());
@@ -187,7 +190,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
     if (operation != null && operation.isMouseOverSlot(mouseX, mouseY) && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
-      ((TileCable) tile).setStack(mc.player.inventory.getItemStack());
+      ((TileCable) tile).setOperationStack(mc.player.inventory.getItemStack());
       operation.stack = mc.player.inventory.getItemStack();
       int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
       PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.player.inventory.getItemStack()));

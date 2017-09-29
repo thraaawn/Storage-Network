@@ -89,22 +89,24 @@ public abstract class AbstractFilterTile extends TileConnectable {
     compound.setTag("crunchTE", invList);
     compound.setBoolean("ores", ores);
     compound.setBoolean("metas", metas);
- 
     compound.setString("way", way.toString());
   }
+  /*
+   * key function used by TileMaster for all item trafic
+   */
   public boolean canTransfer(ItemStack stack, Direction way) {
     if (isStorage() && !this.way.match(way))
       return false;
-    if (isWhitelist()) {
+    if (this.isWhitelist()) {
       boolean tmp = false;
       for (int i = 0; i < FILTER_SIZE; i++) {
-        if (getFilter().get(i) == null)
+        if (this.filter.get(i) == null) {
           continue;
-        ItemStack s = getFilter().get(i).getStack();
-        if (s == null)
+        }
+        ItemStack s = this.filter.get(i).getStack();
+        if (s == null) {
           continue;
-       
-   
+        }
         if (ores ? Util.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
           tmp = true;
           break;
@@ -115,12 +117,13 @@ public abstract class AbstractFilterTile extends TileConnectable {
     else {
       boolean tmp = true;
       for (int i = 0; i < FILTER_SIZE; i++) {
-        if (getFilter().get(i) == null)
+        if (this.filter.get(i) == null) {
           continue;
-        ItemStack s = getFilter().get(i).getStack();
-        if (s == null || s.isEmpty())
+        }
+        ItemStack s = this.filter.get(i).getStack();
+        if (s == null || s.isEmpty()) {
           continue;
-      
+        }
         if (ores ? Util.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
           tmp = false;
           break;
@@ -137,7 +140,6 @@ public abstract class AbstractFilterTile extends TileConnectable {
    * @return
    */
   public abstract boolean isStorage();
- 
   /**
    * the whitelist / blacklist (ghost stacks in gui)
    * 
@@ -161,7 +163,6 @@ public abstract class AbstractFilterTile extends TileConnectable {
   public void setMeta(boolean ores) {
     this.metas = ores;
   }
- 
   public boolean isWhitelist() {
     return isWhitelist;
   }

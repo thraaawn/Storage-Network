@@ -90,7 +90,7 @@ public class BlockCable extends AbstractBlockConnectable {
     if (worldIn.isRemote)
       return true;
     TileCable tile = (TileCable) worldIn.getTileEntity(pos);
-    if (tile.getKind() == CableKind.exKabel || tile.getKind() == CableKind.imKabel || tile.getKind() == CableKind.storageKabel) {
+    if (tile.getKind() == CableKind.exKabel || tile.getKind() == CableKind.imKabel) { //  || tile.getKind() == CableKind.storageKabel
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }
