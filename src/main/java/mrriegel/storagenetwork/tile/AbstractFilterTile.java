@@ -83,6 +83,23 @@ public abstract class AbstractFilterTile extends TileConnectable {
   }
   /*
    * key function used by TileMaster for all item trafic
+   * 
+   * TODO: TEST CASES
+   * 
+   * export  + meta
+   * 
+   * export - meta
+   * 
+   * import + meta ; whitelist
+   * 
+   * import - meta ; whitelist
+   * 
+   * import + meta ; blacklist
+   * 
+   * import - meta ; blacklist
+   * 
+   * 
+   * 
    */
   public boolean canTransfer(ItemStack stack, Direction way) {
     if (isStorage() && !this.way.match(way)) {
