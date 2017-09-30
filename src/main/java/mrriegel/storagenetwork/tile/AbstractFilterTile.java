@@ -46,7 +46,6 @@ public abstract class AbstractFilterTile extends TileConnectable {
     }
     ores = compound.getBoolean("ores");
     metas = compound.getBoolean("metas");
- 
     try {
       way = Direction.valueOf(compound.getString("way"));
     }
@@ -86,7 +85,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
    * 
    * TODO: TEST CASES
    * 
-   * export  + meta
+   * export + meta
    * 
    * export - meta
    * 
@@ -105,15 +104,10 @@ public abstract class AbstractFilterTile extends TileConnectable {
     if (isStorage() && !this.way.match(way)) {
       return false;
     }
-    StackWrapper stackWrapper;
     if (this.isWhitelist()) {
       boolean tmp = false;
-      for (int i = 0; i < FILTER_SIZE; i++) {
-        stackWrapper = this.filter.get(i);
-        if (stackWrapper == null) {
-          continue;
-        }
-        if (stackWrapper.getStack() == null) {
+      for (StackWrapper stackWrapper : this.filter.values()) {
+        if (stackWrapper == null || stackWrapper.getStack() == null) {
           continue;
         }
         if (doesWrapperMatchStack(stackWrapper, stack)) {
@@ -125,12 +119,8 @@ public abstract class AbstractFilterTile extends TileConnectable {
     }
     else {
       boolean tmp = true;
-      for (int i = 0; i < FILTER_SIZE; i++) {
-        stackWrapper = this.filter.get(i);
-        if (this.filter.get(i) == null) {
-          continue;
-        }
-        if (stackWrapper.getStack() == null) {
+      for (StackWrapper stackWrapper : this.filter.values()) {
+        if (stackWrapper == null || stackWrapper.getStack() == null) {
           continue;
         }
         if (doesWrapperMatchStack(stackWrapper, stack)) {

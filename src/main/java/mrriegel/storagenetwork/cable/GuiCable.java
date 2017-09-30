@@ -171,19 +171,10 @@ public class GuiCable extends RigelNetworkGuiContainer {
        checkOre = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, "Ore Dictionary", true);
       checkOre.setIsChecked(tile.getOre());
       buttonList.add(checkOre);
-       checkMeta = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, "Meta", true);
+       checkMeta = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, "Use Metadata", true);
       checkMeta.setIsChecked(tile.getMeta());
       buttonList.add(checkMeta);
-      //    RenderHelper.disableStandardItemLighting();
-      //    GlStateManager.disableLighting();
-      //    GlStateManager.disableDepth();
-      //    GlStateManager.disableBlend();
-      //   
-      //      mc.fontRenderer.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
-      // 
-      //      mc.fontRenderer.drawStringWithShadow("M", e.x + 1, e.y, 0xff4040);
-      //    GlStateManager.enableLighting();
-      //    GlStateManager.enableDepth();
+  
     }
   }
   @Override
