@@ -32,6 +32,10 @@ public class TileCable extends AbstractFilterTile {
   public enum CableKind {
     kabel, exKabel, imKabel, storageKabel;
   }
+  public TileCable(){
+    this.setOres(false);
+    this.setMeta(true);
+  }
   public int getUpgradesOfType(int num) {
     int res = 0;
     for (ItemStack s : upgrades) {

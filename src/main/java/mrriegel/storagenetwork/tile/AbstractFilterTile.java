@@ -46,21 +46,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
     }
     ores = compound.getBoolean("ores");
     metas = compound.getBoolean("metas");
-    //    NBTTagList oreList = compound.getTagList("ores", Constants.NBT.TAG_COMPOUND);
-    //    for (int i = 0; i < oreList.tagCount(); i++) {
-    //      NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
-    //      int slot = stackTag.getByte("Slot");
-    //      ores.put(slot, stackTag.getBoolean("Ore"));
-    //    }
-    //    NBTTagList metaList = compound.getTagList("metas", Constants.NBT.TAG_COMPOUND);
-    //    metas = new HashMap<Integer, Boolean>();
-    //    for (int i = 0; i < FILTER_SIZE; i++)
-    //      metas.put(i, true);
-    //    for (int i = 0; i < metaList.tagCount(); i++) {
-    //      NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
-    //      int slot = stackTag.getByte("Slot");
-    //      metas.put(slot, stackTag.getBoolean("Meta"));
-    //    }
+ 
     try {
       way = Direction.valueOf(compound.getString("way"));
     }
@@ -91,23 +77,29 @@ public abstract class AbstractFilterTile extends TileConnectable {
     compound.setBoolean("metas", metas);
     compound.setString("way", way.toString());
   }
+  private boolean doesWrapperMatchStack(StackWrapper stackWrapper, ItemStack stack) {
+    ItemStack s = stackWrapper.getStack();
+    return ores ? Util.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem();
+  }
   /*
    * key function used by TileMaster for all item trafic
    */
   public boolean canTransfer(ItemStack stack, Direction way) {
-    if (isStorage() && !this.way.match(way))
+    if (isStorage() && !this.way.match(way)) {
       return false;
+    }
+    StackWrapper stackWrapper;
     if (this.isWhitelist()) {
       boolean tmp = false;
       for (int i = 0; i < FILTER_SIZE; i++) {
-        if (this.filter.get(i) == null) {
+        stackWrapper = this.filter.get(i);
+        if (stackWrapper == null) {
           continue;
         }
-        ItemStack s = this.filter.get(i).getStack();
-        if (s == null) {
+        if (stackWrapper.getStack() == null) {
           continue;
         }
-        if (ores ? Util.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+        if (doesWrapperMatchStack(stackWrapper, stack)) {
           tmp = true;
           break;
         }
@@ -117,14 +109,14 @@ public abstract class AbstractFilterTile extends TileConnectable {
     else {
       boolean tmp = true;
       for (int i = 0; i < FILTER_SIZE; i++) {
+        stackWrapper = this.filter.get(i);
         if (this.filter.get(i) == null) {
           continue;
         }
-        ItemStack s = this.filter.get(i).getStack();
-        if (s == null || s.isEmpty()) {
+        if (stackWrapper.getStack() == null) {
           continue;
         }
-        if (ores ? Util.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+        if (doesWrapperMatchStack(stackWrapper, stack)) {
           tmp = false;
           break;
         }
