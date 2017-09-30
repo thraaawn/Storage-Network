@@ -19,6 +19,10 @@ gui.storagenetwork.operate.tooltip=Active if %s than %d %s in network
 gui.storagenetwork.operate.tooltip.more=more
 gui.storagenetwork.operate.tooltip.less=less
 
+
+gui.storagenetwork.checkbox.meta=Use Metadata
+gui.storagenetwork.checkbox.ore=Ore Dictionary
+
 gui.storagenetwork.req.tooltip_NAME=Sort by name
 gui.storagenetwork.req.tooltip_MOD=Sort by mod
 gui.storagenetwork.req.tooltip_AMOUNT=Sort by amount
