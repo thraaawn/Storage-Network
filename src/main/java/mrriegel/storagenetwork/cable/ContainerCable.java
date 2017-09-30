@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.cable;
 import java.util.Arrays;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModItems;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import net.minecraft.entity.player.EntityPlayer;
@@ -75,10 +76,26 @@ public class ContainerCable extends Container {
   public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
     Slot slot = this.inventorySlots.get(slotIndex);
     StorageNetwork.log("transfer slot in ContainerCable: TODO: upgrades to top right " + slotIndex);
+    //in range [4,39] means its coming FROM inventory
+    // [0,3] is the filter list
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       if (itemstack1.isEmpty()) {
         return ItemStack.EMPTY;
+      }
+      if(itemstack1.getItem() instanceof ItemUpgrade){
+        if(4 <= slotIndex && slotIndex <= 39 ){
+          //FROM inventory to upgrade slots
+          if (!this.mergeItemStack(itemstack1, 0, 4, true)) {
+            return ItemStack.EMPTY;
+          }
+        }
+        else if(0 <= slotIndex && slotIndex <= 3){
+          //FROM upgrade slots TO inventory
+          if (!this.mergeItemStack(itemstack1, 4, 40, true)) {
+            return ItemStack.EMPTY;
+          }
+        }
       }
       for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
         if (tile.getFilter().get(i) == null && !isInFilter(new StackWrapper(itemstack1, 1))) {
