@@ -15,7 +15,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.items.ItemUpgrade;
-import mrriegel.storagenetwork.network.ButtonMessage;
+import mrriegel.storagenetwork.network.CableDataMessage;
 import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
@@ -168,10 +168,10 @@ public class GuiCable extends RigelNetworkGuiContainer {
       buttonList.add(btnOperationToggle);
       operation = new ItemSlot(cable.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
       //      
-       checkOre = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, "Ore Dictionary", true);
+       checkOre = new GuiCheckBox(10, guiLeft + 78, guiTop + 64,I18n.format("gui.storagenetwork.checkbox.ore"), true);
       checkOre.setIsChecked(tile.getOre());
       buttonList.add(checkOre);
-       checkMeta = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, "Use Metadata", true);
+       checkMeta = new GuiCheckBox(11, guiLeft + 78, guiTop + 76,I18n.format("gui.storagenetwork.checkbox.meta"), true);
       checkMeta.setIsChecked(tile.getMeta());
       buttonList.add(checkMeta);
   
@@ -223,7 +223,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
   @Override
   protected void actionPerformed(GuiButton button) throws IOException {
     super.actionPerformed(button);
-    PacketHandler.INSTANCE.sendToServer(new ButtonMessage(button.id, tile.getPos()));
+    PacketHandler.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));
     if (button.id == btnMinus.id) {
       tile.setPriority(tile.getPriority() - 1);
     }
@@ -244,23 +244,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
   }
   @Override
   protected void keyTyped(char typedChar, int keyCode) throws IOException {
-    //    if (typedChar == 'o' || typedChar == 'm') {
-    //      for (int i = 0; i < list.size(); i++) {
-    //        ItemSlot e = list.get(i);
-    //        int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
-    //        int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-    //        ContainerCable con = (ContainerCable) inventorySlots;
-    //        if (e.isMouseOverSlot(mouseX, mouseY) && e.stack != null) {
-    //          if (typedChar == 'o' && OreDictionary.getOreIDs(e.stack).length > 0)
-    //            con.tile.getOres().put(i, !con.tile.getOres().get(i));
-    //          else if (typedChar == 'm')
-    //            con.tile.getMetas().put(i, !con.tile.getMetas().get(i));
-    //          con.slotChanged();
-    //          PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(i), tile.getMeta(i)));
-    //          break;
-    //        }
-    //      }
-    //    }
+ 
     if (!(tile instanceof TileCable)) {
       super.keyTyped(typedChar, keyCode);
       return;

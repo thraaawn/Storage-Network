@@ -1,7 +1,5 @@
-package mrriegel.storagenetwork.render;
+package mrriegel.storagenetwork.cable;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.cable.BlockCable;
-import mrriegel.storagenetwork.cable.TileCable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;

@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.proxy;
+import mrriegel.storagenetwork.cable.CableRenderer;
 import mrriegel.storagenetwork.cable.TileCable;
-import mrriegel.storagenetwork.render.CableRenderer;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 

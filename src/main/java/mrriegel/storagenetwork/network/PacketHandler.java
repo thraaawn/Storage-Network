@@ -7,7 +7,7 @@ public class PacketHandler {
   public static final SimpleNetworkWrapper INSTANCE = new SimpleNetworkWrapper(StorageNetwork.MODID);
   public static void init() {
     int id = 0;
-    INSTANCE.registerMessage(ButtonMessage.class, ButtonMessage.class, id++, Side.SERVER);
+    INSTANCE.registerMessage(CableDataMessage.class, CableDataMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(StacksMessage.class, StacksMessage.class, id++, Side.CLIENT);
     //		INSTANCE.registerMessage(FluidsMessage.class, FluidsMessage.class, id++, Side.CLIENT);
     INSTANCE.registerMessage(RequestMessage.class, RequestMessage.class, id++, Side.SERVER);

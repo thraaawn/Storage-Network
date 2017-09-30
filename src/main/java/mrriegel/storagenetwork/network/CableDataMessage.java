@@ -15,16 +15,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.IItemHandler;
 
-public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, IMessage> {
+public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
   int id;
   BlockPos pos;
-  public ButtonMessage() {}
-  public ButtonMessage(int id, BlockPos pos) {
+  public CableDataMessage() {}
+  public CableDataMessage(int id, BlockPos pos) {
     this.id = id;
     this.pos = pos;
   }
   @Override
-  public IMessage onMessage(final ButtonMessage message, final MessageContext ctx) {
+  public IMessage onMessage(final CableDataMessage message, final MessageContext ctx) {
     IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
       @Override

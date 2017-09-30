@@ -1,6 +1,5 @@
-package mrriegel.storagenetwork.render;
+package mrriegel.storagenetwork.cable;
 import mrriegel.storagenetwork.cable.BlockCable.EnumConnectType;
-import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
