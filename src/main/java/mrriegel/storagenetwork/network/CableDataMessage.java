@@ -2,8 +2,8 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.cable.ContainerCable;
 import mrriegel.storagenetwork.cable.TileCable;
-import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -75,7 +75,7 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
           }
           tile.markDirty();
         }
-        Util.updateTile(t.getWorld(), t.getPos());
+        UtilTileEntity.updateTile(t.getWorld(), t.getPos());
       }
     });
     return null;

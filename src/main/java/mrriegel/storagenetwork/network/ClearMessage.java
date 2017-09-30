@@ -1,9 +1,10 @@
 package mrriegel.storagenetwork.network;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
-import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -46,7 +47,7 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
           }
           //      ctr.slotChanged();
           List<StackWrapper> list = m.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().player);
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().player);
           ctr.detectAndSendChanges();
           // }
         }

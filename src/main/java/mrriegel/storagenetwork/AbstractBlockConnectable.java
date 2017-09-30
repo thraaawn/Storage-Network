@@ -1,5 +1,5 @@
 package mrriegel.storagenetwork;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import mrriegel.storagenetwork.master.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -25,7 +25,7 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
         IConnectable conUnitNeedsMaster = (IConnectable) worldIn.getTileEntity(pos);
         //the new thing needs to find the master of the network. so either my neighbor knows who the master is, 
         //or my neighbor IS the master
-        for (BlockPos p : Util.getSides(pos)) {
+        for (BlockPos p : UtilTileEntity.getSides(pos)) {
           if (worldIn.getTileEntity(p) instanceof IConnectable) {
             IConnectable conUnit = (IConnectable) worldIn.getTileEntity(p);
             if (conUnit.getMaster() != null) {
@@ -47,7 +47,7 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
   public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
     IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
     if (tile.getMaster() == null) {
-      for (BlockPos p : Util.getSides(pos)) {
+      for (BlockPos p : UtilTileEntity.getSides(pos)) {
         if (worldIn.getTileEntity(p) instanceof TileMaster) {
           tile.setMaster(p);
           break;
@@ -78,7 +78,7 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
   }
   private void setAllMastersNull(World world, BlockPos pos) {
     ((IConnectable) world.getTileEntity(pos)).setMaster(null);
-    for (BlockPos bl : Util.getSides(pos)) {
+    for (BlockPos bl : UtilTileEntity.getSides(pos)) {
       if (world.getChunkFromBlockCoords(bl).isLoaded() && world.getTileEntity(bl) instanceof IConnectable && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
         ((IConnectable) world.getTileEntity(bl)).setMaster(null);
         world.markChunkDirty(bl, world.getTileEntity(bl));

@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.IConnectable;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -52,7 +52,7 @@ public class BlockMaster extends BlockContainer {
     BlockPos mas = null;
     if (worldIn.isRemote)
       return;
-    for (BlockPos p : Util.getSides(pos)) {
+    for (BlockPos p : UtilTileEntity.getSides(pos)) {
       if (worldIn.getTileEntity(p) instanceof IConnectable && ((IConnectable) worldIn.getTileEntity(p)).getMaster() != null && !((IConnectable) worldIn.getTileEntity(p)).getMaster().equals(pos)) {
         mas = ((IConnectable) worldIn.getTileEntity(p)).getMaster();
         break;

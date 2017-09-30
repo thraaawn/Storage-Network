@@ -4,12 +4,12 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.cable.BlockCable.EnumConnectType;
-import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.InvHelper;
+import mrriegel.storagenetwork.data.FilterItem;
+import mrriegel.storagenetwork.helper.UtilInventory;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -220,7 +220,7 @@ public class TileCable extends AbstractFilterTile {
   @Override
   public IItemHandler getInventory() {
     if (getConnectedInventory() != null)
-      return InvHelper.getItemHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
+      return UtilInventory.getItemHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
     return null;
   }
   @Override

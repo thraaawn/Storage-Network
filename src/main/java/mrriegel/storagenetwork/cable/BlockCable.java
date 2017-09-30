@@ -7,13 +7,13 @@ import com.google.common.collect.Maps;
 import mrriegel.storagenetwork.AbstractBlockConnectable;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.IConnectable;
-import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.gui.GuiHandler;
-import mrriegel.storagenetwork.helper.InvHelper;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.helper.UtilInventory;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.registry.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -103,7 +103,7 @@ public class BlockCable extends AbstractBlockConnectable {
     return 0;
   }
   boolean validInventory(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-    return InvHelper.hasItemHandler(worldIn, pos, side);
+    return UtilInventory.hasItemHandler(worldIn, pos, side);
   }
   IBlockState getNewState(IBlockAccess world, BlockPos pos) {
     if (!(world.getTileEntity(pos) instanceof TileCable))
@@ -175,7 +175,7 @@ public class BlockCable extends AbstractBlockConnectable {
     state = getNewState(worldIn, pos);
     super.setConnections(worldIn, pos, state, refresh);
     if (refresh) {
-      Util.updateTile(worldIn, pos);
+      UtilTileEntity.updateTile(worldIn, pos);
     }
   }
   @SuppressWarnings("deprecation")
@@ -298,7 +298,7 @@ public class BlockCable extends AbstractBlockConnectable {
     if (tileentity instanceof TileCable) {
       TileCable tile = (TileCable) tileentity;
       for (int i = 0; i < tile.getUpgrades().size(); i++) {
-        Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getUpgrades().get(i));
+        UtilTileEntity.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getUpgrades().get(i));
       }
     }
     super.breakBlock(worldIn, pos, state);

@@ -44,11 +44,7 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
             tile.sort = message.sort;
             tile.downwards = message.direction;
           }
-          //					else if (t instanceof TileFRequest) {
-          //						TileFRequest tile = (TileFRequest) t;
-          //						tile.sort = message.sort;
-          //						tile.downwards = message.direction;
-          //					}
+  
           t.markDirty();
         }
       }

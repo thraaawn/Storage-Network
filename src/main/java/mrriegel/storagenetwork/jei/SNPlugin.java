@@ -7,7 +7,7 @@ import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.ingredients.IModIngredientRegistration;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
-import mrriegel.storagenetwork.ModBlocks;
+import mrriegel.storagenetwork.registry.ModBlocks;
 import net.minecraft.item.ItemStack;
 
 @JEIPlugin

@@ -5,6 +5,8 @@ import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.master.BlockMaster;
 import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.proxy.CommonProxy;
+import mrriegel.storagenetwork.registry.ModBlocks;
+import mrriegel.storagenetwork.registry.ModItems;
 import mrriegel.storagenetwork.request.BlockRequest;
 import mrriegel.storagenetwork.request.TileRequest;
 import net.minecraft.block.Block;

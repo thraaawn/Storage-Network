@@ -2,8 +2,8 @@ package mrriegel.storagenetwork.network;
 import java.util.List;
 import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
-import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
@@ -29,8 +29,8 @@ public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, I
     mainThread.addScheduledTask(new Runnable() {
       @Override
       public void run() {
-        if (Minecraft.getMinecraft().currentScreen instanceof RigelNetworkGuiRequest) {
-          RigelNetworkGuiRequest gui = (RigelNetworkGuiRequest) Minecraft.getMinecraft().currentScreen;
+        if (Minecraft.getMinecraft().currentScreen instanceof GuiContainerStorageInventory) {
+          GuiContainerStorageInventory gui = (GuiContainerStorageInventory) Minecraft.getMinecraft().currentScreen;
           gui.stacks = message.stacks;
           gui.craftableStacks = message.craftableStacks;
         }

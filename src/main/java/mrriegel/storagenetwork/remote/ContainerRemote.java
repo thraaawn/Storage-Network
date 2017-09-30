@@ -1,14 +1,14 @@
 package mrriegel.storagenetwork.remote;
 import java.util.List;
 import com.google.common.collect.Lists;
-import mrriegel.storagenetwork.ModItems;
+import mrriegel.storagenetwork.data.FilterItem;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
-import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.NBTHelper;
-import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
-import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
+import mrriegel.storagenetwork.registry.ModItems;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -60,7 +60,7 @@ public class ContainerRemote extends ContainerNetworkBase {
         }
         if (tile != null) {
           List<StackWrapper> list = tile.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
           detectAndSendChanges();
         }
         return stack;
@@ -115,7 +115,7 @@ public class ContainerRemote extends ContainerNetworkBase {
         slot.putStack(stack);
         detectAndSendChanges();
         List<StackWrapper> list = tile.getStacks();
-        PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
         return ItemStack.EMPTY;
       }
     }
@@ -128,7 +128,7 @@ public class ContainerRemote extends ContainerNetworkBase {
     }
     if (!playerIn.world.isRemote && playerIn.world.getTotalWorldTime() % 40 == 0) {
       List<StackWrapper> list = tile.getStacks();
-      PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+      PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
     }
     return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.remote;
   }

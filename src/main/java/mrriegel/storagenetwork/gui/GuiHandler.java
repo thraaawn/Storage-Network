@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.gui;
 import mrriegel.storagenetwork.cable.ContainerCable;
 import mrriegel.storagenetwork.cable.GuiCable;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import mrriegel.storagenetwork.remote.ContainerRemote;
 import mrriegel.storagenetwork.remote.GuiRemote;
 import mrriegel.storagenetwork.request.ContainerRequest;
@@ -19,7 +19,7 @@ public class GuiHandler implements IGuiHandler {
   public static final int REMOTE = 4;
   @Override
   public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-    Util.updateTile(world, new BlockPos(x, y, z));
+    UtilTileEntity.updateTile(world, new BlockPos(x, y, z));
     if (ID == CABLE) {
       return new ContainerCable((AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
     }

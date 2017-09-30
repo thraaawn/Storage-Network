@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class Util {
+public class UtilTileEntity {
   private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
   public static void init() {
     Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();

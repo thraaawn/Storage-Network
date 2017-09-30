@@ -10,8 +10,8 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mrriegel.storagenetwork.StorageNetwork;
 //import mezz.jei.gui.ingredients.GuiIngredient;
 import mrriegel.storagenetwork.network.ClearMessage;
-import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RecipeMessage;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.request.ContainerRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -33,7 +33,7 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
   @Override
   public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
     if (doTransfer) {
-      PacketHandler.INSTANCE.sendToServer(new ClearMessage());
+      PacketRegistry.INSTANCE.sendToServer(new ClearMessage());
       StorageNetwork.log(" recipeLayout  " + recipeLayout);
       Map<Integer, ? extends IGuiIngredient<ItemStack>> inputs = recipeLayout.getItemStacks().getGuiIngredients();
       Map<Integer, List<ItemStack>> map = new HashMap<Integer, List<ItemStack>>();
@@ -78,7 +78,7 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
           }
         }
       }
-      PacketHandler.INSTANCE.sendToServer(new RecipeMessage(nbt, 0));
+      PacketRegistry.INSTANCE.sendToServer(new RecipeMessage(nbt, 0));
     }
     return null;
   }

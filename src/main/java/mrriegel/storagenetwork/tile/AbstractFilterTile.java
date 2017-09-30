@@ -1,8 +1,8 @@
 package mrriegel.storagenetwork.tile;
 import java.util.HashMap;
 import java.util.Map;
-import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -78,7 +78,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
   }
   private boolean doesWrapperMatchStack(StackWrapper stackWrapper, ItemStack stack) {
     ItemStack s = stackWrapper.getStack();
-    return ores ? Util.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem();
+    return ores ? UtilTileEntity.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem();
   }
   /*
    * key function used by TileMaster for all item trafic

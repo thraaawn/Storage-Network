@@ -1,11 +1,11 @@
 package mrriegel.storagenetwork.request;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
+import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-public class GuiRequest extends RigelNetworkGuiRequest {
+public class GuiRequest extends GuiContainerStorageInventory {
   TileRequest tile;
   public GuiRequest(ContainerRequest inventorySlotsIn) {
     super(inventorySlotsIn);

@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.helper;
+import mrriegel.storagenetwork.data.FilterItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -12,7 +13,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
-public class InvHelper {
+public class UtilInventory {
   public static boolean hasItemHandler(IBlockAccess world, BlockPos pos, EnumFacing facing) {
     return getItemHandler(world.getTileEntity(pos), facing) != null;
   }

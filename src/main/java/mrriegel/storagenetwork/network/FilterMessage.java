@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.cable.ContainerCable;
-import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.data.StackWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;

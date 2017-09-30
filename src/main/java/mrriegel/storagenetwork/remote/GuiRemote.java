@@ -1,13 +1,13 @@
 package mrriegel.storagenetwork.remote;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
+import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-public class GuiRemote extends RigelNetworkGuiRequest {
+public class GuiRemote extends GuiContainerStorageInventory {
   public GuiRemote(ContainerRemote inventorySlotsIn) {
     super(inventorySlotsIn);
     texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");

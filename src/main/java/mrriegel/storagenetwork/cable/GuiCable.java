@@ -5,16 +5,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import com.google.common.collect.Lists;
-import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
-import mrriegel.storagenetwork.gui.RigelNetworkGuiContainer;
-import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.gui.GuiContainerBase;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.network.CableDataMessage;
 import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.LimitMessage;
-import mrriegel.storagenetwork.network.PacketHandler;
+import mrriegel.storagenetwork.registry.ModBlocks;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -26,7 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
-public class GuiCable extends RigelNetworkGuiContainer {
+public class GuiCable extends GuiContainerBase {
   private static final int TEXTBOX_WIDTH = 26;
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
   CableKind kind;
@@ -112,13 +112,15 @@ public class GuiCable extends RigelNetworkGuiContainer {
     if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OPERATION) >= 1)
       operation.drawTooltip(mouseX, mouseY);
     if (btnImport != null && btnImport.isMouseOver())
-      drawHoveringText(Lists.newArrayList("Import Filter"), mouseX - guiLeft, mouseY - guiTop);
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.gui.import")), mouseX - guiLeft, mouseY - guiTop);
     if (btnInputOutputStorage != null && btnInputOutputStorage.isMouseOver())
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX - guiLeft, mouseY - guiTop);
     if (mouseX > guiLeft + 29 && mouseX < guiLeft + 37 && mouseY > guiTop + 10 && mouseY < guiTop + 20)
       this.drawHoveringText(Lists.newArrayList("Priority"), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
-    if (btnWhite != null && btnWhite.isMouseOver())
-      this.drawHoveringText(Lists.newArrayList(tile.isWhitelist() ? "Whitelist" : "Blacklist"), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
+    if (btnWhite != null && btnWhite.isMouseOver()) {
+      String s = tile.isWhitelist() ? I18n.format("gui.storagenetwork.gui.whitelist"): I18n.format("gui.storagenetwork.gui.blacklist");
+      this.drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
+    }
     if (btnOperationToggle != null && btnOperationToggle.isMouseOver()) {
       String s = I18n.format("gui.storagenetwork.operate.tooltip", I18n.format("gui.storagenetwork.operate.tooltip." + (((TileCable) tile).isMode() ? "more" : "less")), ((TileCable) tile).getLimit(), ((TileCable) tile).getOperationStack() != null ? ((TileCable) tile).getOperationStack().getDisplayName() : "Items");
       //   String s = I18n.format("gui.storagenetwork.operate.tooltip");
@@ -175,7 +177,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
       ((TileCable) tile).setOperationStack(mc.player.inventory.getItemStack());
       operation.stack = mc.player.inventory.getItemStack();
       int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-      PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.player.inventory.getItemStack()));
+      PacketRegistry.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.player.inventory.getItemStack()));
       return;
     }
     for (int i = 0; i < list.size(); i++) {
@@ -203,7 +205,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
           }
         }
         con.slotChanged();
-        PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(), tile.getMeta()));
+        PacketRegistry.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(), tile.getMeta()));
         break;
       }
     }
@@ -211,7 +213,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
   @Override
   protected void actionPerformed(GuiButton button) throws IOException {
     super.actionPerformed(button);
-    PacketHandler.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));
+    PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));
     if (button.id == btnMinus.id) {
       tile.setPriority(tile.getPriority() - 1);
     }
@@ -226,7 +228,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
         ((TileCable) tile).setMode(!((TileCable) tile).isMode());
     }
     else if (button.id == checkMeta.id || button.id == checkOre.id) {
-      PacketHandler.INSTANCE.sendToServer(new FilterMessage(-1, null, checkOre.isChecked(), checkMeta.isChecked()));
+      PacketRegistry.INSTANCE.sendToServer(new FilterMessage(-1, null, checkOre.isChecked(), checkMeta.isChecked()));
     }
   }
   @Override
@@ -252,7 +254,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
           searchBar.setText("0");
         }
         ((TileCable) tile).setLimit(num);
-        PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), operation.stack));
+        PacketRegistry.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), operation.stack));
       }
       else {
         super.keyTyped(typedChar, keyCode);
@@ -306,24 +308,6 @@ public class GuiCable extends RigelNetworkGuiContainer {
         else if (this.hovered) {
           l = 16777120;
         }
-        //        if (tile instanceof TileCable) {
-        //          List<String> lis = new ArrayList<String>();
-        //          String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.world.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileCable) tile).isMode() ? "more" : "less")), ((TileCable) tile).getLimit(), ((TileCable) tile).getStack() != null ? ((TileCable) tile).getStack().getDisplayName() : "Items");
-        //          List<String> matchList = new ArrayList<String>();
-        //          Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
-        //          Matcher regexMatcher = regex.matcher(s);
-        //          while (regexMatcher.find()) {
-        //            matchList.add(regexMatcher.group());
-        //          }
-        //          lis = new ArrayList<String>(matchList);
-        //          if (this.hovered && id == 4 && ((TileCable) tile).getStack() != null) {
-        ////            GlStateManager.pushMatrix();
-        ////            GlStateManager.disableLighting();
-        //            //drawHoveringText(lis, x, y, fontRenderer);
-        ////            GlStateManager.enableLighting();
-        ////            GlStateManager.popMatrix();
-        //          }
-        //        }
         this.drawCenteredString(fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, l);
       }
     }

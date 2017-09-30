@@ -13,11 +13,11 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.InvHelper;
+import mrriegel.storagenetwork.data.FilterItem;
+import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.helper.UtilInventory;
 import mrriegel.storagenetwork.helper.NBTHelper;
-import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.AbstractFilterTile.Direction;
@@ -173,7 +173,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (pos == null || world == null || this.getWorld().isBlockLoaded(pos) == false) {
       return;
     }
-    for (BlockPos bl : Util.getSides(pos)) {
+    for (BlockPos bl : UtilTileEntity.getSides(pos)) {
       if (this.getWorld().isBlockLoaded(bl) == false) {
         continue;
       }
@@ -247,7 +247,7 @@ public class TileMaster extends TileEntity implements ITickable {
     ItemStack in = stack.copy();
     for (AbstractFilterTile t : invs) {
       IItemHandler inv = t.getInventory();
-      if (!InvHelper.contains(inv, in))
+      if (!UtilInventory.contains(inv, in))
         continue;
       if (!t.canTransfer(in, Direction.IN))
         continue;
@@ -261,7 +261,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     for (AbstractFilterTile t : invs) {
       IItemHandler inv = t.getInventory();
-      if (InvHelper.contains(inv, in))
+      if (UtilInventory.contains(inv, in))
         continue;
       if (!t.canTransfer(in, Direction.IN))
         continue;
@@ -339,7 +339,7 @@ public class TileMaster extends TileEntity implements ITickable {
         }
         int maxStackSize = stackCurrent.getMaxStackSize();
         if ((tileCable.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
-          maxStackSize = Math.min(maxStackSize, currentFilter.getSize() - InvHelper.getAmount(inv, new FilterItem(stackCurrent, meta, ore, false)));
+          maxStackSize = Math.min(maxStackSize, currentFilter.getSize() - UtilInventory.getAmount(inv, new FilterItem(stackCurrent, meta, ore, false)));
         }
         if (maxStackSize <= 0) {
           continue;

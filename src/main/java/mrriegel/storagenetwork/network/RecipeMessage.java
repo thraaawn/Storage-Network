@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.data.FilterItem;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
-import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.InvHelper;
-import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.helper.UtilInventory;
 import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -111,11 +112,11 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
               FilterItem filterItem = new FilterItem(stackCurrent);
               filterItem.setOre(isOreDict);//important: set this for correct matching
               StorageNetwork.log("CALL exctractItem   " + stackCurrent + " isOreDict " + isOreDict);
-              ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, true);
+              ItemStack ex = UtilInventory.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, true);
               /*********** First try and use the players inventory **/
               int slot = j - 1;
               if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(slot).isEmpty()) {
-                InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, false);
+                UtilInventory.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, false);
                 // System.out.println("extractedItem.simulated is false "+slot+"_" +ex.getUnlocalizedName());
                 //make sure to add the real item after the nonsimulated withdrawl is complete https://github.com/PrinceOfAmber/Storage-Network/issues/16
                 craftMatrix.setInventorySlotContents(slot, ex);
@@ -134,7 +135,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
           //now make sure client sync happens.
           ctr.slotChanged();
           List<StackWrapper> list = master.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, master.getCraftableStacks(list)), ctx.getServerHandler().player);
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, master.getCraftableStacks(list)), ctx.getServerHandler().player);
         }
       }
       //}

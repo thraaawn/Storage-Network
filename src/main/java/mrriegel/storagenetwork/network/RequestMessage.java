@@ -2,9 +2,10 @@ package mrriegel.storagenetwork.network;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.data.FilterItem;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.remote.ContainerRemote;
 import mrriegel.storagenetwork.remote.ItemRemote;
 import mrriegel.storagenetwork.request.ContainerRequest;
@@ -64,14 +65,14 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
               //when player TAKES an item, go here
               ctx.getServerHandler().player.inventory.setItemStack(stack);
               StorageNetwork.log("REQUEST message sStack Single??? " + stack + " isCLIENT " + tile.getWorld().isRemote);
-              PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().player);
+              PacketRegistry.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().player);
             }
           }
           else {
             StorageNetwork.log("WAT how did we get empty stack  " + stack + " isCLIENT " + tile.getWorld().isRemote);
           }
           List<StackWrapper> list = tile.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
           ctx.getServerHandler().player.openContainer.detectAndSendChanges();
         }
         else if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote) {
@@ -86,11 +87,11 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
             }
             else {
               ctx.getServerHandler().player.inventory.setItemStack(stack);
-              PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().player);
+              PacketRegistry.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().player);
             }
           }
           List<StackWrapper> list = tile.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
           ctx.getServerHandler().player.openContainer.detectAndSendChanges();
         }
       }

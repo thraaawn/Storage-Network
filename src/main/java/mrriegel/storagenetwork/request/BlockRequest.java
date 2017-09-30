@@ -6,7 +6,7 @@ import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.gui.GuiHandler;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -83,7 +83,7 @@ public class BlockRequest extends AbstractBlockConnectable {
     if (tileentity instanceof TileRequest) {
       TileRequest tile = (TileRequest) tileentity;
       for (int i = 0; i < 9; i++) {
-        Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.matrix.get(i));
+        UtilTileEntity.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.matrix.get(i));
       }
     }
     super.breakBlock(worldIn, pos, state);

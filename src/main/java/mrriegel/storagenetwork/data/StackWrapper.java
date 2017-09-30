@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.helper;
+package mrriegel.storagenetwork.data;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
