@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.remote;
-import mrriegel.storagenetwork.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.item.ItemStack;

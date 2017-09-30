@@ -82,7 +82,9 @@ public class RequestRecipeTransferHandlerRemote<C extends Container> implements 
           break;
         }
       }
-      if (foo) { return OreDictionary.getOreName(i); }
+      if (foo) {
+        return OreDictionary.getOreName(i);
+      }
     }
     return null;
   }

@@ -74,7 +74,9 @@ public class BlockMaster extends BlockContainer {
   }
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    if (!(worldIn.getTileEntity(pos) instanceof TileMaster)) { return false; }
+    if (!(worldIn.getTileEntity(pos) instanceof TileMaster)) {
+      return false;
+    }
     TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
     if (!worldIn.isRemote) {
       playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "(Potential) Empty Slots: " + tile.emptySlots()));

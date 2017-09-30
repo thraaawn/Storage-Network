@@ -1,10 +1,10 @@
 package mrriegel.storagenetwork.remote;
 import java.util.List;
 import javax.annotation.Nullable;
-import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.CreativeTab;
-import mrriegel.storagenetwork.GuiHandler;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
@@ -97,7 +97,9 @@ public class ItemRemote extends Item {
     return GuiHandler.REMOTE;
   }
   public static TileMaster getTile(ItemStack stack) {
-    if (stack == null || stack.isEmpty()) { return null; }
+    if (stack == null || stack.isEmpty()) {
+      return null;
+    }
     TileEntity t = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(stack, "dim")).getTileEntity(new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z")));
     return t instanceof TileMaster ? (TileMaster) t : null;
   }

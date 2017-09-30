@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.proxy;
-import mrriegel.storagenetwork.ConfigHandler;
-import mrriegel.storagenetwork.GuiHandler;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.PacketHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;

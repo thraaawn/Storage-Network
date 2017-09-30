@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.network;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.ContainerNetworkBase;
+import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
 import net.minecraft.inventory.Container;

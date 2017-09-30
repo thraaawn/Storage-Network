@@ -74,7 +74,7 @@ public class ContainerCable extends Container {
   @Override
   public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
     Slot slot = this.inventorySlots.get(slotIndex);
-    StorageNetwork.log("transfer slot in ContainerCable: TODO: upgrades to top right "+ slotIndex);
+    StorageNetwork.log("transfer slot in ContainerCable: TODO: upgrades to top right " + slotIndex);
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       if (itemstack1.isEmpty()) {
@@ -83,7 +83,6 @@ public class ContainerCable extends Container {
       for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
         if (tile.getFilter().get(i) == null && !isInFilter(new StackWrapper(itemstack1, 1))) {
           tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.getCount()));
-           
           break;
         }
       }

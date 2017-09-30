@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork;
+package mrriegel.storagenetwork.gui;
 import mrriegel.storagenetwork.cable.ContainerCable;
 import mrriegel.storagenetwork.cable.GuiCable;
 import mrriegel.storagenetwork.helper.Util;

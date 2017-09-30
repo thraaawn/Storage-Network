@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.request;
 import java.util.HashMap;
 import java.util.Map;
-import mrriegel.storagenetwork.RigelNetworkGuiRequest;
+import mrriegel.storagenetwork.gui.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.tile.TileConnectable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

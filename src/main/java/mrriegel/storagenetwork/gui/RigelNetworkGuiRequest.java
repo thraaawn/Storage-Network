@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork;
+package mrriegel.storagenetwork.gui;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.Settings;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;

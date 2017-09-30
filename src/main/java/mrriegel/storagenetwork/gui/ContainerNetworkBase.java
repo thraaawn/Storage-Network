@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork;
+package mrriegel.storagenetwork.gui;
 import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.helper.FilterItem;

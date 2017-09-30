@@ -1,18 +1,14 @@
 package mrriegel.storagenetwork.cable;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.ModBlocks;
-import mrriegel.storagenetwork.RigelNetworkGuiContainer;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
+import mrriegel.storagenetwork.gui.RigelNetworkGuiContainer;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.network.CableDataMessage;
@@ -25,13 +21,10 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class GuiCable extends RigelNetworkGuiContainer {
   private static final int TEXTBOX_WIDTH = 26;
@@ -142,8 +135,7 @@ public class GuiCable extends RigelNetworkGuiContainer {
     btnWhite = new Button(3, guiLeft + 58, guiTop + 5, "");
     buttonList.add(btnWhite);
     btnWhite.visible = tile.getBlockType() == ModBlocks.imKabel;
-        
-        //if (tile.isStorage()) {
+    //if (tile.isStorage()) {
     btnImport = new Button(5, guiLeft + 78, guiTop + 5, "I");
     buttonList.add(btnImport);
     if (tile.isStorage()) {
@@ -168,13 +160,12 @@ public class GuiCable extends RigelNetworkGuiContainer {
       buttonList.add(btnOperationToggle);
       operation = new ItemSlot(cable.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
       //      
-       checkOre = new GuiCheckBox(10, guiLeft + 78, guiTop + 64,I18n.format("gui.storagenetwork.checkbox.ore"), true);
+      checkOre = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, I18n.format("gui.storagenetwork.checkbox.ore"), true);
       checkOre.setIsChecked(tile.getOre());
       buttonList.add(checkOre);
-       checkMeta = new GuiCheckBox(11, guiLeft + 78, guiTop + 76,I18n.format("gui.storagenetwork.checkbox.meta"), true);
+      checkMeta = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, I18n.format("gui.storagenetwork.checkbox.meta"), true);
       checkMeta.setIsChecked(tile.getMeta());
       buttonList.add(checkMeta);
-  
     }
   }
   @Override
@@ -195,7 +186,6 @@ public class GuiCable extends RigelNetworkGuiContainer {
         if (mc.player.inventory.getItemStack() != null) {
           if (!con.isInFilter(new StackWrapper(mc.player.inventory.getItemStack(), 1))) {
             con.tile.getFilter().put(i, new StackWrapper(mc.player.inventory.getItemStack(), mc.player.inventory.getItemStack().getCount()));
- 
           }
         }
         else {
@@ -206,11 +196,9 @@ public class GuiCable extends RigelNetworkGuiContainer {
               x.setSize(x.getSize() - (isShiftKeyDown() ? 10 : 1));
             else if (mouseButton == 2) {
               con.tile.getFilter().put(i, null);
- 
             }
             if (x != null && x.getSize() <= 0) {
               con.tile.getFilter().put(i, null);
- 
             }
           }
         }
@@ -237,14 +225,12 @@ public class GuiCable extends RigelNetworkGuiContainer {
       if (tile instanceof TileCable)
         ((TileCable) tile).setMode(!((TileCable) tile).isMode());
     }
-    else if(button.id == checkMeta.id || button.id == checkOre.id){
-
+    else if (button.id == checkMeta.id || button.id == checkOre.id) {
       PacketHandler.INSTANCE.sendToServer(new FilterMessage(-1, null, checkOre.isChecked(), checkMeta.isChecked()));
     }
   }
   @Override
   protected void keyTyped(char typedChar, int keyCode) throws IOException {
- 
     if (!(tile instanceof TileCable)) {
       super.keyTyped(typedChar, keyCode);
       return;

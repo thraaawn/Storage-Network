@@ -36,7 +36,9 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
       public void run() {
         if (ctx.getServerHandler().player.openContainer instanceof ContainerRequest) {
           TileMaster tile = (TileMaster) ctx.getServerHandler().player.world.getTileEntity(((ContainerRequest) ctx.getServerHandler().player.openContainer).tile.getMaster());
-          if (tile == null) { return; }
+          if (tile == null) {
+            return;
+          }
           // System.out.println("!RequestMessage message.stack == "+message.stack);
           int in = message.stack.isEmpty() ? 0 : tile.getAmount(new FilterItem(message.stack, true, false, true));
           //   System.out.println("!RequestMessage in == "+in);

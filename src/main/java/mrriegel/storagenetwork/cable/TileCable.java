@@ -32,7 +32,7 @@ public class TileCable extends AbstractFilterTile {
   public enum CableKind {
     kabel, exKabel, imKabel, storageKabel;
   }
-  public TileCable(){
+  public TileCable() {
     this.setOres(false);
     this.setMeta(true);
   }
@@ -80,10 +80,14 @@ public class TileCable extends AbstractFilterTile {
     down = map.get(EnumFacing.DOWN);
   }
   public boolean doesPassOperationFilterLimit() {
-    if (getUpgradesOfType(ItemUpgrade.OPERATION) < 1) { return true; }
+    if (getUpgradesOfType(ItemUpgrade.OPERATION) < 1) {
+      return true;
+    }
     //ok operation upgrade does NOT exist
     TileMaster m = (TileMaster) world.getTileEntity(getMaster());
-    if (getOperationStack() == null || getOperationStack().isEmpty()) { return true; }
+    if (getOperationStack() == null || getOperationStack().isEmpty()) {
+      return true;
+    }
     int amount = m.getAmount(new FilterItem(getOperationStack()));
     if (isMode()) {
       return amount > getLimit();

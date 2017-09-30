@@ -1,8 +1,8 @@
 package mrriegel.storagenetwork.remote;
 import java.util.List;
 import com.google.common.collect.Lists;
-import mrriegel.storagenetwork.ContainerNetworkBase;
 import mrriegel.storagenetwork.ModItems;
+import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
@@ -41,7 +41,9 @@ public class ContainerRemote extends ContainerNetworkBase {
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
-        if (playerIn.world.isRemote) { return stack; }
+        if (playerIn.world.isRemote) {
+          return stack;
+        }
         List<ItemStack> lis = Lists.newArrayList();
         for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
           lis.add(craftMatrix.getStackInSlot(i).copy());
@@ -95,7 +97,9 @@ public class ContainerRemote extends ContainerNetworkBase {
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-    if (playerIn.world.isRemote) { return ItemStack.EMPTY; }
+    if (playerIn.world.isRemote) {
+      return ItemStack.EMPTY;
+    }
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
     if (slot != null && slot.getHasStack()) {
@@ -119,7 +123,9 @@ public class ContainerRemote extends ContainerNetworkBase {
   }
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {
-    if (tile == null) { return false; }
+    if (tile == null) {
+      return false;
+    }
     if (!playerIn.world.isRemote && playerIn.world.getTotalWorldTime() % 40 == 0) {
       List<StackWrapper> list = tile.getStacks();
       PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);

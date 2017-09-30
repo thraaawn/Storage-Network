@@ -5,15 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.logging.log4j.Level;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import mrriegel.storagenetwork.ConfigHandler;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.NBTHelper;
@@ -23,12 +22,7 @@ import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.AbstractFilterTile.Direction;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
@@ -41,7 +35,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class TileMaster extends TileEntity implements ITickable {
   public Set<BlockPos> connectables;
@@ -284,11 +277,7 @@ public class TileMaster extends TileEntity implements ITickable {
   }
   public void updateImports() {
     List<TileCable> attachedCables = getAttachedCables(CableKind.imKabel);
-    
-    
     for (TileCable tileCable : attachedCables) {
-
-
       IItemHandler inv = tileCable.getInventory();
       if ((world.getTotalWorldTime() + 10) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
         continue;
@@ -304,7 +293,6 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!tileCable.doesPassOperationFilterLimit()) {
           continue; // nope, cant pass by. operation filter in place and all set
         }
-        
         // int num = s.getCount();
         int insert = Math.min(stackCurrent.getCount(), (int) Math.pow(2, tileCable.getUpgradesOfType(ItemUpgrade.STACK) + 2));
         ItemStack extracted = inv.extractItem(i, insert, true);
@@ -328,7 +316,6 @@ public class TileMaster extends TileEntity implements ITickable {
         continue;
       }
       IItemHandler inv = tileCable.getInventory();
-    
       boolean ore = tileCable.getOre();
       boolean meta = tileCable.getMeta();
       //now check the filter inside this dudlio

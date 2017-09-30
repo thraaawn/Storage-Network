@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.ContainerNetworkBase;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
@@ -63,7 +63,9 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
           //            return;
           //   ContainerRequest con = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
           //  TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.world.getTileEntity(con.tile.getMaster());
-          if (master == null) { return; }
+          if (master == null) {
+            return;
+          }
           String[] oreDictKeys;// = oreDictKey.split(",");
           for (int j = 1; j < 10; j++) {
             Map<Integer, ItemStack> map = new HashMap<Integer, ItemStack>();

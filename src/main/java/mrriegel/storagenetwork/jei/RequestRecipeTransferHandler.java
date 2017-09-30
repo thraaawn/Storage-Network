@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.google.common.primitives.Ints;
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
@@ -63,7 +62,7 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
           //yep this was the issue. dont force oredict here. letJEI recipeIngredients handle it and follow forward
           List<String> oresForStack = null;//getOresForStack(current);
           if (oresForStack != null) {
-//            StorageNetwork.log("ORE DIDCT STRING CSV WHA T" + String.join(",", oresForStack));
+            //            StorageNetwork.log("ORE DIDCT STRING CSV WHA T" + String.join(",", oresForStack));
             nbt.setString("s" + j, String.join(",", oresForStack));
           }
           else {//current is null
@@ -90,7 +89,9 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
    * @return
    */
   private List<String> getOresForStack(List<ItemStack> lis) {
-    if (lis == null) { return null; }
+    if (lis == null) {
+      return null;
+    }
     List<String> matchingDicts = new ArrayList<String>();
     //ore dict has no "get keys for stack" ..w ell it does but it gets ids not strings
     String oreName;

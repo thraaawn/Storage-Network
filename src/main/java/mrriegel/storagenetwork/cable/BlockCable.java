@@ -6,18 +6,16 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
 import mrriegel.storagenetwork.AbstractBlockConnectable;
 import mrriegel.storagenetwork.CreativeTab;
-import mrriegel.storagenetwork.GuiHandler;
 import mrriegel.storagenetwork.IConnectable;
 import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
+import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.master.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -209,7 +207,9 @@ public class BlockCable extends AbstractBlockConnectable {
   }
   @Override
   public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
-    if (!(worldIn.getTileEntity(pos) instanceof TileCable)) { return; }
+    if (!(worldIn.getTileEntity(pos) instanceof TileCable)) {
+      return;
+    }
     state = state.getActualState(worldIn, pos);
     TileCable tile = (TileCable) worldIn.getTileEntity(pos);
     float f = 0.3125F;
