@@ -1,7 +1,6 @@
 package mrriegel.storagenetwork.remote;
 import java.util.List;
 import com.google.common.collect.Lists;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.data.FilterItem;
 import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
