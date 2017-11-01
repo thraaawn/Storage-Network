@@ -1,11 +1,11 @@
-package mrriegel.storagenetwork;
+package mrriegel.storagenetwork.gui;
 import java.util.List;
 import com.google.common.collect.Lists;
-import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.data.FilterItem;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
-import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -50,7 +50,7 @@ public abstract class ContainerNetworkBase extends Container {
         res = result.getStackInSlot(0);
     }
     List<StackWrapper> list = tile.getStacks();
-    PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) player);
+    PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) player);
     detectAndSendChanges();
   }
 }

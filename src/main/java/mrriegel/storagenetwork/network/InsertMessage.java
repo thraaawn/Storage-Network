@@ -1,8 +1,9 @@
 package mrriegel.storagenetwork.network;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.remote.ContainerRemote;
 import mrriegel.storagenetwork.request.ContainerRequest;
 import net.minecraft.inventory.Container;
@@ -39,7 +40,7 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
         if (c instanceof ContainerRequest)
           t = w.getTileEntity(((ContainerRequest) c).tile.getMaster());
         else if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote)
-          t = ((ContainerRemote) c).tile;
+          t = ((ContainerRemote) c).tileMaster;
         if (t instanceof TileMaster) {
           TileMaster tile = (TileMaster) t;
           int rest;
@@ -58,9 +59,9 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
               send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
           }
           ctx.getServerHandler().player.inventory.setItemStack(send);
-          PacketHandler.INSTANCE.sendTo(new StackMessage(send), ctx.getServerHandler().player);
+          PacketRegistry.INSTANCE.sendTo(new StackMessage(send), ctx.getServerHandler().player);
           List<StackWrapper> list = tile.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
           c.detectAndSendChanges();
         }
       }

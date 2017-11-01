@@ -2,8 +2,8 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.cable.ContainerCable;
 import mrriegel.storagenetwork.cable.TileCable;
-import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -15,16 +15,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.IItemHandler;
 
-public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, IMessage> {
+public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
   int id;
   BlockPos pos;
-  public ButtonMessage() {}
-  public ButtonMessage(int id, BlockPos pos) {
+  public CableDataMessage() {}
+  public CableDataMessage(int id, BlockPos pos) {
     this.id = id;
     this.pos = pos;
   }
   @Override
-  public IMessage onMessage(final ButtonMessage message, final MessageContext ctx) {
+  public IMessage onMessage(final CableDataMessage message, final MessageContext ctx) {
     IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
       @Override
@@ -40,7 +40,7 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
               tile.setPriority(tile.getPriority() + 1);
             break;
             case 3:
-              tile.setWhite(!tile.isWhite());
+              tile.setWhite(!tile.isWhitelist());
             break;
             case 4:
               if (tile instanceof TileCable)
@@ -75,7 +75,7 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
           }
           tile.markDirty();
         }
-        Util.updateTile(t.getWorld(), t.getPos());
+        UtilTileEntity.updateTile(t.getWorld(), t.getPos());
       }
     });
     return null;

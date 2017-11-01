@@ -1,8 +1,8 @@
 package mrriegel.storagenetwork.tile;
 import java.util.HashMap;
 import java.util.Map;
-import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -11,10 +11,11 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 
 public abstract class AbstractFilterTile extends TileConnectable {
+  public static final int FILTER_SIZE = 18;
   private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
-  private Map<Integer, Boolean> ores = new HashMap<Integer, Boolean>();
-  private Map<Integer, Boolean> metas = new HashMap<Integer, Boolean>();
-  private boolean white;
+  private boolean ores = false;
+  private boolean metas = false;
+  private boolean isWhitelist;
   private int priority;
   private Direction way = Direction.BOTH;
   public enum Direction {
@@ -34,7 +35,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
     readSettings(compound);
   }
   public void readSettings(NBTTagCompound compound) {
-    white = compound.getBoolean("white");
+    isWhitelist = compound.getBoolean("white");
     priority = compound.getInteger("prio");
     NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
     filter = new HashMap<Integer, StackWrapper>();
@@ -43,24 +44,8 @@ public abstract class AbstractFilterTile extends TileConnectable {
       int slot = stackTag.getByte("Slot");
       filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
     }
-    NBTTagList oreList = compound.getTagList("ores", Constants.NBT.TAG_COMPOUND);
-    ores = new HashMap<Integer, Boolean>();
-    for (int i = 0; i < 18; i++)
-      ores.put(i, false);
-    for (int i = 0; i < oreList.tagCount(); i++) {
-      NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
-      int slot = stackTag.getByte("Slot");
-      ores.put(slot, stackTag.getBoolean("Ore"));
-    }
-    NBTTagList metaList = compound.getTagList("metas", Constants.NBT.TAG_COMPOUND);
-    metas = new HashMap<Integer, Boolean>();
-    for (int i = 0; i < 18; i++)
-      metas.put(i, true);
-    for (int i = 0; i < metaList.tagCount(); i++) {
-      NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
-      int slot = stackTag.getByte("Slot");
-      metas.put(slot, stackTag.getBoolean("Meta"));
-    }
+    ores = compound.getBoolean("ores");
+    metas = compound.getBoolean("metas");
     try {
       way = Direction.valueOf(compound.getString("way"));
     }
@@ -75,10 +60,10 @@ public abstract class AbstractFilterTile extends TileConnectable {
     return compound;
   }
   public void writeSettings(NBTTagCompound compound) {
-    compound.setBoolean("white", white);
+    compound.setBoolean("white", isWhitelist);
     compound.setInteger("prio", priority);
     NBTTagList invList = new NBTTagList();
-    for (int i = 0; i < 18; i++) {
+    for (int i = 0; i < FILTER_SIZE; i++) {
       if (filter.get(i) != null) {
         NBTTagCompound stackTag = new NBTTagCompound();
         stackTag.setByte("Slot", (byte) i);
@@ -87,42 +72,45 @@ public abstract class AbstractFilterTile extends TileConnectable {
       }
     }
     compound.setTag("crunchTE", invList);
-    NBTTagList oreList = new NBTTagList();
-    for (int i = 0; i < 18; i++) {
-      if (ores.get(i) != null) {
-        NBTTagCompound stackTag = new NBTTagCompound();
-        stackTag.setByte("Slot", (byte) i);
-        stackTag.setBoolean("Ore", ores.get(i));
-        oreList.appendTag(stackTag);
-      }
-    }
-    compound.setTag("ores", oreList);
-    NBTTagList metaList = new NBTTagList();
-    for (int i = 0; i < 18; i++) {
-      if (metas.get(i) != null) {
-        NBTTagCompound stackTag = new NBTTagCompound();
-        stackTag.setByte("Slot", (byte) i);
-        stackTag.setBoolean("Meta", metas.get(i));
-        metaList.appendTag(stackTag);
-      }
-    }
-    compound.setTag("metas", metaList);
+    compound.setBoolean("ores", ores);
+    compound.setBoolean("metas", metas);
     compound.setString("way", way.toString());
   }
+  private boolean doesWrapperMatchStack(StackWrapper stackWrapper, ItemStack stack) {
+    ItemStack s = stackWrapper.getStack();
+    return ores ? UtilTileEntity.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem();
+  }
+  /*
+   * key function used by TileMaster for all item trafic
+   * 
+   * TODO: TEST CASES
+   * 
+   * export + meta
+   * 
+   * export - meta
+   * 
+   * import + meta ; whitelist
+   * 
+   * import - meta ; whitelist
+   * 
+   * import + meta ; blacklist
+   * 
+   * import - meta ; blacklist
+   * 
+   * 
+   * 
+   */
   public boolean canTransfer(ItemStack stack, Direction way) {
-    if (isStorage() && !this.way.match(way))
+    if (isStorage() && !this.way.match(way)) {
       return false;
-    if (isWhite()) {
+    }
+    if (this.isWhitelist()) {
       boolean tmp = false;
-      for (int i = 0; i < 18; i++) {
-        if (getFilter().get(i) == null)
+      for (StackWrapper stackWrapper : this.filter.values()) {
+        if (stackWrapper == null || stackWrapper.getStack() == null) {
           continue;
-        ItemStack s = getFilter().get(i).getStack();
-        if (s == null)
-          continue;
-        boolean ore = getOre(i);
-        boolean meta = getMeta(i);
-        if (ore ? Util.equalOreDict(stack, s) : meta ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+        }
+        if (doesWrapperMatchStack(stackWrapper, stack)) {
           tmp = true;
           break;
         }
@@ -131,15 +119,11 @@ public abstract class AbstractFilterTile extends TileConnectable {
     }
     else {
       boolean tmp = true;
-      for (int i = 0; i < 18; i++) {
-        if (getFilter().get(i) == null)
+      for (StackWrapper stackWrapper : this.filter.values()) {
+        if (stackWrapper == null || stackWrapper.getStack() == null) {
           continue;
-        ItemStack s = getFilter().get(i).getStack();
-        if (s == null || s.isEmpty())
-          continue;
-        boolean ore = getOre(i);
-        boolean meta = getMeta(i);
-        if (ore ? Util.equalOreDict(stack, s) : meta ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+        }
+        if (doesWrapperMatchStack(stackWrapper, stack)) {
           tmp = false;
           break;
         }
@@ -149,14 +133,12 @@ public abstract class AbstractFilterTile extends TileConnectable {
   }
   public abstract IItemHandler getInventory();
   public abstract BlockPos getSource();
-  //	public abstract boolean isFluid();
+  /**
+   * identical to checking === CableKind.storage
+   * 
+   * @return
+   */
   public abstract boolean isStorage();
-  public boolean getOre(int i) {
-    return getOres().get(i) == null ? false : getOres().get(i);
-  }
-  public boolean getMeta(int i) {
-    return getMetas().get(i) == null ? true : getMetas().get(i);
-  }
   /**
    * the whitelist / blacklist (ghost stacks in gui)
    * 
@@ -168,23 +150,23 @@ public abstract class AbstractFilterTile extends TileConnectable {
   public void setFilter(Map<Integer, StackWrapper> filter) {
     this.filter = filter;
   }
-  public Map<Integer, Boolean> getOres() {
+  public boolean getOre() {
     return ores;
   }
-  public void setOres(Map<Integer, Boolean> ores) {
+  public void setOres(boolean ores) {
     this.ores = ores;
   }
-  public Map<Integer, Boolean> getMetas() {
+  public boolean getMeta() {
     return metas;
   }
-  public void setMetas(Map<Integer, Boolean> metas) {
-    this.metas = metas;
+  public void setMeta(boolean ores) {
+    this.metas = ores;
   }
-  public boolean isWhite() {
-    return white;
+  public boolean isWhitelist() {
+    return isWhitelist;
   }
   public void setWhite(boolean white) {
-    this.white = white;
+    this.isWhitelist = white;
   }
   public int getPriority() {
     return priority;

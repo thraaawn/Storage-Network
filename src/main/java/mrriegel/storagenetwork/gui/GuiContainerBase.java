@@ -1,5 +1,4 @@
-package mrriegel.storagenetwork;
-import java.util.Arrays;
+package mrriegel.storagenetwork.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -7,8 +6,8 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 
-public abstract class RigelNetworkGuiContainer extends GuiContainer {
-  public RigelNetworkGuiContainer(Container inventorySlotsIn) {
+public abstract class GuiContainerBase extends GuiContainer {
+  public GuiContainerBase(Container inventorySlotsIn) {
     super(inventorySlotsIn);
   }
   private abstract class AbstractSlot {

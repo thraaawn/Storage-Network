@@ -1,7 +1,5 @@
-package mrriegel.storagenetwork.render;
+package mrriegel.storagenetwork.cable;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.cable.BlockCable;
-import mrriegel.storagenetwork.cable.TileCable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -19,7 +17,9 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileCable> {
   }
   @Override
   public void render(TileCable te, double x, double y, double z, float partialTicks, int destroyStage, float partial) {
-    if (te == null || te.getKind() == null || !(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockCable)) { return; }
+    if (te == null || te.getKind() == null || !(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockCable)) {
+      return;
+    }
     GlStateManager.pushMatrix();
     GlStateManager.enableRescaleNormal();
     GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);

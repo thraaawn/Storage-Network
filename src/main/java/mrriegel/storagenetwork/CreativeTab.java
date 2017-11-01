@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork;
+import mrriegel.storagenetwork.registry.ModBlocks;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 

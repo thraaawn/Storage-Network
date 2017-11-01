@@ -45,7 +45,9 @@ public class NBTHelper {
   // String
   public static String getString(ItemStack stack, String keyName) {
     initNBTTagCompound(stack);
-    if (!stack.getTagCompound().hasKey(keyName)) { return null; }
+    if (!stack.getTagCompound().hasKey(keyName)) {
+      return null;
+    }
     return stack.getTagCompound().getString(keyName);
   }
   public static void setString(ItemStack stack, String keyName, String keyValue) {
@@ -157,7 +159,9 @@ public class NBTHelper {
   // enum
   public static <E extends Enum<E>> E getEnum(ItemStack stack, String keyName, Class<E> clazz) {
     initNBTTagCompound(stack);
-    if (!stack.getTagCompound().hasKey(keyName)) { return null; }
+    if (!stack.getTagCompound().hasKey(keyName)) {
+      return null;
+    }
     String s = stack.getTagCompound().getString(keyName);
     for (E e : clazz.getEnumConstants()) {
       if (e.toString().equals(s))

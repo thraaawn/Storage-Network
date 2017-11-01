@@ -1,7 +1,6 @@
-package mrriegel.storagenetwork.render;
+package mrriegel.storagenetwork.cable;
 import mrriegel.storagenetwork.cable.BlockCable.EnumConnectType;
-import mrriegel.storagenetwork.cable.TileCable;
-import mrriegel.storagenetwork.cable.TileCable.Kind;
+import mrriegel.storagenetwork.cable.TileCable.CableKind;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -126,7 +125,7 @@ public class ModelCable extends ModelBase {
       this.down.render(f5);
       this.downC.render(f5);
     }
-    if (!oo(tile) || tile.getKind() != Kind.kabel)
+    if (!oo(tile) || tile.getKind() != CableKind.kabel)
       this.cube.render(f5);
   }
   // @Override

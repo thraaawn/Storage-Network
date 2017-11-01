@@ -4,12 +4,12 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import mrriegel.storagenetwork.ModBlocks;
 import mrriegel.storagenetwork.cable.BlockCable.EnumConnectType;
-import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.InvHelper;
+import mrriegel.storagenetwork.data.FilterItem;
+import mrriegel.storagenetwork.helper.UtilInventory;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -29,8 +29,12 @@ public class TileCable extends AbstractFilterTile {
   private int limit = 0;
   public EnumConnectType north, south, east, west, up, down;
   ItemStack stack = null;
-  public enum Kind {
+  public enum CableKind {
     kabel, exKabel, imKabel, storageKabel;
+  }
+  public TileCable() {
+    this.setOres(false);
+    this.setMeta(true);
   }
   public int getUpgradesOfType(int num) {
     int res = 0;
@@ -43,18 +47,18 @@ public class TileCable extends AbstractFilterTile {
     return res;
   }
   public boolean isUpgradeable() {
-    Kind kind = getKind();
-    return kind == Kind.exKabel || kind == Kind.imKabel;
+    CableKind kind = getKind();
+    return kind == CableKind.exKabel || kind == CableKind.imKabel;
   }
-  public static Kind getKind(Block b) {
+  public static CableKind getKind(Block b) {
     if (b == ModBlocks.kabel)
-      return Kind.kabel;
+      return CableKind.kabel;
     if (b == ModBlocks.exKabel)
-      return Kind.exKabel;
+      return CableKind.exKabel;
     if (b == ModBlocks.imKabel)
-      return Kind.imKabel;
+      return CableKind.imKabel;
     if (b == ModBlocks.storageKabel)
-      return Kind.storageKabel;
+      return CableKind.storageKabel;
     return null;
   }
   public Map<EnumFacing, EnumConnectType> getConnects() {
@@ -75,11 +79,16 @@ public class TileCable extends AbstractFilterTile {
     up = map.get(EnumFacing.UP);
     down = map.get(EnumFacing.DOWN);
   }
-  public boolean status() {
-    if (getUpgradesOfType(ItemUpgrade.OP) < 1) { return true; }
+  public boolean doesPassOperationFilterLimit() {
+    if (getUpgradesOfType(ItemUpgrade.OPERATION) < 1) {
+      return true;
+    }
+    //ok operation upgrade does NOT exist
     TileMaster m = (TileMaster) world.getTileEntity(getMaster());
-    if (getStack() == null || getStack().isEmpty()) { return true; }
-    int amount = m.getAmount(new FilterItem(getStack()));
+    if (getOperationStack() == null || getOperationStack().isEmpty()) {
+      return true;
+    }
+    int amount = m.getAmount(new FilterItem(getOperationStack()));
     if (isMode()) {
       return amount > getLimit();
     }
@@ -160,7 +169,7 @@ public class TileCable extends AbstractFilterTile {
     AxisAlignedBB bb = new AxisAlignedBB(pos.getX() - renderExtention, pos.getY() - renderExtention, pos.getZ() - renderExtention, pos.getX() + 1 + renderExtention, pos.getY() + 1 + renderExtention, pos.getZ() + 1 + renderExtention);
     return bb;
   }
-  public Kind getKind() {
+  public CableKind getKind() {
     if (world == null)
       return null;
     return getKind(world.getBlockState(pos).getBlock());
@@ -202,16 +211,16 @@ public class TileCable extends AbstractFilterTile {
   public void setLimit(int limit) {
     this.limit = limit;
   }
-  public ItemStack getStack() {
+  public ItemStack getOperationStack() {
     return stack;
   }
-  public void setStack(ItemStack stack) {
+  public void setOperationStack(ItemStack stack) {
     this.stack = stack;
   }
   @Override
   public IItemHandler getInventory() {
     if (getConnectedInventory() != null)
-      return InvHelper.getItemHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
+      return UtilInventory.getItemHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
     return null;
   }
   @Override
@@ -220,6 +229,6 @@ public class TileCable extends AbstractFilterTile {
   }
   @Override
   public boolean isStorage() {
-    return getKind() == Kind.storageKabel;
+    return getKind() == CableKind.storageKabel;
   }
 }

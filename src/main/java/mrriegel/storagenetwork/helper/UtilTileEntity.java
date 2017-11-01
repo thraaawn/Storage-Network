@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class Util {
+public class UtilTileEntity {
   private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
   public static void init() {
     Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
@@ -95,8 +95,9 @@ public class Util {
   }
   public static List<BlockPos> getSides(BlockPos pos) {
     List<BlockPos> lis = Lists.newArrayList();
-    for (EnumFacing face : EnumFacing.values())
+    for (EnumFacing face : EnumFacing.values()) {
       lis.add(pos.offset(face));
+    }
     return lis;
   }
   public static void updateTile(World world, BlockPos pos) {

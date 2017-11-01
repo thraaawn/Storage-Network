@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork;
+package mrriegel.storagenetwork.registry;
 import mrriegel.storagenetwork.cable.BlockCable;
 import mrriegel.storagenetwork.master.BlockMaster;
 import mrriegel.storagenetwork.request.BlockRequest;

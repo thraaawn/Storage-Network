@@ -1,5 +1,4 @@
-package mrriegel.storagenetwork.helper;
-import mrriegel.storagenetwork.StorageNetwork;
+package mrriegel.storagenetwork.data;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -27,7 +26,7 @@ public class StackWrapper {
     copy.setCount(1);//count outside of [1,64] gets set to EMPTY STACK, breaking things like Storage Drawers
     copy.writeToNBT(c);
     compound.setTag("stack", c);
-    compound.setInteger("size", size); 
+    compound.setInteger("size", size);
     return compound;
   }
   @Override
@@ -36,7 +35,9 @@ public class StackWrapper {
   }
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof StackWrapper)) { return false; }
+    if (!(obj instanceof StackWrapper)) {
+      return false;
+    }
     StackWrapper o = (StackWrapper) obj;
     return o.stack.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(o.stack, stack);
   }
@@ -60,8 +61,9 @@ public class StackWrapper {
   public static StackWrapper loadStackWrapperFromNBT(NBTTagCompound nbt) {
     StackWrapper wrap = new StackWrapper();
     wrap.readFromNBT(nbt);
-    if (wrap.getStack() == null || wrap.getStack().getItem() == null) { return null; }
- 
+    if (wrap.getStack() == null || wrap.getStack().getItem() == null) {
+      return null;
+    }
     return wrap;
   }
 }

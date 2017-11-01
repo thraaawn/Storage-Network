@@ -1,4 +1,5 @@
-package mrriegel.storagenetwork.helper;
+package mrriegel.storagenetwork.data;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
@@ -70,7 +71,7 @@ public class FilterItem {
   public boolean match(ItemStack s) {
     if (s == null || s.isEmpty())
       return false;
-    if (ore && Util.equalOreDict(s, stack))
+    if (ore && UtilTileEntity.equalOreDict(s, stack))
       return true;
     if (nbt && !ItemStack.areItemStackTagsEqual(stack, s))
       return false;

@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork;
+package mrriegel.storagenetwork.gui;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,15 +9,16 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
-import mrriegel.storagenetwork.helper.Settings;
-import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import mrriegel.storagenetwork.jei.JeiHooks;
+import mrriegel.storagenetwork.jei.Settings;
 import mrriegel.storagenetwork.network.ClearMessage;
 import mrriegel.storagenetwork.network.InsertMessage;
-import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -32,7 +33,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
 
-public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
+public abstract class GuiContainerStorageInventory extends GuiContainerBase {
+  private static final int MOUSE_BTN_RIGHT = 1;
+  private static final int MOUSE_BTN_LEFT = 0;
   public static final String NBT_SEARCH = "storagenetwork_search";
   protected ResourceLocation texture;
   protected int page = 1, maxPage = 1;
@@ -44,13 +47,13 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   protected long lastClick;
   private Button clearTextBtn;
   private boolean forceFocus;
-  public RigelNetworkGuiRequest(ContainerNetworkBase inventorySlotsIn) {
+  public GuiContainerStorageInventory(ContainerNetworkBase inventorySlotsIn) {
     super(inventorySlotsIn);
     this.xSize = 176;
     this.ySize = 256;
     this.stacks = Lists.newArrayList();
     this.craftableStacks = Lists.newArrayList();
-    PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
+    PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
     lastClick = System.currentTimeMillis();
   }
   protected boolean canClick() {
@@ -70,11 +73,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     buttonList.add(direction);
     sort = new Button(1, guiLeft + 21, guiTop + 93, "");
     buttonList.add(sort);
-    // left = new Button(2, guiLeft + 44, guiTop + 93, "<");
-    // buttonList.add(left);
-    // right = new Button(3, guiLeft + 58, guiTop + 93, ">");
-    // buttonList.add(right);
-    jei = new Button(4, guiLeft + 169, guiTop + 93, "");
+    jei = new Button(4, guiLeft + 35, guiTop + 93, "");
     if (ConfigHandler.jeiLoaded) {
       buttonList.add(jei);
     }
@@ -93,19 +92,23 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   protected abstract boolean inField(int mouseX, int mouseY);
   protected abstract boolean inSearchbar(int mouseX, int mouseY);
   protected abstract boolean inX(int mouseX, int mouseY);
+  protected abstract boolean isScreenValid();
   @Override
   public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    if (this.isScreenValid() == false) {
+      return;
+    }
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     this.mc.getTextureManager().bindTexture(texture);
     int i = (this.width - this.xSize) / 2;
     int j = (this.height - this.ySize) / 2;
     this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
-    String search = searchBar.getText(); 
+    String search = searchBar.getText();
     List<StackWrapper> tmp = search.equals("") ? Lists.newArrayList(stacks) : Lists.<StackWrapper> newArrayList();
     if (!search.equals("")) {
       for (StackWrapper s : stacks) {
         if (search.startsWith("@")) {
-          String name = Util.getModNameForItem(s.getStack().getItem());
+          String name = UtilTileEntity.getModNameForItem(s.getStack().getItem());
           if (name.toLowerCase().contains(search.toLowerCase().substring(1)))
             tmp.add(s);
         }
@@ -155,7 +158,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
           case NAME:
             return o2.getStack().getDisplayName().compareToIgnoreCase(o1.getStack().getDisplayName()) * mul;
           case MOD:
-            return Util.getModNameForItem(o2.getStack().getItem()).compareToIgnoreCase(Util.getModNameForItem(o1.getStack().getItem())) * mul;
+            return UtilTileEntity.getModNameForItem(o2.getStack().getItem()).compareToIgnoreCase(UtilTileEntity.getModNameForItem(o1.getStack().getItem())) * mul;
         }
         return 0;
       }
@@ -200,18 +203,21 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     super.drawScreen(mouseX, mouseY, partialTicks);
     super.renderHoveredToolTip(mouseX, mouseY);
+    if (this.isScreenValid() == false) {
+      mc.player.closeScreen();
+    }
   }
   @Override
   public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    if (this.isScreenValid() == false) {
+      return;
+    }
     for (ItemSlot s : slots) {
       if (s.isMouseOverSlot(mouseX, mouseY)) {
         s.drawTooltip(mouseX, mouseY);
       }
     }
-    // if (inX(mouseX, mouseY))
-    // drawHoveringText(Lists.newArrayList("Clear the crafting grid."),
-    // mouseX - guiLeft, mouseY - guiTop);
     if (inSearchbar(mouseX, mouseY)) {
       List<String> lis = Lists.newArrayList();
       if (!isShiftKeyDown()) {
@@ -277,7 +283,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
       this.forceFocus = true;//we have to force it to go next-tick
     }
     if (doSort) {
-      PacketHandler.INSTANCE.sendToServer(new SortMessage(getPos(), getDownwards(), getSort()));
+      PacketRegistry.INSTANCE.sendToServer(new SortMessage(getPos(), getDownwards(), getSort()));
     }
   }
   @Override
@@ -286,17 +292,20 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     searchBar.setFocused(false);
     if (inSearchbar(mouseX, mouseY)) {
       searchBar.setFocused(true);
+      if (mouseButton == MOUSE_BTN_RIGHT) {
+        searchBar.setText("");
+      }
     }
     else if (inX(mouseX, mouseY)) {
-      PacketHandler.INSTANCE.sendToServer(new ClearMessage());
-      PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
+      PacketRegistry.INSTANCE.sendToServer(new ClearMessage());
+      PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
     }
-    else if (over != null && !over.isEmpty() && (mouseButton == 0 || mouseButton == 1) && mc.player.inventory.getItemStack().isEmpty() && canClick()) {
-      PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
+    else if (over != null && !over.isEmpty() && (mouseButton == MOUSE_BTN_LEFT || mouseButton == MOUSE_BTN_RIGHT) && mc.player.inventory.getItemStack().isEmpty() && canClick()) {
+      PacketRegistry.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
       lastClick = System.currentTimeMillis();
     }
     else if (mc.player.inventory.getItemStack() != null && !mc.player.inventory.getItemStack().isEmpty() && inField(mouseX, mouseY) && canClick()) {
-      PacketHandler.INSTANCE.sendToServer(new InsertMessage(getDim(), mouseButton, mc.player.inventory.getItemStack()));
+      PacketRegistry.INSTANCE.sendToServer(new InsertMessage(getDim(), mouseButton, mc.player.inventory.getItemStack()));
       lastClick = System.currentTimeMillis();
     }
   }
@@ -305,7 +314,7 @@ public abstract class RigelNetworkGuiRequest extends RigelNetworkGuiContainer {
     if (!this.checkHotbarKeys(keyCode)) {
       Keyboard.enableRepeatEvents(true);
       if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
-        PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
+        PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
       }
       else {
         super.keyTyped(typedChar, keyCode);

@@ -9,8 +9,8 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 //import mezz.jei.gui.ingredients.GuiIngredient;
 import mrriegel.storagenetwork.network.ClearMessage;
-import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RecipeMessage;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.remote.ContainerRemote;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -32,7 +32,7 @@ public class RequestRecipeTransferHandlerRemote<C extends Container> implements 
   @Override
   public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
     if (doTransfer) {
-      PacketHandler.INSTANCE.sendToServer(new ClearMessage());
+      PacketRegistry.INSTANCE.sendToServer(new ClearMessage());
       Map<Integer, ? extends IGuiIngredient<ItemStack>> inputs = recipeLayout.getItemStacks().getGuiIngredients();
       Map<Integer, List<ItemStack>> map = new HashMap<Integer, List<ItemStack>>();
       for (int j = 0; j < container.inventorySlots.size(); j++) {
@@ -67,7 +67,7 @@ public class RequestRecipeTransferHandlerRemote<C extends Container> implements 
           }
         }
       }
-      PacketHandler.INSTANCE.sendToServer(new RecipeMessage(nbt, 0));
+      PacketRegistry.INSTANCE.sendToServer(new RecipeMessage(nbt, 0));
     }
     return null;
   }
@@ -82,7 +82,9 @@ public class RequestRecipeTransferHandlerRemote<C extends Container> implements 
           break;
         }
       }
-      if (foo) { return OreDictionary.getOreName(i); }
+      if (foo) {
+        return OreDictionary.getOreName(i);
+      }
     }
     return null;
   }

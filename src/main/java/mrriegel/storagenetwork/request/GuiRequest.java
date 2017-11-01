@@ -1,16 +1,16 @@
 package mrriegel.storagenetwork.request;
-import mrriegel.storagenetwork.RigelNetworkGuiRequest;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
 import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-public class GuiRequest extends RigelNetworkGuiRequest {
+public class GuiRequest extends GuiContainerStorageInventory {
   TileRequest tile;
   public GuiRequest(ContainerRequest inventorySlotsIn) {
     super(inventorySlotsIn);
     tile = ((ContainerRequest) inventorySlots).tile;
-    texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
+    texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   }
   @Override
   public void initGui() {
@@ -67,5 +67,10 @@ public class GuiRequest extends RigelNetworkGuiRequest {
   @Override
   protected boolean inX(int mouseX, int mouseY) {
     return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
+  }
+  @Override
+  protected boolean isScreenValid() {
+    // TODO Auto-generated method stub
+    return true;
   }
 }

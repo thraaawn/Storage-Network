@@ -1,14 +1,13 @@
 package mrriegel.storagenetwork.request;
 import java.util.List;
 import com.google.common.collect.Lists;
-import mrriegel.storagenetwork.ContainerNetworkBase;
-import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.data.FilterItem;
+import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.gui.ContainerNetworkBase;
+import mrriegel.storagenetwork.helper.UtilTileEntity;
 import mrriegel.storagenetwork.master.TileMaster;
-import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -38,7 +37,9 @@ public class ContainerRequest extends ContainerNetworkBase {
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
-        if (playerIn.world.isRemote) { return stack; }
+        if (playerIn.world.isRemote) {
+          return stack;
+        }
         List<ItemStack> lis = Lists.newArrayList();
         for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
           lis.add(craftMatrix.getStackInSlot(i).copy());
@@ -54,7 +55,7 @@ public class ContainerRequest extends ContainerNetworkBase {
           }
         }
         List<StackWrapper> list = t.getStacks();
-        PacketHandler.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
         detectAndSendChanges();
         return stack;
       }
@@ -98,11 +99,13 @@ public class ContainerRequest extends ContainerNetworkBase {
     for (int i = 0; i < 9; i++) {
       tile.matrix.put(i, craftMatrix.getStackInSlot(i));
     }
-    Util.updateTile(tile.getWorld(), tile.getPos());
+    UtilTileEntity.updateTile(tile.getWorld(), tile.getPos());
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-    if (playerIn.world.isRemote) { return ItemStack.EMPTY; }
+    if (playerIn.world.isRemote) {
+      return ItemStack.EMPTY;
+    }
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
     if (slot != null && slot.getHasStack()) {
@@ -113,7 +116,9 @@ public class ContainerRequest extends ContainerNetworkBase {
         return ItemStack.EMPTY;
       }
       if (slotIndex <= 9) {
-        if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) { return ItemStack.EMPTY; }
+        if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) {
+          return ItemStack.EMPTY;
+        }
         slot.onSlotChange(itemstack1, itemstack);
       }
       else {
@@ -124,9 +129,10 @@ public class ContainerRequest extends ContainerNetworkBase {
           slot.putStack(stack);
           detectAndSendChanges();
           List<StackWrapper> list = tile.getStacks();
-          PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
-          if (stack.isEmpty()){
-            return ItemStack.EMPTY;}
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+          if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
+          }
           slot.onTake(playerIn, itemstack1);
           return ItemStack.EMPTY;
         }
@@ -137,8 +143,9 @@ public class ContainerRequest extends ContainerNetworkBase {
       else {
         slot.onSlotChanged();
       }
-      if (itemstack1.getCount() == itemstack.getCount()) { return ItemStack.EMPTY; }
-//      StorageNetwork.log("on take eh "+itemstack1);
+      if (itemstack1.getCount() == itemstack.getCount()) {
+        return ItemStack.EMPTY;
+      }
       slot.onTake(playerIn, itemstack1);
     }
     return itemstack;
@@ -149,8 +156,8 @@ public class ContainerRequest extends ContainerNetworkBase {
       return false;
     TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
     if (!tile.getWorld().isRemote && tile.getWorld().getTotalWorldTime() % 40 == 0) {
-       List<StackWrapper> list = t.getStacks();
-      PacketHandler.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+      List<StackWrapper> list = t.getStacks();
+      PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
     }
     return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
   }

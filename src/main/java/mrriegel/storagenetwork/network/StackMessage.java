@@ -30,11 +30,11 @@ public class StackMessage implements IMessage, IMessageHandler<StackMessage, IMe
   @Override
   public void fromBytes(ByteBuf buf) {
     this.stack = ByteBufUtils.readItemStack(buf);
-    StorageNetwork.log("StackMessage readItemStack  "+stack  );
+    StorageNetwork.log("StackMessage readItemStack  " + stack);
   }
   @Override
   public void toBytes(ByteBuf buf) {
     ByteBufUtils.writeItemStack(buf, this.stack);
-    StorageNetwork.log("StackMessage writeItemStack  "+stack  );
+    StorageNetwork.log("StackMessage writeItemStack  " + stack);
   }
 }
