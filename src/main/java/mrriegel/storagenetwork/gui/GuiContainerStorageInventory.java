@@ -73,7 +73,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     buttonList.add(direction);
     sort = new Button(1, guiLeft + 21, guiTop + 93, "");
     buttonList.add(sort);
-
     jei = new Button(4, guiLeft + 35, guiTop + 93, "");
     if (ConfigHandler.jeiLoaded) {
       buttonList.add(jei);
@@ -93,8 +92,12 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   protected abstract boolean inField(int mouseX, int mouseY);
   protected abstract boolean inSearchbar(int mouseX, int mouseY);
   protected abstract boolean inX(int mouseX, int mouseY);
+  protected abstract boolean isScreenValid();
   @Override
   public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    if (this.isScreenValid() == false) {
+      return;
+    }
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     this.mc.getTextureManager().bindTexture(texture);
     int i = (this.width - this.xSize) / 2;
@@ -200,16 +203,21 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     super.drawScreen(mouseX, mouseY, partialTicks);
     super.renderHoveredToolTip(mouseX, mouseY);
+    if (this.isScreenValid() == false) {
+      mc.player.closeScreen();
+    }
   }
   @Override
   public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    if (this.isScreenValid() == false) {
+      return;
+    }
     for (ItemSlot s : slots) {
       if (s.isMouseOverSlot(mouseX, mouseY)) {
         s.drawTooltip(mouseX, mouseY);
       }
     }
-
     if (inSearchbar(mouseX, mouseY)) {
       List<String> lis = Lists.newArrayList();
       if (!isShiftKeyDown()) {

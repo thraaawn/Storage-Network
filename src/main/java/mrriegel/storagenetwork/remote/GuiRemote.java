@@ -15,7 +15,8 @@ public class GuiRemote extends GuiContainerStorageInventory {
   @Override
   public void initGui() {
     super.initGui();
-    String savedSearch = NBTHelper.getString(getItemRemote(), NBT_SEARCH);
+    ItemStack remote = getItemRemote();
+    String savedSearch = NBTHelper.getString(remote, NBT_SEARCH);
     if (savedSearch != null) {
       searchBar.setText(savedSearch);
     }
@@ -23,8 +24,9 @@ public class GuiRemote extends GuiContainerStorageInventory {
   @Override
   public void updateScreen() {
     super.updateScreen();
-    if (searchBar != null && searchBar.getText() != null) {
-      NBTHelper.setString(getItemRemote(), NBT_SEARCH, searchBar.getText());
+    ItemStack remote = getItemRemote();
+    if (searchBar != null && searchBar.getText() != null && remote != null) {
+      NBTHelper.setString(remote, NBT_SEARCH, searchBar.getText());
     }
   }
   @Override
@@ -37,22 +39,40 @@ public class GuiRemote extends GuiContainerStorageInventory {
   }
   @Override
   public boolean getDownwards() {
-    return NBTHelper.getBoolean(getItemRemote(), "down");
+    ItemStack remote = getItemRemote();
+    if (remote != null)
+      return NBTHelper.getBoolean(remote, "down");
+    return false;
   }
   @Override
   public void setDownwards(boolean d) {
-    NBTHelper.setBoolean(getItemRemote(), "down", d);
+    ItemStack remote = getItemRemote();
+    if (remote != null)
+      NBTHelper.setBoolean(remote, "down", d);
   }
   @Override
   public EnumSortType getSort() {
-    return EnumSortType.valueOf(NBTHelper.getString(getItemRemote(), "sort"));
+    ItemStack remote = getItemRemote();
+    if (remote != null)
+      return EnumSortType.valueOf(NBTHelper.getString(remote, "sort"));
+    return null;
   }
+  /**
+   * 
+   * @return @Nullable ItemStack
+   */
   public ItemStack getItemRemote() {
-    return mc.player.inventory.getCurrentItem();
+    ItemStack remote = mc.player.inventory.getCurrentItem();
+    if (remote.getItem() instanceof ItemRemote == false) {
+      return null;
+    }
+    return remote;
   }
   @Override
   public void setSort(EnumSortType s) {
-    NBTHelper.setString(getItemRemote(), "sort", s.toString());
+    ItemStack remote = getItemRemote();
+    if (remote != null)
+      NBTHelper.setString(remote, "sort", s.toString());
   }
   @Override
   public BlockPos getPos() {
@@ -60,7 +80,10 @@ public class GuiRemote extends GuiContainerStorageInventory {
   }
   @Override
   protected int getDim() {
-    return NBTHelper.getInteger(getItemRemote(), "dim");
+    ItemStack remote = getItemRemote();
+    if (remote != null)
+      return NBTHelper.getInteger(remote, "dim");
+    return 0;
   }
   @Override
   protected boolean inField(int mouseX, int mouseY) {
@@ -73,5 +96,9 @@ public class GuiRemote extends GuiContainerStorageInventory {
   @Override
   protected boolean inX(int mouseX, int mouseY) {
     return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
+  }
+  @Override
+  protected boolean isScreenValid() {
+    return this.getItemRemote() != null;
   }
 }

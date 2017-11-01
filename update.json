@@ -7,8 +7,8 @@
     "1.12-recommended": "1.0.14",
     "1.12.1-latest": "1.0.15",
     "1.12.1-recommended": "1.0.15",
-    "1.12.2-latest": "1.1.0",
-    "1.12.2-recommended": "1.1.0"
+    "1.12.2-latest": "1.1.1",
+    "1.12.2-recommended": "1.1.1"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -36,5 +36,7 @@
   },
   "1.12.2":{
 	"1.1.0":"You can now shift-click the upgrade items in an out of the four upgrade slots in the import/export cables.  Added two checkboxes to import and export cables: one to toggle matching metadata and one to toggle matching on the ore dictionary.  The export cable does not have a blacklist mode, only whitelist, so I removed the deceptive toggle button.  Optimized imports and export code.  Moved some hardcoded text out into the .lang files."
+	,"1.1.1":"If you drop or move the remote away while holding it with the GUI screen open, it will now just close instead of crashing. ."
+  
   }
 }

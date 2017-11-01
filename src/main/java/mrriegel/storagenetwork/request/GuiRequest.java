@@ -68,4 +68,9 @@ public class GuiRequest extends GuiContainerStorageInventory {
   protected boolean inX(int mouseX, int mouseY) {
     return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
   }
+  @Override
+  protected boolean isScreenValid() {
+    // TODO Auto-generated method stub
+    return true;
+  }
 }
