@@ -98,6 +98,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (this.isScreenValid() == false) {
       return;
     }
+    this.drawDefaultBackground();//dim the background as normal
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     this.mc.getTextureManager().bindTexture(texture);
     int i = (this.width - this.xSize) / 2;
@@ -205,7 +206,10 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     super.renderHoveredToolTip(mouseX, mouseY);
     if (this.isScreenValid() == false) {
       mc.player.closeScreen();
+      return;
     }
+
+    drawTooltips(mouseX, mouseY);
   }
   @Override
   public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
@@ -213,6 +217,17 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (this.isScreenValid() == false) {
       return;
     }
+    if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
+      JeiHooks.setFilterText(searchBar.getText());
+    }
+    if (forceFocus) {
+      this.searchBar.setFocused(true);
+      if (this.searchBar.isFocused()) {
+        this.forceFocus = false;
+      }
+    }
+  }
+  public void drawTooltips(int mouseX, int mouseY) {
     for (ItemSlot s : slots) {
       if (s.isMouseOverSlot(mouseX, mouseY)) {
         s.drawTooltip(mouseX, mouseY);
@@ -240,15 +255,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (jei != null && jei.isMouseOver()) {
       String s = I18n.format(Settings.jeiSearch ? "gui.storagenetwork.fil.tooltip_jei_on" : "gui.storagenetwork.fil.tooltip_jei_off");
       drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop);
-    }
-    if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
-      JeiHooks.setFilterText(searchBar.getText());
-    }
-    if (forceFocus) {
-      this.searchBar.setFocused(true);
-      if (this.searchBar.isFocused()) {
-        this.forceFocus = false;
-      }
     }
   }
   @Override

@@ -51,9 +51,15 @@ public class GuiCable extends GuiContainerBase {
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     super.drawScreen(mouseX, mouseY, partialTicks);
     super.renderHoveredToolTip(mouseX, mouseY);
+    drawTooltips(mouseX, mouseY);
+  }
+  @Override
+  public void drawBackground(int tint) {
+    super.drawBackground(tint);
   }
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    this.drawDefaultBackground();//dim the background as normal
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     this.mc.getTextureManager().bindTexture(texture);
     int i = (this.width - this.xSize) / 2;
@@ -107,8 +113,11 @@ public class GuiCable extends GuiContainerBase {
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-    for (ItemSlot s : list)
-      s.drawTooltip(mouseX, mouseY);
+  }
+  public void drawTooltips(int mouseX, int mouseY) {
+    for (ItemSlot s : list) {
+      this.renderToolTip(s.stack, mouseX, mouseY);
+    }
     if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OPERATION) >= 1)
       operation.drawTooltip(mouseX, mouseY);
     if (btnImport != null && btnImport.isMouseOver())
@@ -118,7 +127,7 @@ public class GuiCable extends GuiContainerBase {
     if (mouseX > guiLeft + 29 && mouseX < guiLeft + 37 && mouseY > guiTop + 10 && mouseY < guiTop + 20)
       this.drawHoveringText(Lists.newArrayList("Priority"), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
     if (btnWhite != null && btnWhite.isMouseOver()) {
-      String s = tile.isWhitelist() ? I18n.format("gui.storagenetwork.gui.whitelist"): I18n.format("gui.storagenetwork.gui.blacklist");
+      String s = tile.isWhitelist() ? I18n.format("gui.storagenetwork.gui.whitelist") : I18n.format("gui.storagenetwork.gui.blacklist");
       this.drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop, fontRenderer);
     }
     if (btnOperationToggle != null && btnOperationToggle.isMouseOver()) {
