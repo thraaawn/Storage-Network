@@ -88,7 +88,7 @@ public class BlockCable extends AbstractBlockConnectable {
     if (worldIn.isRemote)
       return true;
     TileCable tile = (TileCable) worldIn.getTileEntity(pos);
-    if (tile.getKind() != CableKind.kabel){
+    if (tile.getKind() != CableKind.kabel) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }
@@ -301,6 +301,7 @@ public class BlockCable extends AbstractBlockConnectable {
         UtilTileEntity.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getUpgrades().get(i));
       }
     }
+    worldIn.updateComparatorOutputLevel(pos, this);
     super.breakBlock(worldIn, pos, state);
   }
   @Override
