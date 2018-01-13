@@ -10,7 +10,6 @@ public abstract class GuiContainerBase extends GuiContainer {
   public GuiContainerBase(Container inventorySlotsIn) {
     super(inventorySlotsIn);
   }
-
   public class ItemSlot extends AbstractSlot {
     public ItemStack stack;
     public ItemSlot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
@@ -54,20 +53,7 @@ public abstract class GuiContainerBase extends GuiContainer {
     @Override
     public void drawTooltip(int mx, int my) {
       if (toolTip && this.isMouseOverSlot(mx, my) && stack != null && !stack.isEmpty()) {
-
-//renderToolTip(stack, mx, my);
-
-        
-//        try {
-//          GlStateManager.pushMatrix();
-//          GlStateManager.disableLighting();
-          renderToolTip(stack, mx - this.guiLeft, my - this.guiTop);
-//          GlStateManager.popMatrix();
-//          GlStateManager.enableLighting();
-//        }
-//        catch (Exception e) {
-//          e.printStackTrace();
-//        }
+        renderToolTip(stack, mx, my);
       }
     }
   }

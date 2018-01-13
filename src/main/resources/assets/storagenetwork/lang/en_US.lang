@@ -27,6 +27,8 @@ gui.storagenetwork.gui.import=Import Filter
 gui.storagenetwork.gui.whitelist=Whitelist
 gui.storagenetwork.gui.blacklist=Blacklist
 
+gui.storagenetwork.sort=Sort Direction
+
 gui.storagenetwork.req.tooltip_NAME=Sort by name
 gui.storagenetwork.req.tooltip_MOD=Sort by mod
 gui.storagenetwork.req.tooltip_AMOUNT=Sort by amount

@@ -42,6 +42,6 @@
 	"1.0.15":"Attempt to stop lag spikes and crashes by being more careful around chunk unloading.  Addressed JEI recipe finder useing the wrong ore-dictionary item (such as getting the wrong colour of dye / getting lapis instead of inc sacks).   Compatible with Minecraft 1.12.2.  Minimum forge version is now 14.22.0.2464.  Updated JEI compatibility to 4.7.8.92. "
  	,"1.1.0":"You can now shift-click the upgrade items in an out of the four upgrade slots in the import/export cables.  Added two checkboxes to import and export cables: one to toggle matching metadata and one to toggle matching on the ore dictionary.  The export cable does not have a blacklist mode, only whitelist, so I removed the deceptive toggle button.  Optimized imports and export code.  Moved some hardcoded text out into the .lang files."
 	,"1.1.1":"If you drop or move the remote away while holding it with the GUI screen open, it will now just close instead of crashing. ."
-	,"1.2.0":"Minimum forge version 14.23.0.2494.  Fixed Network packet too large crash when crafting recipes on large networks & modpacks with many recipes.  Tooltips now no longer hide behind the JEI screen.  "
+	,"1.2.0":"Minimum forge version 14.23.0.2494.  Fixed Network packet too large crash when crafting recipes on large networks & modpacks with many recipes.  Tooltips now no longer hide behind the JEI screen.  Fix missing tooltip for Sort Direction button."
   }
 }
