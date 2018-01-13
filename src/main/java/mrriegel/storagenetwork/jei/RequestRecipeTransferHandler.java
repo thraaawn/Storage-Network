@@ -30,55 +30,49 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
   public Class<? extends Container> getContainerClass() {
     return ContainerRequest.class;
   }
+  public static NBTTagCompound recipeToTag(Container container, IRecipeLayout recipeLayout){
+    NBTTagCompound nbt = new NBTTagCompound();
+    StorageNetwork.log(" recipeLayout  " + recipeLayout);
+    Map<Integer, ? extends IGuiIngredient<ItemStack>> inputs = recipeLayout.getItemStacks().getGuiIngredients();
+    Map<Integer, List<ItemStack>> map = new HashMap<Integer, List<ItemStack>>();
+    NBTTagCompound recipe = new NBTTagCompound();
+    for (Slot slot : container.inventorySlots) {
+      if (slot.inventory instanceof InventoryCrafting) {
+        //for some reason it was looping like this  (int j = 1; j < 10; j++)
+        StorageNetwork.log("found a crafting slot eh" +  slot.getSlotIndex());
+        IGuiIngredient<ItemStack> ingredient = inputs.get(slot.getSlotIndex() + 1);
+        if (ingredient == null) {
+          continue;
+        }
+        List<ItemStack> possibleItems = ingredient.getAllIngredients();
+        if (possibleItems == null) {
+          continue;
+        }
+        NBTTagList invList = new NBTTagList();
+        for (int i = 0; i < possibleItems.size(); i++) {
+          if (i >= 5) {
+            break; // Max 5 possible items to avoid reaching max network packet size
+          }
+          if (!possibleItems.get(i).isEmpty()) {
+            NBTTagCompound stackTag = new NBTTagCompound();
+            possibleItems.get(i).writeToNBT(stackTag);
+            invList.appendTag(stackTag);
+            
+            
+          }
+        }
+        nbt.setTag("s" + (slot.getSlotIndex()), invList);
+      }
+    }
+    return nbt;
+  }
   @Override
   public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
     if (doTransfer) {
       PacketRegistry.INSTANCE.sendToServer(new ClearMessage());
-      StorageNetwork.log(" recipeLayout  " + recipeLayout);
-      Map<Integer, ? extends IGuiIngredient<ItemStack>> inputs = recipeLayout.getItemStacks().getGuiIngredients();
-      Map<Integer, List<ItemStack>> map = new HashMap<Integer, List<ItemStack>>();
-      for (int j = 0; j < container.inventorySlots.size(); j++) {
-        Slot slot = container.inventorySlots.get(j);
-        if ((slot.inventory instanceof InventoryCrafting)) {
-          try {
-            IGuiIngredient<ItemStack> ingredient = inputs.get(slot.getSlotIndex() + 1);
-            if (ingredient != null) {
-              StorageNetwork.log(" ingredients at j   " + ingredient.getAllIngredients());//this could be empty array, or something like [1xtile.bwm:wood_siding@5]
-              //or for an ore dict entry it might be    [1xitem.ingotIron@0]
-              map.put(j, ingredient.getAllIngredients());
-            }
-          }
-          catch (Exception e) {
-            e.printStackTrace();
-          }
-        }
-      }
-      NBTTagCompound nbt = new NBTTagCompound();
-      List<ItemStack> current;
-      for (int j = 1; j < 10; j++) {//its a 3x3 grid eh
-        current = map.get(j);
-        if (current != null) {
-          StorageNetwork.log("TEST SKIP ORE DICT IN HANDLER!! current at j   " + current);
-          //yep this was the issue. dont force oredict here. letJEI recipeIngredients handle it and follow forward
-          List<String> oresForStack = null;//getOresForStack(current);
-          if (oresForStack != null) {
-            //            StorageNetwork.log("ORE DIDCT STRING CSV WHA T" + String.join(",", oresForStack));
-            nbt.setString("s" + j, String.join(",", oresForStack));
-          }
-          else {//current is null
-            NBTTagList invList = new NBTTagList();
-            for (int i = 0; i < current.size(); i++) {
-              if (!current.get(i).isEmpty()) {
-                NBTTagCompound stackTag = new NBTTagCompound();
-                current.get(i).writeToNBT(stackTag);
-                invList.appendTag(stackTag);
-              }
-            }
-            nbt.setTag("s" + j, invList);
-          }
-        }
-      }
-      PacketRegistry.INSTANCE.sendToServer(new RecipeMessage(nbt, 0));
+      NBTTagCompound nbt = RequestRecipeTransferHandler.recipeToTag(container, recipeLayout);
+       
+      PacketRegistry.INSTANCE.sendToServer(new RecipeMessage(nbt));
     }
     return null;
   }

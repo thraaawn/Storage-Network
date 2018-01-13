@@ -28,11 +28,10 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, IMessage> {
   NBTTagCompound nbt;
-  int index;
+  int index = 0;
   public RecipeMessage() {}
-  public RecipeMessage(NBTTagCompound nbt, int index) {
+  public RecipeMessage(NBTTagCompound nbt) {
     this.nbt = nbt;
-    this.index = index;
   }
   @Override
   public void fromBytes(ByteBuf buf) {
@@ -68,20 +67,20 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
             return;
           }
           String[] oreDictKeys;// = oreDictKey.split(",");
-          for (int j = 1; j < 10; j++) {
+          for (int slot = 0; slot < 9; slot++) {
             Map<Integer, ItemStack> map = new HashMap<Integer, ItemStack>();
             //if its a string, then ore dict is allowed
             /*********
              * parse nbt of the slot, whether its ore dict, itemstack, ore empty
              **********/
             boolean isOreDict;
-            if (message.nbt.hasKey("s" + j, Constants.NBT.TAG_STRING)) {
+            if (message.nbt.hasKey("s" + slot, Constants.NBT.TAG_STRING)) {
               isOreDict = true;
               /*************
                * NEW: each item stack could be in MULTIPLE ore dicts. such as
                * betterthanmods multiblocks
                **/
-              oreDictKeys = message.nbt.getString("s" + j).split(",");
+              oreDictKeys = message.nbt.getString("s" + slot).split(",");
               List<ItemStack> l = new ArrayList<ItemStack>();
               for (String oreKey : oreDictKeys) {
                 l.addAll(OreDictionary.getOres(oreKey));
@@ -90,17 +89,17 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
               for (int i = 0; i < l.size(); i++) {
                 map.put(i, l.get(i));
               }
-              StorageNetwork.log(message.nbt.getString("s" + j) + " ore dict keyS found  " + l);
+              StorageNetwork.log(message.nbt.getString("s" + slot) + " ore dict keyS found  " + l);
             }
             else { // is not string, so just simple item stacks
               isOreDict = false;
-              NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
+              NBTTagList invList = message.nbt.getTagList("s" + slot, Constants.NBT.TAG_COMPOUND);
               for (int i = 0; i < invList.tagCount(); i++) {
                 NBTTagCompound stackTag = invList.getCompoundTagAt(i);
                 ItemStack s = new ItemStack(stackTag);
                 map.put(i, s);
               }
-              StorageNetwork.log(j + "   is ore stacks " + map.keySet());
+              StorageNetwork.log(slot + "   is ore stacks " + map.keySet());
             }
             /********* end parse nbt of this current slot ******/
             /********** now start trying to fill in recipe **/
@@ -114,7 +113,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
               StorageNetwork.log("CALL exctractItem   " + stackCurrent + " isOreDict " + isOreDict);
               ItemStack ex = UtilInventory.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, true);
               /*********** First try and use the players inventory **/
-              int slot = j - 1;
+//              int slot = j ;//- 1;
               if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(slot).isEmpty()) {
                 UtilInventory.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, false);
                 // System.out.println("extractedItem.simulated is false "+slot+"_" +ex.getUnlocalizedName());

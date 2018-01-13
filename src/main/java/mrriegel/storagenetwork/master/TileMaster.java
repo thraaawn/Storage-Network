@@ -436,7 +436,7 @@ public class TileMaster extends TileEntity implements ITickable {
           res = extracted.copy();
           res.setCount(result);
         }
-        StorageNetwork.log("!TileMaster request: yes actually remove items from source now " + res + "__" + result);
+        //        StorageNetwork.log("!TileMaster request: yes actually remove items from source now " + res + "__" + result);
         //  int rest = s.getCount();
         if (result == size) {
           return ItemHandlerHelper.copyStackWithSize(res, size);
