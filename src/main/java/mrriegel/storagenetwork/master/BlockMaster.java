@@ -110,8 +110,7 @@ public class BlockMaster extends BlockContainer {
     public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
       super.addInformation(stack, playerIn, tooltip, advanced);
       tooltip.add(I18n.format("tooltip.storagenetwork.master"));
-      //			if (ConfigHandler.energyNeeded)
-      //				tooltip.add(I18n.format("tooltip.storagenetwork.RFNeeded"));
+   
     }
   }
 }

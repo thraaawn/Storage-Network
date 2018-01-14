@@ -67,7 +67,7 @@ public class TileMaster extends TileEntity implements ITickable {
   }
   public int emptySlots() {
     int res = 0;
-    //    List<StackWrapper> stacks = Lists.newArrayList();
+ 
     List<AbstractFilterTile> invs = Lists.newArrayList();
     for (BlockPos p : connectables) {
       if (world.getTileEntity(p) instanceof AbstractFilterTile) {
@@ -394,15 +394,7 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
     }
-    //only match meta if NOT wildca rd
-    //    if(fil.getStack().getMetadata() == OreDictionary.WILDCARD_VALUE ){
-    //     
-    //      //fil.setMeta(false);
-    //      StorageNetwork.log("!TileMaster ATTEMPT to request IGNORE meta ___ "+fil.getStack());
-    //    }
-    // 
-    //fil.setOre(fil.getStack().getMetadata() == OreDictionary.WILDCARD_VALUE);
-    //    fil.setOre(true);//TODO: where why this set?. anyway just ALWAYS use ore dictionary. because fuck yeah 
+  
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
     for (AbstractFilterTile t : invs) {

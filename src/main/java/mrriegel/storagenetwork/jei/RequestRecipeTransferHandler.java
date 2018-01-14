@@ -34,8 +34,7 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
     NBTTagCompound nbt = new NBTTagCompound();
     StorageNetwork.log(" recipeLayout  " + recipeLayout);
     Map<Integer, ? extends IGuiIngredient<ItemStack>> inputs = recipeLayout.getItemStacks().getGuiIngredients();
-    Map<Integer, List<ItemStack>> map = new HashMap<Integer, List<ItemStack>>();
-    NBTTagCompound recipe = new NBTTagCompound();
+ 
     for (Slot slot : container.inventorySlots) {
       if (slot.inventory instanceof InventoryCrafting) {
         //for some reason it was looping like this  (int j = 1; j < 10; j++)
@@ -76,39 +75,5 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
     }
     return null;
   }
-  /**
-   * get all matching ore dictionary strings for these recipe inputs
-   * 
-   * @param lis
-   * @return
-   */
-  private List<String> getOresForStack(List<ItemStack> lis) {
-    if (lis == null) {
-      return null;
-    }
-    List<String> matchingDicts = new ArrayList<String>();
-    //ore dict has no "get keys for stack" ..w ell it does but it gets ids not strings
-    String oreName;
-    for (ItemStack s : lis) {
-      if (s == null || s.isEmpty()) {
-        continue;
-      }
-      for (int i : OreDictionary.getOreIDs(s)) {
-        oreName = OreDictionary.getOreName(i);
-        if (oreName != null && matchingDicts.contains(oreName) == false)
-          matchingDicts.add(oreName);
-      }
-    }
-    //    for (int i : OreDictionary.getOreIDs(lis.get(0))) {
-    //      boolean foo = true;
-    //      for (ItemStack stack : lis) {
-    //        if (!Ints.asList(OreDictionary.getOreIDs(stack)).contains(i)) {
-    //          foo = false;
-    //          break;//DONT BREAK: an item could be registered to more than one dictionary!
-    //        }
-    //      }
-    //      if (foo) { return OreDictionary.getOreName(i); }
-    //    }
-    return matchingDicts;
-  }
+  
 }

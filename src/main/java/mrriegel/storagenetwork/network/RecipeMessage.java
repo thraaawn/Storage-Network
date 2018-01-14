@@ -58,11 +58,6 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
           ContainerNetworkBase ctr = (ContainerNetworkBase) c;
           TileMaster master = ctr.getTileMaster();
           InventoryCrafting craftMatrix = ctr.getCraftMatrix();
-          // if (message.index == 0) {
-          //          if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest))
-          //            return;
-          //   ContainerRequest con = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
-          //  TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.world.getTileEntity(con.tile.getMaster());
           if (master == null) {
             return;
           }
@@ -77,8 +72,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
             if (message.nbt.hasKey("s" + slot, Constants.NBT.TAG_STRING)) {
               isOreDict = true;
               /*************
-               * NEW: each item stack could be in MULTIPLE ore dicts. such as
-               * betterthanmods multiblocks
+               * NEW: each item stack could be in MULTIPLE ore dicts. such as betterthanmods multiblocks
                **/
               oreDictKeys = message.nbt.getString("s" + slot).split(",");
               List<ItemStack> l = new ArrayList<ItemStack>();
@@ -113,7 +107,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
               StorageNetwork.log("CALL exctractItem   " + stackCurrent + " isOreDict " + isOreDict);
               ItemStack ex = UtilInventory.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, true);
               /*********** First try and use the players inventory **/
-//              int slot = j ;//- 1;
+              //              int slot = j ;//- 1;
               if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(slot).isEmpty()) {
                 UtilInventory.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, false);
                 // System.out.println("extractedItem.simulated is false "+slot+"_" +ex.getUnlocalizedName());

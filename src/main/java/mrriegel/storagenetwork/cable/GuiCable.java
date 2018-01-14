@@ -151,13 +151,13 @@ public class GuiCable extends GuiContainerBase {
   @Override
   public void initGui() {
     super.initGui();
-    btnMinus = new Button(0, guiLeft + 6, guiTop + 5, "-");
+    btnMinus = new Button(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
     this.addButton(btnMinus);
-    btnPlus = new Button(1, guiLeft + 37, guiTop + 5, "+");
+    btnPlus = new Button(CableDataMessage.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
     this.addButton(btnPlus);
-    btnImport = new Button(5, guiLeft + 78, guiTop + 5, "I");
+    btnImport = new Button(CableDataMessage.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
     this.addButton(btnImport);
-    btnWhite = new Button(3, guiLeft + 58, guiTop + 5, "");
+    btnWhite = new Button(CableDataMessage.TOGGLE_WHITELIST, guiLeft + 58, guiTop + 5, "");
     this.addButton(btnWhite);
     btnWhite.visible = tile.getBlockType() != ModBlocks.exKabel;
     if (tile.isStorage() == false) {
@@ -177,7 +177,7 @@ public class GuiCable extends GuiContainerBase {
         searchBar.setFocused(true);
         searchBar.setText(cable.getLimit() + "");
         searchBar.width = 20;
-        btnOperationToggle = new Button(4, guiLeft + 28, guiTop + 66, "");
+        btnOperationToggle = new Button(CableDataMessage.TOGGLE_MODE, guiLeft + 28, guiTop + 66, "");
         //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
         this.addButton(btnOperationToggle);
         operation = new ItemSlot(cable.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);

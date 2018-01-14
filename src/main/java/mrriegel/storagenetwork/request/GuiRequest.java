@@ -13,20 +13,6 @@ public class GuiRequest extends GuiContainerStorageInventory {
     texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   }
   @Override
-  public void initGui() {
-    super.initGui();
-  //saving wroks on the remote item but not really ont he table at all
-    //  searchBar.setText(tile.search);
-    
-  }
-//  @Override
-//  public void updateScreen() {
-//    super.updateScreen();
-//    if (searchBar != null) {
-//      tile.search = searchBar.getText();
-//    }
-//  }
-  @Override
   public int getLines() {
     return 4;
   }
@@ -71,7 +57,7 @@ public class GuiRequest extends GuiContainerStorageInventory {
     return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
   }
   @Override
-  protected boolean isScreenValid() { 
+  protected boolean isScreenValid() {
     return true;
   }
 }

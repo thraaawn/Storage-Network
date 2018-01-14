@@ -35,7 +35,7 @@ public class StorageNetwork {
   @SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")
   public static CommonProxy proxy;
   public static void log(String s) {
-    System.out.println(s);
+//    System.out.println(s);
   }
   @EventHandler
   public void preInit(FMLPreInitializationEvent event) {
