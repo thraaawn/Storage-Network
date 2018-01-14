@@ -1,6 +1,4 @@
 package mrriegel.storagenetwork.jei;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import mezz.jei.api.gui.IGuiIngredient;
@@ -21,7 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.oredict.OreDictionary;
 
 @SuppressWarnings("rawtypes")
 @Optional.Interface(iface = "mezz.jei.api.recipe.transfer.IRecipeTransferHandler", modid = "jei", striprefs = true)
@@ -30,15 +27,14 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
   public Class<? extends Container> getContainerClass() {
     return ContainerRequest.class;
   }
-  public static NBTTagCompound recipeToTag(Container container, IRecipeLayout recipeLayout){
+  public static NBTTagCompound recipeToTag(Container container, IRecipeLayout recipeLayout) {
     NBTTagCompound nbt = new NBTTagCompound();
     StorageNetwork.log(" recipeLayout  " + recipeLayout);
     Map<Integer, ? extends IGuiIngredient<ItemStack>> inputs = recipeLayout.getItemStacks().getGuiIngredients();
- 
     for (Slot slot : container.inventorySlots) {
       if (slot.inventory instanceof InventoryCrafting) {
         //for some reason it was looping like this  (int j = 1; j < 10; j++)
-        StorageNetwork.log("found a crafting slot eh" +  slot.getSlotIndex());
+        StorageNetwork.log("found a crafting slot eh" + slot.getSlotIndex());
         IGuiIngredient<ItemStack> ingredient = inputs.get(slot.getSlotIndex() + 1);
         if (ingredient == null) {
           continue;
@@ -56,8 +52,6 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
             NBTTagCompound stackTag = new NBTTagCompound();
             possibleItems.get(i).writeToNBT(stackTag);
             invList.appendTag(stackTag);
-            
-            
           }
         }
         nbt.setTag("s" + (slot.getSlotIndex()), invList);
@@ -70,10 +64,8 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
     if (doTransfer) {
       PacketRegistry.INSTANCE.sendToServer(new ClearMessage());
       NBTTagCompound nbt = RequestRecipeTransferHandler.recipeToTag(container, recipeLayout);
-       
       PacketRegistry.INSTANCE.sendToServer(new RecipeMessage(nbt));
     }
     return null;
   }
-  
 }

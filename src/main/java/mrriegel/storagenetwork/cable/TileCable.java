@@ -96,6 +96,7 @@ public class TileCable extends AbstractFilterTile {
       return amount <= getLimit();
     }
   }
+  @SuppressWarnings("serial")
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);

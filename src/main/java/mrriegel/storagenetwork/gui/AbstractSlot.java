@@ -1,5 +1,4 @@
 package mrriegel.storagenetwork.gui;
-
 import net.minecraft.client.Minecraft;
 
 public abstract class AbstractSlot {
@@ -19,7 +18,7 @@ public abstract class AbstractSlot {
     this.toolTip = toolTip;
     mc = Minecraft.getMinecraft();
   }
-  public abstract boolean isMouseOverSlot(int mouseX, int mouseY) ;
+  public abstract boolean isMouseOverSlot(int mouseX, int mouseY);
   public abstract void drawSlot(int mx, int my);
   public abstract void drawTooltip(int mx, int my);
 }

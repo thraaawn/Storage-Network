@@ -83,14 +83,14 @@ public class ContainerCable extends Container {
       if (itemstack1.isEmpty()) {
         return ItemStack.EMPTY;
       }
-      if(itemstack1.getItem() instanceof ItemUpgrade){
-        if(4 <= slotIndex && slotIndex <= 39 ){
+      if (itemstack1.getItem() instanceof ItemUpgrade) {
+        if (4 <= slotIndex && slotIndex <= 39) {
           //FROM inventory to upgrade slots
           if (!this.mergeItemStack(itemstack1, 0, 4, true)) {
             return ItemStack.EMPTY;
           }
         }
-        else if(0 <= slotIndex && slotIndex <= 3){
+        else if (0 <= slotIndex && slotIndex <= 3) {
           //FROM upgrade slots TO inventory
           if (!this.mergeItemStack(itemstack1, 4, 40, true)) {
             return ItemStack.EMPTY;

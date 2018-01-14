@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.IConnectable;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -67,7 +66,6 @@ public class TileMaster extends TileEntity implements ITickable {
   }
   public int emptySlots() {
     int res = 0;
- 
     List<AbstractFilterTile> invs = Lists.newArrayList();
     for (BlockPos p : connectables) {
       if (world.getTileEntity(p) instanceof AbstractFilterTile) {
@@ -394,7 +392,6 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
     }
-  
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
     for (AbstractFilterTile t : invs) {

@@ -87,7 +87,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   public abstract EnumSortType getSort();
   public abstract void setSort(EnumSortType s);
   public abstract BlockPos getPos();
- 
   protected abstract int getDim();
   protected abstract boolean inField(int mouseX, int mouseY);
   protected abstract boolean inSearchbar(int mouseX, int mouseY);
@@ -208,7 +207,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       mc.player.closeScreen();
       return;
     }
-
     drawTooltips(mouseX, mouseY);
   }
   @Override
@@ -244,20 +242,20 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
         lis.add(I18n.format("gui.storagenetwork.fil.tooltip_2"));
         lis.add(I18n.format("gui.storagenetwork.fil.tooltip_3"));
       }
-      drawHoveringText(lis, mouseX , mouseY );
+      drawHoveringText(lis, mouseX, mouseY);
     }
     if (clearTextBtn.isMouseOver()) {
-      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX , mouseY );
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX, mouseY);
     }
     if (sort.isMouseOver()) {
-      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX , mouseY);
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX, mouseY);
     }
-    if(direction.isMouseOver()){
-      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.sort")), mouseX , mouseY );
+    if (direction.isMouseOver()) {
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.sort")), mouseX, mouseY);
     }
     if (jei != null && jei.isMouseOver()) {
       String s = I18n.format(Settings.jeiSearch ? "gui.storagenetwork.fil.tooltip_jei_on" : "gui.storagenetwork.fil.tooltip_jei_off");
-      drawHoveringText(Lists.newArrayList(s), mouseX , mouseY );
+      drawHoveringText(Lists.newArrayList(s), mouseX, mouseY);
     }
   }
   @Override
