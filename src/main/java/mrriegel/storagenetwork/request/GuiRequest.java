@@ -13,6 +13,18 @@ public class GuiRequest extends GuiContainerStorageInventory {
     texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   }
   @Override
+  public void initGui() {
+    super.initGui();
+    searchBar.setText(tile.search);
+  }
+  @Override
+  public void updateScreen() {
+    super.updateScreen();
+    if (searchBar != null) {
+      tile.search = searchBar.getText();
+    }
+  }
+  @Override
   public int getLines() {
     return 4;
   }

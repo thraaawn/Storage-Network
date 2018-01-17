@@ -42,6 +42,7 @@ public class ContainerRemote extends ContainerNetworkBase {
         if (playerIn.world.isRemote) {
           return stack;
         }
+//        this.onCrafting(stack);
         List<ItemStack> lis = Lists.newArrayList();
         for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
           lis.add(craftMatrix.getStackInSlot(i).copy());
@@ -104,7 +105,9 @@ public class ContainerRemote extends ContainerNetworkBase {
       ItemStack itemstack1 = slot.getStack();
       itemstack = itemstack1.copy();
       if (slotIndex == 0) {
+        // when shift click crafting
         craftShift(playerIn, this.getTileMaster());
+//        this.onCraftMatrixChanged(this.craftMatrix);
         return ItemStack.EMPTY;
       }
       else if (tileMaster != null) {

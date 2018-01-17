@@ -63,6 +63,7 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
     if (doTransfer) {
       PacketRegistry.INSTANCE.sendToServer(new ClearMessage());
       NBTTagCompound nbt = RequestRecipeTransferHandler.recipeToTag(container, recipeLayout);
+      StorageNetwork.log("SEND new RecipeMessage");
       PacketRegistry.INSTANCE.sendToServer(new RecipeMessage(nbt));
     }
     return null;

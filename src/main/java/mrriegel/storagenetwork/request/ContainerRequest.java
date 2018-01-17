@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.request;
 import java.util.List;
 import com.google.common.collect.Lists;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.data.FilterItem;
 import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
@@ -55,7 +56,8 @@ public class ContainerRequest extends ContainerNetworkBase {
           }
         }
         List<StackWrapper> list = t.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+        StorageNetwork.log("ContainerRequest.onTake DISAGBLE stacksMessage");
+     //   PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
         detectAndSendChanges();
         return stack;
       }

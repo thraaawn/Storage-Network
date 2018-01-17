@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork;
+import org.apache.logging.log4j.Logger;
 import mrriegel.storagenetwork.cable.BlockCable;
 import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.items.ItemUpgrade;
@@ -12,6 +13,7 @@ import mrriegel.storagenetwork.request.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,6 +30,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
 public class StorageNetwork {
+  private Logger logger;
   public static final String MODID = "storagenetwork";
   public static final String MODNAME = "Simple Storage Network";
   @Instance(StorageNetwork.MODID)
@@ -35,10 +38,14 @@ public class StorageNetwork {
   @SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")
   public static CommonProxy proxy;
   public static void log(String s) {
-    //    System.out.println(s);
+    instance.logger.info(s);
+  }
+  public static void benchmark( String s){
+    StorageNetwork.log(System.currentTimeMillis() + " : "+ s);
   }
   @EventHandler
   public void preInit(FMLPreInitializationEvent event) {
+    logger = event.getModLog();
     proxy.preInit(event);
     MinecraftForge.EVENT_BUS.register(this);
   }

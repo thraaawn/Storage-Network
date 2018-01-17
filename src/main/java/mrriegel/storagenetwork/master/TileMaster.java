@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.IConnectable;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -383,6 +384,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (size == 0 || fil == null) {
       return ItemStack.EMPTY;
     }
+    StorageNetwork.benchmark( "first rebuild connectables");
     List<AbstractFilterTile> invs = Lists.newArrayList();
     for (BlockPos p : connectables) {
       if (world.getTileEntity(p) instanceof AbstractFilterTile) {
@@ -392,6 +394,7 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
     }
+    StorageNetwork.benchmark( "after r connectables");
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
     for (AbstractFilterTile t : invs) {
@@ -410,12 +413,13 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!t.canTransfer(stackCurrent, Direction.OUT)) {
           continue;
         }
+        StorageNetwork.benchmark( " AbstractFilterTile loop step");
         //        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
         //        StorageNetwork.log("sss" + stackCurreint + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
-        //StorageNetwork.log("extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
-        world.markChunkDirty(pos, this);
+     //   StorageNetwork.log("DISABLE markChunkDirty at  extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
+        //world.markChunkDirty(pos, this);
         //the other KEY fix for https://github.com/PrinceOfAmber/Storage-Network/issues/19, where it 
         //voided stuff when you took all from storage drawer: extracted can have a >0 stacksize, but still be air,
         //so the getCount overrides the 16, and gives zero instead, so i di my own override of, if empty then it got all so use source
