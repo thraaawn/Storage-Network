@@ -37,14 +37,17 @@ public abstract class ContainerNetworkBase extends Container {
     StorageNetwork.log("onCraftMatrixChanged  ");
     super.onCraftMatrixChanged(inventoryIn);
   }
+  /**
+   * A note on the shift-craft delay bug root cause was ANY interaction with matrix (setting contents etc) was causing triggers/events to do a recipe lookup. Meaning during this shift-click action you
+   * can get up to 9x64 FULL recipe scans Solution is just to disable all those triggers but only for duration of this action
+   * 
+   * @param player
+   * @param tile
+   */
   public void craftShift(EntityPlayer player, TileMaster tile) {
     this.recipeLocked = true;
-    //  MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-    //    CraftingManager.getRemainingItems(p_180303_0_, craftMatrix)
-    //    craftMatrix.getSizeInventory()
-    // always false, so always on server
     StorageNetwork.log("Container.craftShift: algo start; CLIENT = " + player.world.isRemote);
-    SlotCrafting sl = new SlotCrafting(player, matrix, result, 0, 0, 0);
+    //    SlotCrafting sl = new SlotCrafting(player, matrix, result, 0, 0, 0);
     int crafted = 0;
     List<ItemStack> recipeCopy = Lists.newArrayList();
     for (int i = 0; i < matrix.getSizeInventory(); i++) {
@@ -55,28 +58,14 @@ public abstract class ContainerNetworkBase extends Container {
     int sizeFull = res.getMaxStackSize();
     int numberToCraft = sizeFull / sizePerCraft;
     StorageNetwork.log("numberToCraft = " + numberToCraft);
-    // TODO: ?!? a strategy
-    // use tile.request(..,..,true) to simulate requests first, and also with 64
-    //now what SHOULD happen, is if we request 64 but have 50 is that we get all 50.
-    //then check over all ingredients for max # amount, and do single requests for that much every time
-    //ALTERNATE: possibly easiers?
-    //spin offf thread runners
     while (crafted + res.getCount() <= res.getMaxStackSize()) {
       StorageNetwork.benchmark("while loop top");
       if (!ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), true).isEmpty()) {
         break;
       }
       StorageNetwork.benchmark("before insertItemStacked");
-      ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), false);
-      //      server.addScheduledTask(new Runnable() {
-      //        public void run() {
-      //          StorageNetwork.log("TEST THREAD ");
-      //        }
-      //      });
-      StorageNetwork.benchmark("before onTake REFACTORED");
+      //onTake replaced with this handcoded rewrite
       //      sl.onTake(player, res);// ontake this does the actaul craft see ContainerRequest
-      //START RSF
-      //      sl.onCrafting(res);
       NonNullList<ItemStack> remainder = CraftingManager.getRemainingItems(matrix, player.world);
       StorageNetwork.benchmark("after getRemainingItems");
       for (int i = 0; i < remainder.size(); ++i) {
@@ -109,7 +98,7 @@ public abstract class ContainerNetworkBase extends Container {
           StorageNetwork.benchmark("after isempty section");
         }
       }
-      //END RSF
+      //END onTake redo
       StorageNetwork.benchmark("after onTake REFACTORED");
       crafted += res.getCount();
       ItemStack stackInSlot;
@@ -128,8 +117,6 @@ public abstract class ContainerNetworkBase extends Container {
           StorageNetwork.benchmark("before request");
           ItemStack req = tile.request(filterItemCurrent, 1, false);
           StorageNetwork.benchmark("after request & before setInventorySlotContents");
-          // AHA! THIS IS THE BIGGEST TIMEKILLER
-          // goes from ... 60 to ...76 MS (or 50-59, etc) . not much but adds up in the 9x64 operations happening here
           matrix.setInventorySlotContents(i, req);
           StorageNetwork.benchmark("after setInventorySlotContents");
         }
