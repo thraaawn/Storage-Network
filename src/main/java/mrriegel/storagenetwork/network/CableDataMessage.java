@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.IItemHandler;
 
 public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
-  public static final int TOGGLE_SORTDIR = 6;
+  public static final int TOGGLE_WAY = 6;
   public static final int IMPORT_FILTER = 5;
   public static final int TOGGLE_WHITELIST = 3;
   public static final int PRIORITY_UP = 1;
@@ -76,7 +76,7 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
                 }
               }
             break;
-            case TOGGLE_SORTDIR:
+            case TOGGLE_WAY:
               tile.setWay(tile.getWay().next());
             break;
           }

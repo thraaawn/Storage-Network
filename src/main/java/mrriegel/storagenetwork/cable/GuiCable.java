@@ -131,16 +131,16 @@ public class GuiCable extends GuiContainerBase {
     if (btnInputOutputStorage != null && btnInputOutputStorage.isMouseOver())
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX, mouseY);
     if (mouseX > guiLeft + 20 && mouseX < guiLeft + 50 && mouseY > guiTop + 2 && mouseY < guiTop + 30)
-      this.drawHoveringText(Lists.newArrayList("gui.storagenetwork.priority"), mouseX, mouseY, fontRenderer);
+      this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.priority")), mouseX, mouseY, fontRenderer);
     if (btnWhite != null && btnWhite.isMouseOver()) {
       String s = tile.isWhitelist() ? I18n.format("gui.storagenetwork.gui.whitelist") : I18n.format("gui.storagenetwork.gui.blacklist");
       this.drawHoveringText(Lists.newArrayList(s), mouseX, mouseY, fontRenderer);
     }
     if (btnPlus != null && btnPlus.isMouseOver()) {
-      this.drawHoveringText(Lists.newArrayList("gui.storagenetwork.priority.up"), mouseX, mouseY, fontRenderer);
+      this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.priority.up")), mouseX, mouseY, fontRenderer);
     }
     if (btnMinus != null && btnMinus.isMouseOver()) {
-      this.drawHoveringText(Lists.newArrayList("gui.storagenetwork.priority.down"), mouseX, mouseY, fontRenderer);
+      this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.priority.down")), mouseX, mouseY, fontRenderer);
     }
     if (btnOperationToggle != null && btnOperationToggle.isMouseOver()) {
       String s = I18n.format("gui.storagenetwork.operate.tooltip", I18n.format("gui.storagenetwork.operate.tooltip." + (((TileCable) tile).isMode() ? "more" : "less")), ((TileCable) tile).getLimit(), ((TileCable) tile).getOperationStack() != null ? ((TileCable) tile).getOperationStack().getDisplayName() : "Items");
@@ -160,6 +160,10 @@ public class GuiCable extends GuiContainerBase {
     btnWhite = new Button(CableDataMessage.TOGGLE_WHITELIST, guiLeft + 58, guiTop + 5, "");
     this.addButton(btnWhite);
     btnWhite.visible = tile.getBlockType() != ModBlocks.exKabel;
+    if (tile.isStorage()) {
+      btnInputOutputStorage = new Button(6, guiLeft + 115, guiTop + 5, "");
+      buttonList.add(btnInputOutputStorage);
+    }
     if (tile.isStorage() == false) {
       //      btnInputOutputStorage = new Button(6, guiLeft + 115, guiTop + 5, "");
       //      this.addButton(btnInputOutputStorage);
