@@ -40,9 +40,6 @@ public class StorageNetwork {
   public static void log(String s) {
     instance.logger.info(s);
   }
-  public static void benchmark( String s){
-    StorageNetwork.log(System.currentTimeMillis() + " : "+ s);
-  }
   @EventHandler
   public void preInit(FMLPreInitializationEvent event) {
     logger = event.getModLog();
@@ -94,5 +91,13 @@ public class StorageNetwork {
     for (int i = 0; i < 2; i++) {
       ModelLoader.setCustomModelResourceLocation(ModItems.remote, i, new ModelResourceLocation(StorageNetwork.MODID + ":remote_" + i, "inventory"));
     }
+  }
+  private static long lastTime;
+  public static void benchmark(String s) {
+    long now = System.currentTimeMillis();
+    long DIFF = now - lastTime;
+    lastTime = now;
+    StorageNetwork.log(now
+        + " [" + DIFF + "]" + " : " + s);
   }
 }

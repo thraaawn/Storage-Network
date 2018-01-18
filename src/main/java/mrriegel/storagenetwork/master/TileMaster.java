@@ -384,7 +384,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (size == 0 || fil == null) {
       return ItemStack.EMPTY;
     }
-    StorageNetwork.benchmark( "first rebuild connectables");
+ //   StorageNetwork.benchmark( "first rebuild connectables");
     List<AbstractFilterTile> invs = Lists.newArrayList();
     for (BlockPos p : connectables) {
       if (world.getTileEntity(p) instanceof AbstractFilterTile) {
@@ -394,7 +394,7 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
     }
-    StorageNetwork.benchmark( "after r connectables");
+  //  StorageNetwork.benchmark( "after r connectables");
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
     for (AbstractFilterTile t : invs) {
@@ -413,7 +413,7 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!t.canTransfer(stackCurrent, Direction.OUT)) {
           continue;
         }
-        StorageNetwork.benchmark( " AbstractFilterTile loop step");
+       // StorageNetwork.benchmark( " AbstractFilterTile loop step");
         //        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
         //        StorageNetwork.log("sss" + stackCurreint + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
         int miss = size - result;

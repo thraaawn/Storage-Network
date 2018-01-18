@@ -25,40 +25,51 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class ContainerRequest extends ContainerNetworkBase {
   public TileRequest tile;
   public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
-    craftMatrix = new InventoryCrafting(this, 3, 3);
+    matrix = new InventoryCrafting(this, 3, 3);
     this.tile = tile;
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
     //reload saved item stacks FOR the grid
     for (int i = 0; i < 9; i++) {
       if (tile.matrix.get(i) != null && tile.matrix.get(i).isEmpty() == false)
-        craftMatrix.setInventorySlotContents(i, tile.matrix.get(i));
+        matrix.setInventorySlotContents(i, tile.matrix.get(i));
     }
     //crafting output slot
-    SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
+    SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, matrix, result, 0, 101, 128) {
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
         if (playerIn.world.isRemote) {
           return stack;
         }
+        StorageNetwork.benchmark("[onTake] start");
         List<ItemStack> lis = Lists.newArrayList();
-        for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
-          lis.add(craftMatrix.getStackInSlot(i).copy());
+        for (int i = 0; i < matrix.getSizeInventory(); i++) {
+          lis.add(matrix.getStackInSlot(i).copy());
+        }
+        StorageNetwork.benchmark("[onTake] before superOnTake");
         super.onTake(playerIn, stack);
+        StorageNetwork.benchmark("[onTake] after superOnTake");
         TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
+        StorageNetwork.benchmark("[onTake] before detectSave");
         detectAndSendChanges();
-        for (int i = 0; i < craftMatrix.getSizeInventory(); i++) {
-          if (craftMatrix.getStackInSlot(i) == null || craftMatrix.getStackInSlot(i).isEmpty()) {
+        StorageNetwork.benchmark("[onTake] after detectSave");
+        for (int i = 0; i < matrix.getSizeInventory(); i++) {
+          if (matrix.getStackInSlot(i) == null || matrix.getStackInSlot(i).isEmpty()) {
+            StorageNetwork.benchmark("[onTake] before request " + i);
             ItemStack req = t.request(
                 !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
-            if (!req.isEmpty())
-              craftMatrix.setInventorySlotContents(i, req);
+            StorageNetwork.benchmark("[onTake] after request " + i);
+            if (!req.isEmpty()) {
+              matrix.setInventorySlotContents(i, req);
+            }
           }
         }
-        List<StackWrapper> list = t.getStacks();
-        StorageNetwork.log("ContainerRequest.onTake DISAGBLE stacksMessage");
-     //   PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+        StorageNetwork.benchmark("[onTake] after BIG loop");
+        //        List<StackWrapper> list = t.getStacks();
+        //        StorageNetwork.log("ContainerRequest.onTake DISAGBLE stacksMessage");
+        //   PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
         detectAndSendChanges();
+        StorageNetwork.benchmark("[onTake] end");
         return stack;
       }
     };
@@ -67,7 +78,7 @@ public class ContainerRequest extends ContainerNetworkBase {
     //3x3 crafting grid
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
-        this.addSlotToContainer(new Slot(craftMatrix, index++, 8 + j * 18, 110 + i * 18));
+        this.addSlotToContainer(new Slot(matrix, index++, 8 + j * 18, 110 + i * 18));
       }
     }
     //player inventory
@@ -80,11 +91,11 @@ public class ContainerRequest extends ContainerNetworkBase {
     for (int i = 0; i < 9; ++i) {
       this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
     }
-    this.onCraftMatrixChanged(this.craftMatrix);
+    this.onCraftMatrixChanged(this.matrix);
   }
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
-    IRecipe r = CraftingManager.findMatchingRecipe(craftMatrix, tile.getWorld());
+    IRecipe r = CraftingManager.findMatchingRecipe(matrix, tile.getWorld());
     if (r != null) {
       this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
     }
@@ -97,9 +108,12 @@ public class ContainerRequest extends ContainerNetworkBase {
     slotChanged();
     super.onContainerClosed(playerIn);
   }
+  @Override
   public void slotChanged() {
+    //parent is abstract
+    StorageNetwork.log("containerrequest.slotChanged");
     for (int i = 0; i < 9; i++) {
-      tile.matrix.put(i, craftMatrix.getStackInSlot(i));
+      tile.matrix.put(i, matrix.getStackInSlot(i));
     }
     UtilTileEntity.updateTile(tile.getWorld(), tile.getPos());
   }
@@ -169,7 +183,7 @@ public class ContainerRequest extends ContainerNetworkBase {
   }
   @Override
   public InventoryCrafting getCraftMatrix() {
-    return this.craftMatrix;
+    return this.matrix;
   }
   @Override
   public TileMaster getTileMaster() {

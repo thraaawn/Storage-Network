@@ -26,7 +26,7 @@ public class ContainerRemote extends ContainerNetworkBase {
   public TileMaster tileMaster;
   public ItemStack remoteItemStack;
   public ContainerRemote(final InventoryPlayer playerInv) {
-    craftMatrix = new InventoryCrafting(this, 3, 3);
+    matrix = new InventoryCrafting(this, 3, 3);
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
     remoteItemStack = playerInv.getCurrentItem();
@@ -34,9 +34,9 @@ public class ContainerRemote extends ContainerNetworkBase {
       tileMaster = ItemRemote.getTile(remoteItemStack);
     }
     for (int i = 0; i < 9; i++) {
-      craftMatrix.setInventorySlotContents(i, NBTHelper.getItemStack(remoteItemStack, "c" + i));
+      matrix.setInventorySlotContents(i, NBTHelper.getItemStack(remoteItemStack, "c" + i));
     }
-    SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
+    SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, matrix, result, 0, 101, 128) {
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
         if (playerIn.world.isRemote) {
@@ -44,17 +44,17 @@ public class ContainerRemote extends ContainerNetworkBase {
         }
 //        this.onCrafting(stack);
         List<ItemStack> lis = Lists.newArrayList();
-        for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
-          lis.add(craftMatrix.getStackInSlot(i).copy());
+        for (int i = 0; i < matrix.getSizeInventory(); i++)
+          lis.add(matrix.getStackInSlot(i).copy());
         super.onTake(playerIn, stack);
         detectAndSendChanges();
-        for (int i = 0; i < craftMatrix.getSizeInventory(); i++) {
-          if (craftMatrix.getStackInSlot(i) == null || craftMatrix.getStackInSlot(i).isEmpty()
+        for (int i = 0; i < matrix.getSizeInventory(); i++) {
+          if (matrix.getStackInSlot(i) == null || matrix.getStackInSlot(i).isEmpty()
               && tileMaster != null) {
             ItemStack req = tileMaster.request(
                 !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
             if (!req.isEmpty())
-              craftMatrix.setInventorySlotContents(i, req);
+              matrix.setInventorySlotContents(i, req);
           }
         }
         if (tileMaster != null) {
@@ -69,7 +69,7 @@ public class ContainerRemote extends ContainerNetworkBase {
     int index = 0;
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
-        this.addSlotToContainer(new Slot(craftMatrix, index++, 8 + j * 18, 110 + i * 18));
+        this.addSlotToContainer(new Slot(matrix, index++, 8 + j * 18, 110 + i * 18));
       }
     }
     for (int i = 0; i < 3; ++i) {
@@ -92,7 +92,7 @@ public class ContainerRemote extends ContainerNetworkBase {
       else
         this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
     }
-    this.onCraftMatrixChanged(this.craftMatrix);
+    this.onCraftMatrixChanged(this.matrix);
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
@@ -135,7 +135,7 @@ public class ContainerRemote extends ContainerNetworkBase {
   }
   public void slotChanged() {
     for (int i = 0; i < 9; i++) {
-      NBTHelper.setItemStack(remoteItemStack, "c" + i, craftMatrix.getStackInSlot(i));
+      NBTHelper.setItemStack(remoteItemStack, "c" + i, matrix.getStackInSlot(i));
     }
   }
   @Override
@@ -145,7 +145,7 @@ public class ContainerRemote extends ContainerNetworkBase {
   }
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
-    IRecipe r = CraftingManager.findMatchingRecipe(craftMatrix, this.playerInv.player.world);
+    IRecipe r = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
     if (r != null) {
       this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
     }
@@ -155,7 +155,7 @@ public class ContainerRemote extends ContainerNetworkBase {
   }
   @Override
   public InventoryCrafting getCraftMatrix() {
-    return this.craftMatrix;
+    return this.matrix;
   }
   @Override
   public TileMaster getTileMaster() {
