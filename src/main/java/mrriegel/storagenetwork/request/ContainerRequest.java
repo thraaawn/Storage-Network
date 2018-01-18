@@ -95,6 +95,8 @@ public class ContainerRequest extends ContainerNetworkBase {
   }
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
+
+    StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged");
     IRecipe r = CraftingManager.findMatchingRecipe(matrix, tile.getWorld());
     if (r != null) {
       this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
@@ -102,6 +104,7 @@ public class ContainerRequest extends ContainerNetworkBase {
     else {
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
     }
+    StorageNetwork.benchmark("[cr] end . onCraftMatrixChanged");
   }
   @Override
   public void onContainerClosed(EntityPlayer playerIn) {
@@ -111,11 +114,13 @@ public class ContainerRequest extends ContainerNetworkBase {
   @Override
   public void slotChanged() {
     //parent is abstract
-    StorageNetwork.log("containerrequest.slotChanged");
+    StorageNetwork.log("[cr] start .slotChanged");
     for (int i = 0; i < 9; i++) {
       tile.matrix.put(i, matrix.getStackInSlot(i));
     }
+    StorageNetwork.benchmark("[cr] slotChanged before updateTile");
     UtilTileEntity.updateTile(tile.getWorld(), tile.getPos());
+    StorageNetwork.benchmark("[cr] slotChanged End updateTile");
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
