@@ -161,12 +161,10 @@ public class GuiCable extends GuiContainerBase {
     this.addButton(btnWhite);
     btnWhite.visible = tile.getBlockType() != ModBlocks.exKabel;
     if (tile.isStorage()) {
-      btnInputOutputStorage = new Button(6, guiLeft + 115, guiTop + 5, "");
-      buttonList.add(btnInputOutputStorage);
+      btnInputOutputStorage = new Button(CableDataMessage.TOGGLE_WAY, guiLeft + 115, guiTop + 5, "");
+      this.addButton(btnInputOutputStorage);
     }
     if (tile.isStorage() == false) {
-      //      btnInputOutputStorage = new Button(6, guiLeft + 115, guiTop + 5, "");
-      //      this.addButton(btnInputOutputStorage);
       if (tile instanceof TileCable) {
         TileCable cable = (TileCable) tile;
         Keyboard.enableRepeatEvents(true);
