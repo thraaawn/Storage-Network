@@ -2,6 +2,7 @@ package mrriegel.storagenetwork;
 import org.apache.logging.log4j.Logger;
 import mrriegel.storagenetwork.cable.BlockCable;
 import mrriegel.storagenetwork.cable.TileCable;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.master.BlockMaster;
 import mrriegel.storagenetwork.master.TileMaster;
@@ -13,7 +14,6 @@ import mrriegel.storagenetwork.request.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,7 +38,9 @@ public class StorageNetwork {
   @SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")
   public static CommonProxy proxy;
   public static void log(String s) {
-    instance.logger.info(s);
+    if (ConfigHandler.logEverything) {
+      instance.logger.info(s);
+    }
   }
   @EventHandler
   public void preInit(FMLPreInitializationEvent event) {

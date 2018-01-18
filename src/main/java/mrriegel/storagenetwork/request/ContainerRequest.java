@@ -95,9 +95,13 @@ public class ContainerRequest extends ContainerNetworkBase {
   }
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
-
+    if (this.recipeLocked) {
+      StorageNetwork.log("recipe locked so onCraftMatrixChanged cancelled");
+      return;
+    }
     StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged");
     IRecipe r = CraftingManager.findMatchingRecipe(matrix, tile.getWorld());
+    StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged - afterFindRecipe");
     if (r != null) {
       this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
     }
@@ -114,6 +118,7 @@ public class ContainerRequest extends ContainerNetworkBase {
   @Override
   public void slotChanged() {
     //parent is abstract
+    //seems to not happen from -shiftclick- crafting
     StorageNetwork.log("[cr] start .slotChanged");
     for (int i = 0; i < 9; i++) {
       tile.matrix.put(i, matrix.getStackInSlot(i));

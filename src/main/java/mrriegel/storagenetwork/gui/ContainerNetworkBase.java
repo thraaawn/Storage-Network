@@ -1,15 +1,11 @@
 package mrriegel.storagenetwork.gui;
 import java.util.List;
 import com.google.common.collect.Lists;
-import com.lothrazar.cyclicmagic.ModCyclic;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.data.FilterItem;
 import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
-import mrriegel.storagenetwork.network.StacksMessage;
-import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -18,9 +14,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
@@ -28,6 +22,7 @@ public abstract class ContainerNetworkBase extends Container {
   public InventoryPlayer playerInv;
   public InventoryCraftResult result;
   public InventoryCrafting matrix;
+  public boolean recipeLocked = false;
   public abstract InventoryCrafting getCraftMatrix();
   public abstract TileMaster getTileMaster();
   public abstract void slotChanged();
@@ -43,8 +38,9 @@ public abstract class ContainerNetworkBase extends Container {
     super.onCraftMatrixChanged(inventoryIn);
   }
   public void craftShift(EntityPlayer player, TileMaster tile) {
-    MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-//    CraftingManager.getRemainingItems(p_180303_0_, craftMatrix)
+    this.recipeLocked = true;
+    //  MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+    //    CraftingManager.getRemainingItems(p_180303_0_, craftMatrix)
     //    craftMatrix.getSizeInventory()
     // always false, so always on server
     StorageNetwork.log("Container.craftShift: algo start; CLIENT = " + player.world.isRemote);
@@ -70,70 +66,50 @@ public abstract class ContainerNetworkBase extends Container {
       if (!ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), true).isEmpty()) {
         break;
       }
-
       StorageNetwork.benchmark("before insertItemStacked");
       ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), false);
-      
-      
       //      server.addScheduledTask(new Runnable() {
       //        public void run() {
       //          StorageNetwork.log("TEST THREAD ");
       //        }
       //      });
       StorageNetwork.benchmark("before onTake REFACTORED");
-//      sl.onTake(player, res);// ontake this does the actaul craft see ContainerRequest
-      
+      //      sl.onTake(player, res);// ontake this does the actaul craft see ContainerRequest
       //START RSF
-//      sl.onCrafting(res);
+      //      sl.onCrafting(res);
       NonNullList<ItemStack> remainder = CraftingManager.getRemainingItems(matrix, player.world);
       StorageNetwork.benchmark("after getRemainingItems");
-      for (int i = 0; i < remainder.size(); ++i)
-      {
+      for (int i = 0; i < remainder.size(); ++i) {
         StorageNetwork.benchmark("before getstackinslot");
-          ItemStack slot = this.matrix.getStackInSlot(i);
-          StorageNetwork.benchmark("after getstackinslot");
-          ItemStack remainderCurrent = remainder.get(i);
-
-
-          StorageNetwork.benchmark("A");
-          if (!remainderCurrent.isEmpty())
-          {
-              if (slot.isEmpty())
-              {
-
-                StorageNetwork.benchmark("B");
-                  this.matrix.setInventorySlotContents(i, remainderCurrent);
-
-                  StorageNetwork.benchmark("C");
-              }
-              else if (ItemStack.areItemsEqual(slot, remainderCurrent) && ItemStack.areItemStackTagsEqual(slot, remainderCurrent))
-              {
-
-                StorageNetwork.benchmark("D");
-                  remainderCurrent.grow(slot.getCount());
-                  this.matrix.setInventorySlotContents(i, remainderCurrent);
-                  StorageNetwork.benchmark("E");
-              }
-              else if (!player.inventory.addItemStackToInventory(remainderCurrent))
-              {
-                  player.dropItem(remainderCurrent, false);
-              }
-              StorageNetwork.benchmark("F");
+        ItemStack slot = this.matrix.getStackInSlot(i);
+        StorageNetwork.benchmark("after getstackinslot");
+        ItemStack remainderCurrent = remainder.get(i);
+        StorageNetwork.benchmark("A");
+        if (!remainderCurrent.isEmpty()) {
+          if (slot.isEmpty()) {
+            StorageNetwork.benchmark("B");
+            this.matrix.setInventorySlotContents(i, remainderCurrent);
+            StorageNetwork.benchmark("C");
           }
-          else if (!slot.isEmpty())
-          {
-
-            StorageNetwork.benchmark("start isempty section");
-              this.matrix.decrStackSize(i, 1);
-              slot = this.matrix.getStackInSlot(i);
-              StorageNetwork.benchmark("after isempty section");
+          else if (ItemStack.areItemsEqual(slot, remainderCurrent) && ItemStack.areItemStackTagsEqual(slot, remainderCurrent)) {
+            StorageNetwork.benchmark("D");
+            remainderCurrent.grow(slot.getCount());
+            this.matrix.setInventorySlotContents(i, remainderCurrent);
+            StorageNetwork.benchmark("E");
           }
- 
+          else if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
+            player.dropItem(remainderCurrent, false);
+          }
+          StorageNetwork.benchmark("F");
+        }
+        else if (!slot.isEmpty()) {
+          StorageNetwork.benchmark("start isempty section");
+          this.matrix.decrStackSize(i, 1);
+          slot = this.matrix.getStackInSlot(i);
+          StorageNetwork.benchmark("after isempty section");
+        }
       }
-      
-      
       //END RSF
-      
       StorageNetwork.benchmark("after onTake REFACTORED");
       crafted += res.getCount();
       ItemStack stackInSlot;
@@ -174,5 +150,6 @@ public abstract class ContainerNetworkBase extends Container {
     //    PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) player);
     detectAndSendChanges();
     StorageNetwork.benchmark("end");
+    this.recipeLocked = false;
   }
 }

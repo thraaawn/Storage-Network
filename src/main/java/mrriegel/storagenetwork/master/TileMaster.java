@@ -55,12 +55,11 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     for (AbstractFilterTile t : invs) {
       IItemHandler inv = t.getInventory();
-      //StorageNetwork.log(" inventory size  " + inv.getSlots());
       for (int i = 0; i < inv.getSlots(); i++) {
         if (inv.getStackInSlot(i) != null && !inv.getStackInSlot(i).isEmpty() && t.canTransfer(inv.getStackInSlot(i), Direction.BOTH))
           addToList(stacks, inv.getStackInSlot(i).copy(), inv.getStackInSlot(i).getCount());
         //        else
-        //          StorageNetwork.log(" reject   " + inv.getStackInSlot(i).getDisplayName());
+        //                  StorageNetwork.log(" reject   " + inv.getStackInSlot(i).getDisplayName());
       }
     }
     return stacks;
@@ -384,7 +383,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (size == 0 || fil == null) {
       return ItemStack.EMPTY;
     }
- //   StorageNetwork.benchmark( "first rebuild connectables");
+    //   StorageNetwork.benchmark( "first rebuild connectables");
     List<AbstractFilterTile> invs = Lists.newArrayList();
     for (BlockPos p : connectables) {
       if (world.getTileEntity(p) instanceof AbstractFilterTile) {
@@ -394,7 +393,7 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
     }
-  //  StorageNetwork.benchmark( "after r connectables");
+    //  StorageNetwork.benchmark( "after r connectables");
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
     for (AbstractFilterTile t : invs) {
@@ -413,23 +412,23 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!t.canTransfer(stackCurrent, Direction.OUT)) {
           continue;
         }
-       // StorageNetwork.benchmark( " AbstractFilterTile loop step");
-        //        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
-        //        StorageNetwork.log("sss" + stackCurreint + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
+        // StorageNetwork.benchmark( " AbstractFilterTile loop step");
+        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
+        //                StorageNetwork.log("sss" + stackCurreint + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
-     //   StorageNetwork.log("DISABLE markChunkDirty at  extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
+        //   StorageNetwork.log("DISABLE markChunkDirty at  extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
         //world.markChunkDirty(pos, this);
         //the other KEY fix for https://github.com/PrinceOfAmber/Storage-Network/issues/19, where it 
         //voided stuff when you took all from storage drawer: extracted can have a >0 stacksize, but still be air,
         //so the getCount overrides the 16, and gives zero instead, so i di my own override of, if empty then it got all so use source
         result += Math.min(extracted.isEmpty() ? stackCurrent.getCount() : extracted.getCount(), miss);
         res = stackCurrent.copy();
-        if (res.isEmpty()) {//workaround for storage drawer and chest thing
+        if (res.isEmpty()) { //workaround for storage drawer and chest thing
           res = extracted.copy();
           res.setCount(result);
         }
-        //        StorageNetwork.log("!TileMaster request: yes actually remove items from source now " + res + "__" + result);
+        StorageNetwork.log("!TileMaster request: yes actually remove items from source now " + res + "__" + result);
         //  int rest = s.getCount();
         if (result == size) {
           return ItemHandlerHelper.copyStackWithSize(res, size);
