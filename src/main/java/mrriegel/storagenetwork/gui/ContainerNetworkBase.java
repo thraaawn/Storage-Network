@@ -14,6 +14,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
@@ -58,14 +59,28 @@ public abstract class ContainerNetworkBase extends Container {
     int sizeFull = res.getMaxStackSize();
     int numberToCraft = sizeFull / sizePerCraft;
     StorageNetwork.log("numberToCraft = " + numberToCraft);
+    IRecipe r = CraftingManager.findMatchingRecipe(matrix, player.world);
+    if (r == null) {
+      return;
+    }
     while (crafted + res.getCount() <= res.getMaxStackSize()) {
       StorageNetwork.benchmark("while loop top");
       if (!ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), true).isEmpty()) {
         break;
       }
-      StorageNetwork.benchmark("before insertItemStacked");
+      //stop if empty
+      if (r.matches(matrix, player.world) == false) {
+        break;
+      }
       //onTake replaced with this handcoded rewrite
-      //      sl.onTake(player, res);// ontake this does the actaul craft see ContainerRequest
+      //  this.getSlot(0).onTake(player, res);// ontake this does the actaul craft see ContainerRequest
+      //        this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
+      StorageNetwork.log("create recipe output" + r.getRecipeOutput().copy());
+      ItemStack out = r.getRecipeOutput().copy();
+      if (!player.inventory.addItemStackToInventory(out)) {
+        //          System.out.println("FAILED so drop item addItemStackToInventory" + remainderCurrent.getDisplayName() + remainderCurrent.getCount());
+        player.dropItem(out, false);
+      }
       NonNullList<ItemStack> remainder = CraftingManager.getRemainingItems(matrix, player.world);
       StorageNetwork.benchmark("after getRemainingItems");
       for (int i = 0; i < remainder.size(); ++i) {
@@ -86,8 +101,12 @@ public abstract class ContainerNetworkBase extends Container {
             this.matrix.setInventorySlotContents(i, remainderCurrent);
             StorageNetwork.benchmark("E");
           }
-          else if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
-            player.dropItem(remainderCurrent, false);
+          else {
+            System.out.println("OK TRY TO addItemStackToInventory" + remainderCurrent.getDisplayName() + remainderCurrent.getCount());
+            if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
+              System.out.println("FAILED so drop item addItemStackToInventory" + remainderCurrent.getDisplayName() + remainderCurrent.getCount());
+              player.dropItem(remainderCurrent, false);
+            }
           }
           StorageNetwork.benchmark("F");
         }

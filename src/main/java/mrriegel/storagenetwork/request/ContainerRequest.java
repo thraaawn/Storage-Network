@@ -132,22 +132,26 @@ public class ContainerRequest extends ContainerNetworkBase {
     if (playerIn.world.isRemote) {
       return ItemStack.EMPTY;
     }
+    StorageNetwork.log("transfer "+slotIndex);
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       itemstack = itemstack1.copy();
       if (slotIndex == 0) {
+   //     System.out.println("craftShift "+slotIndex);
         craftShift(playerIn, (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster()));
         return ItemStack.EMPTY;
       }
       if (slotIndex <= 9) {
+     //  System.out.println("mergeItemStack 10 to 46 "+slotIndex);
         if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) {
           return ItemStack.EMPTY;
         }
         slot.onSlotChange(itemstack1, itemstack);
       }
       else {
+     //   System.out.println("insert stac");
         TileMaster tile = (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster());
         if (tile != null) {
           int rest = tile.insertStack(itemstack1, null, false);
