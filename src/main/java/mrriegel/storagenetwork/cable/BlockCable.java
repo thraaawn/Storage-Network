@@ -82,13 +82,14 @@ public class BlockCable extends AbstractBlockConnectable {
   }
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    //  ItemStack heldItem = playerIn.getHeldItem(hand);
-    if (!(worldIn.getTileEntity(pos) instanceof TileCable))
+    if (!(worldIn.getTileEntity(pos) instanceof TileCable)) {
       return false;
-    if (worldIn.isRemote)
+    }
+    if (worldIn.isRemote) {
       return true;
+    }
     TileCable tile = (TileCable) worldIn.getTileEntity(pos);
-    if (tile.getKind() == CableKind.exKabel || tile.getKind() == CableKind.imKabel) { //  || tile.getKind() == CableKind.storageKabel
+    if (tile.getKind() != CableKind.kabel) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }
@@ -246,42 +247,41 @@ public class BlockCable extends AbstractBlockConnectable {
   }
   @Override
   public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-    if (!(source.getTileEntity(pos) instanceof TileCable))
+    if (!(source.getTileEntity(pos) instanceof TileCable)) {
       return FULL_BLOCK_AABB;
+    }
     state = state.getActualState(source, pos);
     TileCable tile = (TileCable) source.getTileEntity(pos);
-    float f = 0.3125F;
-    float f1 = 0.6875F;
-    float f2 = 0.3125F;
-    float f3 = 0.6875F;
-    float f4 = 0.3125F;
-    float f5 = 0.6875F;
-    if (tile == null)
-      return new AxisAlignedBB(f, f4, f2, f1, f5, f3);
-    //    if (tile != null && tile.getCover() != null && tile.getCover() != Blocks.GLASS) { return FULL_BLOCK_AABB; }
-    //AxisAlignedBB res = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
+    float x1 = 0.37F;
+    float x2 = 0.63F;
+    float y1 = 0.37F;
+    float y2 = 0.63F;
+    float z1 = 0.37F;
+    float z2 = 0.63F;
+    if (tile == null) {
+      return new AxisAlignedBB(x1, z1, y1, x2, z2, y2);
+    }
     if (tile.north != EnumConnectType.NULL) {
-      f2 = 0f;
+      y1 = 0f;
     }
     if (tile.south != EnumConnectType.NULL) {
-      f3 = 1f;
+      y2 = 1f;
     }
     if (tile.west != EnumConnectType.NULL) {
-      f = 0f;
+      x1 = 0f;
     }
     if (tile.east != EnumConnectType.NULL) {
-      f1 = 1f;
+      x2 = 1f;
     }
     if (tile.down != EnumConnectType.NULL) {
-      f4 = 0f;
+      z1 = 0f;
     }
     if (tile.up != EnumConnectType.NULL) {
-      f5 = 1f;
+      z2 = 1f;
     }
-    return new AxisAlignedBB(f, f4, f2, f1, f5, f3);
+    return new AxisAlignedBB(x1, z1, y1, x2, z2, y2);
   }
   protected EnumConnectType getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
-    // Block block = worldIn.getBlockState(pos).getBlock();
     Block ori = worldIn.getBlockState(orig).getBlock();
     if (worldIn.getTileEntity(pos) instanceof IConnectable || worldIn.getTileEntity(pos) instanceof TileMaster)
       return EnumConnectType.CONNECT;
@@ -301,6 +301,7 @@ public class BlockCable extends AbstractBlockConnectable {
         UtilTileEntity.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getUpgrades().get(i));
       }
     }
+    worldIn.updateComparatorOutputLevel(pos, this);
     super.breakBlock(worldIn, pos, state);
   }
   @Override
@@ -324,18 +325,4 @@ public class BlockCable extends AbstractBlockConnectable {
         tooltip.add(I18n.format("tooltip.storagenetwork.kabel_L"));
     }
   }
-  //  public static class PropertyConnection extends PropertyEnum<EnumConnectType> {
-  //    String name;
-  //    public PropertyConnection(String name2) {
-  //      super(name2, EnumConnectType.class, Lists.newArrayList(EnumConnectType.values()));
-  //      this.name = name2;
-  //    }
-  ////    public static PropertyConnection create(String name) {
-  ////      return new PropertyConnection(name);
-  ////    }
-  //    @Override
-  //    public String getName() {
-  //      return name;
-  //    }
-  //  }
 }

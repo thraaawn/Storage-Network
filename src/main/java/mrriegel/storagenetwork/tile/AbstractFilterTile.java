@@ -26,7 +26,14 @@ public abstract class AbstractFilterTile extends TileConnectable {
       return this == way;
     }
     public Direction next() {
-      return values()[(this.ordinal() + 1) % values().length];
+      //NO MORE input only, bad UX. if i see item in grid and cant get => think is broken
+      if (this == OUT) {
+        return BOTH;
+      }
+      else {
+        return OUT;
+      }
+      //return values()[(this.ordinal() + 1) % values().length];
     }
   }
   @Override

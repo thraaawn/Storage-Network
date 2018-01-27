@@ -5,7 +5,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -17,11 +16,8 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
   @Override
   public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
     try {
-      //be more careful eh?  java.lang.IllegalArgumentException: Cannot get property PropertyInteger{name=meta, clazz=class java.lang.Integer, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 
-      if (!blockIn.hasTileEntity(state) && blockIn != Blocks.AIR) {
-        return;
-      }
-      if (worldIn.getTileEntity(pos) instanceof IConnectable) {
+      TileEntity tile = worldIn.getTileEntity(pos);
+      if (tile != null && tile instanceof IConnectable) {
         IConnectable conUnitNeedsMaster = (IConnectable) worldIn.getTileEntity(pos);
         //the new thing needs to find the master of the network. so either my neighbor knows who the master is, 
         //or my neighbor IS the master
@@ -40,8 +36,7 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
       setConnections(worldIn, pos, state, true);
     }
     catch (Exception e) {
-      System.out.println("StorageNetwork: exception thrown while updating neighbours:");
-      e.printStackTrace();
+      StorageNetwork.instance.logger.error("StorageNetwork: exception thrown while updating neighbours:", e);
     }
   }
   public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {

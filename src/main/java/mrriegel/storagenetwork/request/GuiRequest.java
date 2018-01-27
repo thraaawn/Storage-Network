@@ -70,7 +70,6 @@ public class GuiRequest extends GuiContainerStorageInventory {
   }
   @Override
   protected boolean isScreenValid() {
-    // TODO Auto-generated method stub
     return true;
   }
 }

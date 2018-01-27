@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import javax.annotation.Nonnull;
 import org.apache.commons.lang3.text.WordUtils;
 import com.google.common.collect.Lists;
+import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,28 +70,14 @@ public class UtilTileEntity {
     return false;
   }
   public static void spawnItemStack(World worldIn, double x, double y, double z, ItemStack stack) {
-    if (stack == null || worldIn.isRemote)
+    if (stack == null || stack.isEmpty() || worldIn.isRemote) {
       return;
-    Random RANDOM = worldIn.rand;
-    float f = RANDOM.nextFloat() * 0.8F + 0.1F;
-    float f1 = RANDOM.nextFloat() * 0.8F + 0.1F;
-    float f2 = RANDOM.nextFloat() * 0.8F + 0.1F;
-    while (stack.getCount() > 0) {
-      int i = RANDOM.nextInt(21) + 10;
-      if (i > stack.getCount()) {
-        i = stack.getCount();
-      }
-      stack.shrink(i);
-      EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, new ItemStack(stack.getItem(), i, stack.getMetadata()));
-      if (stack.hasTagCompound()) {
-        entityitem.getItem().setTagCompound(stack.getTagCompound().copy());
-      }
-      float f3 = 0.05F;
-      entityitem.motionX = RANDOM.nextGaussian() * f3;
-      entityitem.motionY = RANDOM.nextGaussian() * f3 + 0.20000000298023224D;
-      entityitem.motionZ = RANDOM.nextGaussian() * f3;
-      worldIn.spawnEntity(entityitem);
     }
+    float f = 0.1F;
+    float f1 = 0.8F;
+    float f2 = 0.1F;
+    EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, stack);
+    worldIn.spawnEntity(entityitem);
   }
   public static List<BlockPos> getSides(BlockPos pos) {
     List<BlockPos> lis = Lists.newArrayList();
@@ -111,8 +97,7 @@ public class UtilTileEntity {
           world.markChunkDirty(pos, world.getTileEntity(pos));
         }
         catch (Error e) {
-          System.out.println(e.getMessage());
-          e.printStackTrace();
+          StorageNetwork.instance.logger.error("Update Tile error", e);
         }
       }
     }

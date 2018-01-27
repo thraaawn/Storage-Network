@@ -16,6 +16,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.IItemHandler;
 
 public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
+  public static final int TOGGLE_WAY = 6;
+  public static final int IMPORT_FILTER = 5;
+  public static final int TOGGLE_WHITELIST = 3;
+  public static final int PRIORITY_UP = 1;
+  public static final int PRIORITY_DOWN = 0;
+  public static final int TOGGLE_MODE = 4;
   int id;
   BlockPos pos;
   public CableDataMessage() {}
@@ -33,20 +39,21 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
         if (t instanceof AbstractFilterTile) {
           AbstractFilterTile tile = (AbstractFilterTile) t;
           switch (message.id) {
-            case 0:
+            case PRIORITY_DOWN:
               tile.setPriority(tile.getPriority() - 1);
             break;
-            case 1:
+            case PRIORITY_UP:
               tile.setPriority(tile.getPriority() + 1);
             break;
-            case 3:
+            case TOGGLE_WHITELIST:
               tile.setWhite(!tile.isWhitelist());
             break;
-            case 4:
-              if (tile instanceof TileCable)
+            case TOGGLE_MODE://4
+              if (tile instanceof TileCable) {
                 ((TileCable) tile).setMode(!((TileCable) tile).isMode());
+              }
             break;
-            case 5:
+            case IMPORT_FILTER:
               if (tile.getInventory() != null) {
                 IItemHandler inv = tile.getInventory();
                 int index = 0;
@@ -69,7 +76,7 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
                 }
               }
             break;
-            case 6:
+            case TOGGLE_WAY:
               tile.setWay(tile.getWay().next());
             break;
           }

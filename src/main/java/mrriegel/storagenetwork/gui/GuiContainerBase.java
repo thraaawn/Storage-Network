@@ -1,5 +1,4 @@
 package mrriegel.storagenetwork.gui;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -10,34 +9,15 @@ public abstract class GuiContainerBase extends GuiContainer {
   public GuiContainerBase(Container inventorySlotsIn) {
     super(inventorySlotsIn);
   }
-  private abstract class AbstractSlot {
-    public int x, y, size, guiLeft, guiTop;
-    public boolean number, square, smallFont, toolTip;
-    protected Minecraft mc;
-    public AbstractSlot(int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
-      super();
-      this.x = x;
-      this.y = y;
-      this.size = size;
-      this.guiLeft = guiLeft;
-      this.guiTop = guiTop;
-      this.number = number;
-      this.square = square;
-      this.smallFont = smallFont;
-      this.toolTip = toolTip;
-      mc = Minecraft.getMinecraft();
-    }
-    public boolean isMouseOverSlot(int mouseX, int mouseY) {
-      return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
-    }
-    public abstract void drawSlot(int mx, int my);
-    public abstract void drawTooltip(int mx, int my);
-  }
   public class ItemSlot extends AbstractSlot {
     public ItemStack stack;
     public ItemSlot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
       super(x, y, size, guiLeft, guiTop, number, square, smallFont, toolTip);
       this.stack = stack;
+    }
+    @Override
+    public boolean isMouseOverSlot(int mouseX, int mouseY) {
+      return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
     }
     @Override
     public void drawSlot(int mx, int my) {
@@ -72,16 +52,7 @@ public abstract class GuiContainerBase extends GuiContainer {
     @Override
     public void drawTooltip(int mx, int my) {
       if (toolTip && this.isMouseOverSlot(mx, my) && stack != null && !stack.isEmpty()) {
-        try {
-          GlStateManager.pushMatrix();
-          GlStateManager.disableLighting();
-          renderToolTip(stack, mx - this.guiLeft, my - this.guiTop);
-          GlStateManager.popMatrix();
-          GlStateManager.enableLighting();
-        }
-        catch (Exception e) {
-          e.printStackTrace();
-        }
+        renderToolTip(stack, mx, my);
       }
     }
   }

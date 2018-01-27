@@ -40,18 +40,14 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
           if (tile == null) {
             return;
           }
-          // System.out.println("!RequestMessage message.stack == "+message.stack);
           int in = message.stack.isEmpty() ? 0 : tile.getAmount(new FilterItem(message.stack, true, false, true));
-          //   System.out.println("!RequestMessage in == "+in);
           ItemStack stack;
           if (message.stack.isEmpty()) {
             stack = ItemStack.EMPTY;
           }
           else {
             StorageNetwork.log("message.stack HUNTIN eh " + message.stack);
-            //   System.out.println("!RequestMessage  message.id = == "+ message.id );
             int ss = message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(Math.min(message.stack.getMaxStackSize() / 2, in / 2), 1);
-            // System.out.println("!RequestMessage  ssssssss "+ ss );
             stack = tile.request(
                 new FilterItem(message.stack, true, false, true),
                 ss, false);

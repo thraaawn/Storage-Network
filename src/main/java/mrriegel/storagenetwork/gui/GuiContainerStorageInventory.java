@@ -70,15 +70,15 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     searchBar.setTextColor(16777215);
     searchBar.setFocused(true);
     direction = new Button(0, guiLeft + 7, guiTop + 93, "");
-    buttonList.add(direction);
+    this.addButton(direction);
     sort = new Button(1, guiLeft + 21, guiTop + 93, "");
-    buttonList.add(sort);
+    this.addButton(sort);
     jei = new Button(4, guiLeft + 35, guiTop + 93, "");
     if (ConfigHandler.jeiLoaded) {
-      buttonList.add(jei);
+      this.addButton(jei);
     }
     clearTextBtn = new Button(5, guiLeft + 64, guiTop + 93, "X");
-    buttonList.add(clearTextBtn);
+    this.addButton(clearTextBtn);
   }
   public abstract int getLines();
   public abstract int getColumns();
@@ -87,7 +87,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   public abstract EnumSortType getSort();
   public abstract void setSort(EnumSortType s);
   public abstract BlockPos getPos();
-  // protected abstract BlockPos getMaster();
   protected abstract int getDim();
   protected abstract boolean inField(int mouseX, int mouseY);
   protected abstract boolean inSearchbar(int mouseX, int mouseY);
@@ -98,6 +97,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (this.isScreenValid() == false) {
       return;
     }
+    this.drawDefaultBackground();//dim the background as normal
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     this.mc.getTextureManager().bindTexture(texture);
     int i = (this.width - this.xSize) / 2;
@@ -205,7 +205,9 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     super.renderHoveredToolTip(mouseX, mouseY);
     if (this.isScreenValid() == false) {
       mc.player.closeScreen();
+      return;
     }
+    drawTooltips(mouseX, mouseY);
   }
   @Override
   public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
@@ -213,6 +215,17 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (this.isScreenValid() == false) {
       return;
     }
+    if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
+      JeiHooks.setFilterText(searchBar.getText());
+    }
+    if (forceFocus) {
+      this.searchBar.setFocused(true);
+      if (this.searchBar.isFocused()) {
+        this.forceFocus = false;
+      }
+    }
+  }
+  public void drawTooltips(int mouseX, int mouseY) {
     for (ItemSlot s : slots) {
       if (s.isMouseOverSlot(mouseX, mouseY)) {
         s.drawTooltip(mouseX, mouseY);
@@ -229,26 +242,20 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
         lis.add(I18n.format("gui.storagenetwork.fil.tooltip_2"));
         lis.add(I18n.format("gui.storagenetwork.fil.tooltip_3"));
       }
-      drawHoveringText(lis, mouseX - guiLeft, mouseY - guiTop);
+      drawHoveringText(lis, mouseX, mouseY);
     }
     if (clearTextBtn.isMouseOver()) {
-      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX - guiLeft, mouseY - guiTop);
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX, mouseY);
     }
     if (sort.isMouseOver()) {
-      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX - guiLeft, mouseY - guiTop);
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX, mouseY);
+    }
+    if (direction.isMouseOver()) {
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.sort")), mouseX, mouseY);
     }
     if (jei != null && jei.isMouseOver()) {
       String s = I18n.format(Settings.jeiSearch ? "gui.storagenetwork.fil.tooltip_jei_on" : "gui.storagenetwork.fil.tooltip_jei_off");
-      drawHoveringText(Lists.newArrayList(s), mouseX - guiLeft, mouseY - guiTop);
-    }
-    if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
-      JeiHooks.setFilterText(searchBar.getText());
-    }
-    if (forceFocus) {
-      this.searchBar.setFocused(true);
-      if (this.searchBar.isFocused()) {
-        this.forceFocus = false;
-      }
+      drawHoveringText(Lists.newArrayList(s), mouseX, mouseY);
     }
   }
   @Override

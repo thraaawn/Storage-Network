@@ -19,9 +19,7 @@ public class PacketRegistry {
     int id = 0;
     INSTANCE.registerMessage(CableDataMessage.class, CableDataMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(StacksMessage.class, StacksMessage.class, id++, Side.CLIENT);
-    //		INSTANCE.registerMessage(FluidsMessage.class, FluidsMessage.class, id++, Side.CLIENT);
     INSTANCE.registerMessage(RequestMessage.class, RequestMessage.class, id++, Side.SERVER);
-    //		INSTANCE.registerMessage(FRequestMessage.class, FRequestMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(ClearMessage.class, ClearMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(SortMessage.class, SortMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(RecipeMessage.class, RecipeMessage.class, id++, Side.SERVER);
@@ -29,6 +27,5 @@ public class PacketRegistry {
     INSTANCE.registerMessage(InsertMessage.class, InsertMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(StackMessage.class, StackMessage.class, id++, Side.CLIENT);
     INSTANCE.registerMessage(FilterMessage.class, FilterMessage.class, id++, Side.SERVER);
-    //    INSTANCE.registerMessage(FaceMessage.class, FaceMessage.class, id++, Side.SERVER);
   }
 }

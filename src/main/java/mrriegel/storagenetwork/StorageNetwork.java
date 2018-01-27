@@ -1,6 +1,8 @@
 package mrriegel.storagenetwork;
+import org.apache.logging.log4j.Logger;
 import mrriegel.storagenetwork.cable.BlockCable;
 import mrriegel.storagenetwork.cable.TileCable;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.master.BlockMaster;
 import mrriegel.storagenetwork.master.TileMaster;
@@ -28,6 +30,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
 public class StorageNetwork {
+  public Logger logger;
   public static final String MODID = "storagenetwork";
   public static final String MODNAME = "Simple Storage Network";
   @Instance(StorageNetwork.MODID)
@@ -35,10 +38,13 @@ public class StorageNetwork {
   @SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")
   public static CommonProxy proxy;
   public static void log(String s) {
-    //System.out.println(s);
+    if (ConfigHandler.logEverything) {
+      instance.logger.info(s);
+    }
   }
   @EventHandler
   public void preInit(FMLPreInitializationEvent event) {
+    logger = event.getModLog();
     proxy.preInit(event);
     MinecraftForge.EVENT_BUS.register(this);
   }
@@ -87,5 +93,13 @@ public class StorageNetwork {
     for (int i = 0; i < 2; i++) {
       ModelLoader.setCustomModelResourceLocation(ModItems.remote, i, new ModelResourceLocation(StorageNetwork.MODID + ":remote_" + i, "inventory"));
     }
+  }
+  private static long lastTime;
+  public static void benchmark(String s) {
+    long now = System.currentTimeMillis();
+    long DIFF = now - lastTime;
+    lastTime = now;
+    StorageNetwork.log(now
+        + " [" + DIFF + "]" + " : " + s);
   }
 }

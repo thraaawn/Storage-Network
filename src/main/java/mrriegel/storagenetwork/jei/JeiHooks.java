@@ -17,8 +17,7 @@ public class JeiHooks {
       mezz.jei.Internal.getRuntime().getItemListOverlay().setFilterText(s);
     }
     catch (Exception e) {
-      System.out.println(StorageNetwork.MODID + " : mezz.jei.Internal not found");
-      e.printStackTrace();
+      StorageNetwork.instance.logger.error(" mezz.jei.Internal not found ", e);
     }
   }
 }
