@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import org.apache.commons.lang3.text.WordUtils;
 import com.google.common.collect.Lists;
+import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -96,8 +97,7 @@ public class UtilTileEntity {
           world.markChunkDirty(pos, world.getTileEntity(pos));
         }
         catch (Error e) {
-          System.out.println(e.getMessage());
-          e.printStackTrace();
+          StorageNetwork.instance.logger.error("Update Tile error",e);
         }
       }
     }

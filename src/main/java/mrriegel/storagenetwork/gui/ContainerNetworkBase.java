@@ -78,8 +78,8 @@ public abstract class ContainerNetworkBase extends Container {
       StorageNetwork.log("create recipe output" + r.getRecipeOutput().copy());
       ItemStack out = r.getRecipeOutput().copy();
       if (!player.inventory.addItemStackToInventory(out)) {
-        //          System.out.println("FAILED so drop item addItemStackToInventory" + remainderCurrent.getDisplayName() + remainderCurrent.getCount());
-        player.dropItem(out, false);
+
+   player.dropItem(out, false);
       }
       NonNullList<ItemStack> remainder = CraftingManager.getRemainingItems(matrix, player.world);
       StorageNetwork.benchmark("after getRemainingItems");
@@ -102,9 +102,9 @@ public abstract class ContainerNetworkBase extends Container {
             StorageNetwork.benchmark("E");
           }
           else {
-            System.out.println("OK TRY TO addItemStackToInventory" + remainderCurrent.getDisplayName() + remainderCurrent.getCount());
+           
             if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
-              System.out.println("FAILED so drop item addItemStackToInventory" + remainderCurrent.getDisplayName() + remainderCurrent.getCount());
+              
               player.dropItem(remainderCurrent, false);
             }
           }
