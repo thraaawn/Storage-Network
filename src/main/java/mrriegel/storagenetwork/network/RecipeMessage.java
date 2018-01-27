@@ -50,7 +50,6 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
       @Override
       public void run() {
         Container c = ctx.getServerHandler().player.openContainer;
- 
         StorageNetwork.log("new recipe packet. how do i tell if its an ore dict one " + message.nbt);
         //NON ore dict entry looks like [{id:"betterwithmods:wood_siding",Count:1b,Damage:0s}]
         //ore dict entry is a ,s2:"plankWood"
@@ -110,15 +109,13 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
               //              int slot = j ;//- 1;
               if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(slot).isEmpty()) {
                 UtilInventory.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().player.inventory), filterItem, 1, false);
-
-    //make sure to add the real item after the nonsimulated withdrawl is complete https://github.com/PrinceOfAmber/Storage-Network/issues/16
+                //make sure to add the real item after the nonsimulated withdrawl is complete https://github.com/PrinceOfAmber/Storage-Network/issues/16
                 craftMatrix.setInventorySlotContents(slot, ex);
                 break;
               }
               /********* now find it from the network ***/
               stackCurrent = master.request(!stackCurrent.isEmpty() ? filterItem : null, 1, false);
               if (stackCurrent != null && craftMatrix.getStackInSlot(slot).isEmpty()) {
-
                 craftMatrix.setInventorySlotContents(slot, stackCurrent);
                 break;
               }

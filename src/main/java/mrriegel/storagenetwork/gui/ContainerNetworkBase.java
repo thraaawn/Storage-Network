@@ -11,7 +11,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -78,8 +77,7 @@ public abstract class ContainerNetworkBase extends Container {
       StorageNetwork.log("create recipe output" + r.getRecipeOutput().copy());
       ItemStack out = r.getRecipeOutput().copy();
       if (!player.inventory.addItemStackToInventory(out)) {
-
-   player.dropItem(out, false);
+        player.dropItem(out, false);
       }
       NonNullList<ItemStack> remainder = CraftingManager.getRemainingItems(matrix, player.world);
       StorageNetwork.benchmark("after getRemainingItems");
@@ -102,9 +100,7 @@ public abstract class ContainerNetworkBase extends Container {
             StorageNetwork.benchmark("E");
           }
           else {
-           
             if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
-              
               player.dropItem(remainderCurrent, false);
             }
           }

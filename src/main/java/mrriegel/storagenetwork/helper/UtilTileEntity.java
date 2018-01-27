@@ -97,7 +97,7 @@ public class UtilTileEntity {
           world.markChunkDirty(pos, world.getTileEntity(pos));
         }
         catch (Error e) {
-          StorageNetwork.instance.logger.error("Update Tile error",e);
+          StorageNetwork.instance.logger.error("Update Tile error", e);
         }
       }
     }
