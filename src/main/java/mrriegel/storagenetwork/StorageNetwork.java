@@ -30,7 +30,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
 public class StorageNetwork {
-  private Logger logger;
+  Logger logger;
   public static final String MODID = "storagenetwork";
   public static final String MODNAME = "Simple Storage Network";
   @Instance(StorageNetwork.MODID)
