@@ -99,16 +99,16 @@ public class ContainerRequest extends ContainerNetworkBase {
       StorageNetwork.log("recipe locked so onCraftMatrixChanged cancelled");
       return;
     }
-    StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged");
+   // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged");
     IRecipe r = CraftingManager.findMatchingRecipe(matrix, tile.getWorld());
-    StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged - afterFindRecipe");
+   // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged - afterFindRecipe");
     if (r != null) {
       this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
     }
     else {
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
     }
-    StorageNetwork.benchmark("[cr] end . onCraftMatrixChanged");
+  //  StorageNetwork.benchmark("[cr] end . onCraftMatrixChanged");
   }
   @Override
   public void onContainerClosed(EntityPlayer playerIn) {

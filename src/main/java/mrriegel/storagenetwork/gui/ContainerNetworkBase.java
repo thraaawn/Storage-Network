@@ -34,7 +34,7 @@ public abstract class ContainerNetworkBase extends Container {
   }
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
-    StorageNetwork.log("onCraftMatrixChanged  ");
+   // StorageNetwork.log("onCraftMatrixChanged  ");
     super.onCraftMatrixChanged(inventoryIn);
   }
   /**
@@ -84,7 +84,9 @@ public abstract class ContainerNetworkBase extends Container {
       for (int i = 0; i < remainder.size(); ++i) {
         StorageNetwork.benchmark("before getstackinslot");
         ItemStack slot = this.matrix.getStackInSlot(i);
-        StorageNetwork.benchmark("after getstackinslot");
+        //is milk
+       
+        StorageNetwork.benchmark("after getstackinslot from remainder = "+slot.getUnlocalizedName());
         ItemStack remainderCurrent = remainder.get(i);
         StorageNetwork.benchmark("A");
         if (!remainderCurrent.isEmpty()) {
