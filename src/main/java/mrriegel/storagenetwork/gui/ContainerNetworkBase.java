@@ -91,7 +91,7 @@ public abstract class ContainerNetworkBase extends Container {
           slot = new ItemStack(slot.getItem().getContainerItem());
           matrix.setInventorySlotContents(i, slot);
         }
-        if (!slot.getItem().getContainerItem(slot).isEmpty()) { //is the fix for milk and similar
+        else if (!slot.getItem().getContainerItem(slot).isEmpty()) { //is the fix for milk and similar
           slot = slot.getItem().getContainerItem(slot);
           matrix.setInventorySlotContents(i, slot);
         }
@@ -160,11 +160,15 @@ public abstract class ContainerNetworkBase extends Container {
       }
       StorageNetwork.benchmark("after ifElse & end of while loop");
     }
-    List<StackWrapper> list = tile.getStacks();
+ 
     StorageNetwork.log("Container.craftShift: SEND new StacksMessage UNDO what does this change");
     //    PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) player);
     detectAndSendChanges();
-    StorageNetwork.benchmark("end");
     this.recipeLocked = false;
+    //update recipe again in case remnants left : IE hammer and such
+    this.onCraftMatrixChanged(this.matrix);
+ 
+    StorageNetwork.benchmark("[network base] end :: " + result.getStackInSlot(0));
+    StorageNetwork.benchmark("end");
   }
 }
