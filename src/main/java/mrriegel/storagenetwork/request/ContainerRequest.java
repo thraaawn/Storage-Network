@@ -38,10 +38,18 @@ public class ContainerRequest extends ContainerNetworkBase {
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, matrix, result, 0, 101, 128) {
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
+//        if(  result.getStackInSlot(0) == null 
+//            || result.getStackInSlot(0).isEmpty()){
+//          StorageNetwork.benchmark("[onTake] EMPTY!!!");
+//          result.setInventorySlotContents(0, ItemStack.EMPTY);
+//          return ItemStack.EMPTY;
+//        }
         if (playerIn.world.isRemote) {
+          StorageNetwork.benchmark("[onTake] isRemote");
           return stack;
         }
-        StorageNetwork.benchmark("[onTake] start");
+        StorageNetwork.benchmark("[onTake] start!!"+result.getStackInSlot(0));
+        onCraftMatrixChanged(matrix);
         List<ItemStack> lis = Lists.newArrayList();
         for (int i = 0; i < matrix.getSizeInventory(); i++) {
           lis.add(matrix.getStackInSlot(i).copy());
@@ -99,16 +107,16 @@ public class ContainerRequest extends ContainerNetworkBase {
       StorageNetwork.log("recipe locked so onCraftMatrixChanged cancelled");
       return;
     }
-    StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged");
+   // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged");
     IRecipe r = CraftingManager.findMatchingRecipe(matrix, tile.getWorld());
-    StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged - afterFindRecipe");
+   // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged - afterFindRecipe");
     if (r != null) {
       this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
     }
     else {
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
     }
-    StorageNetwork.benchmark("[cr] end . onCraftMatrixChanged");
+  //  StorageNetwork.benchmark("[cr] end . onCraftMatrixChanged");
   }
   @Override
   public void onContainerClosed(EntityPlayer playerIn) {

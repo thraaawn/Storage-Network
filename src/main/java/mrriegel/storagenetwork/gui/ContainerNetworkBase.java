@@ -34,7 +34,7 @@ public abstract class ContainerNetworkBase extends Container {
   }
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
-    StorageNetwork.log("onCraftMatrixChanged  ");
+    // StorageNetwork.log("onCraftMatrixChanged  ");
     super.onCraftMatrixChanged(inventoryIn);
   }
   /**
@@ -84,10 +84,18 @@ public abstract class ContainerNetworkBase extends Container {
       for (int i = 0; i < remainder.size(); ++i) {
         StorageNetwork.benchmark("before getstackinslot");
         ItemStack slot = this.matrix.getStackInSlot(i);
-        StorageNetwork.benchmark("after getstackinslot");
+        StorageNetwork.benchmark("after getstackinslot from remainder = " + slot.getUnlocalizedName());
         ItemStack remainderCurrent = remainder.get(i);
         StorageNetwork.benchmark("A");
-        if (!remainderCurrent.isEmpty()) {
+        if (slot.getItem().getContainerItem() != null) { //is the fix for milk and similar
+          slot = new ItemStack(slot.getItem().getContainerItem());
+          matrix.setInventorySlotContents(i, slot);
+        }
+        else if (!slot.getItem().getContainerItem(slot).isEmpty()) { //is the fix for milk and similar
+          slot = slot.getItem().getContainerItem(slot);
+          matrix.setInventorySlotContents(i, slot);
+        }
+        else if (!remainderCurrent.isEmpty()) {
           if (slot.isEmpty()) {
             StorageNetwork.benchmark("B");
             this.matrix.setInventorySlotContents(i, remainderCurrent);
@@ -100,17 +108,22 @@ public abstract class ContainerNetworkBase extends Container {
             StorageNetwork.benchmark("E");
           }
           else {
+            StorageNetwork.benchmark("F");
             if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
+              StorageNetwork.benchmark("G");
               player.dropItem(remainderCurrent, false);
             }
           }
-          StorageNetwork.benchmark("F");
+          StorageNetwork.benchmark("H");
         }
         else if (!slot.isEmpty()) {
           StorageNetwork.benchmark("start isempty section");
           this.matrix.decrStackSize(i, 1);
           slot = this.matrix.getStackInSlot(i);
           StorageNetwork.benchmark("after isempty section");
+        }
+        else {
+          StorageNetwork.benchmark("I");
         }
       }
       //END onTake redo
@@ -147,11 +160,15 @@ public abstract class ContainerNetworkBase extends Container {
       }
       StorageNetwork.benchmark("after ifElse & end of while loop");
     }
-    List<StackWrapper> list = tile.getStacks();
+ 
     StorageNetwork.log("Container.craftShift: SEND new StacksMessage UNDO what does this change");
     //    PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) player);
     detectAndSendChanges();
-    StorageNetwork.benchmark("end");
     this.recipeLocked = false;
+    //update recipe again in case remnants left : IE hammer and such
+    this.onCraftMatrixChanged(this.matrix);
+ 
+    StorageNetwork.benchmark("[network base] end :: " + result.getStackInSlot(0));
+    StorageNetwork.benchmark("end");
   }
 }
