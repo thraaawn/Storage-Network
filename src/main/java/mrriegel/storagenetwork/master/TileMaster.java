@@ -277,9 +277,14 @@ public class TileMaster extends TileEntity implements ITickable {
     List<TileCable> attachedCables = getAttachedCables(CableKind.imKabel);
     for (TileCable tileCable : attachedCables) {
       IItemHandler inv = tileCable.getInventory();
-      if ((world.getTotalWorldTime() + 10) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
+      int speedRatio =  tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1 ;
+//      StorageNetwork.log("speedratio " + speedRatio+" and the divisor is "+(30 / speedRatio)
+//          + " ===GO=== " + (world.getTotalWorldTime()  % (30 / speedRatio) == 0) );
+      if (world.getTotalWorldTime()  % (30 / speedRatio) != 0) {
         continue;
       }
+      boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) >0;
+    
       for (int i = 0; i < inv.getSlots(); i++) {
         ItemStack stackCurrent = inv.getStackInSlot(i);
         if (stackCurrent == null || stackCurrent.isEmpty()) {
@@ -292,7 +297,8 @@ public class TileMaster extends TileEntity implements ITickable {
           continue; // nope, cant pass by. operation filter in place and all set
         }
         // int num = s.getCount();
-        int insert = Math.min(stackCurrent.getCount(), (int) Math.pow(2, tileCable.getUpgradesOfType(ItemUpgrade.STACK) + 2));
+        int maxInsert= (hasStackUpgrade) ? 64 : 4;
+        int insert = Math.min(stackCurrent.getCount(), maxInsert);
         ItemStack extracted = inv.extractItem(i, insert, true);
         if (extracted == null || extracted.getCount() < insert) {
           continue;
