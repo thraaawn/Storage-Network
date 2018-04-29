@@ -23,7 +23,7 @@ public class ContainerCable extends Container {
     upgrades = new InventoryBasic("upgrades", false, 4) {
       @Override
       public int getInventoryStackLimit() {
-        return 4;
+        return 1;
       }
     };
     if (tile instanceof TileCable && ((TileCable) tile).isUpgradeable()) {
@@ -34,7 +34,7 @@ public class ContainerCable extends Container {
         this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
           @Override
           public boolean isItemValid(ItemStack stack) {
-            return stack.getItem() == ModItems.upgrade && ((getStack() != null && getStack().getItemDamage() == stack.getItemDamage()) || !in(stack.getItemDamage()));
+            return stack.getItem() == ModItems.upgrade;// && ((getStack() != null && getStack().getItemDamage() == stack.getItemDamage()) || !in(stack.getItemDamage()));
           }
           @Override
           public void onSlotChanged() {
@@ -75,7 +75,7 @@ public class ContainerCable extends Container {
   @Override
   public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
     Slot slot = this.inventorySlots.get(slotIndex);
-    StorageNetwork.log("transfer slot in ContainerCable: TODO: upgrades to top right " + slotIndex);
+   
     //in range [4,39] means its coming FROM inventory
     // [0,3] is the filter list
     if (slot != null && slot.getHasStack()) {

@@ -41,7 +41,6 @@ public class TileCable extends AbstractFilterTile {
     for (ItemStack s : upgrades) {
       if (s != null && !s.isEmpty() && s.getItemDamage() == num) {
         res += s.getCount();
-        break;
       }
     }
     return res;

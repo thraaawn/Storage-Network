@@ -57,8 +57,9 @@ public class ItemRemote extends Item {
   @Override
   public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
     ItemStack itemStackIn = playerIn.getHeldItem(hand);
-    if (worldIn.isRemote)
-      return super.onItemRightClick(worldIn, playerIn, hand);
+    if (worldIn.isRemote) {
+      return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
+    }
     int x = NBTHelper.getInteger(itemStackIn, "x");
     int y = NBTHelper.getInteger(itemStackIn, "y");
     int z = NBTHelper.getInteger(itemStackIn, "z");
@@ -69,6 +70,7 @@ public class ItemRemote extends Item {
           if (NBTHelper.getString(itemStackIn, "sort") == null)
             NBTHelper.setString(itemStackIn, "sort", EnumSortType.NAME.toString());
           playerIn.openGui(StorageNetwork.instance, getGui(), world, x, y, z);
+          return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
         }
         else
           playerIn.sendMessage(new TextComponentString("Cable Master not loaded."));
