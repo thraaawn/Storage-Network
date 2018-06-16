@@ -7,8 +7,8 @@
     "1.12-recommended": "1.0.15",
     "1.12.1-latest": "1.0.15",
     "1.12.1-recommended": "1.1.1",
-    "1.12.2-latest": "1.2.4",
-    "1.12.2-recommended": "1.2.4"
+    "1.12.2-latest": "1.2.5",
+    "1.12.2-recommended": "1.2.5"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -47,5 +47,6 @@
 	,"1.2.2":"Fixed exceptions thrown to log when connecting to some modded blocks (Thermal expansion).  New config option ReloadNetworkWhenUnloadChunk that you can disable if your server has any chunk loading issues.  "
 	,"1.2.3":"Fixed item dupe bug occurring with certain special case recipes.  "
 	,"1.2.4":"Stack Upgrade now increases import/export size to a full stack (from 4 to 64 where previously it was from 4 to 8).  Upgrade Items now stack to 64 when outside of a cable.  Fixed and improved the power of the Speed Upgrade.  "
+  	,"1.2.5":"Requires forge version 14.23.1.2594 or higher.  Fixed item loss when using extractor cables along with speed upgrades.   "
   }
 }
