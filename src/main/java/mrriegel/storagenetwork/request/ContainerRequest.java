@@ -111,7 +111,11 @@ public class ContainerRequest extends ContainerNetworkBase {
     IRecipe r = CraftingManager.findMatchingRecipe(matrix, tile.getWorld());
    // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged - afterFindRecipe");
     if (r != null) {
-      this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
+      //      StorageNetwork.log("craft out nbt " + r.getRecipeOutput().copy().getTagCompound());
+      ItemStack itemstack = r.getCraftingResult(this.matrix);
+      //real way to not lose nbt tags BETTER THAN COPY
+      //      StorageNetwork.log("!!!!!!!!!!TEST itemstack " + itemstack.getTagCompound());
+      this.result.setInventorySlotContents(0, itemstack);
     }
     else {
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);

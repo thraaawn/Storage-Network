@@ -338,6 +338,7 @@ public class TileMaster extends TileEntity implements ITickable {
           continue;
         }
         ItemStack stackCurrent = this.request(new FilterItem(stackToFilter, meta, ore, false), 1, true);
+        //^ 1
         if (stackCurrent == null || stackCurrent.isEmpty()) {
           continue;
         }
@@ -351,17 +352,19 @@ public class TileMaster extends TileEntity implements ITickable {
         ItemStack max = ItemHandlerHelper.copyStackWithSize(stackCurrent, maxStackSize);
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, max, true);
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
+
         insert = Math.min(insert, (int) Math.pow(2, tileCable.getUpgradesOfType(ItemUpgrade.STACK) + 2));
         if (!tileCable.doesPassOperationFilterLimit()) {
           continue;
         }
         ItemStack rec = this.request(new FilterItem(stackCurrent, meta, ore, false), insert, false);
+
         if (rec == null || rec.isEmpty()) {
           continue;
         }
-        rec.shrink(tileCable.getUpgradesOfType(ItemUpgrade.SPEED));
+        //now insert the stack we just pulled out 
         ItemHandlerHelper.insertItemStacked(inv, rec, false);
-        world.markChunkDirty(pos, this);
+        world.markChunkDirty(pos, this);// is this needed?
         break;
       }
     }
@@ -418,9 +421,7 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!t.canTransfer(stackCurrent, Direction.OUT)) {
           continue;
         }
-        // StorageNetwork.benchmark( " AbstractFilterTile loop step");
-        StorageNetwork.log("so res is NOT? air?" + res + "?" + res.isEmpty() + res.getDisplayName());
-        //                StorageNetwork.log("sss" + stackCurreint + "?" + stackCurrent.isEmpty() + stackCurrent.getDisplayName());
+
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
         //   StorageNetwork.log("DISABLE markChunkDirty at  extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
@@ -434,7 +435,7 @@ public class TileMaster extends TileEntity implements ITickable {
           res = extracted.copy();
           res.setCount(result);
         }
-        StorageNetwork.log("!TileMaster request: yes actually remove items from source now " + res + "__" + result);
+        StorageNetwork.log(t.getPos() + "?" + size + "!TileMaster:request: yes actually remove items from source now " + res + "__" + result);
         //  int rest = s.getCount();
         if (result == size) {
           return ItemHandlerHelper.copyStackWithSize(res, size);

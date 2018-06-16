@@ -133,6 +133,7 @@ public class ContainerRemote extends ContainerNetworkBase {
     }
     return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.remote;
   }
+  @Override
   public void slotChanged() {
     for (int i = 0; i < 9; i++) {
       NBTHelper.setItemStack(remoteItemStack, "c" + i, matrix.getStackInSlot(i));
@@ -147,7 +148,9 @@ public class ContainerRemote extends ContainerNetworkBase {
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     IRecipe r = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
     if (r != null) {
-      this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
+      ItemStack itemstack = r.getCraftingResult(this.matrix);
+      //real way to not lose nbt tags BETTER THAN COPY 
+      this.result.setInventorySlotContents(0, itemstack);
     }
     else {
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
