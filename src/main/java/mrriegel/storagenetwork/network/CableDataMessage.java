@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.network;
+
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.cable.ContainerCable;
 import mrriegel.storagenetwork.cable.TileCable;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.IItemHandler;
 
 public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
+
   public static final int TOGGLE_WAY = 6;
   public static final int IMPORT_FILTER = 5;
   public static final int TOGGLE_WHITELIST = 3;
@@ -24,15 +26,19 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
   public static final int TOGGLE_MODE = 4;
   int id;
   BlockPos pos;
+
   public CableDataMessage() {}
+
   public CableDataMessage(int id, BlockPos pos) {
     this.id = id;
     this.pos = pos;
   }
+
   @Override
   public IMessage onMessage(final CableDataMessage message, final MessageContext ctx) {
     IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
+
       @Override
       public void run() {
         TileEntity t = ctx.getServerHandler().player.world.getTileEntity(message.pos);
@@ -87,11 +93,13 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
     });
     return null;
   }
+
   @Override
   public void fromBytes(ByteBuf buf) {
     this.pos = BlockPos.fromLong(buf.readLong());
     this.id = buf.readInt();
   }
+
   @Override
   public void toBytes(ByteBuf buf) {
     buf.writeLong(this.pos.toLong());

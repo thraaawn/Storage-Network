@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork;
+
 import org.apache.logging.log4j.Logger;
 import mrriegel.storagenetwork.cable.BlockCable;
 import mrriegel.storagenetwork.cable.TileCable;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
 public class StorageNetwork {
+
   public Logger logger;
   public static final String MODID = "storagenetwork";
   public static final String MODNAME = "Simple Storage Network";
@@ -37,25 +39,30 @@ public class StorageNetwork {
   public static StorageNetwork instance;
   @SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")
   public static CommonProxy proxy;
+
   public static void log(String s) {
     if (ConfigHandler.logEverything) {
       instance.logger.info(s);
     }
   }
+
   @EventHandler
   public void preInit(FMLPreInitializationEvent event) {
     logger = event.getModLog();
     proxy.preInit(event);
     MinecraftForge.EVENT_BUS.register(this);
   }
+
   @EventHandler
   public void init(FMLInitializationEvent event) {
     proxy.init(event);
   }
+
   @EventHandler
   public void postInit(FMLPostInitializationEvent event) {
     proxy.postInit(event);
   }
+
   @SubscribeEvent
   public void onRegistryBlock(RegistryEvent.Register<Block> event) {
     event.getRegistry().register(ModBlocks.master);
@@ -65,6 +72,7 @@ public class StorageNetwork {
     event.getRegistry().register(ModBlocks.exKabel.setUnlocalizedName(ModBlocks.exKabel.getRegistryName().toString()));
     event.getRegistry().register(ModBlocks.imKabel.setUnlocalizedName(ModBlocks.imKabel.getRegistryName().toString()));
   }
+
   @SubscribeEvent
   public void onRegistryEvent(RegistryEvent.Register<Item> event) {
     event.getRegistry().register(new BlockMaster.Item(ModBlocks.master).setRegistryName(ModBlocks.master.getRegistryName()));
@@ -79,6 +87,7 @@ public class StorageNetwork {
     GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
     GameRegistry.registerTileEntity(TileRequest.class, "tileRequest");
   }
+
   @SubscribeEvent
   public void registerModels(ModelRegistryEvent event) {
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.kabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":kabel", "inventory"));
@@ -94,7 +103,9 @@ public class StorageNetwork {
       ModelLoader.setCustomModelResourceLocation(ModItems.remote, i, new ModelResourceLocation(StorageNetwork.MODID + ":remote_" + i, "inventory"));
     }
   }
+
   private static long lastTime;
+
   public static void benchmark(String s) {
     long now = System.currentTimeMillis();
     long DIFF = now - lastTime;

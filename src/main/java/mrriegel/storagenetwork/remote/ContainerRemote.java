@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.remote;
+
 import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.data.FilterItem;
@@ -23,8 +24,10 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRemote extends ContainerNetworkBase {
+
   public TileMaster tileMaster;
   public ItemStack remoteItemStack;
+
   public ContainerRemote(final InventoryPlayer playerInv) {
     matrix = new InventoryCrafting(this, 3, 3);
     this.playerInv = playerInv;
@@ -37,6 +40,7 @@ public class ContainerRemote extends ContainerNetworkBase {
       matrix.setInventorySlotContents(i, NBTHelper.getItemStack(remoteItemStack, "c" + i));
     }
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, matrix, result, 0, 101, 128) {
+
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
         if (playerIn.world.isRemote) {
@@ -80,10 +84,12 @@ public class ContainerRemote extends ContainerNetworkBase {
     for (int i = 0; i < 9; ++i) {
       if (i == playerInv.currentItem)
         this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232) {
+
           @Override
           public boolean isItemValid(ItemStack stack) {
             return false;
           }
+
           @Override
           public boolean canTakeStack(EntityPlayer playerIn) {
             return false;
@@ -94,6 +100,7 @@ public class ContainerRemote extends ContainerNetworkBase {
     }
     this.onCraftMatrixChanged(this.matrix);
   }
+
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
     if (playerIn.world.isRemote) {
@@ -122,6 +129,7 @@ public class ContainerRemote extends ContainerNetworkBase {
     }
     return itemstack;
   }
+
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {
     if (tileMaster == null) {
@@ -133,17 +141,20 @@ public class ContainerRemote extends ContainerNetworkBase {
     }
     return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.remote;
   }
+
   @Override
   public void slotChanged() {
     for (int i = 0; i < 9; i++) {
       NBTHelper.setItemStack(remoteItemStack, "c" + i, matrix.getStackInSlot(i));
     }
   }
+
   @Override
   public void onContainerClosed(EntityPlayer playerIn) {
     slotChanged();
     super.onContainerClosed(playerIn);
   }
+
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     IRecipe r = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
@@ -156,10 +167,12 @@ public class ContainerRemote extends ContainerNetworkBase {
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
     }
   }
+
   @Override
   public InventoryCrafting getCraftMatrix() {
     return this.matrix;
   }
+
   @Override
   public TileMaster getTileMaster() {
     return ItemRemote.getTile(remoteItemStack);

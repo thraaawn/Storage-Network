@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.gui;
+
 import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
@@ -19,24 +20,32 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 public abstract class ContainerNetworkBase extends Container {
+
   public InventoryPlayer playerInv;
   public InventoryCraftResult result;
   public InventoryCrafting matrix;
   public boolean recipeLocked = false;
+
   public abstract InventoryCrafting getCraftMatrix();
+
   public abstract TileMaster getTileMaster();
+
   public abstract void slotChanged();
+
   boolean test = false;
+
   @Override
   public void detectAndSendChanges() {
     //   StorageNetwork.log("detectAndSendChanges  ");
     super.detectAndSendChanges();
   }
+
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     // StorageNetwork.log("onCraftMatrixChanged  ");
     super.onCraftMatrixChanged(inventoryIn);
   }
+
   /**
    * A note on the shift-craft delay bug root cause was ANY interaction with matrix (setting contents etc) was causing triggers/events to do a recipe lookup. Meaning during this shift-click action you
    * can get up to 9x64 FULL recipe scans Solution is just to disable all those triggers but only for duration of this action
@@ -160,14 +169,12 @@ public abstract class ContainerNetworkBase extends Container {
       }
       StorageNetwork.benchmark("after ifElse & end of while loop");
     }
- 
     StorageNetwork.log("Container.craftShift: SEND new StacksMessage UNDO what does this change");
     //    PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) player);
     detectAndSendChanges();
     this.recipeLocked = false;
     //update recipe again in case remnants left : IE hammer and such
     this.onCraftMatrixChanged(this.matrix);
- 
     StorageNetwork.benchmark("[network base] end :: " + result.getStackInSlot(0));
     StorageNetwork.benchmark("end");
   }

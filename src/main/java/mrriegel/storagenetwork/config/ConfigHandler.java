@@ -1,15 +1,18 @@
 package mrriegel.storagenetwork.config;
+
 import java.io.File;
 import mrriegel.storagenetwork.tile.TileConnectable;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Loader;
 
 public class ConfigHandler {
+
   public static Configuration config;
   public static boolean smallFont, jeiLoaded;
   public static int rangeWirelessAccessor;
   public static long refreshTicks;
   public static boolean logEverything;
+
   public static void refreshConfig(File file) {
     config = new Configuration(file);
     config.load();

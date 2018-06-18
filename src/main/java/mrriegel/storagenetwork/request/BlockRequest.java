@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.request;
+
 import java.util.List;
 import javax.annotation.Nullable;
 import mrriegel.storagenetwork.AbstractBlockConnectable;
@@ -27,7 +28,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class BlockRequest extends AbstractBlockConnectable {
+
   public static final PropertyDirection FACING = PropertyDirection.create("facing");
+
   public BlockRequest() {
     super(Material.IRON);
     this.setHardness(3.0F);
@@ -36,14 +39,17 @@ public class BlockRequest extends AbstractBlockConnectable {
     this.setRegistryName("request");
     this.setUnlocalizedName(getRegistryName().toString());
   }
+
   @Override
   public TileEntity createNewTileEntity(World worldIn, int meta) {
     return new TileRequest();
   }
+
   @Override
   public EnumBlockRenderType getRenderType(IBlockState state) {
     return EnumBlockRenderType.MODEL;
   }
+
   @Override
   public IBlockState getStateFromMeta(int meta) {
     EnumFacing enumfacing = EnumFacing.getFront(meta);
@@ -52,19 +58,23 @@ public class BlockRequest extends AbstractBlockConnectable {
     }
     return this.getDefaultState().withProperty(FACING, enumfacing);
   }
+
   @Override
   public int getMetaFromState(IBlockState state) {
     return state.getValue(FACING).getIndex();
   }
+
   @Override
   protected BlockStateContainer createBlockState() {
     return new BlockStateContainer(this, new IProperty[] { FACING });
   }
+
   @Override
   public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
     IBlockState s = this.getDefaultState().withProperty(FACING, facing.getOpposite());
     return s;
   }
+
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
     if (!(worldIn.getTileEntity(pos) instanceof IConnectable)) {
@@ -77,6 +87,7 @@ public class BlockRequest extends AbstractBlockConnectable {
     }
     return true;
   }
+
   @Override
   public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
     TileEntity tileentity = worldIn.getTileEntity(pos);
@@ -88,10 +99,13 @@ public class BlockRequest extends AbstractBlockConnectable {
     }
     super.breakBlock(worldIn, pos, state);
   }
+
   public static class Item extends ItemBlock {
+
     public Item(Block block) {
       super(block);
     }
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
       super.addInformation(stack, playerIn, tooltip, advanced);

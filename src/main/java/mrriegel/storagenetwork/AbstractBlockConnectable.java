@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork;
+
 import mrriegel.storagenetwork.helper.UtilTileEntity;
 import mrriegel.storagenetwork.master.TileMaster;
 import net.minecraft.block.Block;
@@ -10,9 +11,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class AbstractBlockConnectable extends BlockContainer {
+
   public AbstractBlockConnectable(Material materialIn) {
     super(materialIn);
   }
+
   @Override
   public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
     try {
@@ -39,6 +42,7 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
       StorageNetwork.instance.logger.error("StorageNetwork: exception thrown while updating neighbours:", e);
     }
   }
+
   public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
     IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
     if (tile.getMaster() == null) {
@@ -71,6 +75,7 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
     }
     worldIn.markChunkDirty(((TileEntity) tile).getPos(), ((TileEntity) tile));
   }
+
   private void setAllMastersNull(World world, BlockPos pos) {
     ((IConnectable) world.getTileEntity(pos)).setMaster(null);
     for (BlockPos bl : UtilTileEntity.getSides(pos)) {

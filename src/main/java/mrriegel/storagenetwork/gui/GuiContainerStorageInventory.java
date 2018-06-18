@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.gui;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +35,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
 
 public abstract class GuiContainerStorageInventory extends GuiContainerBase {
+
   private static final int MOUSE_BTN_RIGHT = 1;
   private static final int MOUSE_BTN_LEFT = 0;
   public static final String NBT_SEARCH = "storagenetwork_search";
@@ -47,6 +49,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   protected long lastClick;
   private Button clearTextBtn;
   private boolean forceFocus;
+
   public GuiContainerStorageInventory(ContainerNetworkBase inventorySlotsIn) {
     super(inventorySlotsIn);
     this.xSize = 176;
@@ -56,9 +59,11 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
     lastClick = System.currentTimeMillis();
   }
+
   protected boolean canClick() {
     return System.currentTimeMillis() > lastClick + 100L;
   }
+
   @Override
   public void initGui() {
     super.initGui();
@@ -80,18 +85,31 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     clearTextBtn = new Button(5, guiLeft + 64, guiTop + 93, "X");
     this.addButton(clearTextBtn);
   }
+
   public abstract int getLines();
+
   public abstract int getColumns();
+
   public abstract boolean getDownwards();
+
   public abstract void setDownwards(boolean d);
+
   public abstract EnumSortType getSort();
+
   public abstract void setSort(EnumSortType s);
+
   public abstract BlockPos getPos();
+
   protected abstract int getDim();
+
   protected abstract boolean inField(int mouseX, int mouseY);
+
   protected abstract boolean inSearchbar(int mouseX, int mouseY);
+
   protected abstract boolean inX(int mouseX, int mouseY);
+
   protected abstract boolean isScreenValid();
+
   @Override
   public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     if (this.isScreenValid() == false) {
@@ -149,7 +167,9 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     // for (StackWrapper s : craftableStacks)
     // tmp.add(s);
     Collections.sort(tmp, new Comparator<StackWrapper>() {
+
       int mul = getDownwards() ? -1 : 1;
+
       @Override
       public int compare(StackWrapper o2, StackWrapper o1) {
         switch (getSort()) {
@@ -199,6 +219,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (slots.isEmpty())
       over = ItemStack.EMPTY;
   }
+
   @Override
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     super.drawScreen(mouseX, mouseY, partialTicks);
@@ -209,6 +230,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     }
     drawTooltips(mouseX, mouseY);
   }
+
   @Override
   public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
@@ -225,6 +247,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       }
     }
   }
+
   public void drawTooltips(int mouseX, int mouseY) {
     for (ItemSlot s : slots) {
       if (s.isMouseOverSlot(mouseX, mouseY)) {
@@ -258,11 +281,13 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       drawHoveringText(Lists.newArrayList(s), mouseX, mouseY);
     }
   }
+
   @Override
   public void onGuiClosed() {
     super.onGuiClosed();
     Keyboard.enableRepeatEvents(false);
   }
+
   @Override
   public void actionPerformed(GuiButton button) throws IOException {
     super.actionPerformed(button);
@@ -293,6 +318,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       PacketRegistry.INSTANCE.sendToServer(new SortMessage(getPos(), getDownwards(), getSort()));
     }
   }
+
   @Override
   public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -316,6 +342,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       lastClick = System.currentTimeMillis();
     }
   }
+
   @Override
   public void keyTyped(char typedChar, int keyCode) throws IOException {
     if (!this.checkHotbarKeys(keyCode)) {
@@ -328,6 +355,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       }
     }
   }
+
   @Override
   public void updateScreen() {
     super.updateScreen();
@@ -335,6 +363,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       searchBar.updateCursorCounter();
     }
   }
+
   @Override
   public void handleMouseInput() throws IOException {
     super.handleMouseInput();
@@ -350,13 +379,17 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
         page++;
     }
   }
+
   public class Button extends GuiButton {
+
     public Button(int id, int x, int y, String str) {
       super(id, x, y, 14, 14, str);
     }
+
     public Button(int id, int x, int y, int width, String str) {
       super(id, x, y, width, 14, str);
     }
+
     @Override
     public void drawButton(Minecraft mc, int x, int y, float pticks) {// drawButton
       if (this.visible) {

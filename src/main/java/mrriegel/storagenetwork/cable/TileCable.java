@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.cable;
+
 import java.util.List;
 import java.util.Map;
 import com.google.common.collect.Maps;
@@ -22,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
 public class TileCable extends AbstractFilterTile {
+
   private BlockPos connectedInventory;
   private EnumFacing inventoryFace;
   private NonNullList<ItemStack> upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
@@ -29,13 +31,16 @@ public class TileCable extends AbstractFilterTile {
   private int limit = 0;
   public EnumConnectType north, south, east, west, up, down;
   ItemStack stack = null;
+
   public enum CableKind {
     kabel, exKabel, imKabel, storageKabel;
   }
+
   public TileCable() {
     this.setOres(false);
     this.setMeta(true);
   }
+
   public int getUpgradesOfType(int num) {
     int res = 0;
     for (ItemStack s : upgrades) {
@@ -45,10 +50,12 @@ public class TileCable extends AbstractFilterTile {
     }
     return res;
   }
+
   public boolean isUpgradeable() {
     CableKind kind = getKind();
     return kind == CableKind.exKabel || kind == CableKind.imKabel;
   }
+
   public static CableKind getKind(Block b) {
     if (b == ModBlocks.kabel)
       return CableKind.kabel;
@@ -60,6 +67,7 @@ public class TileCable extends AbstractFilterTile {
       return CableKind.storageKabel;
     return null;
   }
+
   public Map<EnumFacing, EnumConnectType> getConnects() {
     Map<EnumFacing, EnumConnectType> map = Maps.newHashMap();
     map.put(EnumFacing.NORTH, north);
@@ -70,6 +78,7 @@ public class TileCable extends AbstractFilterTile {
     map.put(EnumFacing.DOWN, down);
     return map;
   }
+
   public void setConnects(Map<EnumFacing, EnumConnectType> map) {
     north = map.get(EnumFacing.NORTH);
     south = map.get(EnumFacing.SOUTH);
@@ -78,6 +87,7 @@ public class TileCable extends AbstractFilterTile {
     up = map.get(EnumFacing.UP);
     down = map.get(EnumFacing.DOWN);
   }
+
   public boolean doesPassOperationFilterLimit() {
     if (getUpgradesOfType(ItemUpgrade.OPERATION) < 1) {
       return true;
@@ -95,6 +105,7 @@ public class TileCable extends AbstractFilterTile {
       return amount <= getLimit();
     }
   }
+
   @SuppressWarnings("serial")
   @Override
   public void readFromNBT(NBTTagCompound compound) {
@@ -129,6 +140,7 @@ public class TileCable extends AbstractFilterTile {
       }
     }
   }
+
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
@@ -163,32 +175,40 @@ public class TileCable extends AbstractFilterTile {
     compound.setTag("Items", nbttaglist);
     return compound;
   }
+
   @Override
   public AxisAlignedBB getRenderBoundingBox() {
     double renderExtention = 1.0d;
     AxisAlignedBB bb = new AxisAlignedBB(pos.getX() - renderExtention, pos.getY() - renderExtention, pos.getZ() - renderExtention, pos.getX() + 1 + renderExtention, pos.getY() + 1 + renderExtention, pos.getZ() + 1 + renderExtention);
     return bb;
   }
+
   public CableKind getKind() {
     if (world == null)
       return null;
     return getKind(world.getBlockState(pos).getBlock());
   }
+
   public BlockPos getConnectedInventory() {
     return connectedInventory;
   }
+
   public void setConnectedInventory(BlockPos connectedInventory) {
     this.connectedInventory = connectedInventory;
   }
+
   public EnumFacing getInventoryFace() {
     return inventoryFace;
   }
+
   public void setInventoryFace(EnumFacing inventoryFace) {
     this.inventoryFace = inventoryFace;
   }
+
   public List<ItemStack> getUpgrades() {
     return upgrades;
   }
+
   public void setUpgrades(List<ItemStack> upgrades) {
     upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
     int i = 0;
@@ -199,34 +219,43 @@ public class TileCable extends AbstractFilterTile {
       i++;
     }
   }
+
   public boolean isMode() {
     return mode;
   }
+
   public void setMode(boolean mode) {
     this.mode = mode;
   }
+
   public int getLimit() {
     return limit;
   }
+
   public void setLimit(int limit) {
     this.limit = limit;
   }
+
   public ItemStack getOperationStack() {
     return stack;
   }
+
   public void setOperationStack(ItemStack stack) {
     this.stack = stack;
   }
+
   @Override
   public IItemHandler getInventory() {
     if (getConnectedInventory() != null)
       return UtilInventory.getItemHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
     return null;
   }
+
   @Override
   public BlockPos getSource() {
     return getConnectedInventory();
   }
+
   @Override
   public boolean isStorage() {
     return getKind() == CableKind.storageKabel;

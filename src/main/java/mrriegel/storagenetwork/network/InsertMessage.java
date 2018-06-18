@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.network;
+
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.data.StackWrapper;
@@ -20,18 +21,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, IMessage> {
+
   int dim, buttonID;
   ItemStack stack;
+
   public InsertMessage() {}
+
   public InsertMessage(int dim, int buttonID, ItemStack stack) {
     this.dim = dim;
     this.stack = stack;
     this.buttonID = buttonID;
   }
+
   @Override
   public IMessage onMessage(final InsertMessage message, final MessageContext ctx) {
     IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
+
       @Override
       public void run() {
         World w = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
@@ -68,12 +74,14 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
     });
     return null;
   }
+
   @Override
   public void fromBytes(ByteBuf buf) {
     this.dim = buf.readInt();
     this.stack = ByteBufUtils.readItemStack(buf);
     this.buttonID = buf.readInt();
   }
+
   @Override
   public void toBytes(ByteBuf buf) {
     buf.writeInt(this.dim);

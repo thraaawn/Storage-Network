@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.jei;
+
 import java.util.List;
 import java.util.Map;
 import mezz.jei.api.gui.IGuiIngredient;
@@ -22,10 +23,12 @@ import net.minecraftforge.fml.common.Optional;
 @SuppressWarnings("rawtypes")
 @Optional.Interface(iface = "mezz.jei.api.recipe.transfer.IRecipeTransferHandler", modid = "jei", striprefs = true)
 public class RequestRecipeTransferHandler<C extends Container> implements IRecipeTransferHandler {
+
   @Override
   public Class<? extends Container> getContainerClass() {
     return ContainerRequest.class;
   }
+
   public static NBTTagCompound recipeToTag(Container container, IRecipeLayout recipeLayout) {
     NBTTagCompound nbt = new NBTTagCompound();
     StorageNetwork.log(" recipeLayout  " + recipeLayout);
@@ -58,6 +61,7 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
     }
     return nbt;
   }
+
   @Override
   public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
     if (doTransfer) {

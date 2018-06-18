@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.tile;
+
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import mrriegel.storagenetwork.IConnectable;
@@ -13,46 +14,57 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class TileConnectable extends TileEntity implements IConnectable {
+
   protected BlockPos posMaster;
+
   @Override
   public NBTTagCompound getUpdateTag() {
     return writeToNBT(new NBTTagCompound());
   }
+
   @SuppressWarnings("serial")
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
     posMaster = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {}.getType());
   }
+
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
     compound.setString("master", new Gson().toJson(posMaster));
     return compound;
   }
+
   @Override
   public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
     return oldState.getBlock() != newSate.getBlock();
   }
+
   @Override
   public BlockPos getMaster() {
     return posMaster;
   }
+
   @Override
   public void setMaster(BlockPos master) {
     this.posMaster = master;
   }
+
   @Override
   public SPacketUpdateTileEntity getUpdatePacket() {
     NBTTagCompound syncData = new NBTTagCompound();
     this.writeToNBT(syncData);
     return new SPacketUpdateTileEntity(this.pos, 1, syncData);
   }
+
   @Override
   public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
     readFromNBT(pkt.getNbtCompound());
   }
+
   public static boolean reloadNetworkWhenUnloadChunk;
+
   @Override
   public void onChunkUnload() {
     if (reloadNetworkWhenUnloadChunk) {

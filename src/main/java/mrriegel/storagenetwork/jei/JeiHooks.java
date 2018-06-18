@@ -1,8 +1,10 @@
 package mrriegel.storagenetwork.jei;
+
 import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraftforge.fml.common.Optional;
 
 public class JeiHooks {
+
   /**
    * so if JEI is not loaded, this will be called but then its an empty FN
    * 
@@ -11,6 +13,7 @@ public class JeiHooks {
   public static void setFilterText(String s) {
     _setFilterText(s);
   }
+
   @Optional.Method(modid = "jei")
   private static void _setFilterText(String s) {
     try {
