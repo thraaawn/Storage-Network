@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.network;
+
 import java.util.List;
 import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
@@ -13,9 +14,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, IMessage> {
+
   int size, csize;
   List<StackWrapper> stacks, craftableStacks;
+
   public StacksMessage() {}
+
   public StacksMessage(List<StackWrapper> stacks, List<StackWrapper> craftableStacks) {
     super();
     this.stacks = stacks;
@@ -23,10 +27,12 @@ public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, I
     this.size = stacks.size();
     this.csize = craftableStacks.size();
   }
+
   @Override
   public IMessage onMessage(final StacksMessage message, final MessageContext ctx) {
     IThreadListener mainThread = Minecraft.getMinecraft();
     mainThread.addScheduledTask(new Runnable() {
+
       @Override
       public void run() {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiContainerStorageInventory) {
@@ -38,6 +44,7 @@ public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, I
     });
     return null;
   }
+
   @Override
   public void fromBytes(ByteBuf buf) {
     this.size = buf.readInt();
@@ -51,6 +58,7 @@ public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, I
       craftableStacks.add(StackWrapper.loadStackWrapperFromNBT(ByteBufUtils.readTag(buf)));
     }
   }
+
   @Override
   public void toBytes(ByteBuf buf) {
     buf.writeInt(this.size);

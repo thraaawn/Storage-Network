@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.network;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,26 +28,33 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, IMessage> {
+
   NBTTagCompound nbt;
   int index = 0;
+
   public RecipeMessage() {}
+
   public RecipeMessage(NBTTagCompound nbt) {
     this.nbt = nbt;
   }
+
   @Override
   public void fromBytes(ByteBuf buf) {
     this.nbt = ByteBufUtils.readTag(buf);
     this.index = buf.readInt();
   }
+
   @Override
   public void toBytes(ByteBuf buf) {
     ByteBufUtils.writeTag(buf, nbt);
     buf.writeInt(this.index);
   }
+
   @Override
   public IMessage onMessage(final RecipeMessage message, final MessageContext ctx) {
     IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
+
       @Override
       public void run() {
         Container c = ctx.getServerHandler().player.openContainer;

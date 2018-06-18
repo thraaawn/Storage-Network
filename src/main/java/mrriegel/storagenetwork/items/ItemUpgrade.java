@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.items;
+
 import java.util.List;
 import mrriegel.storagenetwork.CreativeTab;
 import net.minecraft.client.resources.I18n;
@@ -12,11 +13,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemUpgrade extends Item {
+
   public static final int NUM = 4;
   public static final int SPEED = 0;
   public static final int OPERATION = 1;
   public static final int STACK = 2;
   public static final int STOCK = 3;
+
   public ItemUpgrade() {
     super();
     this.setCreativeTab(CreativeTab.tab);
@@ -25,6 +28,7 @@ public class ItemUpgrade extends Item {
     this.setUnlocalizedName(getRegistryName().toString());
     this.setMaxStackSize(64);
   }
+
   @Override
   @SideOnly(Side.CLIENT)
   public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list) {
@@ -34,10 +38,12 @@ public class ItemUpgrade extends Item {
       }
     }
   }
+
   @Override
   public String getUnlocalizedName(ItemStack stack) {
     return this.getUnlocalizedName() + "_" + stack.getItemDamage();
   }
+
   @Override
   public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
     super.addInformation(stack, playerIn, tooltip, advanced);

@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.cable;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,47 +40,59 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockCable extends AbstractBlockConnectable {
+
   public static enum EnumConnectType implements IStringSerializable {
     CONNECT("connect"), STORAGE("storage"), NULL("null");
+
     String name;
+
     private EnumConnectType(String name) {
       this.name = name;
     }
+
     @Override
     public String getName() {
       return name;
     }
   }
+
   public BlockCable() {
     super(Material.IRON);
     this.setHardness(1.4F);
     this.setCreativeTab(CreativeTab.tab);
   }
+
   @Override
   public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
     return false;
   }
+
   @Override
   public boolean isOpaqueCube(IBlockState state) {
     return false;
   }
+
   @Override
   @SideOnly(Side.CLIENT)
   public boolean isTranslucent(IBlockState state) {
     return true;
   }
+
   @Override
   public boolean isFullCube(IBlockState state) {
     return false;
   }
+
   @Override
   public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
     return layer == BlockRenderLayer.SOLID;
   }
+
   @Override
   public EnumBlockRenderType getRenderType(IBlockState state) {
     return EnumBlockRenderType.INVISIBLE;
   }
+
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
     if (!(worldIn.getTileEntity(pos) instanceof TileCable)) {
@@ -95,17 +108,21 @@ public class BlockCable extends AbstractBlockConnectable {
     }
     return false;
   }
+
   @Override
   public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
     setConnections(worldIn, pos, state, false);
   }
+
   @Override
   public int getMetaFromState(IBlockState state) {
     return 0;
   }
+
   boolean validInventory(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
     return UtilInventory.hasItemHandler(worldIn, pos, side);
   }
+
   IBlockState getNewState(IBlockAccess world, BlockPos pos) {
     if (!(world.getTileEntity(pos) instanceof TileCable))
       return world.getBlockState(pos);
@@ -171,6 +188,7 @@ public class BlockCable extends AbstractBlockConnectable {
     tile.setConnectedInventory(con);
     return world.getBlockState(pos);
   }
+
   @Override
   public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
     state = getNewState(worldIn, pos);
@@ -179,6 +197,7 @@ public class BlockCable extends AbstractBlockConnectable {
       UtilTileEntity.updateTile(worldIn, pos);
     }
   }
+
   @SuppressWarnings("deprecation")
   @Override
   public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
@@ -191,6 +210,7 @@ public class BlockCable extends AbstractBlockConnectable {
       return super.getActualState(state, worldIn, pos);
     }
   }
+
   public static EnumFacing get(BlockPos a, BlockPos b) {
     if (a.up().equals(b))
       return EnumFacing.DOWN;
@@ -206,6 +226,7 @@ public class BlockCable extends AbstractBlockConnectable {
       return EnumFacing.NORTH;
     return null;
   }
+
   @Override
   public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
     if (!(worldIn.getTileEntity(pos) instanceof TileCable)) {
@@ -245,6 +266,7 @@ public class BlockCable extends AbstractBlockConnectable {
       addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
     }
   }
+
   @Override
   public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
     if (!(source.getTileEntity(pos) instanceof TileCable)) {
@@ -281,6 +303,7 @@ public class BlockCable extends AbstractBlockConnectable {
     }
     return new AxisAlignedBB(x1, z1, y1, x2, z2, y2);
   }
+
   protected EnumConnectType getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
     Block ori = worldIn.getBlockState(orig).getBlock();
     if (worldIn.getTileEntity(pos) instanceof IConnectable || worldIn.getTileEntity(pos) instanceof TileMaster)
@@ -292,6 +315,7 @@ public class BlockCable extends AbstractBlockConnectable {
       return EnumConnectType.NULL;
     return EnumConnectType.STORAGE;
   }
+
   @Override
   public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
     TileEntity tileentity = worldIn.getTileEntity(pos);
@@ -304,14 +328,18 @@ public class BlockCable extends AbstractBlockConnectable {
     worldIn.updateComparatorOutputLevel(pos, this);
     super.breakBlock(worldIn, pos, state);
   }
+
   @Override
   public TileEntity createNewTileEntity(World worldIn, int meta) {
     return new TileCable();
   }
+
   public static class ItemCable extends ItemBlock {
+
     public ItemCable(Block block) {
       super(block);
     }
+
     @Override
     public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
       super.addInformation(stack, playerIn, tooltip, advanced);

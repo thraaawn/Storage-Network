@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.tile;
+
 import java.util.HashMap;
 import java.util.Map;
 import mrriegel.storagenetwork.data.StackWrapper;
@@ -11,6 +12,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 
 public abstract class AbstractFilterTile extends TileConnectable {
+
   public static final int FILTER_SIZE = 18;
   private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
   private boolean ores = false;
@@ -18,13 +20,16 @@ public abstract class AbstractFilterTile extends TileConnectable {
   private boolean isWhitelist;
   private int priority;
   private Direction way = Direction.BOTH;
+
   public enum Direction {
     IN, OUT, BOTH;
+
     public boolean match(Direction way) {
       if (this == BOTH || way == BOTH)
         return true;
       return this == way;
     }
+
     public Direction next() {
       //NO MORE input only, bad UX. if i see item in grid and cant get => think is broken
       if (this == OUT) {
@@ -36,11 +41,13 @@ public abstract class AbstractFilterTile extends TileConnectable {
       //return values()[(this.ordinal() + 1) % values().length];
     }
   }
+
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
     readSettings(compound);
   }
+
   public void readSettings(NBTTagCompound compound) {
     isWhitelist = compound.getBoolean("white");
     priority = compound.getInteger("prio");
@@ -60,12 +67,14 @@ public abstract class AbstractFilterTile extends TileConnectable {
       way = Direction.BOTH;
     }
   }
+
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
     writeSettings(compound);
     return compound;
   }
+
   public void writeSettings(NBTTagCompound compound) {
     compound.setBoolean("white", isWhitelist);
     compound.setInteger("prio", priority);
@@ -83,12 +92,13 @@ public abstract class AbstractFilterTile extends TileConnectable {
     compound.setBoolean("metas", metas);
     compound.setString("way", way.toString());
   }
+
   private boolean doesWrapperMatchStack(StackWrapper stackWrapper, ItemStack stack) {
     ItemStack s = stackWrapper.getStack();
     return ores ? UtilTileEntity.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem();
   }
-  /*
-   * key function used by TileMaster for all item trafic
+
+  /* key function used by TileMaster for all item trafic
    * 
    * TODO: TEST CASES
    * 
@@ -102,11 +112,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
    * 
    * import + meta ; blacklist
    * 
-   * import - meta ; blacklist
-   * 
-   * 
-   * 
-   */
+   * import - meta ; blacklist */
   public boolean canTransfer(ItemStack stack, Direction way) {
     if (isStorage() && !this.way.match(way)) {
       return false;
@@ -138,14 +144,18 @@ public abstract class AbstractFilterTile extends TileConnectable {
       return tmp;
     }
   }
+
   public abstract IItemHandler getInventory();
+
   public abstract BlockPos getSource();
+
   /**
    * identical to checking === CableKind.storage
    * 
    * @return
    */
   public abstract boolean isStorage();
+
   /**
    * the whitelist / blacklist (ghost stacks in gui)
    * 
@@ -154,36 +164,47 @@ public abstract class AbstractFilterTile extends TileConnectable {
   public Map<Integer, StackWrapper> getFilter() {
     return filter;
   }
+
   public void setFilter(Map<Integer, StackWrapper> filter) {
     this.filter = filter;
   }
+
   public boolean getOre() {
     return ores;
   }
+
   public void setOres(boolean ores) {
     this.ores = ores;
   }
+
   public boolean getMeta() {
     return metas;
   }
+
   public void setMeta(boolean ores) {
     this.metas = ores;
   }
+
   public boolean isWhitelist() {
     return isWhitelist;
   }
+
   public void setWhite(boolean white) {
     this.isWhitelist = white;
   }
+
   public int getPriority() {
     return priority;
   }
+
   public void setPriority(int priority) {
     this.priority = priority;
   }
+
   public Direction getWay() {
     return way;
   }
+
   public void setWay(Direction way) {
     this.way = way;
   }

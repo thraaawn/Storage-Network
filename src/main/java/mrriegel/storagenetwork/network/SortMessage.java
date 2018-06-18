@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.network;
+
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.remote.ContainerRemote;
@@ -16,19 +17,24 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMessage> {
+
   BlockPos pos;
   boolean direction;
   EnumSortType sort;
+
   public SortMessage() {}
+
   public SortMessage(BlockPos pos, boolean direction, EnumSortType sort) {
     this.pos = pos;
     this.direction = direction;
     this.sort = sort;
   }
+
   @Override
   public IMessage onMessage(final SortMessage message, final MessageContext ctx) {
     IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
+
       @Override
       public void run() {
         if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote
@@ -50,12 +56,14 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
     });
     return null;
   }
+
   @Override
   public void fromBytes(ByteBuf buf) {
     this.pos = BlockPos.fromLong(buf.readLong());
     this.direction = buf.readBoolean();
     this.sort = EnumSortType.valueOf(ByteBufUtils.readUTF8String(buf));
   }
+
   @Override
   public void toBytes(ByteBuf buf) {
     buf.writeLong(this.pos.toLong());

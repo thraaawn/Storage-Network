@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.remote;
+
 import java.util.List;
 import javax.annotation.Nullable;
 import mrriegel.storagenetwork.CreativeTab;
@@ -28,12 +29,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemRemote extends Item {
+
   public ItemRemote() {
     super();
     this.setCreativeTab(CreativeTab.tab);
     this.setHasSubtypes(true);
     this.setMaxStackSize(1);
   }
+
   @Override
   @SideOnly(Side.CLIENT)
   public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list) {
@@ -43,10 +46,12 @@ public class ItemRemote extends Item {
       }
     }
   }
+
   @Override
   public String getUnlocalizedName(ItemStack stack) {
     return this.getUnlocalizedName() + "_" + stack.getItemDamage();
   }
+
   @Override
   public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
     tooltip.add(I18n.format("tooltip.storagenetwork.remote_" + stack.getItemDamage()));
@@ -54,6 +59,7 @@ public class ItemRemote extends Item {
       tooltip.add("Dimension: " + NBTHelper.getInteger(stack, "dim") + ", x: " + NBTHelper.getInteger(stack, "x") + ", y: " + NBTHelper.getInteger(stack, "y") + ", z: " + NBTHelper.getInteger(stack, "z"));
     }
   }
+
   @Override
   public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
     ItemStack itemStackIn = playerIn.getHeldItem(hand);
@@ -81,6 +87,7 @@ public class ItemRemote extends Item {
     }
     return super.onItemRightClick(worldIn, playerIn, hand);
   }
+
   @Override
   public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
     ItemStack stack = playerIn.getHeldItem(hand);
@@ -95,9 +102,11 @@ public class ItemRemote extends Item {
     }
     return super.onItemUse(playerIn, worldIn, pos, hand, side, hitX, hitY, hitZ);
   }
+
   protected int getGui() {
     return GuiHandler.REMOTE;
   }
+
   public static TileMaster getTile(ItemStack stack) {
     if (stack == null || stack.isEmpty()) {
       return null;
@@ -105,6 +114,7 @@ public class ItemRemote extends Item {
     TileEntity t = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(stack, "dim")).getTileEntity(new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z")));
     return t instanceof TileMaster ? (TileMaster) t : null;
   }
+
   public static void copyTag(ItemStack from, ItemStack to) {
     NBTHelper.setInteger(to, "x", NBTHelper.getInteger(from, "x"));
     NBTHelper.setInteger(to, "y", NBTHelper.getInteger(from, "y"));

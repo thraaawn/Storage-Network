@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.master;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -37,8 +38,10 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class TileMaster extends TileEntity implements ITickable {
+
   public Set<BlockPos> connectables;
   public List<BlockPos> storageInventorys;
+
   public List<StackWrapper> getStacks() {
     List<StackWrapper> stacks = Lists.newArrayList();
     List<AbstractFilterTile> invs = Lists.newArrayList();
@@ -64,6 +67,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return stacks;
   }
+
   public int emptySlots() {
     int res = 0;
     List<AbstractFilterTile> invs = Lists.newArrayList();
@@ -85,6 +89,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return res;
   }
+
   public List<StackWrapper> getCraftableStacks(List<StackWrapper> stacks) {
     List<StackWrapper> craftableStacks = Lists.newArrayList();
     //    List<AbstractTileContainer> invs = Lists.newArrayList();
@@ -112,6 +117,7 @@ public class TileMaster extends TileEntity implements ITickable {
     //    }
     return craftableStacks;
   }
+
   private void addToList(List<StackWrapper> lis, ItemStack s, int num) {
     boolean added = false;
     for (int i = 0; i < lis.size(); i++) {
@@ -128,6 +134,7 @@ public class TileMaster extends TileEntity implements ITickable {
       lis.add(new StackWrapper(s, num));
     }
   }
+
   public int getAmount(FilterItem fil) {
     if (fil == null) {
       return 0;
@@ -140,6 +147,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return size;
   }
+
   public List<FilterItem> getIngredients(ItemStack template) {
     Map<Integer, ItemStack> stacks = Maps.<Integer, ItemStack> newHashMap();
     Map<Integer, Boolean> metas = Maps.<Integer, Boolean> newHashMap();
@@ -163,10 +171,12 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return list;
   }
+
   @Override
   public NBTTagCompound getUpdateTag() {
     return writeToNBT(new NBTTagCompound());
   }
+
   private void addConnectables(final BlockPos pos) {
     if (pos == null || world == null || this.getWorld().isBlockLoaded(pos) == false) {
       return;
@@ -193,6 +203,7 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     }
   }
+
   private void addInventorys() {
     storageInventorys = Lists.newArrayList();
     for (BlockPos cable : connectables) {
@@ -206,6 +217,7 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     }
   }
+
   public void refreshNetwork() {
     if (world.isRemote) {
       return;
@@ -220,6 +232,7 @@ public class TileMaster extends TileEntity implements ITickable {
     addInventorys();
     world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
   }
+
   public int insertStack(ItemStack stack, BlockPos source, boolean simulate) {
     if (stack == null || stack.isEmpty()) {
       return 0;
@@ -237,6 +250,7 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     }
     Collections.sort(invs, new Comparator<AbstractFilterTile>() {
+
       @Override
       public int compare(AbstractFilterTile o1, AbstractFilterTile o2) {
         return Integer.compare(o2.getPriority(), o1.getPriority());
@@ -273,18 +287,18 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return in.getCount();
   }
+
   public void updateImports() {
     List<TileCable> attachedCables = getAttachedCables(CableKind.imKabel);
     for (TileCable tileCable : attachedCables) {
       IItemHandler inv = tileCable.getInventory();
-      int speedRatio =  tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1 ;
-//      StorageNetwork.log("speedratio " + speedRatio+" and the divisor is "+(30 / speedRatio)
-//          + " ===GO=== " + (world.getTotalWorldTime()  % (30 / speedRatio) == 0) );
-      if (world.getTotalWorldTime()  % (30 / speedRatio) != 0) {
+      int speedRatio = tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1;
+      //      StorageNetwork.log("speedratio " + speedRatio+" and the divisor is "+(30 / speedRatio)
+      //          + " ===GO=== " + (world.getTotalWorldTime()  % (30 / speedRatio) == 0) );
+      if (world.getTotalWorldTime() % (30 / speedRatio) != 0) {
         continue;
       }
-      boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) >0;
-    
+      boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
       for (int i = 0; i < inv.getSlots(); i++) {
         ItemStack stackCurrent = inv.getStackInSlot(i);
         if (stackCurrent == null || stackCurrent.isEmpty()) {
@@ -297,7 +311,7 @@ public class TileMaster extends TileEntity implements ITickable {
           continue; // nope, cant pass by. operation filter in place and all set
         }
         // int num = s.getCount();
-        int maxInsert= (hasStackUpgrade) ? 64 : 4;
+        int maxInsert = (hasStackUpgrade) ? 64 : 4;
         int insert = Math.min(stackCurrent.getCount(), maxInsert);
         ItemStack extracted = inv.extractItem(i, insert, true);
         if (extracted == null || extracted.getCount() < insert) {
@@ -310,6 +324,7 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     }
   }
+
   public void updateExports() {
     List<TileCable> attachedCables = getAttachedCables(CableKind.exKabel);
     for (TileCable tileCable : attachedCables) {
@@ -352,13 +367,11 @@ public class TileMaster extends TileEntity implements ITickable {
         ItemStack max = ItemHandlerHelper.copyStackWithSize(stackCurrent, maxStackSize);
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, max, true);
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
-
         insert = Math.min(insert, (int) Math.pow(2, tileCable.getUpgradesOfType(ItemUpgrade.STACK) + 2));
         if (!tileCable.doesPassOperationFilterLimit()) {
           continue;
         }
         ItemStack rec = this.request(new FilterItem(stackCurrent, meta, ore, false), insert, false);
-
         if (rec == null || rec.isEmpty()) {
           continue;
         }
@@ -369,6 +382,7 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     }
   }
+
   public List<TileCable> getAttachedCables(CableKind kind) {
     List<TileCable> attachedCables = Lists.newArrayList();
     for (BlockPos p : connectables) {
@@ -381,6 +395,7 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     }
     Collections.sort(attachedCables, new Comparator<TileCable>() {
+
       @Override
       public int compare(TileCable o1, TileCable o2) {
         return Integer.compare(o1.getPriority(), o2.getPriority());
@@ -388,6 +403,7 @@ public class TileMaster extends TileEntity implements ITickable {
     });
     return attachedCables;
   }
+
   public ItemStack request(FilterItem fil, final int size, boolean simulate) {
     if (size == 0 || fil == null) {
       return ItemStack.EMPTY;
@@ -421,7 +437,6 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!t.canTransfer(stackCurrent, Direction.OUT)) {
           continue;
         }
-
         int miss = size - result;
         ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
         //   StorageNetwork.log("DISABLE markChunkDirty at  extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
@@ -447,6 +462,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return ItemHandlerHelper.copyStackWithSize(res, result);
   }
+
   @Override
   public void update() {
     if (world == null || world.isRemote) {
@@ -465,16 +481,19 @@ public class TileMaster extends TileEntity implements ITickable {
       e.printStackTrace();
     }
   }
+
   @Override
   public SPacketUpdateTileEntity getUpdatePacket() {
     NBTTagCompound syncData = new NBTTagCompound();
     this.writeToNBT(syncData);
     return new SPacketUpdateTileEntity(this.pos, 1, syncData);
   }
+
   @Override
   public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
     readFromNBT(pkt.getNbtCompound());
   }
+
   @Override
   public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
     return oldState.getBlock() != newSate.getBlock();

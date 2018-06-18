@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.master;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class BlockMaster extends BlockContainer {
+
   public BlockMaster() {
     super(Material.IRON);
     this.setHardness(3.0F);
@@ -38,14 +40,17 @@ public class BlockMaster extends BlockContainer {
     this.setRegistryName("master");
     this.setUnlocalizedName(getRegistryName().toString());
   }
+
   @Override
   public TileEntity createNewTileEntity(World worldIn, int meta) {
     return new TileMaster();
   }
+
   @Override
   public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
     onBlockPlacedBy(worldIn, pos, state, null, null);
   }
+
   @Override
   public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
     super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
@@ -68,10 +73,12 @@ public class BlockMaster extends BlockContainer {
         ((TileMaster) worldIn.getTileEntity(pos)).refreshNetwork();
     }
   }
+
   @Override
   public EnumBlockRenderType getRenderType(IBlockState state) {
     return EnumBlockRenderType.MODEL;
   }
+
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
     if (!(worldIn.getTileEntity(pos) instanceof TileMaster)) {
@@ -91,6 +98,7 @@ public class BlockMaster extends BlockContainer {
         lis.add(e);
       }
       Collections.sort(lis, new Comparator<Entry<String, Integer>>() {
+
         @Override
         public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
           return Integer.compare(o2.getValue(), o1.getValue());
@@ -102,10 +110,13 @@ public class BlockMaster extends BlockContainer {
     }
     return true;
   }
+
   public static class Item extends ItemBlock {
+
     public Item(Block block) {
       super(block);
     }
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
       super.addInformation(stack, playerIn, tooltip, advanced);

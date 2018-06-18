@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.jei;
+
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
@@ -15,10 +16,12 @@ import net.minecraftforge.fml.common.Optional;
 @SuppressWarnings("rawtypes")
 @Optional.Interface(iface = "mezz.jei.api.recipe.transfer.IRecipeTransferHandler", modid = "jei", striprefs = true)
 public class RequestRecipeTransferHandlerRemote<C extends Container> implements IRecipeTransferHandler {
+
   @Override
   public Class<? extends Container> getContainerClass() {
     return ContainerRemote.class;
   }
+
   @Override
   public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
     if (doTransfer) {

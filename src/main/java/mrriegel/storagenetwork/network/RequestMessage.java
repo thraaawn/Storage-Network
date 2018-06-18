@@ -44,15 +44,12 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 
       @Override
       public void run() {
-
         TileMaster tileMaster = null;
         if (ctx.getServerHandler().player.openContainer instanceof ContainerRequest) {
-
           ContainerRequest ctrRequest = (ContainerRequest) ctx.getServerHandler().player.openContainer;
           tileMaster = (TileMaster) ctx.getServerHandler().player.world.getTileEntity(ctrRequest.tile.getMaster());
         }
         else if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote) {
-
           tileMaster = ItemRemote.getTile(ctx.getServerHandler().player.inventory.getCurrentItem());
         }
         if (tileMaster == null) {
@@ -67,7 +64,6 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
             message.id == 0 ? message.stack.getMaxStackSize()
                 : message.ctrl ? 1 : Math.min(message.stack.getMaxStackSize() / 2, in / 2),
             1);
-
         stack = tileMaster.request(
             new FilterItem(message.stack, true, false, true),
             sizeRequested, false);
@@ -98,7 +94,6 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
         ctx.getServerHandler().player.openContainer.detectAndSendChanges();
       }
     });
-
     return null;
   }
 
@@ -106,7 +101,6 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
   public void fromBytes(ByteBuf buf) {
     this.id = buf.readInt();
     this.stack = ByteBufUtils.readItemStack(buf);
-
     this.shift = buf.readBoolean();
     this.ctrl = buf.readBoolean();
   }
@@ -115,7 +109,6 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
   public void toBytes(ByteBuf buf) {
     buf.writeInt(this.id);
     ByteBufUtils.writeItemStack(buf, stack);
-
     buf.writeBoolean(this.shift);
     buf.writeBoolean(this.ctrl);
   }

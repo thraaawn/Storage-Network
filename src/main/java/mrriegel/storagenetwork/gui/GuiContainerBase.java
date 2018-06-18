@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.gui;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -6,19 +7,25 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 
 public abstract class GuiContainerBase extends GuiContainer {
+
   public GuiContainerBase(Container inventorySlotsIn) {
     super(inventorySlotsIn);
   }
+
   public class ItemSlot extends AbstractSlot {
+
     public ItemStack stack;
+
     public ItemSlot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
       super(x, y, size, guiLeft, guiTop, number, square, smallFont, toolTip);
       this.stack = stack;
     }
+
     @Override
     public boolean isMouseOverSlot(int mouseX, int mouseY) {
       return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
     }
+
     @Override
     public void drawSlot(int mx, int my) {
       GlStateManager.pushMatrix();
@@ -49,6 +56,7 @@ public abstract class GuiContainerBase extends GuiContainer {
       }
       GlStateManager.popMatrix();
     }
+
     @Override
     public void drawTooltip(int mx, int my) {
       if (toolTip && this.isMouseOverSlot(mx, my) && stack != null && !stack.isEmpty()) {

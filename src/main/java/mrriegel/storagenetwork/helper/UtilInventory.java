@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.helper;
+
 import mrriegel.storagenetwork.data.FilterItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -14,9 +15,11 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 public class UtilInventory {
+
   public static boolean hasItemHandler(IBlockAccess world, BlockPos pos, EnumFacing facing) {
     return getItemHandler(world.getTileEntity(pos), facing) != null;
   }
+
   public static IItemHandler getItemHandler(TileEntity tile, EnumFacing side) {
     if (tile == null)
       return null;
@@ -28,6 +31,7 @@ public class UtilInventory {
       return new InvWrapper((IInventory) tile);
     return null;
   }
+
   public static ItemStack insert(TileEntity tile, ItemStack stack, EnumFacing side) {
     if (tile == null) {
       return stack;
@@ -35,6 +39,7 @@ public class UtilInventory {
     IItemHandler inv = getItemHandler(tile, side);
     return ItemHandlerHelper.insertItemStacked(inv, stack, false);
   }
+
   public static int canInsert(IItemHandler inv, ItemStack stack) {
     if (inv == null || stack == null || stack.isEmpty()) {
       return 0;
@@ -44,6 +49,7 @@ public class UtilInventory {
     stack.shrink(rest);
     return stack.getCount();
   }
+
   public static boolean contains(IItemHandler inv, ItemStack stack) {
     for (int i = 0; i < inv.getSlots(); i++) {
       if (ItemHandlerHelper.canItemStacksStack(inv.getStackInSlot(i), stack)) {
@@ -52,6 +58,7 @@ public class UtilInventory {
     }
     return false;
   }
+
   public static int getAmount(IItemHandler inv, FilterItem fil) {
     if (inv == null || fil == null) {
       return 0;
@@ -64,6 +71,7 @@ public class UtilInventory {
     }
     return amount;
   }
+
   public static ItemStack extractItem(IItemHandler inv, FilterItem fil, int num, boolean simulate) {
     if (inv == null || fil == null) {
       return null;

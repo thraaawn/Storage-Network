@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.network;
+
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.data.StackWrapper;
@@ -16,10 +17,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMessage> {
+
   @Override
   public IMessage onMessage(final ClearMessage message, final MessageContext ctx) {
     IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
     mainThread.addScheduledTask(new Runnable() {
+
       @Override
       public void run() {
         Container c = ctx.getServerHandler().player.openContainer;
@@ -53,8 +56,10 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
     });
     return null;
   }
+
   @Override
   public void fromBytes(ByteBuf buf) {}
+
   @Override
   public void toBytes(ByteBuf buf) {}
 }

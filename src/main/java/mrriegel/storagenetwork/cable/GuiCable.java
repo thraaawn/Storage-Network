@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.cable;
+
 import java.io.IOException;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
 public class GuiCable extends GuiContainerBase {
+
   private static final int TEXTBOX_WIDTH = 26;
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
   CableKind kind;
@@ -37,6 +39,7 @@ public class GuiCable extends GuiContainerBase {
   ItemSlot operation;
   private GuiCheckBox checkOre;
   private GuiCheckBox checkMeta;
+
   public GuiCable(ContainerCable inventorySlotsIn) {
     super(inventorySlotsIn);
     this.xSize = 176;
@@ -47,16 +50,19 @@ public class GuiCable extends GuiContainerBase {
     }
     list = Lists.newArrayList();
   }
+
   @Override
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     super.drawScreen(mouseX, mouseY, partialTicks);
     super.renderHoveredToolTip(mouseX, mouseY);
     drawTooltips(mouseX, mouseY);
   }
+
   @Override
   public void drawBackground(int tint) {
     super.drawBackground(tint);
   }
+
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     this.drawDefaultBackground();//dim the background as normal
@@ -114,10 +120,12 @@ public class GuiCable extends GuiContainerBase {
     //    }
     fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
   }
+
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
   }
+
   private void drawTooltips(int mouseX, int mouseY) {
     for (ItemSlot s : list) {
       if (s != null && s.stack != null && !s.stack.isEmpty() && s.isMouseOverSlot(mouseX, mouseY))
@@ -147,6 +155,7 @@ public class GuiCable extends GuiContainerBase {
       this.drawHoveringText(Lists.newArrayList(s), mouseX, mouseY, fontRenderer);
     }
   }
+
   @Override
   public void initGui() {
     super.initGui();
@@ -191,6 +200,7 @@ public class GuiCable extends GuiContainerBase {
       }
     }
   }
+
   @Override
   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -231,6 +241,7 @@ public class GuiCable extends GuiContainerBase {
       }
     }
   }
+
   @Override
   protected void actionPerformed(GuiButton button) throws IOException {
     super.actionPerformed(button);
@@ -253,6 +264,7 @@ public class GuiCable extends GuiContainerBase {
       PacketRegistry.INSTANCE.sendToServer(new FilterMessage(-1, null, checkOre.isChecked(), checkMeta.isChecked()));
     }
   }
+
   @Override
   protected void keyTyped(char typedChar, int keyCode) throws IOException {
     if (!(tile instanceof TileCable)) {
@@ -283,15 +295,19 @@ public class GuiCable extends GuiContainerBase {
       }
     }
   }
+
   @Override
   public void onGuiClosed() {
     super.onGuiClosed();
     Keyboard.enableRepeatEvents(false);
   }
+
   class Button extends GuiButton {
+
     public Button(int id, int x, int y, String z) {
       super(id, x, y, 16, 16, z);
     }
+
     @Override
     public void drawButton(Minecraft mcc, int x, int y, float p) {//drawButon
       if (this.visible) {

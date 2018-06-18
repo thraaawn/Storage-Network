@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.request;
+
 import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
@@ -23,7 +24,9 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRequest extends ContainerNetworkBase {
+
   public TileRequest tile;
+
   public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
     matrix = new InventoryCrafting(this, 3, 3);
     this.tile = tile;
@@ -36,19 +39,20 @@ public class ContainerRequest extends ContainerNetworkBase {
     }
     //crafting output slot
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, matrix, result, 0, 101, 128) {
+
       @Override
       public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
-//        if(  result.getStackInSlot(0) == null 
-//            || result.getStackInSlot(0).isEmpty()){
-//          StorageNetwork.benchmark("[onTake] EMPTY!!!");
-//          result.setInventorySlotContents(0, ItemStack.EMPTY);
-//          return ItemStack.EMPTY;
-//        }
+        //        if(  result.getStackInSlot(0) == null 
+        //            || result.getStackInSlot(0).isEmpty()){
+        //          StorageNetwork.benchmark("[onTake] EMPTY!!!");
+        //          result.setInventorySlotContents(0, ItemStack.EMPTY);
+        //          return ItemStack.EMPTY;
+        //        }
         if (playerIn.world.isRemote) {
           StorageNetwork.benchmark("[onTake] isRemote");
           return stack;
         }
-        StorageNetwork.benchmark("[onTake] start!!"+result.getStackInSlot(0));
+        StorageNetwork.benchmark("[onTake] start!!" + result.getStackInSlot(0));
         onCraftMatrixChanged(matrix);
         List<ItemStack> lis = Lists.newArrayList();
         for (int i = 0; i < matrix.getSizeInventory(); i++) {
@@ -101,15 +105,16 @@ public class ContainerRequest extends ContainerNetworkBase {
     }
     this.onCraftMatrixChanged(this.matrix);
   }
+
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     if (this.recipeLocked) {
       StorageNetwork.log("recipe locked so onCraftMatrixChanged cancelled");
       return;
     }
-   // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged");
+    // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged");
     IRecipe r = CraftingManager.findMatchingRecipe(matrix, tile.getWorld());
-   // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged - afterFindRecipe");
+    // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged - afterFindRecipe");
     if (r != null) {
       //      StorageNetwork.log("craft out nbt " + r.getRecipeOutput().copy().getTagCompound());
       ItemStack itemstack = r.getCraftingResult(this.matrix);
@@ -120,13 +125,15 @@ public class ContainerRequest extends ContainerNetworkBase {
     else {
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
     }
-  //  StorageNetwork.benchmark("[cr] end . onCraftMatrixChanged");
+    //  StorageNetwork.benchmark("[cr] end . onCraftMatrixChanged");
   }
+
   @Override
   public void onContainerClosed(EntityPlayer playerIn) {
     slotChanged();
     super.onContainerClosed(playerIn);
   }
+
   @Override
   public void slotChanged() {
     //parent is abstract
@@ -139,6 +146,7 @@ public class ContainerRequest extends ContainerNetworkBase {
     UtilTileEntity.updateTile(tile.getWorld(), tile.getPos());
     StorageNetwork.benchmark("[cr] slotChanged End updateTile");
   }
+
   @Override
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
     if (playerIn.world.isRemote) {
@@ -189,6 +197,7 @@ public class ContainerRequest extends ContainerNetworkBase {
     }
     return itemstack;
   }
+
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {
     if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
@@ -200,14 +209,17 @@ public class ContainerRequest extends ContainerNetworkBase {
     }
     return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
   }
+
   @Override
   public boolean canMergeSlot(ItemStack stack, Slot slot) {
     return slot.inventory != this.result && super.canMergeSlot(stack, slot);
   }
+
   @Override
   public InventoryCrafting getCraftMatrix() {
     return this.matrix;
   }
+
   @Override
   public TileMaster getTileMaster() {
     return (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());

@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.helper;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,9 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class UtilTileEntity {
+
   private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
+
   public static void init() {
     Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
     for (Map.Entry<String, ModContainer> modEntry : modMap.entrySet()) {
@@ -33,6 +36,7 @@ public class UtilTileEntity {
       modNamesForIds.put(lowercaseId, modName);
     }
   }
+
   @Nonnull
   public static String getModNameForItem(@Nonnull Object object) {
     ResourceLocation itemResourceLocation;
@@ -54,6 +58,7 @@ public class UtilTileEntity {
     }
     return modName;
   }
+
   public static boolean equalOreDict(ItemStack a, ItemStack b) {
     int[] ar = OreDictionary.getOreIDs(a);
     int[] br = OreDictionary.getOreIDs(b);
@@ -63,12 +68,14 @@ public class UtilTileEntity {
           return true;
     return false;
   }
+
   public static <E> boolean contains(List<E> list, E e, Comparator<? super E> c) {
     for (E a : list)
       if (c.compare(a, e) == 0)
         return true;
     return false;
   }
+
   public static void spawnItemStack(World worldIn, double x, double y, double z, ItemStack stack) {
     if (stack == null || stack.isEmpty() || worldIn.isRemote) {
       return;
@@ -79,6 +86,7 @@ public class UtilTileEntity {
     EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, stack);
     worldIn.spawnEntity(entityitem);
   }
+
   public static List<BlockPos> getSides(BlockPos pos) {
     List<BlockPos> lis = Lists.newArrayList();
     for (EnumFacing face : EnumFacing.values()) {
@@ -86,6 +94,7 @@ public class UtilTileEntity {
     }
     return lis;
   }
+
   public static void updateTile(World world, BlockPos pos) {
     if (world == null || world.isRemote || world.getTileEntity(pos) == null || !world.getChunkFromBlockCoords(pos).isLoaded())
       return;

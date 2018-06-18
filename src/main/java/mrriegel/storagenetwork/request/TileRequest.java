@@ -1,4 +1,5 @@
 package mrriegel.storagenetwork.request;
+
 import java.util.HashMap;
 import java.util.Map;
 import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
@@ -9,17 +10,22 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
 public class TileRequest extends TileConnectable {
+
   public Map<Integer, ItemStack> matrix = new HashMap<Integer, ItemStack>();
   public boolean downwards;
   public EnumSortType sort = EnumSortType.NAME;
   public String search = "";
+
   public enum EnumSortType {
     AMOUNT, NAME, MOD;
+
     private static EnumSortType[] vals = values();
+
     public EnumSortType next() {
       return vals[(this.ordinal() + 1) % vals.length];
     }
   }
+
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
@@ -35,6 +41,7 @@ public class TileRequest extends TileConnectable {
       matrix.put(slot, s);
     }
   }
+
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
