@@ -21,8 +21,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class RequestMessage implements IMessage, IMessageHandler<RequestMessage, IMessage> {
 
-  int id;
-  ItemStack stack;
+  int id = 0;
+  ItemStack stack = ItemStack.EMPTY;
   boolean shift, ctrl;
 
   public RequestMessage() {}
@@ -37,9 +37,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
   @Override
   public IMessage onMessage(final RequestMessage message, final MessageContext ctx) {
     IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
-    if (message.stack.isEmpty()) {
-      return null;
-    }
+
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
