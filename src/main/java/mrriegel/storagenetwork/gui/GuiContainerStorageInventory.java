@@ -56,8 +56,9 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     this.ySize = 256;
     this.stacks = Lists.newArrayList();
     this.craftableStacks = Lists.newArrayList();
-    PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
+    PacketRegistry.INSTANCE.sendToServer(new RequestMessage());
     lastClick = System.currentTimeMillis();
+
   }
 
   protected boolean canClick() {
