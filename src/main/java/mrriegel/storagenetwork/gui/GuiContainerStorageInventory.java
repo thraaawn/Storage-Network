@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.helper.UtilTileEntity;
@@ -38,7 +39,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
   private static final int MOUSE_BTN_RIGHT = 1;
   private static final int MOUSE_BTN_LEFT = 0;
-  public static final String NBT_SEARCH = "storagenetwork_search";
   protected ResourceLocation texture;
   protected int page = 1, maxPage = 1;
   public List<StackWrapper> stacks, craftableStacks;
@@ -75,6 +75,10 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     searchBar.setVisible(true);
     searchBar.setTextColor(16777215);
     searchBar.setFocused(true);
+    if (ConfigHandler.jeiLoaded && Settings.jeiSearch) {
+      searchBar.setText(JeiHooks.getFilterText());
+      StorageNetwork.log("!!push to TEXT FROM JEI on open  " + searchBar.getText());
+    }
     direction = new Button(0, guiLeft + 7, guiTop + 93, "");
     this.addButton(direction);
     sort = new Button(1, guiLeft + 21, guiTop + 93, "");
@@ -85,6 +89,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     }
     clearTextBtn = new Button(5, guiLeft + 64, guiTop + 93, "X");
     this.addButton(clearTextBtn);
+
   }
 
   public abstract int getLines();
@@ -238,9 +243,16 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (this.isScreenValid() == false) {
       return;
     }
-    if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
-      JeiHooks.setFilterText(searchBar.getText());
-    }
+    //    if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
+    //      //if JEI has text, pull that in first
+    //      if (searchBar.getText().isEmpty() && !searchBar.getText().equals(JeiHooks.getFilterText())) {
+    //        searchBar.setText(JeiHooks.getFilterText());
+    //      }
+    //      else {
+    //        JeiHooks.setFilterText(searchBar.getText());
+    //      }
+    //      //StorageNetwork.log("push to JEI " + searchBar.getText() + " OLD in jei WAS " + JeiHooks.getFilterText());
+    //    }
     if (forceFocus) {
       this.searchBar.setFocused(true);
       if (this.searchBar.isFocused()) {
@@ -311,6 +323,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     }
     else if (button.id == this.clearTextBtn.id) {
       doSort = false;
+      StorageNetwork.log("set text clear from clear button");
       this.searchBar.setText("");
       //      this.searchBar.setFocused(true);//doesnt work..somethings overriding it?
       this.forceFocus = true;//we have to force it to go next-tick
@@ -327,6 +340,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (inSearchbar(mouseX, mouseY)) {
       searchBar.setFocused(true);
       if (mouseButton == MOUSE_BTN_RIGHT) {
+        StorageNetwork.log("set text clear from MOUSE");
         searchBar.setText("");
       }
     }
@@ -350,6 +364,10 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       Keyboard.enableRepeatEvents(true);
       if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
         PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
+        if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
+          StorageNetwork.log("push to JEY onkeytyped_");
+          JeiHooks.setFilterText(searchBar.getText()); //  searchBar.setText(JeiHooks.getFilterText());
+        }
       }
       else {
         super.keyTyped(typedChar, keyCode);

@@ -92,9 +92,12 @@ public abstract class ContainerNetworkBase extends Container {
       for (int i = 0; i < remainder.size(); ++i) {
         StorageNetwork.benchmark("before getstackinslot");
         ItemStack slot = this.matrix.getStackInSlot(i);
-        StorageNetwork.benchmark("after getstackinslot from remainder = " + slot.getUnlocalizedName());
+        if (slot.getUnlocalizedName().equals("item.alkahestry_tome")) {
+          StorageNetwork.benchmark(" BUG FOUND !!!!after getstackinslot from remainder = " + slot.getUnlocalizedName()
+            + " CONTAINER ITEM = " + slot.getItem().getContainerItem());
+        }
         ItemStack remainderCurrent = remainder.get(i);
-        StorageNetwork.benchmark("A");
+        //        StorageNetwork.benchmark("A");
         if (slot.getItem().getContainerItem() != null) { //is the fix for milk and similar
           slot = new ItemStack(slot.getItem().getContainerItem());
           matrix.setInventorySlotContents(i, slot);
@@ -115,8 +118,13 @@ public abstract class ContainerNetworkBase extends Container {
             this.matrix.setInventorySlotContents(i, remainderCurrent);
             //StorageNetwork.benchmark("E");
           }
+          else if (ItemStack.areItemsEqualIgnoreDurability(slot, remainderCurrent)) {
+            //crafting that consumes durability
+            StorageNetwork.benchmark("fix for crafting eating durability");
+            this.matrix.setInventorySlotContents(i, remainderCurrent);
+          }
           else {
-            // StorageNetwork.benchmark("F");
+            StorageNetwork.log("Gadd to inventory " + remainderCurrent);
             if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
               // StorageNetwork.benchmark("G");
               player.dropItem(remainderCurrent, false);
