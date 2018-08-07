@@ -4,7 +4,7 @@
   "group": "storagenetwork",
   "pattern": [
     "pcp",
-    "mim",
+    "imi",
 	"pdp"
   ],
   "key": {
@@ -12,8 +12,7 @@
       "item": "minecraft:blaze_rod"
     },
     "i":  {
-	  "item": "storagenetwork:remote",
-	   "data":0
+	  "item": "minecraft:purpur_block"
 	},
     "m":  {
 	  "item": "storagenetwork:master"

@@ -3,9 +3,9 @@
   "type": "minecraft:crafting_shaped",
   "group": "storagenetwork",
   "pattern": [
-    " c ",
-    "eie",
-	" c "
+    "aca",
+    "cic",
+	"bcb"
   ],
   "key": {
     "c": {
@@ -14,8 +14,11 @@
     "i":  {
 	  "item": "storagenetwork:kabel"
 	},
-    "e":  {
-	  "item": "minecraft:ender_pearl"
+    "a":  {
+	  "item": "storagenetwork:im_kabel"
+	},
+    "b":  {
+	  "item": "storagenetwork:ex_kabel"
 	}
   },
   "result": {

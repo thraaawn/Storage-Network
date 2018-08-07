@@ -50,6 +50,6 @@
   	,"1.2.5":"Requires forge version 14.23.1.2594 or higher.  Fixed item loss when using extractor cables along with speed upgrades.  Fixed crafting using the network from sometimes dropping NBT data from result (such as Iron Backpacks, Silents Gems).  "
 	,"1.2.6":"Fixed the network sometimes not giving out items with null or Zero NBT tags and cleaned up some old logic.  "
   	,"1.2.7":"Fixed the lag of several seconds when you first open a network inventory, it is now nearly instant."
-  	,"1.2.8":"Suggested minimum forge version 14.23.4.2705.  Fixed ore dictionary issue when JEI is adding a recipe to the grid and not finding matching items (example: different types of tin ore, or different types of wood planks).  Textbox JEI sync now works differently: it only updates JEI text on a keypress and not every tick; when you initially open the screen it reads in your current JEI search instead of wiping it.  "
+  	,"1.2.8":"Suggested minimum forge version 14.23.4.2705.  Fixed ore dictionary issue when JEI is adding a recipe to the grid and not finding matching items (example: different types of tin ore, or different types of wood planks).  Textbox JEI sync now works differently: it only updates JEI text on a keypress and not every tick; when you initially open the screen it reads in your current JEI search instead of wiping it.  Changed default recipes of Remotes. "
   }
 }
