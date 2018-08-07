@@ -40,6 +40,7 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
         if (ingredient == null) {
           continue;
         }
+
         List<ItemStack> possibleItems = ingredient.getAllIngredients();
         if (possibleItems == null) {
           continue;
