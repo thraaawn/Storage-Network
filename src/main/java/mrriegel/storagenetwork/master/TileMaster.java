@@ -367,7 +367,8 @@ public class TileMaster extends TileEntity implements ITickable {
         ItemStack max = ItemHandlerHelper.copyStackWithSize(stackCurrent, maxStackSize);
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, max, true);
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
-        insert = Math.min(insert, (int) ( tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0 ? 64 : 4 );
+        boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
+        insert = Math.min(insert, hasStackUpgrade ? 64 : 4);
         if (!tileCable.doesPassOperationFilterLimit()) {
           continue;
         }
