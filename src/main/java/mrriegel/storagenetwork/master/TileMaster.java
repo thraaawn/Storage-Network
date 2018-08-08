@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.IConnectable;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.cable.TileCable;
 import mrriegel.storagenetwork.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -367,7 +366,8 @@ public class TileMaster extends TileEntity implements ITickable {
         ItemStack max = ItemHandlerHelper.copyStackWithSize(stackCurrent, maxStackSize);
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, max, true);
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
-        insert = Math.min(insert, (int) ( tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0 ? 64 : 4 );
+        boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
+        insert = Math.min(insert, hasStackUpgrade ? 64 : 4);
         if (!tileCable.doesPassOperationFilterLimit()) {
           continue;
         }
@@ -438,7 +438,10 @@ public class TileMaster extends TileEntity implements ITickable {
           continue;
         }
         int miss = size - result;
-        ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).getCount(), miss), simulate);
+        int extractedCount = Math.min(inv.getStackInSlot(i).getCount(), miss);
+        //   StorageNetwork.log("inv.extractItem  slot=" + i + ", size=" + extractedCount + ", simulated=" + simulate);
+        ItemStack extracted = inv.extractItem(i, extractedCount, simulate);
+        // StorageNetwork.log("[TileMaster] inv.extractItem RESULT I WAS GIVEN IS   " + extracted);
         //   StorageNetwork.log("DISABLE markChunkDirty at  extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
         //world.markChunkDirty(pos, this);
         //the other KEY fix for https://github.com/PrinceOfAmber/Storage-Network/issues/19, where it 
@@ -450,7 +453,7 @@ public class TileMaster extends TileEntity implements ITickable {
           res = extracted.copy();
           res.setCount(result);
         }
-        StorageNetwork.log(t.getPos() + "?" + size + "!TileMaster:request: yes actually remove items from source now " + res + "__" + result);
+        //        StorageNetwork.log(t.getPos() + "?" + size + "!TileMaster:request: yes actually remove items from source now " + res + "__" + result);
         //  int rest = s.getCount();
         if (result == size) {
           return ItemHandlerHelper.copyStackWithSize(res, size);

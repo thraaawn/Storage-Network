@@ -109,7 +109,7 @@ public class ContainerRequest extends ContainerNetworkBase {
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     if (this.recipeLocked) {
-      StorageNetwork.log("recipe locked so onCraftMatrixChanged cancelled");
+      //StorageNetwork.log("recipe locked so onCraftMatrixChanged cancelled");
       return;
     }
     // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged");

@@ -16,25 +16,6 @@ public class GuiRemote extends GuiContainerStorageInventory {
   }
 
   @Override
-  public void initGui() {
-    super.initGui();
-    ItemStack remote = getItemRemote();
-    String savedSearch = NBTHelper.getString(remote, NBT_SEARCH);
-    if (savedSearch != null) {
-      searchBar.setText(savedSearch);
-    }
-  }
-
-  @Override
-  public void updateScreen() {
-    super.updateScreen();
-    ItemStack remote = getItemRemote();
-    if (searchBar != null && searchBar.getText() != null && remote != null) {
-      NBTHelper.setString(remote, NBT_SEARCH, searchBar.getText());
-    }
-  }
-
-  @Override
   public int getLines() {
     return 4;
   }

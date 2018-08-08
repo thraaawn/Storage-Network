@@ -4,7 +4,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.data.FilterItem;
-import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.master.TileMaster;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -54,48 +53,48 @@ public abstract class ContainerNetworkBase extends Container {
    * @param tile
    */
   public void craftShift(EntityPlayer player, TileMaster tile) {
+    IRecipe recipeCurrent = CraftingManager.findMatchingRecipe(matrix, player.world);
+    if (recipeCurrent == null) {
+      return;
+    }
     this.recipeLocked = true;
-    StorageNetwork.log("Container.craftShift: algo start; CLIENT = " + player.world.isRemote);
-    //    SlotCrafting sl = new SlotCrafting(player, matrix, result, 0, 0, 0);
     int crafted = 0;
     List<ItemStack> recipeCopy = Lists.newArrayList();
     for (int i = 0; i < matrix.getSizeInventory(); i++) {
       recipeCopy.add(matrix.getStackInSlot(i).copy());
     }
-    ItemStack res = result.getStackInSlot(0);
+    ItemStack res = recipeCurrent.getCraftingResult(matrix);
+    if (res.isEmpty()) {
+      StorageNetwork.instance.logger.error("Recipe output is an empty stack " + recipeCurrent);
+      return;
+    }
     int sizePerCraft = res.getCount();
     int sizeFull = res.getMaxStackSize();
     int numberToCraft = sizeFull / sizePerCraft;
-    StorageNetwork.log("numberToCraft = " + numberToCraft);
-    IRecipe r = CraftingManager.findMatchingRecipe(matrix, player.world);
-    if (r == null) {
-      return;
-    }
-    while (crafted + res.getCount() <= res.getMaxStackSize()) {
-      StorageNetwork.benchmark("while loop top");
-      if (!ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), true).isEmpty()) {
+    StorageNetwork.log("numberToCraft = " + numberToCraft + " for stack " + res);
+    while (crafted + sizePerCraft <= res.getMaxStackSize()) {
+      res = recipeCurrent.getCraftingResult(matrix);
+      StorageNetwork.log("crafted = " + crafted + " ; res.count() = " + res.getCount() + " MAX=" + res.getMaxStackSize());
+      if (!ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res, true).isEmpty()) {
         break;
       }
       //stop if empty
-      if (r.matches(matrix, player.world) == false) {
+      if (recipeCurrent.matches(matrix, player.world) == false) {
         break;
       }
       //onTake replaced with this handcoded rewrite
       //  this.getSlot(0).onTake(player, res);// ontake this does the actaul craft see ContainerRequest
-      //        this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
-      StorageNetwork.log("create recipe output" + r.getRecipeOutput().copy());
-      ItemStack out = r.getRecipeOutput().copy();
-      if (!player.inventory.addItemStackToInventory(out)) {
-        player.dropItem(out, false);
+      StorageNetwork.log("addItemStackToInventory " + res);
+      if (!player.inventory.addItemStackToInventory(res)) {
+        player.dropItem(res, false);
       }
       NonNullList<ItemStack> remainder = CraftingManager.getRemainingItems(matrix, player.world);
-      StorageNetwork.benchmark("after getRemainingItems");
+      //StorageNetwork.benchmark("after getRemainingItems");
       for (int i = 0; i < remainder.size(); ++i) {
-        StorageNetwork.benchmark("before getstackinslot");
+        //StorageNetwork.benchmark("before getstackinslot");
         ItemStack slot = this.matrix.getStackInSlot(i);
-        StorageNetwork.benchmark("after getstackinslot from remainder = " + slot.getUnlocalizedName());
         ItemStack remainderCurrent = remainder.get(i);
-        StorageNetwork.benchmark("A");
+        //        StorageNetwork.benchmark("A");
         if (slot.getItem().getContainerItem() != null) { //is the fix for milk and similar
           slot = new ItemStack(slot.getItem().getContainerItem());
           matrix.setInventorySlotContents(i, slot);
@@ -106,38 +105,41 @@ public abstract class ContainerNetworkBase extends Container {
         }
         else if (!remainderCurrent.isEmpty()) {
           if (slot.isEmpty()) {
-            StorageNetwork.benchmark("B");
+            //   StorageNetwork.benchmark("B");
             this.matrix.setInventorySlotContents(i, remainderCurrent);
-            StorageNetwork.benchmark("C");
+            // StorageNetwork.benchmark("C");
           }
           else if (ItemStack.areItemsEqual(slot, remainderCurrent) && ItemStack.areItemStackTagsEqual(slot, remainderCurrent)) {
-            StorageNetwork.benchmark("D");
+            // StorageNetwork.benchmark("D");
             remainderCurrent.grow(slot.getCount());
             this.matrix.setInventorySlotContents(i, remainderCurrent);
-            StorageNetwork.benchmark("E");
+            //StorageNetwork.benchmark("E");
+          }
+          else if (ItemStack.areItemsEqualIgnoreDurability(slot, remainderCurrent)) {
+            //crafting that consumes durability
+            StorageNetwork.benchmark("fix for crafting eating durability");
+            this.matrix.setInventorySlotContents(i, remainderCurrent);
           }
           else {
-            StorageNetwork.benchmark("F");
+            StorageNetwork.log("Gadd to inventory " + remainderCurrent);
             if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
-              StorageNetwork.benchmark("G");
+              // StorageNetwork.benchmark("G");
               player.dropItem(remainderCurrent, false);
             }
           }
-          StorageNetwork.benchmark("H");
+          //   StorageNetwork.benchmark("H");
         }
         else if (!slot.isEmpty()) {
-          StorageNetwork.benchmark("start isempty section");
+          //      StorageNetwork.benchmark("start isempty section");
           this.matrix.decrStackSize(i, 1);
           slot = this.matrix.getStackInSlot(i);
-          StorageNetwork.benchmark("after isempty section");
+          //    StorageNetwork.benchmark("after isempty section");
         }
-        else {
-          StorageNetwork.benchmark("I");
-        }
+
       }
       //END onTake redo
-      StorageNetwork.benchmark("after onTake REFACTORED");
-      crafted += res.getCount();
+      //StorageNetwork.benchmark("after onTake REFACTORED!");
+      crafted += sizePerCraft;
       ItemStack stackInSlot;
       ItemStack recipeStack;
       FilterItem filterItemCurrent;
@@ -151,31 +153,22 @@ public abstract class ContainerNetworkBase extends Container {
           //////////////// booleans are meta, ore(?ignored?), nbt
           filterItemCurrent = !recipeStack.isEmpty() ? new FilterItem(recipeStack, true, false, false) : null;
           //false here means dont simulate
-          StorageNetwork.benchmark("before request");
+          //StorageNetwork.benchmark("before request");
           ItemStack req = tile.request(filterItemCurrent, 1, false);
-          StorageNetwork.benchmark("after request & before setInventorySlotContents");
+          //StorageNetwork.benchmark("after request & before setInventorySlotContents");
           matrix.setInventorySlotContents(i, req);
-          StorageNetwork.benchmark("after setInventorySlotContents");
+          //StorageNetwork.benchmark("after setInventorySlotContents");
         }
       }
-      StorageNetwork.benchmark("before onCraftMatrixChanged");
+
       onCraftMatrixChanged(matrix);
-      StorageNetwork.benchmark("after onCraftMatrixChanged; before ifElse");
-      if (!ItemHandlerHelper.canItemStacksStack(res, result.getStackInSlot(0))) {
-        break;
-      }
-      else {
-        res = result.getStackInSlot(0);
-      }
-      StorageNetwork.benchmark("after ifElse & end of while loop");
+
     }
-    StorageNetwork.log("Container.craftShift: SEND new StacksMessage UNDO what does this change");
-    //    PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) player);
     detectAndSendChanges();
     this.recipeLocked = false;
     //update recipe again in case remnants left : IE hammer and such
     this.onCraftMatrixChanged(this.matrix);
-    StorageNetwork.benchmark("[network base] end :: " + result.getStackInSlot(0));
+    //StorageNetwork.benchmark("[network base] end :: " + result.getStackInSlot(0));
     StorageNetwork.benchmark("end");
   }
 }

@@ -19,15 +19,11 @@ public class GuiRequest extends GuiContainerStorageInventory {
   @Override
   public void initGui() {
     super.initGui();
-    searchBar.setText(tile.search);
   }
 
   @Override
   public void updateScreen() {
     super.updateScreen();
-    if (searchBar != null) {
-      tile.search = searchBar.getText();
-    }
   }
 
   @Override
