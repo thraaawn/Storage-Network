@@ -158,7 +158,7 @@ public abstract class ContainerNetworkBase extends Container {
           recipeStack = recipeCopy.get(i);
           // StorageNetwork.benchmark( "Container.craftShift loop " + crafted + " slotIndex " + i);
           //////////////// booleans are meta, ore(?ignored?), nbt
-          filterItemCurrent = !recipeStack.isEmpty() ? new FilterItem(recipeStack, true, true, false) : null;
+          filterItemCurrent = !recipeStack.isEmpty() ? new FilterItem(recipeStack, true, false, false) : null;
           //false here means dont simulate
           //StorageNetwork.benchmark("before request");
           ItemStack req = tile.request(filterItemCurrent, 1, false);
