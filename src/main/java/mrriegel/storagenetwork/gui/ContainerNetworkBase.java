@@ -65,13 +65,14 @@ public abstract class ContainerNetworkBase extends Container {
     int sizePerCraft = res.getCount();
     int sizeFull = res.getMaxStackSize();
     int numberToCraft = sizeFull / sizePerCraft;
-    StorageNetwork.log("numberToCraft = " + numberToCraft);
     IRecipe r = CraftingManager.findMatchingRecipe(matrix, player.world);
-    if (r == null) {
+    if (r == null || r.getRecipeOutput().isEmpty()) {
+      StorageNetwork.instance.logger.error("Attempted to shift-craft null or empty recipe : " + r);
       return;
     }
+    StorageNetwork.log("numberToCraft = " + numberToCraft);
     while (crafted + res.getCount() <= res.getMaxStackSize()) {
-      StorageNetwork.benchmark("while loop top");
+
       if (!ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), true).isEmpty()) {
         break;
       }
@@ -82,20 +83,21 @@ public abstract class ContainerNetworkBase extends Container {
       //onTake replaced with this handcoded rewrite
       //  this.getSlot(0).onTake(player, res);// ontake this does the actaul craft see ContainerRequest
       //        this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
-      StorageNetwork.log("create recipe output" + r.getRecipeOutput().copy());
+      StorageNetwork.log("[CtrNetworkBase] create recipe output" + r.getRecipeOutput());
+      StorageNetwork.log("[CtrNetworkBase] create recipe COPY TEST" + r.getRecipeOutput().copy());
       ItemStack out = r.getRecipeOutput().copy();
       if (!player.inventory.addItemStackToInventory(out)) {
         player.dropItem(out, false);
       }
       NonNullList<ItemStack> remainder = CraftingManager.getRemainingItems(matrix, player.world);
-      StorageNetwork.benchmark("after getRemainingItems");
+      //StorageNetwork.benchmark("after getRemainingItems");
       for (int i = 0; i < remainder.size(); ++i) {
-        StorageNetwork.benchmark("before getstackinslot");
+        //StorageNetwork.benchmark("before getstackinslot");
         ItemStack slot = this.matrix.getStackInSlot(i);
-        if (slot.getUnlocalizedName().equals("item.alkahestry_tome")) {
-          StorageNetwork.benchmark(" BUG FOUND !!!!after getstackinslot from remainder = " + slot.getUnlocalizedName()
-            + " CONTAINER ITEM = " + slot.getItem().getContainerItem());
-        }
+        //        if (slot.getUnlocalizedName().equals("item.alkahestry_tome")) {
+        //          StorageNetwork.benchmark(" BUG FOUND !!!!after getstackinslot from remainder = " + slot.getUnlocalizedName()
+        //            + " CONTAINER ITEM = " + slot.getItem().getContainerItem());
+        //        }
         ItemStack remainderCurrent = remainder.get(i);
         //        StorageNetwork.benchmark("A");
         if (slot.getItem().getContainerItem() != null) { //is the fix for milk and similar

@@ -443,7 +443,7 @@ public class TileMaster extends TileEntity implements ITickable {
         StorageNetwork.log("inv.extractItem  slot=" + i + ", size=" + extractedCount + ", simulated=" + simulate);
 
         ItemStack extracted = inv.extractItem(i, extractedCount, simulate);
-        StorageNetwork.log("inv.extractItem RESULT I WAS GIVEN IS   " + extracted);
+        StorageNetwork.log("[TileMaster] inv.extractItem RESULT I WAS GIVEN IS   " + extracted);
         //   StorageNetwork.log("DISABLE markChunkDirty at  extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
         //world.markChunkDirty(pos, this);
         //the other KEY fix for https://github.com/PrinceOfAmber/Storage-Network/issues/19, where it 
