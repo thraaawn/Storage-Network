@@ -58,7 +58,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     this.craftableStacks = Lists.newArrayList();
     PacketRegistry.INSTANCE.sendToServer(new RequestMessage());
     lastClick = System.currentTimeMillis();
-
   }
 
   protected boolean canClick() {
@@ -77,7 +76,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     searchBar.setFocused(true);
     if (ConfigHandler.jeiLoaded && Settings.jeiSearch) {
       searchBar.setText(JeiHooks.getFilterText());
-      StorageNetwork.log("!!push to TEXT FROM JEI on open  " + searchBar.getText());
+
     }
     direction = new Button(0, guiLeft + 7, guiTop + 93, "");
     this.addButton(direction);
@@ -89,7 +88,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     }
     clearTextBtn = new Button(5, guiLeft + 64, guiTop + 93, "X");
     this.addButton(clearTextBtn);
-
   }
 
   public abstract int getLines();
@@ -243,16 +241,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (this.isScreenValid() == false) {
       return;
     }
-    //    if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
-    //      //if JEI has text, pull that in first
-    //      if (searchBar.getText().isEmpty() && !searchBar.getText().equals(JeiHooks.getFilterText())) {
-    //        searchBar.setText(JeiHooks.getFilterText());
-    //      }
-    //      else {
-    //        JeiHooks.setFilterText(searchBar.getText());
-    //      }
-    //      //StorageNetwork.log("push to JEI " + searchBar.getText() + " OLD in jei WAS " + JeiHooks.getFilterText());
-    //    }
+
     if (forceFocus) {
       this.searchBar.setFocused(true);
       if (this.searchBar.isFocused()) {

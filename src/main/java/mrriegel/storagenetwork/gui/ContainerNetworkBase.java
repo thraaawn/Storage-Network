@@ -58,7 +58,6 @@ public abstract class ContainerNetworkBase extends Container {
       return;
     }
     this.recipeLocked = true;
-
     int crafted = 0;
     List<ItemStack> recipeCopy = Lists.newArrayList();
     for (int i = 0; i < matrix.getSizeInventory(); i++) {
@@ -72,11 +71,9 @@ public abstract class ContainerNetworkBase extends Container {
     int sizePerCraft = res.getCount();
     int sizeFull = res.getMaxStackSize();
     int numberToCraft = sizeFull / sizePerCraft;
-
-    StorageNetwork.log("numberToCraft = " + numberToCraft + " for stack "+ res);
+    StorageNetwork.log("numberToCraft = " + numberToCraft + " for stack " + res);
     while (crafted + sizePerCraft <= res.getMaxStackSize()) {
       res = recipeCurrent.getCraftingResult(matrix);
-
       StorageNetwork.log("crafted = " + crafted + " ; res.count() = " + res.getCount() + " MAX=" + res.getMaxStackSize());
       if (!ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res, true).isEmpty()) {
         break;
@@ -87,7 +84,6 @@ public abstract class ContainerNetworkBase extends Container {
       }
       //onTake replaced with this handcoded rewrite
       //  this.getSlot(0).onTake(player, res);// ontake this does the actaul craft see ContainerRequest
-
       StorageNetwork.log("addItemStackToInventory " + res);
       if (!player.inventory.addItemStackToInventory(res)) {
         player.dropItem(res, false);
@@ -97,7 +93,6 @@ public abstract class ContainerNetworkBase extends Container {
       for (int i = 0; i < remainder.size(); ++i) {
         //StorageNetwork.benchmark("before getstackinslot");
         ItemStack slot = this.matrix.getStackInSlot(i);
-
         ItemStack remainderCurrent = remainder.get(i);
         //        StorageNetwork.benchmark("A");
         if (slot.getItem().getContainerItem() != null) { //is the fix for milk and similar
@@ -140,9 +135,7 @@ public abstract class ContainerNetworkBase extends Container {
           slot = this.matrix.getStackInSlot(i);
           //    StorageNetwork.benchmark("after isempty section");
         }
-        //        else {
-        //          StorageNetwork.benchmark("I");
-        //        }
+
       }
       //END onTake redo
       //StorageNetwork.benchmark("after onTake REFACTORED!");
@@ -167,19 +160,10 @@ public abstract class ContainerNetworkBase extends Container {
           //StorageNetwork.benchmark("after setInventorySlotContents");
         }
       }
-      // StorageNetwork.benchmark("before onCraftMatrixChanged");
+
       onCraftMatrixChanged(matrix);
-      //StorageNetwork.benchmark("after onCraftMatrixChanged; before ifElse");
-      //            if (!ItemHandlerHelper.canItemStacksStack(res, result.getStackInSlot(0))) {
-      //              break;
-      //            }
-      //            else {
-      //              res = result.getStackInSlot(0);
-      //            }
-      //    StorageNetwork.benchmark("after ifElse & end of while loop");
+
     }
-    //StorageNetwork.log("Container.craftShift: SEND new StacksMessage UNDO what does this change");
-    //    PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) player);
     detectAndSendChanges();
     this.recipeLocked = false;
     //update recipe again in case remnants left : IE hammer and such

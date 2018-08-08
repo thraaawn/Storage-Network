@@ -37,7 +37,6 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
   @Override
   public IMessage onMessage(final RequestMessage message, final MessageContext ctx) {
     IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
-
     mainThread.addScheduledTask(new Runnable() {
 
       @Override

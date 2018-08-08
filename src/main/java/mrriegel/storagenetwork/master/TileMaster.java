@@ -440,7 +440,6 @@ public class TileMaster extends TileEntity implements ITickable {
         int miss = size - result;
         int extractedCount = Math.min(inv.getStackInSlot(i).getCount(), miss);
         //   StorageNetwork.log("inv.extractItem  slot=" + i + ", size=" + extractedCount + ", simulated=" + simulate);
-
         ItemStack extracted = inv.extractItem(i, extractedCount, simulate);
         // StorageNetwork.log("[TileMaster] inv.extractItem RESULT I WAS GIVEN IS   " + extracted);
         //   StorageNetwork.log("DISABLE markChunkDirty at  extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing

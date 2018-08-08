@@ -74,7 +74,6 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
       public void run() {
         Container c = ctx.getServerHandler().player.openContainer;
         StorageNetwork.log("[RecipeMessage] new recipe packet. how do i tell if its an ore dict one " + message.nbt);
-       
         //NON ore dict entry looks like [{id:"betterwithmods:wood_siding",Count:1b,Damage:0s}]
         //ore dict entry is a ,s2:"plankWood"
         if (c instanceof ContainerNetworkBase) {

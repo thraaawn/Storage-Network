@@ -28,7 +28,6 @@ public class TileRequest extends TileConnectable {
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
     downwards = compound.getBoolean("dir");
-
     sort = EnumSortType.valueOf(compound.getString("sort"));
     NBTTagList invList = compound.getTagList("matrix", Constants.NBT.TAG_COMPOUND);
     matrix = new HashMap<Integer, ItemStack>();
@@ -45,7 +44,6 @@ public class TileRequest extends TileConnectable {
     super.writeToNBT(compound);
     compound.setBoolean("dir", downwards);
     compound.setString("sort", sort.toString());
-
     NBTTagList invList = new NBTTagList();
     invList = new NBTTagList();
     for (int i = 0; i < 9; i++) {

@@ -30,17 +30,14 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
 
   public static NBTTagCompound recipeToTag(Container container, IRecipeLayout recipeLayout) {
     NBTTagCompound nbt = new NBTTagCompound();
-
     Map<Integer, ? extends IGuiIngredient<ItemStack>> inputs = recipeLayout.getItemStacks().getGuiIngredients();
     for (Slot slot : container.inventorySlots) {
       if (slot.inventory instanceof InventoryCrafting) {
         //for some reason it was looping like this  (int j = 1; j < 10; j++)
-
         IGuiIngredient<ItemStack> ingredient = inputs.get(slot.getSlotIndex() + 1);
         if (ingredient == null) {
           continue;
         }
-
         List<ItemStack> possibleItems = ingredient.getAllIngredients();
         if (possibleItems == null) {
           continue;
@@ -67,7 +64,6 @@ public class RequestRecipeTransferHandler<C extends Container> implements IRecip
     if (doTransfer) {
       PacketRegistry.INSTANCE.sendToServer(new ClearMessage());
       NBTTagCompound nbt = RequestRecipeTransferHandler.recipeToTag(container, recipeLayout);
-
       PacketRegistry.INSTANCE.sendToServer(new RecipeMessage(nbt));
     }
     return null;
