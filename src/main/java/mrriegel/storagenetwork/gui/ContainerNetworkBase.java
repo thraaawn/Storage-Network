@@ -58,8 +58,7 @@ public abstract class ContainerNetworkBase extends Container {
       return;
     }
     this.recipeLocked = true;
-    //  StorageNetwork.log("Container.craftShift: algo start; CLIENT = " + player.world.isRemote);
-    //    SlotCrafting sl = new SlotCrafting(player, matrix, result, 0, 0, 0);
+
     int crafted = 0;
     List<ItemStack> recipeCopy = Lists.newArrayList();
     for (int i = 0; i < matrix.getSizeInventory(); i++) {
@@ -88,10 +87,7 @@ public abstract class ContainerNetworkBase extends Container {
       }
       //onTake replaced with this handcoded rewrite
       //  this.getSlot(0).onTake(player, res);// ontake this does the actaul craft see ContainerRequest
-      //        this.result.setInventorySlotContents(0, r.getRecipeOutput().copy());
-      //      StorageNetwork.log("[CtrNetworkBase] create recipe output" + recipeCurrent.getRecipeOutput());
-      //      StorageNetwork.log("[CtrNetworkBase] create recipe COPY TEST" + recipeCurrent.getRecipeOutput().copy());
-      //      ItemStack out = recipeCurrent.getRecipeOutput().copy();
+
       StorageNetwork.log("addItemStackToInventory " + res);
       if (!player.inventory.addItemStackToInventory(res)) {
         player.dropItem(res, false);
@@ -101,10 +97,7 @@ public abstract class ContainerNetworkBase extends Container {
       for (int i = 0; i < remainder.size(); ++i) {
         //StorageNetwork.benchmark("before getstackinslot");
         ItemStack slot = this.matrix.getStackInSlot(i);
-        //        if (slot.getUnlocalizedName().equals("item.alkahestry_tome")) {
-        //          StorageNetwork.benchmark(" BUG FOUND !!!!after getstackinslot from remainder = " + slot.getUnlocalizedName()
-        //            + " CONTAINER ITEM = " + slot.getItem().getContainerItem());
-        //        }
+
         ItemStack remainderCurrent = remainder.get(i);
         //        StorageNetwork.benchmark("A");
         if (slot.getItem().getContainerItem() != null) { //is the fix for milk and similar
@@ -174,9 +167,9 @@ public abstract class ContainerNetworkBase extends Container {
           //StorageNetwork.benchmark("after setInventorySlotContents");
         }
       }
-      StorageNetwork.benchmark("before onCraftMatrixChanged");
+      // StorageNetwork.benchmark("before onCraftMatrixChanged");
       onCraftMatrixChanged(matrix);
-      StorageNetwork.benchmark("after onCraftMatrixChanged; before ifElse");
+      //StorageNetwork.benchmark("after onCraftMatrixChanged; before ifElse");
       //            if (!ItemHandlerHelper.canItemStacksStack(res, result.getStackInSlot(0))) {
       //              break;
       //            }
