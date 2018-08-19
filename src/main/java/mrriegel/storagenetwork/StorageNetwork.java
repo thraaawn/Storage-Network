@@ -10,11 +10,15 @@ import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.ModItems;
+import mrriegel.storagenetwork.remote.ItemRemote;
 import mrriegel.storagenetwork.request.BlockRequest;
 import mrriegel.storagenetwork.request.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -99,11 +103,23 @@ public class StorageNetwork {
     for (int i = 0; i < ItemUpgrade.NUM; i++) {
       ModelLoader.setCustomModelResourceLocation(ModItems.upgrade, i, new ModelResourceLocation(StorageNetwork.MODID + ":upgrade_" + i, "inventory"));
     }
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < ItemRemote.RemoteType.values().length; i++) {
       ModelLoader.setCustomModelResourceLocation(ModItems.remote, i, new ModelResourceLocation(StorageNetwork.MODID + ":remote_" + i, "inventory"));
     }
   }
 
+  public static void chatMessage(EntityPlayer player, String message) {
+    if (player.world.isRemote)
+      player.sendMessage(new TextComponentString(lang(message)));
+  }
+
+  public static void statusMessage(EntityPlayer player, String message) {
+    if (player.world.isRemote)
+      player.sendStatusMessage(new TextComponentString(lang(message)), true);
+  }
+  public static String lang(String message) {
+    return I18n.translateToLocal(message);
+  }
   private static long lastTime;
 
   public static void benchmark(String s) {

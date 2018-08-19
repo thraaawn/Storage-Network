@@ -22,13 +22,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemRemote extends Item {
+
+  public enum RemoteType {
+    LIMITED, DIMENSIONAL, UNLIMITED;
+  }
 
   public ItemRemote() {
     super();
@@ -41,7 +44,7 @@ public class ItemRemote extends Item {
   @SideOnly(Side.CLIENT)
   public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list) {
     if (isInCreativeTab(tab)) {
-      for (int i = 0; i < 2; i++) {
+      for (int i = 0; i < RemoteType.values().length; i++) {
         list.add(new ItemStack(this, 1, i));
       }
     }
@@ -56,36 +59,67 @@ public class ItemRemote extends Item {
   public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
     tooltip.add(I18n.format("tooltip.storagenetwork.remote_" + stack.getItemDamage()));
     if (stack.hasTagCompound() && NBTHelper.getBoolean(stack, "bound")) {
-      tooltip.add("Dimension: " + NBTHelper.getInteger(stack, "dim") + ", x: " + NBTHelper.getInteger(stack, "x") + ", y: " + NBTHelper.getInteger(stack, "y") + ", z: " + NBTHelper.getInteger(stack, "z"));
+      // "Dimension: " + 
+      tooltip.add(NBTHelper.getInteger(stack, "dim") + ", x: " + NBTHelper.getInteger(stack, "x") + ", y: " + NBTHelper.getInteger(stack, "y") + ", z: " + NBTHelper.getInteger(stack, "z"));
     }
   }
 
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
-    ItemStack itemStackIn = playerIn.getHeldItem(hand);
-    if (worldIn.isRemote) {
-      return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
-    }
+  public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand hand) {
+    ItemStack itemStackIn = player.getHeldItem(hand);
+    //    if (worldIn.isRemote) {
+    //      return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+    //    }
     int x = NBTHelper.getInteger(itemStackIn, "x");
     int y = NBTHelper.getInteger(itemStackIn, "y");
     int z = NBTHelper.getInteger(itemStackIn, "z");
-    World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(itemStackIn, "dim"));
-    if (NBTHelper.getBoolean(itemStackIn, "bound") && world.getTileEntity(new BlockPos(x, y, z)) instanceof TileMaster) {
-      if ((itemStackIn.getItemDamage() == 0 && NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() && playerIn.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor) || itemStackIn.getItemDamage() == 1) {
-        if (world.getChunkFromBlockCoords(new BlockPos(x, y, z)).isLoaded()) {
-          if (NBTHelper.getString(itemStackIn, "sort") == null)
-            NBTHelper.setString(itemStackIn, "sort", EnumSortType.NAME.toString());
-          playerIn.openGui(StorageNetwork.instance, getGui(), world, x, y, z);
-          return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
-        }
-        else
-          playerIn.sendMessage(new TextComponentString("Cable Master not loaded."));
-      }
-      else if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() || playerIn.getDistance(x, y, z) > 32))
-        if (!worldIn.isRemote)
-          playerIn.sendMessage(new TextComponentString("Out of Range"));
+    BlockPos targetPos = new BlockPos(x, y, z);
+    World serverTargetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(itemStackIn, "dim"));
+
+    int itemDamage = itemStackIn.getItemDamage();
+    if (itemDamage < 0 || itemDamage >= RemoteType.values().length || !NBTHelper.getBoolean(itemStackIn, "bound")) {
+      //unbound or invalid data
+      return super.onItemRightClick(worldIn, player, hand);
     }
-    return super.onItemRightClick(worldIn, playerIn, hand);
+    if (serverTargetWorld.getChunkFromBlockCoords(targetPos).isLoaded() == false) {
+      StorageNetwork.chatMessage(player, "item.remote.notloaded");
+      return super.onItemRightClick(worldIn, player, hand);
+    }
+    RemoteType remoteType = RemoteType.values()[itemDamage];
+    // first make sure area is loaded, BEFORE getting TE
+    if (serverTargetWorld.getTileEntity(targetPos) instanceof TileMaster) {
+      boolean isSameDimension = (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension());
+      boolean isWithinRange = (player.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor);
+      boolean canOpenGUI = false;
+      switch (remoteType) {
+        case DIMENSIONAL:
+          //all dimensions, unlimited range
+          canOpenGUI = true;
+        break;
+        case LIMITED:
+          //same dimension AND limited range
+          canOpenGUI = isSameDimension && isWithinRange;
+        break;
+        case UNLIMITED:
+          //unlimited range, but MUST be same dimension
+          canOpenGUI = isSameDimension;
+        break;
+      }
+      // ok we found a target
+      if (canOpenGUI) {
+        // validate possible missing data 
+        if (NBTHelper.getString(itemStackIn, "sort") == null) {
+          NBTHelper.setString(itemStackIn, "sort", EnumSortType.NAME.toString());
+        }
+        player.openGui(StorageNetwork.instance, getGui(), serverTargetWorld, x, y, z);
+        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+      }
+      else {// if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() || player.getDistance(x, y, z) > 32))
+        //        StorageNetwork.log("out of range");
+        StorageNetwork.statusMessage(player, "item.remote.outofrange");
+      }
+    }
+    return super.onItemRightClick(worldIn, player, hand);
   }
 
   @Override
