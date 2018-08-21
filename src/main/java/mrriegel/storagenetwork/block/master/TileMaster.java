@@ -13,8 +13,8 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.AbstractFilterTile.Direction;
 import mrriegel.storagenetwork.block.IConnectable;
+import mrriegel.storagenetwork.block.cable.EnumCableKind;
 import mrriegel.storagenetwork.block.cable.TileCable;
-import mrriegel.storagenetwork.block.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.util.NBTHelper;
@@ -456,9 +456,9 @@ public class TileMaster extends TileEntity implements ITickable {
         refreshNetwork();
       }
       List<TileEntity> links = getAttachedTileEntities();
-      List<TileCable> importCables = getAttachedCables(links, CableKind.imKabel);
+      List<TileCable> importCables = getAttachedCables(links, EnumCableKind.imKabel);
       updateImports(importCables);
-      List<TileCable> exportCables = getAttachedCables(links, CableKind.exKabel);
+      List<TileCable> exportCables = getAttachedCables(links, EnumCableKind.exKabel);
       updateExports(exportCables);
     }
     catch (Throwable e) {
@@ -466,7 +466,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
   }
 
-  private List<TileCable> getAttachedCables(List<TileEntity> links, CableKind kind) {
+  private List<TileCable> getAttachedCables(List<TileEntity> links, EnumCableKind kind) {
     List<TileCable> attachedCables = Lists.newArrayList();
     for (TileEntity tileIn : links) {
       if (tileIn instanceof TileCable) {

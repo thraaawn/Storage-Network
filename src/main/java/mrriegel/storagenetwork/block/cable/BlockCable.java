@@ -9,7 +9,6 @@ import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractBlockConnectable;
 import mrriegel.storagenetwork.block.IConnectable;
-import mrriegel.storagenetwork.block.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.registry.ModBlocks;
@@ -31,7 +30,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -40,21 +38,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockCable extends AbstractBlockConnectable {
-
-  public static enum EnumConnectType implements IStringSerializable {
-    CONNECT("connect"), STORAGE("storage"), NULL("null");
-
-    String name;
-
-    private EnumConnectType(String name) {
-      this.name = name;
-    }
-
-    @Override
-    public String getName() {
-      return name;
-    }
-  }
 
   public BlockCable() {
     super(Material.IRON);
@@ -102,7 +85,7 @@ public class BlockCable extends AbstractBlockConnectable {
       return true;
     }
     TileCable tile = (TileCable) worldIn.getTileEntity(pos);
-    if (tile.getKind() != CableKind.kabel) {
+    if (tile.getKind() != EnumCableKind.kabel) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }

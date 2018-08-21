@@ -6,7 +6,6 @@ import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
-import mrriegel.storagenetwork.block.cable.BlockCable.EnumConnectType;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
@@ -32,10 +31,6 @@ public class TileCable extends AbstractFilterTile {
   public EnumConnectType north, south, east, west, up, down;
   ItemStack stack = null;
 
-  public enum CableKind {
-    kabel, exKabel, imKabel, storageKabel;
-  }
-
   public TileCable() {
     this.setOres(false);
     this.setMeta(true);
@@ -52,19 +47,19 @@ public class TileCable extends AbstractFilterTile {
   }
 
   public boolean isUpgradeable() {
-    CableKind kind = getKind();
-    return kind == CableKind.exKabel || kind == CableKind.imKabel;
+    EnumCableKind kind = getKind();
+    return kind == EnumCableKind.exKabel || kind == EnumCableKind.imKabel;
   }
 
-  public static CableKind getKind(Block b) {
+  public static EnumCableKind getKind(Block b) {
     if (b == ModBlocks.kabel)
-      return CableKind.kabel;
+      return EnumCableKind.kabel;
     if (b == ModBlocks.exKabel)
-      return CableKind.exKabel;
+      return EnumCableKind.exKabel;
     if (b == ModBlocks.imKabel)
-      return CableKind.imKabel;
+      return EnumCableKind.imKabel;
     if (b == ModBlocks.storageKabel)
-      return CableKind.storageKabel;
+      return EnumCableKind.storageKabel;
     return null;
   }
 
@@ -183,7 +178,7 @@ public class TileCable extends AbstractFilterTile {
     return bb;
   }
 
-  public CableKind getKind() {
+  public EnumCableKind getKind() {
     if (world == null)
       return null;
     return getKind(world.getBlockState(pos).getBlock());
@@ -258,6 +253,6 @@ public class TileCable extends AbstractFilterTile {
 
   @Override
   public boolean isStorage() {
-    return getKind() == CableKind.storageKabel;
+    return getKind() == EnumCableKind.storageKabel;
   }
 }

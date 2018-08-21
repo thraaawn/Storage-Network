@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
-import mrriegel.storagenetwork.block.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.gui.GuiContainerBase;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.network.CableDataMessage;
@@ -31,7 +30,7 @@ public class GuiCable extends GuiContainerBase {
 
   private static final int TEXTBOX_WIDTH = 26;
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
-  CableKind kind;
+  EnumCableKind kind;
   Button btnPlus, btnMinus, btnWhite, btnOperationToggle, btnImport, btnInputOutputStorage;
   AbstractFilterTile tile;
   private GuiTextField searchBar;
