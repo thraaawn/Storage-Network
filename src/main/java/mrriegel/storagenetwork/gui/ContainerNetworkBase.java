@@ -21,8 +21,8 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 public abstract class ContainerNetworkBase extends Container {
 
   public InventoryPlayer playerInv;
-  public InventoryCraftResult result;
-  public InventoryCrafting matrix;
+  protected InventoryCraftResult result;
+  protected InventoryCraftingNetwork matrix;
   public boolean recipeLocked = false;
 
   public abstract InventoryCrafting getCraftMatrix();

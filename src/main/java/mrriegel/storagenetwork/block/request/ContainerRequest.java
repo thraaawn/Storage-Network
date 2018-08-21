@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
+import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
 import mrriegel.storagenetwork.network.StacksMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
@@ -28,15 +29,15 @@ public class ContainerRequest extends ContainerNetworkBase {
   public TileRequest tile;
 
   public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
-    matrix = new InventoryCrafting(this, 3, 3);
+    matrix = new InventoryCraftingNetwork(this, tile.matrix);
     this.tile = tile;
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
     //reload saved item stacks FOR the grid
-    for (int i = 0; i < 9; i++) {
-      if (tile.matrix.get(i) != null && tile.matrix.get(i).isEmpty() == false)
-        matrix.setInventorySlotContents(i, tile.matrix.get(i));
-    }
+    //    for (int i = 0; i < 9; i++) {
+    //      if (tile.matrix.get(i) != null && tile.matrix.get(i).isEmpty() == false)
+    //        matrix.setInventorySlotContents(i, tile.matrix.get(i));
+    //    }
     //crafting output slot
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, matrix, result, 0, 101, 128) {
 

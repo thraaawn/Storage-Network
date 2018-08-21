@@ -1,10 +1,12 @@
 package mrriegel.storagenetwork.item.remote;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
+import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
 import mrriegel.storagenetwork.network.StacksMessage;
 import mrriegel.storagenetwork.registry.ModItems;
 import mrriegel.storagenetwork.registry.PacketRegistry;
@@ -30,16 +32,21 @@ public class ContainerRemote extends ContainerNetworkBase {
   public ItemStack remoteItemStack;
 
   public ContainerRemote(final InventoryPlayer playerInv) {
-    matrix = new InventoryCrafting(this, 3, 3);
+
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
     remoteItemStack = playerInv.getCurrentItem();
     if (!playerInv.player.world.isRemote) {
       tileMaster = ItemRemote.getTile(remoteItemStack);
     }
+    List<ItemStack> storage = new ArrayList<ItemStack>();
     for (int i = 0; i < 9; i++) {
-      matrix.setInventorySlotContents(i, NBTHelper.getItemStack(remoteItemStack, "c" + i));
+      storage.add(NBTHelper.getItemStack(remoteItemStack, "c" + i));
     }
+    matrix = new InventoryCraftingNetwork(this, storage);
+    //    for (int i = 0; i < 9; i++) {
+    //      matrix.setInventorySlotContents(i, NBTHelper.getItemStack(remoteItemStack, "c" + i));
+    //    }
     SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, matrix, result, 0, 101, 128) {
 
       @Override
