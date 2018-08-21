@@ -2,9 +2,9 @@ package mrriegel.storagenetwork.block.request;
 
 import java.util.List;
 import javax.annotation.Nullable;
-import mrriegel.storagenetwork.AbstractBlockConnectable;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.block.AbstractBlockConnectable;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.util.UtilTileEntity;
