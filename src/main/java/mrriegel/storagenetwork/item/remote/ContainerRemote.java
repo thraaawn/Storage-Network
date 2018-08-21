@@ -24,6 +24,8 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRemote extends ContainerNetworkBase {
@@ -32,7 +34,6 @@ public class ContainerRemote extends ContainerNetworkBase {
   public ItemStack remoteItemStack;
 
   public ContainerRemote(final InventoryPlayer playerInv) {
-
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
     remoteItemStack = playerInv.getCurrentItem();
@@ -65,8 +66,10 @@ public class ContainerRemote extends ContainerNetworkBase {
               && tileMaster != null) {
             ItemStack req = tileMaster.request(
                 !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
-            if (!req.isEmpty())
+            if (!req.isEmpty()) {
+              StorageNetwork.benchmark("PARENT REMOTE ON TAKE  matrix change event  ");
               matrix.setInventorySlotContents(i, req);
+            }
           }
         }
         if (tileMaster != null) {
@@ -107,6 +110,17 @@ public class ContainerRemote extends ContainerNetworkBase {
         this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
     }
     this.onCraftMatrixChanged(this.matrix);
+  }
+
+  @Override
+  @SideOnly(Side.CLIENT)
+  public void setAll(List<ItemStack> listIn) {
+    //    super.setAll(p_190896_1_);
+    matrix.skipEvents = true;
+    for (int i = 0; i < listIn.size(); ++i) {
+      this.getSlot(i).putStack(listIn.get(i));
+    }
+    matrix.skipEvents = false;
   }
 
   @Override
@@ -167,9 +181,8 @@ public class ContainerRemote extends ContainerNetworkBase {
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     IRecipe r = null;
     try {
-      //   StorageNetwork.benchmark("findMatchingRecipe start");
+      StorageNetwork.benchmark("findMatchingRecipe start");
       r = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
-      // StorageNetwork.benchmark("findMatchingRecipe end");
     }
     catch (java.util.NoSuchElementException err) {
       // this seems basically out of my control, its DEEP in vanilla and some library, no idea whats up with that 
@@ -180,11 +193,13 @@ public class ContainerRemote extends ContainerNetworkBase {
       StorageNetwork.instance.logger.error("Error finding recipe [-1]", e);
     }
     if (r != null) {
+      StorageNetwork.benchmark("findMatchingRecipe end success");
       ItemStack itemstack = r.getCraftingResult(this.matrix);
       //real way to not lose nbt tags BETTER THAN COPY 
       this.result.setInventorySlotContents(0, itemstack);
     }
     else {
+      StorageNetwork.benchmark("findMatchingRecipe end fail ");
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
     }
   }
