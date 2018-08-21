@@ -30,7 +30,7 @@ public class GuiCable extends GuiContainerBase {
 
   private static final int TEXTBOX_WIDTH = 26;
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
-  EnumCableKind kind;
+
   Button btnPlus, btnMinus, btnWhite, btnOperationToggle, btnImport, btnInputOutputStorage;
   AbstractFilterTile tile;
   private GuiTextField searchBar;
@@ -44,9 +44,7 @@ public class GuiCable extends GuiContainerBase {
     this.xSize = 176;
     this.ySize = 171;
     this.tile = inventorySlotsIn.tile;
-    if (tile instanceof TileCable) {
-      this.kind = ((TileCable) tile).getKind();
-    }
+
     list = Lists.newArrayList();
   }
 

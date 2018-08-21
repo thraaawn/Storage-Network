@@ -85,7 +85,7 @@ public class BlockCable extends AbstractBlockConnectable {
       return true;
     }
     TileCable tile = (TileCable) worldIn.getTileEntity(pos);
-    if (tile.getKind() != EnumCableKind.kabel) {
+    if (tile.getBlockType() != ModBlocks.kabel) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }

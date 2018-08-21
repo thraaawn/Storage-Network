@@ -13,15 +13,16 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.AbstractFilterTile.Direction;
 import mrriegel.storagenetwork.block.IConnectable;
-import mrriegel.storagenetwork.block.cable.EnumCableKind;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.item.ItemUpgrade;
+import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.NBTHelper;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.FilterItem;
 import mrriegel.storagenetwork.util.data.StackWrapper;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -456,9 +457,9 @@ public class TileMaster extends TileEntity implements ITickable {
         refreshNetwork();
       }
       List<TileEntity> links = getAttachedTileEntities();
-      List<TileCable> importCables = getAttachedCables(links, EnumCableKind.imKabel);
+      List<TileCable> importCables = getAttachedCables(links, ModBlocks.imKabel);
       updateImports(importCables);
-      List<TileCable> exportCables = getAttachedCables(links, EnumCableKind.exKabel);
+      List<TileCable> exportCables = getAttachedCables(links, ModBlocks.exKabel);
       updateExports(exportCables);
     }
     catch (Throwable e) {
@@ -466,12 +467,12 @@ public class TileMaster extends TileEntity implements ITickable {
     }
   }
 
-  private List<TileCable> getAttachedCables(List<TileEntity> links, EnumCableKind kind) {
+  private List<TileCable> getAttachedCables(List<TileEntity> links, Block kind) {
     List<TileCable> attachedCables = Lists.newArrayList();
     for (TileEntity tileIn : links) {
       if (tileIn instanceof TileCable) {
         TileCable tile = (TileCable) tileIn;
-        if (tile.getKind() == kind && tile.getInventory() != null) {
+        if (tile.getBlockType() == kind && tile.getInventory() != null) {
           attachedCables.add(tile);
         }
       }

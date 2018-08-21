@@ -160,7 +160,9 @@ public class ContainerRemote extends ContainerNetworkBase {
   public void onCraftMatrixChanged(IInventory inventoryIn) {
     IRecipe r = null;
     try {
+      //   StorageNetwork.benchmark("findMatchingRecipe start");
       r = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
+      // StorageNetwork.benchmark("findMatchingRecipe end");
     }
     catch (java.util.NoSuchElementException err) {
       // this seems basically out of my control, its DEEP in vanilla and some library, no idea whats up with that 

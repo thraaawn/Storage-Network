@@ -11,7 +11,6 @@ import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.data.FilterItem;
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -47,21 +46,9 @@ public class TileCable extends AbstractFilterTile {
   }
 
   public boolean isUpgradeable() {
-    EnumCableKind kind = getKind();
-    return kind == EnumCableKind.exKabel || kind == EnumCableKind.imKabel;
+    return this.blockType == ModBlocks.imKabel || this.blockType == ModBlocks.exKabel;
   }
 
-  public static EnumCableKind getKind(Block b) {
-    if (b == ModBlocks.kabel)
-      return EnumCableKind.kabel;
-    if (b == ModBlocks.exKabel)
-      return EnumCableKind.exKabel;
-    if (b == ModBlocks.imKabel)
-      return EnumCableKind.imKabel;
-    if (b == ModBlocks.storageKabel)
-      return EnumCableKind.storageKabel;
-    return null;
-  }
 
   public Map<EnumFacing, EnumConnectType> getConnects() {
     Map<EnumFacing, EnumConnectType> map = Maps.newHashMap();
@@ -178,12 +165,6 @@ public class TileCable extends AbstractFilterTile {
     return bb;
   }
 
-  public EnumCableKind getKind() {
-    if (world == null)
-      return null;
-    return getKind(world.getBlockState(pos).getBlock());
-  }
-
   public BlockPos getConnectedInventory() {
     return connectedInventory;
   }
@@ -253,6 +234,6 @@ public class TileCable extends AbstractFilterTile {
 
   @Override
   public boolean isStorage() {
-    return getKind() == EnumCableKind.storageKabel;
+    return this.getBlockType() == ModBlocks.storageKabel;
   }
 }
