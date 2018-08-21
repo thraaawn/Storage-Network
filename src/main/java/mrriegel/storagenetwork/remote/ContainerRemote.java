@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.remote;
 
 import java.util.List;
 import com.google.common.collect.Lists;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.data.FilterItem;
 import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
@@ -157,7 +158,18 @@ public class ContainerRemote extends ContainerNetworkBase {
 
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
-    IRecipe r = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
+    IRecipe r = null;
+    try {
+      r = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
+    }
+    catch (java.util.NoSuchElementException err) {
+      // this seems basically out of my control, its DEEP in vanilla and some library, no idea whats up with that 
+      // https://pastebin.com/2S9LSe23
+      StorageNetwork.instance.logger.error("Error finding recipe [0] Possible conflict with forge, vanilla, or Storage Network", err);
+    }
+    catch (Throwable e) {
+      StorageNetwork.instance.logger.error("Error finding recipe [-1]", e);
+    }
     if (r != null) {
       ItemStack itemstack = r.getCraftingResult(this.matrix);
       //real way to not lose nbt tags BETTER THAN COPY 

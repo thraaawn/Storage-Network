@@ -112,20 +112,27 @@ public class ContainerRequest extends ContainerNetworkBase {
       //StorageNetwork.log("recipe locked so onCraftMatrixChanged cancelled");
       return;
     }
-    // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged");
-    IRecipe r = CraftingManager.findMatchingRecipe(matrix, tile.getWorld());
-    // StorageNetwork.benchmark("[cr] start . onCraftMatrixChanged - afterFindRecipe");
+    IRecipe r = null;
+    try {
+      r = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
+    }
+    catch (java.util.NoSuchElementException err) {
+      // this seems basically out of my control, its DEEP in vanilla and some library, no idea whats up with that 
+      // https://pastebin.com/2S9LSe23
+      StorageNetwork.instance.logger.error("Error finding recipe [0] Possible conflict with forge, vanilla, or Storage Network", err);
+    }
+    catch (Throwable e) {
+      StorageNetwork.instance.logger.error("Error finding recipe [-1]", e);
+    }
     if (r != null) {
       //      StorageNetwork.log("craft out nbt " + r.getRecipeOutput().copy().getTagCompound());
       ItemStack itemstack = r.getCraftingResult(this.matrix);
       //real way to not lose nbt tags BETTER THAN COPY
-      //      StorageNetwork.log("!!!!!!!!!!TEST itemstack " + itemstack.getTagCompound());
       this.result.setInventorySlotContents(0, itemstack);
     }
     else {
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
     }
-    //  StorageNetwork.benchmark("[cr] end . onCraftMatrixChanged");
   }
 
   @Override
