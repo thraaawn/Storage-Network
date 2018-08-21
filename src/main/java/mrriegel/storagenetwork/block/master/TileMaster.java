@@ -9,9 +9,10 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
-import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.AbstractFilterTile.Direction;
+import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.cable.TileCable.CableKind;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -225,8 +226,8 @@ public class TileMaster extends TileEntity implements ITickable {
     try {
       addConnectables(pos);
     }
-    catch (Error e) {
-      e.printStackTrace();
+    catch (Throwable e) {
+      StorageNetwork.instance.logger.error("Refresh network error ", e);
     }
     addInventorys();
     world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
@@ -287,8 +288,7 @@ public class TileMaster extends TileEntity implements ITickable {
     return in.getCount();
   }
 
-  public void updateImports() {
-    List<TileCable> attachedCables = getAttachedCables(CableKind.imKabel);
+  public void updateImports(List<TileCable> attachedCables) {
     for (TileCable tileCable : attachedCables) {
       IItemHandler inv = tileCable.getInventory();
       int speedRatio = tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1;
@@ -324,8 +324,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
   }
 
-  public void updateExports() {
-    List<TileCable> attachedCables = getAttachedCables(CableKind.exKabel);
+  public void updateExports(List<TileCable> attachedCables) {
     for (TileCable tileCable : attachedCables) {
       if (tileCable == null || tileCable.getInventory() == null) {
         continue;
@@ -381,27 +380,6 @@ public class TileMaster extends TileEntity implements ITickable {
         break;
       }
     }
-  }
-
-  public List<TileCable> getAttachedCables(CableKind kind) {
-    List<TileCable> attachedCables = Lists.newArrayList();
-    for (BlockPos p : connectables) {
-      if (!(world.getTileEntity(p) instanceof TileCable)) {
-        continue;
-      }
-      TileCable tile = (TileCable) world.getTileEntity(p);
-      if (tile.getKind() == kind && tile.getInventory() != null) {
-        attachedCables.add(tile);
-      }
-    }
-    Collections.sort(attachedCables, new Comparator<TileCable>() {
-
-      @Override
-      public int compare(TileCable o1, TileCable o2) {
-        return Integer.compare(o1.getPriority(), o2.getPriority());
-      }
-    });
-    return attachedCables;
   }
 
   public ItemStack request(FilterItem fil, final int size, boolean simulate) {
@@ -471,18 +449,55 @@ public class TileMaster extends TileEntity implements ITickable {
     if (world == null || world.isRemote) {
       return;
     }
-    //refresh time in config, default 200 ticks
+    //refresh time in config, default 200 ticks aka 10 seconds
     try {
       if (storageInventorys == null || connectables == null
           || (world.getTotalWorldTime() % (ConfigHandler.refreshTicks) == 0)) {
         refreshNetwork();
       }
-      updateImports();
-      updateExports();
+      List<TileEntity> links = getAttachedTileEntities();
+      List<TileCable> importCables = getAttachedCables(links, CableKind.imKabel);
+      updateImports(importCables);
+      List<TileCable> exportCables = getAttachedCables(links, CableKind.exKabel);
+      updateExports(exportCables);
     }
-    catch (Exception e) {
-      e.printStackTrace();
+    catch (Throwable e) {
+      StorageNetwork.instance.logger.error("Refresh network error ", e);
     }
+  }
+
+  private List<TileCable> getAttachedCables(List<TileEntity> links, CableKind kind) {
+    List<TileCable> attachedCables = Lists.newArrayList();
+    for (TileEntity tileIn : links) {
+      if (tileIn instanceof TileCable) {
+        TileCable tile = (TileCable) tileIn;
+        if (tile.getKind() == kind && tile.getInventory() != null) {
+          attachedCables.add(tile);
+        }
+      }
+    }
+    sortCablesByPriority(attachedCables);
+    return attachedCables;
+  }
+
+  private void sortCablesByPriority(List<TileCable> attachedCables) {
+    Collections.sort(attachedCables, new Comparator<TileCable>() {
+
+      @Override
+      public int compare(TileCable o1, TileCable o2) {
+        return Integer.compare(o1.getPriority(), o2.getPriority());
+      }
+    });
+  }
+
+  private List<TileEntity> getAttachedTileEntities() {
+    List<TileEntity> attachedCables = Lists.newArrayList();
+    TileEntity tile = null;
+    for (BlockPos p : connectables) {
+      tile = world.getTileEntity(p);
+      attachedCables.add(world.getTileEntity(p));
+    }
+    return attachedCables;
   }
 
   @Override

@@ -17,6 +17,7 @@ public class ConfigHandler {
     config = new Configuration(file);
     config.load();
     smallFont = config.getBoolean("smallFont", Configuration.CATEGORY_CLIENT, true, "Font size toggle");
+    //    default 200 ticks aka 10 seconds
     refreshTicks = config.getInt("AutoRefreshTicks", Configuration.CATEGORY_GENERAL, 200, 1, 10000, "How often to auto-refresh a network (one second is 20 ticks)");
     rangeWirelessAccessor = config.getInt("StorageRemoteRange", Configuration.CATEGORY_GENERAL, 128, 1, 10000, "How far the Remote item can reach (non-advanced)");
     ConfigHandler.logEverything = config.getBoolean("LogSpamAllTheThings", Configuration.CATEGORY_GENERAL, false, "Log lots of events, some with systemtime benchmarking. WARNING: VERY SPAMMY. Only use when debugging lag or other issues.");
