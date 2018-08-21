@@ -45,6 +45,32 @@ public abstract class ContainerNetworkBase extends Container {
     super.onCraftMatrixChanged(inventoryIn);
   }
 
+  protected void findMatchingRecipe(InventoryCrafting craftMatrix) {
+    IRecipe recipe = null;
+    try {
+      StorageNetwork.benchmark("findMatchingRecipe start");
+      recipe = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
+    }
+    catch (java.util.NoSuchElementException err) {
+      // this seems basically out of my control, its DEEP in vanilla and some library, no idea whats up with that 
+      // https://pastebin.com/2S9LSe23
+      StorageNetwork.instance.logger.error("Error finding recipe [0] Possible conflict with forge, vanilla, or Storage Network", err);
+    }
+    catch (Throwable e) {
+      StorageNetwork.instance.logger.error("Error finding recipe [-1]", e);
+    }
+    if (recipe != null) {
+      StorageNetwork.benchmark("findMatchingRecipe end success");
+      ItemStack itemstack = recipe.getCraftingResult(this.matrix);
+      //real way to not lose nbt tags BETTER THAN COPY 
+      this.result.setInventorySlotContents(0, itemstack);
+    }
+    else {
+      StorageNetwork.benchmark("findMatchingRecipe end fail ");
+      this.result.setInventorySlotContents(0, ItemStack.EMPTY);
+    }
+  }
+
   /**
    * A note on the shift-craft delay bug root cause was ANY interaction with matrix (setting contents etc) was causing triggers/events to do a recipe lookup. Meaning during this shift-click action you
    * can get up to 9x64 FULL recipe scans Solution is just to disable all those triggers but only for duration of this action
