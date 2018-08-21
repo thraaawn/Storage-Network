@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.config;
 
 import java.io.File;
-import mrriegel.storagenetwork.tile.TileConnectable;
+import mrriegel.storagenetwork.block.TileConnectable;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Loader;
 

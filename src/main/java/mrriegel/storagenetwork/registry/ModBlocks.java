@@ -1,8 +1,8 @@
 package mrriegel.storagenetwork.registry;
 
-import mrriegel.storagenetwork.cable.BlockCable;
-import mrriegel.storagenetwork.master.BlockMaster;
-import mrriegel.storagenetwork.request.BlockRequest;
+import mrriegel.storagenetwork.block.cable.BlockCable;
+import mrriegel.storagenetwork.block.master.BlockMaster;
+import mrriegel.storagenetwork.block.request.BlockRequest;
 import net.minecraft.block.Block;
 
 public class ModBlocks {

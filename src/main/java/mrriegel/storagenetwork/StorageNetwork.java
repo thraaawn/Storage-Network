@@ -1,18 +1,18 @@
 package mrriegel.storagenetwork;
 
 import org.apache.logging.log4j.Logger;
-import mrriegel.storagenetwork.cable.BlockCable;
-import mrriegel.storagenetwork.cable.TileCable;
+import mrriegel.storagenetwork.block.cable.BlockCable;
+import mrriegel.storagenetwork.block.cable.TileCable;
+import mrriegel.storagenetwork.block.master.BlockMaster;
+import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.block.request.BlockRequest;
+import mrriegel.storagenetwork.block.request.TileRequest;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.items.ItemUpgrade;
-import mrriegel.storagenetwork.master.BlockMaster;
-import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.item.ItemUpgrade;
+import mrriegel.storagenetwork.item.remote.ItemRemote;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.ModItems;
-import mrriegel.storagenetwork.remote.ItemRemote;
-import mrriegel.storagenetwork.request.BlockRequest;
-import mrriegel.storagenetwork.request.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;

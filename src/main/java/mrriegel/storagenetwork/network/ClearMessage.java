@@ -2,10 +2,10 @@ package mrriegel.storagenetwork.network;
 
 import java.util.List;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
-import mrriegel.storagenetwork.master.TileMaster;
 import mrriegel.storagenetwork.registry.PacketRegistry;
+import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;

@@ -2,11 +2,11 @@ package mrriegel.storagenetwork.network;
 
 import java.util.List;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.data.StackWrapper;
-import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.block.request.ContainerRequest;
+import mrriegel.storagenetwork.item.remote.ContainerRemote;
 import mrriegel.storagenetwork.registry.PacketRegistry;
-import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.request.ContainerRequest;
+import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;

@@ -1,14 +1,14 @@
 package mrriegel.storagenetwork.gui;
 
-import mrriegel.storagenetwork.cable.ContainerCable;
-import mrriegel.storagenetwork.cable.GuiCable;
-import mrriegel.storagenetwork.helper.UtilTileEntity;
-import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.remote.GuiRemote;
-import mrriegel.storagenetwork.request.ContainerRequest;
-import mrriegel.storagenetwork.request.GuiRequest;
-import mrriegel.storagenetwork.request.TileRequest;
-import mrriegel.storagenetwork.tile.AbstractFilterTile;
+import mrriegel.storagenetwork.block.AbstractFilterTile;
+import mrriegel.storagenetwork.block.cable.ContainerCable;
+import mrriegel.storagenetwork.block.cable.GuiCable;
+import mrriegel.storagenetwork.block.request.ContainerRequest;
+import mrriegel.storagenetwork.block.request.GuiRequest;
+import mrriegel.storagenetwork.block.request.TileRequest;
+import mrriegel.storagenetwork.item.remote.ContainerRemote;
+import mrriegel.storagenetwork.item.remote.GuiRemote;
+import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

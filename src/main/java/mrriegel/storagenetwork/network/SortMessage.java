@@ -1,11 +1,11 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.helper.NBTHelper;
-import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.request.ContainerRequest;
-import mrriegel.storagenetwork.request.TileRequest;
-import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
+import mrriegel.storagenetwork.block.request.ContainerRequest;
+import mrriegel.storagenetwork.block.request.TileRequest;
+import mrriegel.storagenetwork.block.request.TileRequest.EnumSortType;
+import mrriegel.storagenetwork.item.remote.ContainerRemote;
+import mrriegel.storagenetwork.util.NBTHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
