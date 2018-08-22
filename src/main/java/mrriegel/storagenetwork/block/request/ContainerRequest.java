@@ -39,12 +39,7 @@ public class ContainerRequest extends ContainerNetworkBase {
         this.addSlotToContainer(new Slot(matrix, index++, 8 + j * 18, 110 + i * 18));
       }
     }
-    //player inventory
-    for (int i = 0; i < 3; ++i) {
-      for (int j = 0; j < 9; ++j) {
-        this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 174 + i * 18));
-      }
-    }
+    bindPlayerInvo(playerInv);
     //player hotbar
     for (int i = 0; i < 9; ++i) {
       this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
@@ -61,11 +56,6 @@ public class ContainerRequest extends ContainerNetworkBase {
     findMatchingRecipe(matrix);
   }
 
-  @Override
-  public void onContainerClosed(EntityPlayer playerIn) {
-    slotChanged();
-    super.onContainerClosed(playerIn);
-  }
 
   @Override
   public void slotChanged() {

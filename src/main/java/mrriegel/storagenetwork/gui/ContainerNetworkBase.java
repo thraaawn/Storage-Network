@@ -11,6 +11,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -36,15 +37,28 @@ public abstract class ContainerNetworkBase extends Container {
 
   boolean test = false;
 
+  protected void bindPlayerInvo(final InventoryPlayer playerInv) {
+    //player inventory
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 9; ++j) {
+        this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 174 + i * 18));
+      }
+    }
+  }
+
+  @Override
+  public void onContainerClosed(EntityPlayer playerIn) {
+    slotChanged();
+    super.onContainerClosed(playerIn);
+  }
+
   @Override
   public void detectAndSendChanges() {
-    //   StorageNetwork.log("detectAndSendChanges  ");
     super.detectAndSendChanges();
   }
 
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
-    // StorageNetwork.log("onCraftMatrixChanged  ");
     super.onCraftMatrixChanged(inventoryIn);
   }
 
@@ -135,7 +149,6 @@ public abstract class ContainerNetworkBase extends Container {
           else if (ItemStack.areItemsEqual(slot, remainderCurrent) && ItemStack.areItemStackTagsEqual(slot, remainderCurrent)) {
             remainderCurrent.grow(slot.getCount());
             this.matrix.setInventorySlotContents(i, remainderCurrent);
-
           }
           else if (ItemStack.areItemsEqualIgnoreDurability(slot, remainderCurrent)) {
             //crafting that consumes durability
@@ -145,7 +158,6 @@ public abstract class ContainerNetworkBase extends Container {
           else {
             StorageNetwork.log("Gadd to inventory " + remainderCurrent);
             if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
-
               player.dropItem(remainderCurrent, false);
             }
           }
@@ -154,7 +166,6 @@ public abstract class ContainerNetworkBase extends Container {
           this.matrix.decrStackSize(i, 1);
           slot = this.matrix.getStackInSlot(i);
         }
-
       }
       //END onTake redo 
       crafted += sizePerCraft;
@@ -172,15 +183,12 @@ public abstract class ContainerNetworkBase extends Container {
           matrix.setInventorySlotContents(i, req);
         }
       }
-
       onCraftMatrixChanged(matrix);
-
     }
     detectAndSendChanges();
     this.recipeLocked = false;
     //update recipe again in case remnants left : IE hammer and such
     this.onCraftMatrixChanged(this.matrix);
-
   }
 
   public final class SlotCraftingNetwork extends SlotCrafting {
