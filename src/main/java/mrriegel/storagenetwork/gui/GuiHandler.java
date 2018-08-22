@@ -22,12 +22,13 @@ public class GuiHandler implements IGuiHandler {
 
   @Override
   public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-    UtilTileEntity.updateTile(world, new BlockPos(x, y, z));
+    BlockPos pos = new BlockPos(x, y, z);
+    UtilTileEntity.updateTile(world, pos);
     if (ID == CABLE) {
-      return new ContainerCable((TileCable) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+      return new ContainerCable((TileCable) world.getTileEntity(pos), player.inventory);
     }
     if (ID == REQUEST) {
-      return new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+      return new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory);
     }
     if (ID == REMOTE) {
       return new ContainerRemote(player.inventory);
@@ -37,12 +38,13 @@ public class GuiHandler implements IGuiHandler {
 
   @Override
   public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    BlockPos pos = new BlockPos(x, y, z);
     if (ID == CABLE) {
-      TileCable tile = (TileCable) world.getTileEntity(new BlockPos(x, y, z));
+      TileCable tile = (TileCable) world.getTileEntity(pos);
       return new GuiCable(new ContainerCable(tile, player.inventory));
     }
     if (ID == REQUEST) {
-      return new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
+      return new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory));
     }
     if (ID == REMOTE) {
       return new GuiRemote(new ContainerRemote(player.inventory));

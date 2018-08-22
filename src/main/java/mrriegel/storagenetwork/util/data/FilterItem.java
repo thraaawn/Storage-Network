@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.util.data;
 
+import javax.annotation.Nonnull;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -50,9 +51,7 @@ public class FilterItem {
     return stack;
   }
 
-  public void setStack(ItemStack stack) {
-    if (stack == null)
-      throw new NullPointerException();
+  public void setStack(@Nonnull ItemStack stack) {
     this.stack = stack;
   }
 
@@ -86,15 +85,15 @@ public class FilterItem {
     return fil.getStack() != null && fil.getStack().getItem() != null ? fil : null;
   }
 
-  public boolean match(ItemStack s) {
-    if (s == null || s.isEmpty())
+  public boolean match(@Nonnull ItemStack stackIn) {
+    if (stackIn.isEmpty())
       return false;
-    if (ore && UtilTileEntity.equalOreDict(s, stack))
+    if (ore && UtilTileEntity.equalOreDict(stackIn, stack))
       return true;
-    if (nbt && !ItemStack.areItemStackTagsEqual(stack, s))
+    if (nbt && !ItemStack.areItemStackTagsEqual(stack, stackIn))
       return false;
-    if (meta && s.getItemDamage() != stack.getItemDamage())
+    if (meta && stackIn.getItemDamage() != stack.getItemDamage())
       return false;
-    return s.getItem() == stack.getItem();
+    return stackIn.getItem() == stack.getItem();
   }
 }

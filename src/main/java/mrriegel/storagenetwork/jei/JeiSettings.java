@@ -1,5 +1,5 @@
 package mrriegel.storagenetwork.jei;
-public class Settings {
+public class JeiSettings {
 
   public static boolean jeiSearch = true;
 }

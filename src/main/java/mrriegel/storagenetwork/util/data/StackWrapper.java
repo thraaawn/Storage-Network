@@ -1,18 +1,17 @@
 package mrriegel.storagenetwork.util.data;
 
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class StackWrapper {
 
-  ItemStack stack;
-  int size;
+  private ItemStack stack;
+  private int size;
 
-  public StackWrapper(ItemStack stack, int size) {
+  public StackWrapper(@Nonnull ItemStack stack, int size) {
     super();
-    if (stack == null) {
-      stack = ItemStack.EMPTY;
-    }
+
     this.stack = stack;
     this.size = size;
   }
@@ -54,9 +53,7 @@ public class StackWrapper {
     return stack;
   }
 
-  public void setStack(ItemStack stack) {
-    if (stack == null)
-      throw new NullPointerException();
+  public void setStack(@Nonnull ItemStack stack) {
     this.stack = stack;
   }
 

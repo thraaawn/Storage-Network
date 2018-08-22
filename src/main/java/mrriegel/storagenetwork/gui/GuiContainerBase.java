@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.gui;
 
+import mrriegel.storagenetwork.util.UtilInventory;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -12,11 +13,11 @@ public abstract class GuiContainerBase extends GuiContainer {
     super(inventorySlotsIn);
   }
 
-  public class ItemSlot extends AbstractSlot {
+  public class ItemSlotNetwork extends AbstractSlot {
 
     public ItemStack stack;
 
-    public ItemSlot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
+    public ItemSlotNetwork(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
       super(x, y, size, guiLeft, guiTop, number, square, smallFont, toolTip);
       this.stack = stack;
     }
@@ -29,19 +30,21 @@ public abstract class GuiContainerBase extends GuiContainer {
     @Override
     public void drawSlot(int mx, int my) {
       GlStateManager.pushMatrix();
-      if (stack != null && !stack.isEmpty()) {
+      if (!stack.isEmpty()) {
         RenderHelper.enableGUIStandardItemLighting();
         mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-        String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
-        if (number)
+        String amount = UtilInventory.formatLargeNumber(size);
+        if (number) {
           if (smallFont) {
-          GlStateManager.pushMatrix();
-          GlStateManager.scale(.5f, .5f, .5f);
-          mc.getRenderItem().renderItemOverlayIntoGUI(fontRenderer, stack, x * 2 + 16, y * 2 + 16, amount);
-          GlStateManager.popMatrix();
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(.5f, .5f, .5f);
+            mc.getRenderItem().renderItemOverlayIntoGUI(fontRenderer, stack, x * 2 + 16, y * 2 + 16, amount);
+            GlStateManager.popMatrix();
           }
-          else
+          else {
             mc.getRenderItem().renderItemOverlayIntoGUI(fontRenderer, stack, x, y, amount);
+          }
+        }
       }
       if (square && this.isMouseOverSlot(mx, my)) {
         GlStateManager.disableLighting();

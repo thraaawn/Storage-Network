@@ -12,7 +12,7 @@ import mrriegel.storagenetwork.registry.ModBlocks;
 import net.minecraft.item.ItemStack;
 
 @JEIPlugin
-public class SNPlugin implements IModPlugin {
+public class JeiPlugin implements IModPlugin {
 
   @SuppressWarnings({ "rawtypes", "deprecation" })
   @Override

@@ -14,7 +14,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.request.TileRequest.EnumSortType;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.jei.JeiHooks;
-import mrriegel.storagenetwork.jei.Settings;
+import mrriegel.storagenetwork.jei.JeiSettings;
 import mrriegel.storagenetwork.network.ClearMessage;
 import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.RequestMessage;
@@ -44,8 +44,8 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   public List<StackWrapper> stacks, craftableStacks;
   protected ItemStack over = ItemStack.EMPTY;
   protected GuiTextField searchBar;
-  protected Button direction, sort, /* left, right, */jei;
-  protected List<ItemSlot> slots;
+  protected Button directionBtn, sortBtn, /* left, right, */jeiBtn;
+  protected List<ItemSlotNetwork> slots;
   protected long lastClick;
   private Button clearTextBtn;
   private boolean forceFocus;
@@ -74,17 +74,16 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     searchBar.setVisible(true);
     searchBar.setTextColor(16777215);
     searchBar.setFocused(true);
-    if (ConfigHandler.jeiLoaded && Settings.jeiSearch) {
+    if (ConfigHandler.jeiLoaded && JeiSettings.jeiSearch) {
       searchBar.setText(JeiHooks.getFilterText());
-
     }
-    direction = new Button(0, guiLeft + 7, guiTop + 93, "");
-    this.addButton(direction);
-    sort = new Button(1, guiLeft + 21, guiTop + 93, "");
-    this.addButton(sort);
-    jei = new Button(4, guiLeft + 35, guiTop + 93, "");
+    directionBtn = new Button(0, guiLeft + 7, guiTop + 93, "");
+    this.addButton(directionBtn);
+    sortBtn = new Button(1, guiLeft + 21, guiTop + 93, "");
+    this.addButton(sortBtn);
+    jeiBtn = new Button(4, guiLeft + 35, guiTop + 93, "");
     if (ConfigHandler.jeiLoaded) {
-      this.addButton(jei);
+      this.addButton(jeiBtn);
     }
     clearTextBtn = new Button(5, guiLeft + 64, guiTop + 93, "X");
     this.addButton(clearTextBtn);
@@ -205,14 +204,14 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
         int in = index;
         if (in >= tmp.size())
           break;
-        slots.add(new ItemSlot(tmp.get(in).getStack(), guiLeft + 8 + ii * 18, guiTop + 10 + jj * 18, tmp.get(in).getSize(), guiLeft, guiTop, true, true, ConfigHandler.smallFont, true));
+        slots.add(new ItemSlotNetwork(tmp.get(in).getStack(), guiLeft + 8 + ii * 18, guiTop + 10 + jj * 18, tmp.get(in).getSize(), guiLeft, guiTop, true, true, ConfigHandler.smallFont, true));
         index++;
       }
     }
-    for (ItemSlot s : slots) {
+    for (ItemSlotNetwork s : slots) {
       s.drawSlot(mouseX, mouseY);
     }
-    for (ItemSlot s : slots) {
+    for (ItemSlotNetwork s : slots) {
       if (s.isMouseOverSlot(mouseX, mouseY)) {
         over = s.stack;
         break;
@@ -241,7 +240,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (this.isScreenValid() == false) {
       return;
     }
-
     if (forceFocus) {
       this.searchBar.setFocused(true);
       if (this.searchBar.isFocused()) {
@@ -251,7 +249,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   }
 
   public void drawTooltips(int mouseX, int mouseY) {
-    for (ItemSlot s : slots) {
+    for (ItemSlotNetwork s : slots) {
       if (s.isMouseOverSlot(mouseX, mouseY)) {
         s.drawTooltip(mouseX, mouseY);
       }
@@ -272,14 +270,14 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (clearTextBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX, mouseY);
     }
-    if (sort.isMouseOver()) {
+    if (sortBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX, mouseY);
     }
-    if (direction.isMouseOver()) {
+    if (directionBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.sort")), mouseX, mouseY);
     }
-    if (jei != null && jei.isMouseOver()) {
-      String s = I18n.format(Settings.jeiSearch ? "gui.storagenetwork.fil.tooltip_jei_on" : "gui.storagenetwork.fil.tooltip_jei_off");
+    if (jeiBtn != null && jeiBtn.isMouseOver()) {
+      String s = I18n.format(JeiSettings.jeiSearch ? "gui.storagenetwork.fil.tooltip_jei_on" : "gui.storagenetwork.fil.tooltip_jei_off");
       drawHoveringText(Lists.newArrayList(s), mouseX, mouseY);
     }
   }
@@ -308,7 +306,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     }
     else if (button.id == 4) {
       doSort = false;
-      Settings.jeiSearch = !Settings.jeiSearch;
+      JeiSettings.jeiSearch = !JeiSettings.jeiSearch;
     }
     else if (button.id == this.clearTextBtn.id) {
       doSort = false;
@@ -329,7 +327,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (inSearchbar(mouseX, mouseY)) {
       searchBar.setFocused(true);
       if (mouseButton == MOUSE_BTN_RIGHT) {
-        StorageNetwork.log("set text clear from MOUSE");
+
         searchBar.setText("");
       }
     }
@@ -353,7 +351,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       Keyboard.enableRepeatEvents(true);
       if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
         PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
-        if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
+        if (searchBar.isFocused() && ConfigHandler.jeiLoaded && JeiSettings.jeiSearch) {
           StorageNetwork.log("push to JEY onkeytyped_");
           JeiHooks.setFilterText(searchBar.getText()); //  searchBar.setText(JeiHooks.getFilterText());
         }
@@ -417,7 +415,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
           this.drawTexturedModalRect(this.x + 4, this.y + 3, 188 + (getSort() == EnumSortType.AMOUNT ? 6 : getSort() == EnumSortType.MOD ? 12 : 0), 14, 6, 8);
         }
         if (id == 4) {
-          this.drawTexturedModalRect(this.x + 4, this.y + 3, 176 + (Settings.jeiSearch ? 0 : 6), 22, 6, 8);
+          this.drawTexturedModalRect(this.x + 4, this.y + 3, 176 + (JeiSettings.jeiSearch ? 0 : 6), 22, 6, 8);
         }
         this.mouseDragged(mc, x, y);
         int l = 14737632;

@@ -32,6 +32,11 @@ public class UtilInventory {
     return null;
   }
 
+  public static String formatLargeNumber(int size) {
+    String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
+    return amount;
+  }
+
   public static ItemStack insert(TileEntity tile, ItemStack stack, EnumFacing side) {
     if (tile == null) {
       return stack;

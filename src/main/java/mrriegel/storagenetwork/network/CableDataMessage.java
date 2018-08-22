@@ -24,8 +24,8 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
   public static final int PRIORITY_UP = 1;
   public static final int PRIORITY_DOWN = 0;
   public static final int TOGGLE_MODE = 4;
-  int id;
-  BlockPos pos;
+  private int id;
+  private BlockPos pos;
 
   public CableDataMessage() {}
 

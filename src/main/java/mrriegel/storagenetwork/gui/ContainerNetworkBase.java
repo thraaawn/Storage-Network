@@ -26,10 +26,10 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 public abstract class ContainerNetworkBase extends Container {
 
-  public InventoryPlayer playerInv;
+  protected InventoryPlayer playerInv;
   protected InventoryCraftResult result;
   protected InventoryCraftingNetwork matrix;
-  public boolean recipeLocked = false;
+  protected boolean recipeLocked = false;
 
   public InventoryCrafting getCraftMatrix() {
     return this.matrix;

@@ -34,8 +34,8 @@ public class GuiCable extends GuiContainerBase {
   Button btnPlus, btnMinus, btnWhite, btnOperationToggle, btnImport, btnInputOutputStorage;
   AbstractFilterTile tile;
   private GuiTextField searchBar;
-  List<ItemSlot> list;
-  ItemSlot operation;
+  List<ItemSlotNetwork> list;
+  ItemSlotNetwork operation;
   private GuiCheckBox checkOre;
   private GuiCheckBox checkMeta;
 
@@ -105,10 +105,10 @@ public class GuiCable extends GuiContainerBase {
         ItemStack s = wrap == null ? null : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
         boolean numShow = tile instanceof TileCable ? ((TileCable) tile).getUpgradesOfType(ItemUpgrade.STOCK) > 0 : false;
-        list.add(new ItemSlot(s, guiLeft + 8 + ii * 18, guiTop + 26 + jj * 18, num, guiLeft, guiTop, numShow, true, false, true));
+        list.add(new ItemSlotNetwork(s, guiLeft + 8 + ii * 18, guiTop + 26 + jj * 18, num, guiLeft, guiTop, numShow, true, false, true));
       }
     }
-    for (ItemSlot s : list) {
+    for (ItemSlotNetwork s : list) {
       s.drawSlot(mouseX, mouseY);
     }
     if (tile instanceof TileCable && ((TileCable) tile).getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
@@ -124,7 +124,7 @@ public class GuiCable extends GuiContainerBase {
   }
 
   private void drawTooltips(int mouseX, int mouseY) {
-    for (ItemSlot s : list) {
+    for (ItemSlotNetwork s : list) {
       if (s != null && s.stack != null && !s.stack.isEmpty() && s.isMouseOverSlot(mouseX, mouseY))
         this.renderToolTip(s.stack, mouseX, mouseY);
     }
@@ -186,7 +186,7 @@ public class GuiCable extends GuiContainerBase {
         btnOperationToggle = new Button(CableDataMessage.TOGGLE_MODE, guiLeft + 28, guiTop + 66, "");
         //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
         this.addButton(btnOperationToggle);
-        operation = new ItemSlot(cable.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
+        operation = new ItemSlotNetwork(cable.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
         //      
         checkOre = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, I18n.format("gui.storagenetwork.checkbox.ore"), true);
         checkOre.setIsChecked(tile.getOre());
@@ -209,7 +209,7 @@ public class GuiCable extends GuiContainerBase {
       return;
     }
     for (int i = 0; i < list.size(); i++) {
-      ItemSlot e = list.get(i);
+      ItemSlotNetwork e = list.get(i);
       if (e.isMouseOverSlot(mouseX, mouseY)) {
         ContainerCable con = (ContainerCable) inventorySlots;
         StackWrapper x = con.getTile().getFilter().get(i);
