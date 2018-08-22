@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.block.cable;
+package mrriegel.storagenetwork.util.data;
 
 import net.minecraft.util.IStringSerializable;
 

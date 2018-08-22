@@ -64,7 +64,7 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
       catch (Error e) {
         e.printStackTrace();
         if (mas instanceof TileMaster)
-          for (BlockPos p : ((TileMaster) mas).connectables)
+          for (BlockPos p : ((TileMaster) mas).getConnectables())
           if (worldIn.getChunkFromBlockCoords(p).isLoaded() && worldIn.getTileEntity(p) instanceof IConnectable) {
           ((IConnectable) worldIn.getTileEntity(p)).setMaster(null);
           worldIn.markChunkDirty(p, worldIn.getTileEntity(p));

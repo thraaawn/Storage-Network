@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.block.Block;
@@ -54,23 +55,33 @@ public class BlockMaster extends BlockContainer {
   @Override
   public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
     super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-    BlockPos mas = null;
-    if (worldIn.isRemote)
+    BlockPos masterPos = null;
+    if (worldIn.isRemote) {
       return;
+    }
+    TileEntity tileHere = null;
+    IConnectable connect = null;
     for (BlockPos p : UtilTileEntity.getSides(pos)) {
-      if (worldIn.getTileEntity(p) instanceof IConnectable && ((IConnectable) worldIn.getTileEntity(p)).getMaster() != null && !((IConnectable) worldIn.getTileEntity(p)).getMaster().equals(pos)) {
-        mas = ((IConnectable) worldIn.getTileEntity(p)).getMaster();
-        break;
+      tileHere = worldIn.getTileEntity(p);
+      if (tileHere instanceof IConnectable) {
+        connect = ((IConnectable) worldIn.getTileEntity(p));
+        if (connect.getMaster() != null && !connect.getMaster().equals(pos)) {
+          masterPos = connect.getMaster();
+          break;
+        }
       }
     }
-    if (mas != null) {
+    if (masterPos != null) {
+      // we found an existing master on the network, cannot add a new one. so break this one
+      //    TileMaster tileMaster = (TileMaster) worldIn.getTileEntity(masterPos);
       worldIn.setBlockToAir(pos);
       Block.spawnAsEntity(worldIn, pos, ItemHandlerHelper.copyStackWithSize(stack, 1));
-      ((TileMaster) worldIn.getTileEntity(mas)).refreshNetwork();
+      //      ((TileMaster) worldIn.getTileEntity(masterPos)).refreshNetwork();
     }
-    else {
-      if (worldIn.getTileEntity(pos) != null)
+    else {//my position is tile so refresh myself 
+      if (worldIn.getTileEntity(pos) != null) {
         ((TileMaster) worldIn.getTileEntity(pos)).refreshNetwork();
+      }
     }
   }
 
@@ -81,39 +92,42 @@ public class BlockMaster extends BlockContainer {
 
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    if (!(worldIn.getTileEntity(pos) instanceof TileMaster)) {
+    if (worldIn.isRemote) {
+      return true;
+    }
+    TileEntity tileHere = worldIn.getTileEntity(pos);
+    if (!(tileHere instanceof TileMaster)) {
       return false;
     }
-    TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
-    if (!worldIn.isRemote) {
-      playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "(Potential) Empty Slots: " + tile.emptySlots()));
-      playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + "Connectables: " + tile.connectables.size()));
-      Map<String, Integer> map = new HashMap<String, Integer>();
-      for (BlockPos p : tile.connectables) {
-        String block = worldIn.getBlockState(p).getBlock().getLocalizedName();
-        map.put(block, map.get(block) != null ? (map.get(block) + 1) : 1);
-      }
-      List<Entry<String, Integer>> lis = Lists.newArrayList();
-      for (Entry<String, Integer> e : map.entrySet()) {
-        lis.add(e);
-      }
-      Collections.sort(lis, new Comparator<Entry<String, Integer>>() {
+    TileMaster tileMaster = (TileMaster) tileHere;
+    StorageNetwork.log("TODO master onactivated lang bad ");
+    playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "(Potential) Empty Slots: " + tileMaster.emptySlots()));
+    playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + "Connectables: " + tileMaster.getConnectables().size()));
+    Map<String, Integer> map = new HashMap<String, Integer>();
+    for (BlockPos p : tileMaster.getConnectables()) {
+      String block = worldIn.getBlockState(p).getBlock().getLocalizedName();
+      map.put(block, map.get(block) != null ? (map.get(block) + 1) : 1);
+    }
+    List<Entry<String, Integer>> lis = Lists.newArrayList();
+    for (Entry<String, Integer> e : map.entrySet()) {
+      lis.add(e);
+    }
+    Collections.sort(lis, new Comparator<Entry<String, Integer>>() {
 
-        @Override
-        public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
-          return Integer.compare(o2.getValue(), o1.getValue());
-        }
-      });
-      for (Entry<String, Integer> e : lis)
-        playerIn.sendMessage(new TextComponentString(TextFormatting.AQUA + "    " + e.getKey() + ": " + e.getValue()));
-      return false;
+      @Override
+      public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+        return Integer.compare(o2.getValue(), o1.getValue());
+      }
+    });
+    for (Entry<String, Integer> e : lis) {
+      playerIn.sendMessage(new TextComponentString(TextFormatting.AQUA + "    " + e.getKey() + ": " + e.getValue()));
     }
-    return true;
+    return false;
   }
 
-  public static class Item extends ItemBlock {
+  public static class ItemMaster extends ItemBlock {
 
-    public Item(Block block) {
+    public ItemMaster(Block block) {
       super(block);
     }
 

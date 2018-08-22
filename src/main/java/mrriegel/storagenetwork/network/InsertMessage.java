@@ -44,7 +44,7 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
         TileEntity t = null;
         Container c = ctx.getServerHandler().player.openContainer;
         if (c instanceof ContainerRequest)
-          t = w.getTileEntity(((ContainerRequest) c).tile.getMaster());
+          t = w.getTileEntity(((ContainerRequest) c).getTileRequest().getMaster());
         else if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote)
           t = ((ContainerRemote) c).getTileMaster();
         if (t instanceof TileMaster) {

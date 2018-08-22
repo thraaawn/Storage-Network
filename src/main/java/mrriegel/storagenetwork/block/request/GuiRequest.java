@@ -12,7 +12,7 @@ public class GuiRequest extends GuiContainerStorageInventory {
 
   public GuiRequest(ContainerRequest inventorySlotsIn) {
     super(inventorySlotsIn);
-    tile = ((ContainerRequest) inventorySlots).tile;
+    tile = inventorySlotsIn.getTileRequest();
     texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   }
 
@@ -38,12 +38,12 @@ public class GuiRequest extends GuiContainerStorageInventory {
 
   @Override
   public boolean getDownwards() {
-    return tile.downwards;
+    return tile.isDownwards();
   }
 
   @Override
   public void setDownwards(boolean d) {
-    tile.downwards = d;
+    tile.setDownwards(d);
   }
 
   @Override

@@ -73,8 +73,8 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
                   if (s == null || s.isEmpty()) {
                     continue;
                   }
-                  else {
-                    if (!new ContainerCable(tile, ctx.getServerHandler().player.inventory).isInFilter(new StackWrapper(s, 1))) {
+                  else if (tile instanceof TileCable) {
+                    if (!new ContainerCable((TileCable) tile, ctx.getServerHandler().player.inventory).isInFilter(new StackWrapper(s, 1))) {
                       tile.getFilter().put(index, new StackWrapper(s, 1));
                       index++;
                     }

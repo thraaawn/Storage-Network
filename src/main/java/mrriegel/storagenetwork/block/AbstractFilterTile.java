@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.block;
 import java.util.HashMap;
 import java.util.Map;
 import mrriegel.storagenetwork.util.UtilTileEntity;
+import mrriegel.storagenetwork.util.data.EnumFilterDirection;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,28 +20,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
   private boolean metas = false;
   private boolean isWhitelist;
   private int priority;
-  private Direction way = Direction.BOTH;
-
-  public enum Direction {
-    IN, OUT, BOTH;
-
-    public boolean match(Direction way) {
-      if (this == BOTH || way == BOTH)
-        return true;
-      return this == way;
-    }
-
-    public Direction next() {
-      //NO MORE input only, bad UX. if i see item in grid and cant get => think is broken
-      if (this == OUT) {
-        return BOTH;
-      }
-      else {
-        return OUT;
-      }
-      //return values()[(this.ordinal() + 1) % values().length];
-    }
-  }
+  private EnumFilterDirection way = EnumFilterDirection.BOTH;
 
   @Override
   public void readFromNBT(NBTTagCompound compound) {
@@ -61,10 +41,10 @@ public abstract class AbstractFilterTile extends TileConnectable {
     ores = compound.getBoolean("ores");
     metas = compound.getBoolean("metas");
     try {
-      way = Direction.valueOf(compound.getString("way"));
+      way = EnumFilterDirection.valueOf(compound.getString("way"));
     }
     catch (Exception e) {
-      way = Direction.BOTH;
+      way = EnumFilterDirection.BOTH;
     }
   }
 
@@ -113,7 +93,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
    * import + meta ; blacklist
    * 
    * import - meta ; blacklist */
-  public boolean canTransfer(ItemStack stack, Direction way) {
+  public boolean canTransfer(ItemStack stack, EnumFilterDirection way) {
     if (isStorage() && !this.way.match(way)) {
       return false;
     }
@@ -201,11 +181,11 @@ public abstract class AbstractFilterTile extends TileConnectable {
     this.priority = priority;
   }
 
-  public Direction getWay() {
+  public EnumFilterDirection getWay() {
     return way;
   }
 
-  public void setWay(Direction way) {
+  public void setWay(EnumFilterDirection way) {
     this.way = way;
   }
 }

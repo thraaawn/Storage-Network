@@ -16,13 +16,13 @@ import net.minecraft.item.ItemStack;
 public class ContainerCable extends Container {
 
   private static final int UPGRADE_COUNT = 4;
-  InventoryPlayer playerInv;
-  public AbstractFilterTile tile;
-  IInventory upgrades;
 
-  public ContainerCable(AbstractFilterTile tile, InventoryPlayer playerInv) {
-    this.playerInv = playerInv;
-    this.tile = tile;
+  private TileCable tile;
+  private IInventory upgrades;
+
+  public ContainerCable(TileCable tile, InventoryPlayer playerInv) {
+
+    this.setTile(tile);
     upgrades = new InventoryBasic("upgrades", false, UPGRADE_COUNT) {
 
       @Override
@@ -30,9 +30,9 @@ public class ContainerCable extends Container {
         return 1;
       }
     };
-    if (tile instanceof TileCable && ((TileCable) tile).isUpgradeable()) {
-      for (int i = 0; i < ((TileCable) tile).getUpgrades().size(); i++) {
-        upgrades.setInventorySlotContents(i, ((TileCable) tile).getUpgrades().get(i));
+    if (tile.isUpgradeable()) {
+      for (int i = 0; i < tile.getUpgrades().size(); i++) {
+        upgrades.setInventorySlotContents(i, tile.getUpgrades().get(i));
       }
       for (int ii = 0; ii < UPGRADE_COUNT; ii++) {
         this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
@@ -70,16 +70,16 @@ public class ContainerCable extends Container {
 
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {
-    return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
+    return playerIn.getDistanceSq(getTile().getPos().getX() + 0.5D, getTile().getPos().getY() + 0.5D, getTile().getPos().getZ() + 0.5D) <= 64.0D;
   }
 
   public void slotChanged() {
-    if (tile instanceof TileCable) {
-      ((TileCable) tile).setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
+
+      getTile().setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
       for (int i = 0; i < upgrades.getSizeInventory(); i++) {
-        ((TileCable) tile).getUpgrades().set(i, upgrades.getStackInSlot(i));
+        getTile().getUpgrades().set(i, upgrades.getStackInSlot(i));
       }
-    }
+
   }
 
   @Override
@@ -107,8 +107,8 @@ public class ContainerCable extends Container {
         }
       }
       for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
-        if (tile.getFilter().get(i) == null && !isInFilter(new StackWrapper(itemstack1, 1))) {
-          tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.getCount()));
+        if (getTile().getFilter().get(i) == null && !isInFilter(new StackWrapper(itemstack1, 1))) {
+          getTile().getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.getCount()));
           break;
         }
       }
@@ -118,10 +118,18 @@ public class ContainerCable extends Container {
 
   public boolean isInFilter(StackWrapper stack) {
     for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
-      if (tile.getFilter().get(i) != null && tile.getFilter().get(i).getStack().isItemEqual(stack.getStack())) {
+      if (getTile().getFilter().get(i) != null && getTile().getFilter().get(i).getStack().isItemEqual(stack.getStack())) {
         return true;
       }
     }
     return false;
+  }
+
+  public TileCable getTile() {
+    return tile;
+  }
+
+  public void setTile(TileCable tile) {
+    this.tile = tile;
   }
 }

@@ -36,11 +36,11 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
         if (ctx.getServerHandler().player.openContainer instanceof ContainerCable) {
           ContainerCable con = (ContainerCable) ctx.getServerHandler().player.openContainer;
           if (message.wrap != null && message.index >= 0) {
-            con.tile.getFilter().put(message.index, message.wrap);
+            con.getTile().getFilter().put(message.index, message.wrap);
           }
-          con.tile.setOres(message.ore);
-          con.tile.setMeta(message.meta);
-          con.tile.markDirty();
+          con.getTile().setOres(message.ore);
+          con.getTile().setMeta(message.meta);
+          con.getTile().markDirty();
           con.slotChanged();
         }
       }

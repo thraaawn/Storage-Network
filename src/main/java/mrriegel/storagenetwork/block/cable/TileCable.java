@@ -10,6 +10,7 @@ import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.UtilInventory;
+import mrriegel.storagenetwork.util.data.EnumConnectType;
 import mrriegel.storagenetwork.util.data.FilterItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +29,7 @@ public class TileCable extends AbstractFilterTile {
   private boolean mode = true;
   private int limit = 0;
   public EnumConnectType north, south, east, west, up, down;
-  ItemStack stack = null;
+  private ItemStack stack = ItemStack.EMPTY;
 
   public TileCable() {
     this.setOres(false);
@@ -97,9 +98,9 @@ public class TileCable extends AbstractFilterTile {
     mode = compound.getBoolean("mode");
     limit = compound.getInteger("limit");
     if (compound.hasKey("stack", 10))
-      stack = (new ItemStack(compound.getCompoundTag("stack")));
+      stack = new ItemStack(compound.getCompoundTag("stack"));
     else
-      stack = null;
+      stack = ItemStack.EMPTY;
     if (compound.hasKey("north"))
       north = EnumConnectType.valueOf(compound.getString("north"));
     if (compound.hasKey("south"))
@@ -131,7 +132,7 @@ public class TileCable extends AbstractFilterTile {
       compound.setString("inventoryFace", inventoryFace.toString());
     compound.setBoolean("mode", mode);
     compound.setInteger("limit", limit);
-    if (stack != null)
+    if (!stack.isEmpty())
       compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
     if (north != null)
       compound.setString("north", north.toString());

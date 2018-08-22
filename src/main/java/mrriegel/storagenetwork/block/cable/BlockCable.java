@@ -14,6 +14,7 @@ import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.UtilTileEntity;
+import mrriegel.storagenetwork.util.data.EnumConnectType;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

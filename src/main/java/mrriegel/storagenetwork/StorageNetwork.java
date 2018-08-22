@@ -79,8 +79,8 @@ public class StorageNetwork {
 
   @SubscribeEvent
   public void onRegistryEvent(RegistryEvent.Register<Item> event) {
-    event.getRegistry().register(new BlockMaster.Item(ModBlocks.master).setRegistryName(ModBlocks.master.getRegistryName()));
-    event.getRegistry().register(new BlockRequest.Item(ModBlocks.request).setRegistryName(ModBlocks.request.getRegistryName()));
+    event.getRegistry().register(new BlockMaster.ItemMaster(ModBlocks.master).setRegistryName(ModBlocks.master.getRegistryName()));
+    event.getRegistry().register(new BlockRequest.ItemRequest(ModBlocks.request).setRegistryName(ModBlocks.request.getRegistryName()));
     event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.kabel).setRegistryName(ModBlocks.kabel.getRegistryName()));
     event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.storageKabel).setRegistryName(ModBlocks.storageKabel.getRegistryName()));
     event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.exKabel).setRegistryName(ModBlocks.exKabel.getRegistryName()));

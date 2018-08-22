@@ -43,7 +43,7 @@ public class GuiCable extends GuiContainerBase {
     super(inventorySlotsIn);
     this.xSize = 176;
     this.ySize = 171;
-    this.tile = inventorySlotsIn.tile;
+    this.tile = inventorySlotsIn.getTile();
 
     list = Lists.newArrayList();
   }
@@ -212,10 +212,10 @@ public class GuiCable extends GuiContainerBase {
       ItemSlot e = list.get(i);
       if (e.isMouseOverSlot(mouseX, mouseY)) {
         ContainerCable con = (ContainerCable) inventorySlots;
-        StackWrapper x = con.tile.getFilter().get(i);
+        StackWrapper x = con.getTile().getFilter().get(i);
         if (mc.player.inventory.getItemStack() != null) {
           if (!con.isInFilter(new StackWrapper(mc.player.inventory.getItemStack(), 1))) {
-            con.tile.getFilter().put(i, new StackWrapper(mc.player.inventory.getItemStack(), mc.player.inventory.getItemStack().getCount()));
+            con.getTile().getFilter().put(i, new StackWrapper(mc.player.inventory.getItemStack(), mc.player.inventory.getItemStack().getCount()));
           }
         }
         else {
@@ -225,10 +225,10 @@ public class GuiCable extends GuiContainerBase {
             else if (mouseButton == 1)
               x.setSize(x.getSize() - (isShiftKeyDown() ? 10 : 1));
             else if (mouseButton == 2) {
-              con.tile.getFilter().put(i, null);
+              con.getTile().getFilter().put(i, null);
             }
             if (x != null && x.getSize() <= 0) {
-              con.tile.getFilter().put(i, null);
+              con.getTile().getFilter().put(i, null);
             }
           }
         }

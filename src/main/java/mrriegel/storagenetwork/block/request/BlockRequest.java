@@ -71,16 +71,16 @@ public class BlockRequest extends AbstractBlockConnectable {
 
   @Override
   public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-    IBlockState s = this.getDefaultState().withProperty(FACING, facing.getOpposite());
-    return s;
+    return this.getDefaultState().withProperty(FACING, facing.getOpposite());
   }
 
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    if (!(worldIn.getTileEntity(pos) instanceof IConnectable)) {
+    TileEntity tileHere = worldIn.getTileEntity(pos);
+    if (!(tileHere instanceof IConnectable)) {
       return false;
     }
-    IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
+    IConnectable tile = (IConnectable) tileHere;
     if (!worldIn.isRemote && tile.getMaster() != null) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.REQUEST, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
@@ -100,9 +100,9 @@ public class BlockRequest extends AbstractBlockConnectable {
     super.breakBlock(worldIn, pos, state);
   }
 
-  public static class Item extends ItemBlock {
+  public static class ItemRequest extends ItemBlock {
 
-    public Item(Block block) {
+    public ItemRequest(Block block) {
       super(block);
     }
 

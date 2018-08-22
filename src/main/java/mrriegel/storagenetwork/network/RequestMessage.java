@@ -44,7 +44,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
         TileMaster tileMaster = null;
         if (ctx.getServerHandler().player.openContainer instanceof ContainerRequest) {
           ContainerRequest ctrRequest = (ContainerRequest) ctx.getServerHandler().player.openContainer;
-          tileMaster = (TileMaster) ctx.getServerHandler().player.world.getTileEntity(ctrRequest.tile.getMaster());
+          tileMaster = (TileMaster) ctx.getServerHandler().player.world.getTileEntity(ctrRequest.getTileRequest().getMaster());
         }
         else if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote) {
           tileMaster = ItemRemote.getTile(ctx.getServerHandler().player.inventory.getCurrentItem());

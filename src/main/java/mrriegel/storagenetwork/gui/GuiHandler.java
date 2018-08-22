@@ -1,8 +1,8 @@
 package mrriegel.storagenetwork.gui;
 
-import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.cable.ContainerCable;
 import mrriegel.storagenetwork.block.cable.GuiCable;
+import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.request.ContainerRequest;
 import mrriegel.storagenetwork.block.request.GuiRequest;
 import mrriegel.storagenetwork.block.request.TileRequest;
@@ -24,7 +24,7 @@ public class GuiHandler implements IGuiHandler {
   public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
     UtilTileEntity.updateTile(world, new BlockPos(x, y, z));
     if (ID == CABLE) {
-      return new ContainerCable((AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+      return new ContainerCable((TileCable) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
     }
     if (ID == REQUEST) {
       return new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
@@ -38,7 +38,7 @@ public class GuiHandler implements IGuiHandler {
   @Override
   public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
     if (ID == CABLE) {
-      AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z));
+      TileCable tile = (TileCable) world.getTileEntity(new BlockPos(x, y, z));
       return new GuiCable(new ContainerCable(tile, player.inventory));
     }
     if (ID == REQUEST) {
