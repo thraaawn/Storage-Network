@@ -13,9 +13,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, IMessage> {
 
-  int index;
-  StackWrapper wrap;
-  boolean ore, meta;
+  private int index;
+  private StackWrapper wrap;
+  private boolean ore, meta;
 
   public FilterMessage() {}
 

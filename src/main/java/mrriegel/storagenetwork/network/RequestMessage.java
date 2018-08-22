@@ -21,9 +21,9 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class RequestMessage implements IMessage, IMessageHandler<RequestMessage, IMessage> {
 
-  int id = 0;
-  ItemStack stack = ItemStack.EMPTY;
-  boolean shift, ctrl;
+  private int id = 0;
+  private ItemStack stack = ItemStack.EMPTY;
+  private boolean shift, ctrl;
 
   public RequestMessage() {}
 

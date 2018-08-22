@@ -18,9 +18,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMessage> {
 
-  BlockPos pos;
-  boolean direction;
-  EnumSortType sort;
+  private BlockPos pos;
+  private boolean direction;
+  private EnumSortType sort;
 
   public SortMessage() {}
 

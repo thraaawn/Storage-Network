@@ -44,8 +44,8 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
    *  }
    * @formatter:on 
    */
-  NBTTagCompound nbt;
-  int index = 0;
+  private NBTTagCompound nbt;
+  private int index = 0;
 
   public RecipeMessage() {}
 

@@ -13,9 +13,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMessage> {
 
-  int limit;
-  BlockPos pos;
-  ItemStack stack;
+  private int limit;
+  private BlockPos pos;
+  private ItemStack stack;
 
   public LimitMessage() {}
 

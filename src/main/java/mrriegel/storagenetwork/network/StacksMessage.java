@@ -15,8 +15,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, IMessage> {
 
-  int size, csize;
-  List<StackWrapper> stacks, craftableStacks;
+  private int size, csize;
+  private List<StackWrapper> stacks, craftableStacks;
 
   public StacksMessage() {}
 

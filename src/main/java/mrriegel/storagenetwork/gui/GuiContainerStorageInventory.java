@@ -43,7 +43,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   public List<StackWrapper> stacks, craftableStacks;
   protected ItemStack over = ItemStack.EMPTY;
   protected GuiTextField searchBar;
-  protected Button directionBtn, sortBtn, /* left, right, */jeiBtn;
+  protected Button directionBtn, sortBtn, jeiBtn;
   protected List<ItemSlotNetwork> slots;
   protected long lastClick;
   private Button clearTextBtn;

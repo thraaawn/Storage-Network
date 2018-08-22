@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class StackMessage implements IMessage, IMessageHandler<StackMessage, IMessage> {
 
-  ItemStack stack;
+  private ItemStack stack;
 
   public StackMessage() {}
 

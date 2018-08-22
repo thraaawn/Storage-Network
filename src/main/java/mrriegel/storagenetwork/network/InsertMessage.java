@@ -22,8 +22,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, IMessage> {
 
-  int dim, buttonID;
-  ItemStack stack;
+  private int dim, buttonID;
+  private ItemStack stack;
 
   public InsertMessage() {}
 

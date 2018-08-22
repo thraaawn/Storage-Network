@@ -31,9 +31,9 @@ public class GuiCable extends GuiContainerBase {
   private TileCable tile;
   private GuiTextField searchBar;
   private List<ItemSlotNetwork> list;
-  private ItemSlotNetwork operation;
-  private GuiCheckBox checkOre;
-  private GuiCheckBox checkMeta;
+  private ItemSlotNetwork operationItemSlot;
+  private GuiCheckBox checkOreBtn;
+  private GuiCheckBox checkMetaBtn;
 
   public GuiCable(ContainerCable inventorySlotsIn) {
     super(inventorySlotsIn);
@@ -104,7 +104,7 @@ public class GuiCable extends GuiContainerBase {
       s.drawSlot(mouseX, mouseY);
     }
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
-      operation.drawSlot(mouseX, mouseY);
+      operationItemSlot.drawSlot(mouseX, mouseY);
     }
     //    }
     fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
@@ -121,7 +121,7 @@ public class GuiCable extends GuiContainerBase {
         this.renderToolTip(s.getStack(), mouseX, mouseY);
     }
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1)
-      operation.drawTooltip(mouseX, mouseY);
+      operationItemSlot.drawTooltip(mouseX, mouseY);
     if (btnImport != null && btnImport.isMouseOver())
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.gui.import")), mouseX, mouseY);
     if (btnInputOutputStorage != null && btnInputOutputStorage.isMouseOver())
@@ -163,6 +163,7 @@ public class GuiCable extends GuiContainerBase {
     btnWhite.visible = tile.getBlockType() != ModBlocks.exKabel;
     if (tile.isStorage()) {
       btnInputOutputStorage = new GuiCableButton(CableDataMessage.TOGGLE_WAY, guiLeft + 115, guiTop + 5, "");
+      btnInputOutputStorage.setCable(tile);
       this.addButton(btnInputOutputStorage);
     }
     if (tile.isStorage() == false) {
@@ -179,24 +180,25 @@ public class GuiCable extends GuiContainerBase {
       searchBar.width = 20;
       btnOperationToggle = new GuiCableButton(CableDataMessage.TOGGLE_MODE, guiLeft + 28, guiTop + 66, "");
       //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
+      btnOperationToggle.setCable(tile);
       this.addButton(btnOperationToggle);
-      operation = new ItemSlotNetwork(this, tile.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false);
+      operationItemSlot = new ItemSlotNetwork(this, tile.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false);
       //      
-      checkOre = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, I18n.format("gui.storagenetwork.checkbox.ore"), true);
-      checkOre.setIsChecked(tile.getOre());
-      this.addButton(checkOre);
-      checkMeta = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, I18n.format("gui.storagenetwork.checkbox.meta"), true);
-      checkMeta.setIsChecked(tile.getMeta());
-      this.addButton(checkMeta);
+      checkOreBtn = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, I18n.format("gui.storagenetwork.checkbox.ore"), true);
+      checkOreBtn.setIsChecked(tile.getOre());
+      this.addButton(checkOreBtn);
+      checkMetaBtn = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, I18n.format("gui.storagenetwork.checkbox.meta"), true);
+      checkMetaBtn.setIsChecked(tile.getMeta());
+      this.addButton(checkMetaBtn);
     }
   }
 
   @Override
   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
-    if (operation != null && operation.isMouseOverSlot(mouseX, mouseY) && tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
+    if (operationItemSlot != null && operationItemSlot.isMouseOverSlot(mouseX, mouseY) && tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
       tile.setOperationStack(mc.player.inventory.getItemStack());
-      operation.setStack(mc.player.inventory.getItemStack());
+      operationItemSlot.setStack(mc.player.inventory.getItemStack());
       int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
       PacketRegistry.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.player.inventory.getItemStack()));
       return;
@@ -249,18 +251,15 @@ public class GuiCable extends GuiContainerBase {
       if (tile instanceof TileCable)
         tile.setMode(!tile.isMode());
     }
-    else if (checkMeta != null && checkOre != null &&
-        (button.id == checkMeta.id || button.id == checkOre.id)) {
-      PacketRegistry.INSTANCE.sendToServer(new FilterMessage(-1, null, checkOre.isChecked(), checkMeta.isChecked()));
+    else if (checkMetaBtn != null && checkOreBtn != null &&
+        (button.id == checkMetaBtn.id || button.id == checkOreBtn.id)) {
+      PacketRegistry.INSTANCE.sendToServer(new FilterMessage(-1, null, checkOreBtn.isChecked(), checkMetaBtn.isChecked()));
     }
   }
 
   @Override
   protected void keyTyped(char typedChar, int keyCode) throws IOException {
-    //    if (!(tile instanceof TileCable)) {
-    //      super.keyTyped(typedChar, keyCode);
-    //      return;
-    //    }
+
     if (!this.checkHotbarKeys(keyCode)) {
       Keyboard.enableRepeatEvents(true);
       String s = "";
@@ -278,7 +277,7 @@ public class GuiCable extends GuiContainerBase {
           searchBar.setText("0");
         }
         tile.setLimit(num);
-        PacketRegistry.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), operation.getStack()));
+        PacketRegistry.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), operationItemSlot.getStack()));
       }
       else {
         super.keyTyped(typedChar, keyCode);
