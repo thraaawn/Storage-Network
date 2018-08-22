@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.item.remote;
 
 import java.util.ArrayList;
 import java.util.List;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
@@ -60,6 +61,7 @@ public class ContainerRemote extends ContainerNetworkBase {
     if (playerIn.world.isRemote) {
       return ItemStack.EMPTY;
     }
+    StorageNetwork.log("transfer " + slotIndex);
     TileMaster tileMaster = this.getTileMaster();
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
@@ -68,7 +70,7 @@ public class ContainerRemote extends ContainerNetworkBase {
       itemstack = itemstack1.copy();
       if (slotIndex == 0) {
         // when shift click crafting
-        craftShift(playerIn, this.getTileMaster());
+        craftShift(playerIn, tileMaster);
         //        this.onCraftMatrixChanged(this.craftMatrix);
         return ItemStack.EMPTY;
       }
@@ -80,6 +82,12 @@ public class ContainerRemote extends ContainerNetworkBase {
         List<StackWrapper> list = tileMaster.getStacks();
         PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
         return ItemStack.EMPTY;
+      }
+      if (itemstack1.getCount() == 0) {
+        slot.putStack(ItemStack.EMPTY);
+      }
+      else {
+        slot.onSlotChanged();
       }
     }
     return itemstack;

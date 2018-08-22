@@ -20,7 +20,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRequest extends ContainerNetworkBase {
 
-
   public TileRequest tile;
 
   public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
@@ -28,7 +27,6 @@ public class ContainerRequest extends ContainerNetworkBase {
     this.tile = tile;
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
-
     SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(playerInv.player, matrix, result, 0, 101, 128);
     slotCraftOutput.setTileMaster((TileMaster) tile.getWorld().getTileEntity(tile.getMaster()));
     this.addSlotToContainer(slotCraftOutput);
@@ -38,7 +36,6 @@ public class ContainerRequest extends ContainerNetworkBase {
     this.onCraftMatrixChanged(this.matrix);
   }
 
-
   @Override
   public void bindHotbar() {
     //player hotbar
@@ -46,7 +43,6 @@ public class ContainerRequest extends ContainerNetworkBase {
       this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
     }
   }
-
 
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {
@@ -56,7 +52,6 @@ public class ContainerRequest extends ContainerNetworkBase {
     }
     findMatchingRecipe(matrix);
   }
-
 
   @Override
   public void slotChanged() {
@@ -82,31 +77,29 @@ public class ContainerRequest extends ContainerNetworkBase {
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       itemstack = itemstack1.copy();
+      TileMaster tileMaster = this.getTileMaster();
       if (slotIndex == 0) {
-        craftShift(playerIn, (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster()));
+        craftShift(playerIn, tileMaster);
         return ItemStack.EMPTY;
       }
-      if (slotIndex <= 9) {
-        if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) {
+      //      else if (slotIndex <= 9) {
+      //        if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) {
+      //          return ItemStack.EMPTY;
+      //        }
+      //        slot.onSlotChange(itemstack1, itemstack);
+      //      }
+      else if (tileMaster != null) {
+        int rest = tileMaster.insertStack(itemstack1, null, false);
+        ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
+        slot.putStack(stack);
+        detectAndSendChanges();
+        List<StackWrapper> list = tileMaster.getStacks();
+        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+        if (stack.isEmpty()) {
           return ItemStack.EMPTY;
         }
-        slot.onSlotChange(itemstack1, itemstack);
-      }
-      else {
-        TileMaster tile = (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster());
-        if (tile != null) {
-          int rest = tile.insertStack(itemstack1, null, false);
-          ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
-          slot.putStack(stack);
-          detectAndSendChanges();
-          List<StackWrapper> list = tile.getStacks();
-          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
-          if (stack.isEmpty()) {
-            return ItemStack.EMPTY;
-          }
-          slot.onTake(playerIn, itemstack1);
-          return ItemStack.EMPTY;
-        }
+        slot.onTake(playerIn, itemstack1);
+        return ItemStack.EMPTY;
       }
       if (itemstack1.getCount() == 0) {
         slot.putStack(ItemStack.EMPTY);
@@ -139,7 +132,6 @@ public class ContainerRequest extends ContainerNetworkBase {
   public boolean canMergeSlot(ItemStack stack, Slot slot) {
     return slot.inventory != this.result && super.canMergeSlot(stack, slot);
   }
-
 
   @Override
   public TileMaster getTileMaster() {
