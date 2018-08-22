@@ -4,8 +4,12 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.network.StacksMessage;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.data.FilterItem;
+import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -107,7 +111,7 @@ public abstract class ContainerNetworkBase extends Container {
    * @param player
    * @param tile
    */
-  public void craftShift(EntityPlayer player, TileMaster tile) {
+  protected void craftShift(EntityPlayer player, TileMaster tile) {
     IRecipe recipeCurrent = CraftingManager.findMatchingRecipe(matrix, player.world);
     if (recipeCurrent == null) {
       return;
@@ -201,6 +205,49 @@ public abstract class ContainerNetworkBase extends Container {
     this.recipeLocked = false;
     //update recipe again in case remnants left : IE hammer and such
     this.onCraftMatrixChanged(this.matrix);
+  }
+
+  @Override
+  public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
+    if (playerIn.world.isRemote) {
+      return ItemStack.EMPTY;
+    }
+
+    ItemStack itemstack = ItemStack.EMPTY;
+    Slot slot = this.inventorySlots.get(slotIndex);
+    if (slot != null && slot.getHasStack()) {
+      ItemStack itemstack1 = slot.getStack();
+      itemstack = itemstack1.copy();
+      TileMaster tileMaster = this.getTileMaster();
+      if (slotIndex == 0) {
+        craftShift(playerIn, tileMaster);
+        return ItemStack.EMPTY;
+      }
+      else if (tileMaster != null) {
+        int rest = tileMaster.insertStack(itemstack1, null, false);
+        ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
+        slot.putStack(stack);
+        detectAndSendChanges();
+        List<StackWrapper> list = tileMaster.getStacks();
+        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+        if (stack.isEmpty()) {
+          return ItemStack.EMPTY;
+        }
+        slot.onTake(playerIn, itemstack1);
+        return ItemStack.EMPTY;
+      }
+      if (itemstack1.getCount() == 0) {
+        slot.putStack(ItemStack.EMPTY);
+      }
+      else {
+        slot.onSlotChanged();
+      }
+      if (itemstack1.getCount() == itemstack.getCount()) {
+        return ItemStack.EMPTY;
+      }
+      slot.onTake(playerIn, itemstack1);
+    }
+    return itemstack;
   }
 
   public final class SlotCraftingNetwork extends SlotCrafting {

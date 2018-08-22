@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.item.remote;
 
 import java.util.ArrayList;
 import java.util.List;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
@@ -20,7 +19,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRemote extends ContainerNetworkBase {
 
@@ -56,42 +54,6 @@ public class ContainerRemote extends ContainerNetworkBase {
     matrix.skipEvents = false;
   }
 
-  @Override
-  public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-    if (playerIn.world.isRemote) {
-      return ItemStack.EMPTY;
-    }
-    StorageNetwork.log("transfer " + slotIndex);
-    TileMaster tileMaster = this.getTileMaster();
-    ItemStack itemstack = ItemStack.EMPTY;
-    Slot slot = this.inventorySlots.get(slotIndex);
-    if (slot != null && slot.getHasStack()) {
-      ItemStack itemstack1 = slot.getStack();
-      itemstack = itemstack1.copy();
-      if (slotIndex == 0) {
-        // when shift click crafting
-        craftShift(playerIn, tileMaster);
-        //        this.onCraftMatrixChanged(this.craftMatrix);
-        return ItemStack.EMPTY;
-      }
-      else if (tileMaster != null) {
-        int rest = tileMaster.insertStack(itemstack1, null, false);
-        ItemStack stack = (rest == 0) ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
-        slot.putStack(stack);
-        detectAndSendChanges();
-        List<StackWrapper> list = tileMaster.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
-        return ItemStack.EMPTY;
-      }
-      if (itemstack1.getCount() == 0) {
-        slot.putStack(ItemStack.EMPTY);
-      }
-      else {
-        slot.onSlotChanged();
-      }
-    }
-    return itemstack;
-  }
 
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {

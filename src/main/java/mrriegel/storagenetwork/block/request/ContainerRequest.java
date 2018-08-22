@@ -16,7 +16,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRequest extends ContainerNetworkBase {
 
@@ -64,55 +63,6 @@ public class ContainerRequest extends ContainerNetworkBase {
     StorageNetwork.benchmark("[cr] slotChanged before updateTile");
     UtilTileEntity.updateTile(tile.getWorld(), tile.getPos());
     StorageNetwork.benchmark("[cr] slotChanged End updateTile");
-  }
-
-  @Override
-  public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-    if (playerIn.world.isRemote) {
-      return ItemStack.EMPTY;
-    }
-    StorageNetwork.log("transfer " + slotIndex);
-    ItemStack itemstack = ItemStack.EMPTY;
-    Slot slot = this.inventorySlots.get(slotIndex);
-    if (slot != null && slot.getHasStack()) {
-      ItemStack itemstack1 = slot.getStack();
-      itemstack = itemstack1.copy();
-      TileMaster tileMaster = this.getTileMaster();
-      if (slotIndex == 0) {
-        craftShift(playerIn, tileMaster);
-        return ItemStack.EMPTY;
-      }
-      //      else if (slotIndex <= 9) {
-      //        if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) {
-      //          return ItemStack.EMPTY;
-      //        }
-      //        slot.onSlotChange(itemstack1, itemstack);
-      //      }
-      else if (tileMaster != null) {
-        int rest = tileMaster.insertStack(itemstack1, null, false);
-        ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
-        slot.putStack(stack);
-        detectAndSendChanges();
-        List<StackWrapper> list = tileMaster.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
-        if (stack.isEmpty()) {
-          return ItemStack.EMPTY;
-        }
-        slot.onTake(playerIn, itemstack1);
-        return ItemStack.EMPTY;
-      }
-      if (itemstack1.getCount() == 0) {
-        slot.putStack(ItemStack.EMPTY);
-      }
-      else {
-        slot.onSlotChanged();
-      }
-      if (itemstack1.getCount() == itemstack.getCount()) {
-        return ItemStack.EMPTY;
-      }
-      slot.onTake(playerIn, itemstack1);
-    }
-    return itemstack;
   }
 
   @Override
