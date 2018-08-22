@@ -32,20 +32,21 @@ public class ContainerRequest extends ContainerNetworkBase {
     SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(playerInv.player, matrix, result, 0, 101, 128);
     slotCraftOutput.setTileMaster((TileMaster) tile.getWorld().getTileEntity(tile.getMaster()));
     this.addSlotToContainer(slotCraftOutput);
-    int index = 0;
-    //3x3 crafting grid
-    for (int i = 0; i < 3; ++i) {
-      for (int j = 0; j < 3; ++j) {
-        this.addSlotToContainer(new Slot(matrix, index++, 8 + j * 18, 110 + i * 18));
-      }
-    }
+    bindGrid();
     bindPlayerInvo(playerInv);
+    bindHotbar();
+    this.onCraftMatrixChanged(this.matrix);
+  }
+
+
+  @Override
+  public void bindHotbar() {
     //player hotbar
     for (int i = 0; i < 9; ++i) {
       this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
     }
-    this.onCraftMatrixChanged(this.matrix);
   }
+
 
   @Override
   public void onCraftMatrixChanged(IInventory inventoryIn) {

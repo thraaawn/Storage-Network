@@ -38,30 +38,9 @@ public class ContainerRemote extends ContainerNetworkBase {
     SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(playerInv.player, matrix, result, 0, 101, 128);
     slotCraftOutput.setTileMaster(this.getTileMaster());
     this.addSlotToContainer(slotCraftOutput);
-    int index = 0;
-    for (int i = 0; i < 3; ++i) {
-      for (int j = 0; j < 3; ++j) {
-        this.addSlotToContainer(new Slot(matrix, index++, 8 + j * 18, 110 + i * 18));
-      }
-    }
+    bindGrid();
     bindPlayerInvo(playerInv);
-    for (int i = 0; i < 9; ++i) {
-      if (i == playerInv.currentItem)
-        this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232) {
-
-          @Override
-          public boolean isItemValid(ItemStack stack) {
-            return false;
-          }
-
-          @Override
-          public boolean canTakeStack(EntityPlayer playerIn) {
-            return false;
-          }
-        });
-      else
-        this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
-    }
+    bindHotbar();
     this.onCraftMatrixChanged(this.matrix);
   }
 
@@ -134,5 +113,26 @@ public class ContainerRemote extends ContainerNetworkBase {
   @Override
   public TileMaster getTileMaster() {
     return ItemRemote.getTile(remoteItemStack);
+  }
+
+  @Override
+  public void bindHotbar() {
+    for (int i = 0; i < 9; ++i) {
+      if (i == playerInv.currentItem)
+        this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232) {
+
+          @Override
+          public boolean isItemValid(ItemStack stack) {
+            return false;
+          }
+
+          @Override
+          public boolean canTakeStack(EntityPlayer playerIn) {
+            return false;
+          }
+        });
+      else
+        this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
+    }
   }
 }

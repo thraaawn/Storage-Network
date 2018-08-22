@@ -33,6 +33,8 @@ public abstract class ContainerNetworkBase extends Container {
 
   public abstract TileMaster getTileMaster();
 
+  public abstract void bindHotbar();
+
   public abstract void slotChanged();
 
   boolean test = false;
@@ -42,6 +44,16 @@ public abstract class ContainerNetworkBase extends Container {
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 9; ++j) {
         this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 174 + i * 18));
+      }
+    }
+  }
+
+  protected void bindGrid() {
+    int index = 0;
+    //3x3 crafting grid
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        this.addSlotToContainer(new Slot(matrix, index++, 8 + j * 18, 110 + i * 18));
       }
     }
   }
