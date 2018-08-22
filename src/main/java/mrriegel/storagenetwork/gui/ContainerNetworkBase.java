@@ -11,6 +11,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -109,18 +110,14 @@ public abstract class ContainerNetworkBase extends Container {
         break;
       }
       //onTake replaced with this handcoded rewrite
-      //  this.getSlot(0).onTake(player, res);// ontake this does the actaul craft see ContainerRequest
       StorageNetwork.log("addItemStackToInventory " + res);
       if (!player.inventory.addItemStackToInventory(res)) {
         player.dropItem(res, false);
       }
       NonNullList<ItemStack> remainder = CraftingManager.getRemainingItems(matrix, player.world);
-      //StorageNetwork.benchmark("after getRemainingItems");
       for (int i = 0; i < remainder.size(); ++i) {
-        //StorageNetwork.benchmark("before getstackinslot");
         ItemStack slot = this.matrix.getStackInSlot(i);
         ItemStack remainderCurrent = remainder.get(i);
-        //        StorageNetwork.benchmark("A");
         if (slot.getItem().getContainerItem() != null) { //is the fix for milk and similar
           slot = new ItemStack(slot.getItem().getContainerItem());
           matrix.setInventorySlotContents(i, slot);
@@ -131,15 +128,12 @@ public abstract class ContainerNetworkBase extends Container {
         }
         else if (!remainderCurrent.isEmpty()) {
           if (slot.isEmpty()) {
-            //   StorageNetwork.benchmark("B");
             this.matrix.setInventorySlotContents(i, remainderCurrent);
-            // StorageNetwork.benchmark("C");
           }
           else if (ItemStack.areItemsEqual(slot, remainderCurrent) && ItemStack.areItemStackTagsEqual(slot, remainderCurrent)) {
-            // StorageNetwork.benchmark("D");
             remainderCurrent.grow(slot.getCount());
             this.matrix.setInventorySlotContents(i, remainderCurrent);
-            //StorageNetwork.benchmark("E");
+
           }
           else if (ItemStack.areItemsEqualIgnoreDurability(slot, remainderCurrent)) {
             //crafting that consumes durability
@@ -149,41 +143,31 @@ public abstract class ContainerNetworkBase extends Container {
           else {
             StorageNetwork.log("Gadd to inventory " + remainderCurrent);
             if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
-              // StorageNetwork.benchmark("G");
+
               player.dropItem(remainderCurrent, false);
             }
           }
-          //   StorageNetwork.benchmark("H");
         }
         else if (!slot.isEmpty()) {
-          //      StorageNetwork.benchmark("start isempty section");
           this.matrix.decrStackSize(i, 1);
           slot = this.matrix.getStackInSlot(i);
-          //    StorageNetwork.benchmark("after isempty section");
         }
 
       }
-      //END onTake redo
-      //StorageNetwork.benchmark("after onTake REFACTORED!");
+      //END onTake redo 
       crafted += sizePerCraft;
       ItemStack stackInSlot;
       ItemStack recipeStack;
       FilterItem filterItemCurrent;
-      // StorageNetwork.benchmark( "before FOR loop");
       for (int i = 0; i < matrix.getSizeInventory(); i++) {
-        // StorageNetwork.benchmark( "start of FOR loop");
         stackInSlot = matrix.getStackInSlot(i);
         if (stackInSlot.isEmpty()) {
           recipeStack = recipeCopy.get(i);
-          // StorageNetwork.benchmark( "Container.craftShift loop " + crafted + " slotIndex " + i);
           //////////////// booleans are meta, ore(?ignored?), nbt
           filterItemCurrent = !recipeStack.isEmpty() ? new FilterItem(recipeStack, true, false, false) : null;
           //false here means dont simulate
-          //StorageNetwork.benchmark("before request");
           ItemStack req = tile.request(filterItemCurrent, 1, false);
-          //StorageNetwork.benchmark("after request & before setInventorySlotContents");
           matrix.setInventorySlotContents(i, req);
-          //StorageNetwork.benchmark("after setInventorySlotContents");
         }
       }
 
@@ -194,7 +178,56 @@ public abstract class ContainerNetworkBase extends Container {
     this.recipeLocked = false;
     //update recipe again in case remnants left : IE hammer and such
     this.onCraftMatrixChanged(this.matrix);
-    //StorageNetwork.benchmark("[network base] end :: " + result.getStackInSlot(0));
-    StorageNetwork.benchmark("end");
+
+  }
+
+  public final class SlotCraftingNetwork extends SlotCrafting {
+
+    public SlotCraftingNetwork(EntityPlayer player,
+        InventoryCrafting craftingInventory, IInventory inventoryIn,
+        int slotIndex, int xPosition, int yPosition) {
+      super(player, craftingInventory, inventoryIn, slotIndex, xPosition, yPosition);
+    }
+
+    private TileMaster tileMaster;
+
+    @Override
+    public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
+      if (playerIn.world.isRemote) {
+        return stack;
+      }
+      //        this.onCrafting(stack);
+      List<ItemStack> lis = Lists.newArrayList();
+      for (int i = 0; i < matrix.getSizeInventory(); i++) {
+        lis.add(matrix.getStackInSlot(i).copy());
+      }
+      ///    onCraftMatrixChanged(matrix);
+      super.onTake(playerIn, stack);
+      detectAndSendChanges();
+      for (int i = 0; i < matrix.getSizeInventory(); i++) {
+        if (matrix.getStackInSlot(i).isEmpty() && getTileMaster() != null) {
+          ItemStack req = getTileMaster().request(
+              !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
+          if (!req.isEmpty()) {
+            matrix.setInventorySlotContents(i, req);
+          }
+        }
+      }
+      if (getTileMaster() != null) {
+        StorageNetwork.log("remote cancel this stacksMessage");
+        //        List<StackWrapper> list = tileMaster.getStacks();
+        //        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+      }
+      detectAndSendChanges();
+      return stack;
+    }
+
+    public TileMaster getTileMaster() {
+      return tileMaster;
+    }
+
+    public void setTileMaster(TileMaster tileMaster) {
+      this.tileMaster = tileMaster;
+    }
   }
 }

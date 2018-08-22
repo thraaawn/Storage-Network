@@ -1,7 +1,6 @@
 package mrriegel.storagenetwork.block.request;
 
 import java.util.List;
-import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
@@ -9,7 +8,6 @@ import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
 import mrriegel.storagenetwork.network.StacksMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
-import mrriegel.storagenetwork.util.data.FilterItem;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -18,47 +16,11 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRequest extends ContainerNetworkBase {
 
-  private final class SlotCraftingNetworkTBL extends SlotCrafting {
-
-    private final TileRequest tile;
-
-    private SlotCraftingNetworkTBL(EntityPlayer player, InventoryCrafting craftingInventory, IInventory inventoryIn, int slotIndex, int xPosition, int yPosition, TileRequest tile) {
-      super(player, craftingInventory, inventoryIn, slotIndex, xPosition, yPosition);
-      this.tile = tile;
-    }
-
-    @Override
-    public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
-      if (playerIn.world.isRemote) {
-        return stack;
-      }
-      List<ItemStack> lis = Lists.newArrayList();
-      for (int i = 0; i < matrix.getSizeInventory(); i++) {
-        lis.add(matrix.getStackInSlot(i).copy());
-      }
-      onCraftMatrixChanged(matrix);
-      super.onTake(playerIn, stack);
-      TileMaster tileMaster = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
-      detectAndSendChanges();
-      for (int i = 0; i < matrix.getSizeInventory(); i++) {
-        if (matrix.getStackInSlot(i).isEmpty()) {
-          ItemStack req = tileMaster.request(
-              !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
-          if (!req.isEmpty()) {
-            matrix.setInventorySlotContents(i, req);
-          }
-        }
-      }
-      detectAndSendChanges();
-      return stack;
-    }
-  }
 
   public TileRequest tile;
 
@@ -68,7 +30,8 @@ public class ContainerRequest extends ContainerNetworkBase {
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
 
-    SlotCrafting slotCraftOutput = new SlotCraftingNetworkTBL(playerInv.player, matrix, result, 0, 101, 128, tile);
+    SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(playerInv.player, matrix, result, 0, 101, 128);
+    slotCraftOutput.setTileMaster((TileMaster) tile.getWorld().getTileEntity(tile.getMaster()));
     this.addSlotToContainer(slotCraftOutput);
     int index = 0;
     //3x3 crafting grid

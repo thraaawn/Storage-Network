@@ -2,8 +2,6 @@ package mrriegel.storagenetwork.item.remote;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.google.common.collect.Lists;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
@@ -11,7 +9,6 @@ import mrriegel.storagenetwork.network.StacksMessage;
 import mrriegel.storagenetwork.registry.ModItems;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.NBTHelper;
-import mrriegel.storagenetwork.util.data.FilterItem;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,7 +17,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -28,49 +24,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRemote extends ContainerNetworkBase {
 
-  private final class SlotCraftingNetwork extends SlotCrafting {
-
-    private SlotCraftingNetwork(EntityPlayer player, InventoryCrafting craftingInventory, IInventory inventoryIn, int slotIndex, int xPosition, int yPosition) {
-      super(player, craftingInventory, inventoryIn, slotIndex, xPosition, yPosition);
-    }
-
-    public TileMaster tileMaster;
-
-    @Override
-    public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
-      if (playerIn.world.isRemote) {
-        return stack;
-      }
-      //        this.onCrafting(stack);
-      List<ItemStack> lis = Lists.newArrayList();
-      for (int i = 0; i < matrix.getSizeInventory(); i++) {
-        lis.add(matrix.getStackInSlot(i).copy());
-      }
-      ///    onCraftMatrixChanged(matrix);
-      super.onTake(playerIn, stack);
-      detectAndSendChanges();
-      for (int i = 0; i < matrix.getSizeInventory(); i++) {
-        if (matrix.getStackInSlot(i).isEmpty() && tileMaster != null) {
-          ItemStack req = tileMaster.request(
-              !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
-          if (!req.isEmpty()) {
-
-            matrix.setInventorySlotContents(i, req);
-          }
-        }
-      }
-      if (tileMaster != null) {
-        StorageNetwork.log("remote cancel this stacksMessage");
-        //        List<StackWrapper> list = tileMaster.getStacks();
-        //        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
-      }
-      detectAndSendChanges();
-      return stack;
-    }
-  }
-
-  public TileMaster tileMaster;
-  public ItemStack remoteItemStack;
+  private TileMaster tileMaster;
+  private ItemStack remoteItemStack;
 
   public ContainerRemote(final InventoryPlayer playerInv) {
     this.playerInv = playerInv;
@@ -84,9 +39,8 @@ public class ContainerRemote extends ContainerNetworkBase {
       storage.add(NBTHelper.getItemStack(remoteItemStack, "c" + i));
     }
     matrix = new InventoryCraftingNetwork(this, storage);
-
     SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(playerInv.player, matrix, result, 0, 101, 128);
-    slotCraftOutput.tileMaster = this.tileMaster;
+    slotCraftOutput.setTileMaster(this.tileMaster);
     this.addSlotToContainer(slotCraftOutput);
     int index = 0;
     for (int i = 0; i < 3; ++i) {
@@ -196,6 +150,6 @@ public class ContainerRemote extends ContainerNetworkBase {
 
   @Override
   public TileMaster getTileMaster() {
-    return ItemRemote.getTile(remoteItemStack);
+    return tileMaster;
   }
 }
