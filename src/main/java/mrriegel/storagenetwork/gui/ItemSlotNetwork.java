@@ -17,26 +17,22 @@ import net.minecraft.item.ItemStack;
  */
 public class ItemSlotNetwork {
 
-  public int x, y, size, guiLeft, guiTop;
-  public boolean number, square, smallFont, toolTip;
-  protected Minecraft mc;
-  protected GuiContainerBase parent;
+  private int x, y, size, guiLeft, guiTop;
+  private boolean number;
+  private Minecraft mc;
+  private GuiContainerBase parent;
+  private ItemStack stack;
 
-  public ItemStack stack;
-
-  public ItemSlotNetwork(GuiContainerBase parent, @Nonnull ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
+  public ItemSlotNetwork(GuiContainerBase parent, @Nonnull ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number) {
     this.x = x;
     this.y = y;
     this.size = size;
     this.guiLeft = guiLeft;
     this.guiTop = guiTop;
     this.number = number;
-    this.square = square;
-    this.smallFont = smallFont;
-    this.toolTip = toolTip;
     this.parent = parent;
     mc = Minecraft.getMinecraft();
-    this.stack = stack;
+    this.setStack(stack);
   }
 
   public boolean isMouseOverSlot(int mouseX, int mouseY) {
@@ -45,23 +41,18 @@ public class ItemSlotNetwork {
 
   public void drawSlot(int mx, int my) {
     GlStateManager.pushMatrix();
-    if (!stack.isEmpty()) {
+    if (!getStack().isEmpty()) {
       RenderHelper.enableGUIStandardItemLighting();
-      mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
+      mc.getRenderItem().renderItemAndEffectIntoGUI(getStack(), x, y);
       String amount = UtilInventory.formatLargeNumber(size);
       if (number) {
-        if (smallFont) {
-          GlStateManager.pushMatrix();
-          GlStateManager.scale(.5f, .5f, .5f);
-          mc.getRenderItem().renderItemOverlayIntoGUI(parent.getFont(), stack, x * 2 + 16, y * 2 + 16, amount);
-          GlStateManager.popMatrix();
-        }
-        else {
-          mc.getRenderItem().renderItemOverlayIntoGUI(parent.getFont(), stack, x, y, amount);
-        }
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(.5f, .5f, .5f);
+        mc.getRenderItem().renderItemOverlayIntoGUI(parent.getFont(), stack, x * 2 + 16, y * 2 + 16, amount);
+        GlStateManager.popMatrix();
       }
     }
-    if (square && this.isMouseOverSlot(mx, my)) {
+    if (this.isMouseOverSlot(mx, my)) {
       GlStateManager.disableLighting();
       GlStateManager.disableDepth();
       int j1 = x;
@@ -76,8 +67,16 @@ public class ItemSlotNetwork {
   }
 
   public void drawTooltip(int mx, int my) {
-    if (toolTip && this.isMouseOverSlot(mx, my) && !stack.isEmpty()) {
-      parent.renderToolTip(stack, mx, my);
+    if (this.isMouseOverSlot(mx, my) && !getStack().isEmpty()) {
+      parent.renderToolTip(getStack(), mx, my);
     }
+  }
+
+  public ItemStack getStack() {
+    return stack;
+  }
+
+  public void setStack(ItemStack stack) {
+    this.stack = stack;
   }
 }
