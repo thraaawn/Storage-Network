@@ -1,7 +1,6 @@
 package mrriegel.storagenetwork.block.cable;
 
 import java.util.Arrays;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModItems;
@@ -16,6 +15,7 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerCable extends Container {
 
+  private static final int UPGRADE_COUNT = 4;
   InventoryPlayer playerInv;
   public AbstractFilterTile tile;
   IInventory upgrades;
@@ -23,7 +23,7 @@ public class ContainerCable extends Container {
   public ContainerCable(AbstractFilterTile tile, InventoryPlayer playerInv) {
     this.playerInv = playerInv;
     this.tile = tile;
-    upgrades = new InventoryBasic("upgrades", false, 4) {
+    upgrades = new InventoryBasic("upgrades", false, UPGRADE_COUNT) {
 
       @Override
       public int getInventoryStackLimit() {
@@ -34,7 +34,7 @@ public class ContainerCable extends Container {
       for (int i = 0; i < ((TileCable) tile).getUpgrades().size(); i++) {
         upgrades.setInventorySlotContents(i, ((TileCable) tile).getUpgrades().get(i));
       }
-      for (int ii = 0; ii < 4; ii++) {
+      for (int ii = 0; ii < UPGRADE_COUNT; ii++) {
         this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
 
           @Override
@@ -48,13 +48,13 @@ public class ContainerCable extends Container {
             super.onSlotChanged();
           }
 
-          private boolean in(int meta) {
-            for (int i = 0; i < upgrades.getSizeInventory(); i++) {
-              if (upgrades.getStackInSlot(i) != null && upgrades.getStackInSlot(i).getItemDamage() == meta)
-                return true;
-            }
-            return false;
-          }
+          //          private boolean in(int meta) {
+          //            for (int i = 0; i < upgrades.getSizeInventory(); i++) {
+          //              if (upgrades.getStackInSlot(i) != null && upgrades.getStackInSlot(i).getItemDamage() == meta)
+          //                return true;
+          //            }
+          //            return false;
+          //          }
         });
       }
     }

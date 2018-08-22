@@ -78,13 +78,13 @@ public class BlockCable extends AbstractBlockConnectable {
 
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    if (!(worldIn.getTileEntity(pos) instanceof TileCable)) {
+    TileEntity tile = worldIn.getTileEntity(pos);
+    if (tile instanceof TileCable == false) {
       return false;
     }
     if (worldIn.isRemote) {
       return true;
     }
-    TileCable tile = (TileCable) worldIn.getTileEntity(pos);
     if (tile.getBlockType() != ModBlocks.kabel) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
@@ -106,10 +106,12 @@ public class BlockCable extends AbstractBlockConnectable {
     return UtilInventory.hasItemHandler(worldIn, pos, side);
   }
 
-  IBlockState getNewState(IBlockAccess world, BlockPos pos) {
-    if (!(world.getTileEntity(pos) instanceof TileCable))
+  private IBlockState getNewState(IBlockAccess world, BlockPos pos) {
+    TileEntity tileHere = world.getTileEntity(pos);
+    if (!(tileHere instanceof TileCable)) {
       return world.getBlockState(pos);
-    TileCable tile = (TileCable) world.getTileEntity(pos);
+    }
+    TileCable tile = (TileCable) tileHere;
     EnumFacing face = null;
     BlockPos con = null;
     Map<EnumFacing, EnumConnectType> oldMap = tile.getConnects();
@@ -128,19 +130,19 @@ public class BlockCable extends AbstractBlockConnectable {
       storage = true;
       first = true;
     }
-    for (EnumFacing f : EnumFacing.values()) {
-      if (stor == f && first)
+    for (EnumFacing facing : EnumFacing.values()) {
+      if (stor == facing && first)
         continue;
-      EnumConnectType neu = getConnect(world, pos, pos.offset(f));
-      if (neu == EnumConnectType.STORAGE)
+      EnumConnectType connectType = getConnect(world, pos, pos.offset(facing));
+      if (connectType == EnumConnectType.STORAGE)
         if (!storage) {
-        newMap.put(f, neu);
+        newMap.put(facing, connectType);
         storage = true;
         }
         else
-          newMap.put(f, EnumConnectType.NULL);
+          newMap.put(facing, EnumConnectType.NULL);
       else
-        newMap.put(f, neu);
+        newMap.put(facing, connectType);
     }
     tile.setConnects(newMap);
     if (tile.north == EnumConnectType.STORAGE) {
@@ -212,11 +214,12 @@ public class BlockCable extends AbstractBlockConnectable {
 
   @Override
   public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
-    if (!(worldIn.getTileEntity(pos) instanceof TileCable)) {
+    TileEntity tileHere = worldIn.getTileEntity(pos);
+    if (!(tileHere instanceof TileCable)) {
       return;
     }
     state = state.getActualState(worldIn, pos);
-    TileCable tile = (TileCable) worldIn.getTileEntity(pos);
+    TileCable tile = (TileCable) tileHere;
     float f = 0.3125F;
     float f1 = 0.6875F;
     float f2 = 0.3125F;
@@ -251,21 +254,19 @@ public class BlockCable extends AbstractBlockConnectable {
   }
 
   @Override
-  public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-    if (!(source.getTileEntity(pos) instanceof TileCable)) {
+  public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+    TileEntity tileHere = world.getTileEntity(pos);
+    if (tileHere == null || !(tileHere instanceof TileCable)) {
       return FULL_BLOCK_AABB;
     }
-    state = state.getActualState(source, pos);
-    TileCable tile = (TileCable) source.getTileEntity(pos);
+    state = state.getActualState(world, pos);
+    TileCable tile = (TileCable) tileHere;
     float x1 = 0.37F;
     float x2 = 0.63F;
     float y1 = 0.37F;
     float y2 = 0.63F;
     float z1 = 0.37F;
     float z2 = 0.63F;
-    if (tile == null) {
-      return new AxisAlignedBB(x1, z1, y1, x2, z2, y2);
-    }
     if (tile.north != EnumConnectType.NULL) {
       y1 = 0f;
     }
@@ -287,15 +288,19 @@ public class BlockCable extends AbstractBlockConnectable {
     return new AxisAlignedBB(x1, z1, y1, x2, z2, y2);
   }
 
-  protected EnumConnectType getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
-    Block ori = worldIn.getBlockState(orig).getBlock();
-    if (worldIn.getTileEntity(pos) instanceof IConnectable || worldIn.getTileEntity(pos) instanceof TileMaster)
+  protected EnumConnectType getConnect(IBlockAccess world, BlockPos orig, BlockPos pos) {
+    TileEntity tileHere = world.getTileEntity(pos);
+    Block ori = world.getBlockState(orig).getBlock();
+    if (tileHere instanceof IConnectable || tileHere instanceof TileMaster) {
       return EnumConnectType.CONNECT;
-    if (ori == ModBlocks.kabel)
+    }
+    if (ori == ModBlocks.kabel) {
       return EnumConnectType.NULL;
+    }
     EnumFacing face = get(orig, pos);
-    if (!validInventory(worldIn, pos, face))
+    if (!validInventory(world, pos, face)) {
       return EnumConnectType.NULL;
+    }
     return EnumConnectType.STORAGE;
   }
 
