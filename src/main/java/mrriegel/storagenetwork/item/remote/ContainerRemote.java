@@ -28,6 +28,47 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRemote extends ContainerNetworkBase {
 
+  private final class SlotCraftingNetwork extends SlotCrafting {
+
+    private SlotCraftingNetwork(EntityPlayer player, InventoryCrafting craftingInventory, IInventory inventoryIn, int slotIndex, int xPosition, int yPosition) {
+      super(player, craftingInventory, inventoryIn, slotIndex, xPosition, yPosition);
+    }
+
+    public TileMaster tileMaster;
+
+    @Override
+    public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
+      if (playerIn.world.isRemote) {
+        return stack;
+      }
+      //        this.onCrafting(stack);
+      List<ItemStack> lis = Lists.newArrayList();
+      for (int i = 0; i < matrix.getSizeInventory(); i++) {
+        lis.add(matrix.getStackInSlot(i).copy());
+      }
+      ///    onCraftMatrixChanged(matrix);
+      super.onTake(playerIn, stack);
+      detectAndSendChanges();
+      for (int i = 0; i < matrix.getSizeInventory(); i++) {
+        if (matrix.getStackInSlot(i).isEmpty() && tileMaster != null) {
+          ItemStack req = tileMaster.request(
+              !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
+          if (!req.isEmpty()) {
+
+            matrix.setInventorySlotContents(i, req);
+          }
+        }
+      }
+      if (tileMaster != null) {
+        StorageNetwork.log("remote cancel this stacksMessage");
+        //        List<StackWrapper> list = tileMaster.getStacks();
+        //        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+      }
+      detectAndSendChanges();
+      return stack;
+    }
+  }
+
   public TileMaster tileMaster;
   public ItemStack remoteItemStack;
 
@@ -43,41 +84,9 @@ public class ContainerRemote extends ContainerNetworkBase {
       storage.add(NBTHelper.getItemStack(remoteItemStack, "c" + i));
     }
     matrix = new InventoryCraftingNetwork(this, storage);
-    //    for (int i = 0; i < 9; i++) {
-    //      matrix.setInventorySlotContents(i, NBTHelper.getItemStack(remoteItemStack, "c" + i));
-    //    }
-    SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, matrix, result, 0, 101, 128) {
 
-      @Override
-      public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
-        if (playerIn.world.isRemote) {
-          return stack;
-        }
-        //        this.onCrafting(stack);
-        List<ItemStack> lis = Lists.newArrayList();
-        for (int i = 0; i < matrix.getSizeInventory(); i++)
-          lis.add(matrix.getStackInSlot(i).copy());
-        super.onTake(playerIn, stack);
-        detectAndSendChanges();
-        for (int i = 0; i < matrix.getSizeInventory(); i++) {
-          if (matrix.getStackInSlot(i) == null || matrix.getStackInSlot(i).isEmpty()
-              && tileMaster != null) {
-            ItemStack req = tileMaster.request(
-                !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
-            if (!req.isEmpty()) {
-              StorageNetwork.benchmark("PARENT REMOTE ON TAKE  matrix change event  ");
-              matrix.setInventorySlotContents(i, req);
-            }
-          }
-        }
-        if (tileMaster != null) {
-          List<StackWrapper> list = tileMaster.getStacks();
-          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
-          detectAndSendChanges();
-        }
-        return stack;
-      }
-    };
+    SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(playerInv.player, matrix, result, 0, 101, 128);
+    slotCraftOutput.tileMaster = this.tileMaster;
     this.addSlotToContainer(slotCraftOutput);
     int index = 0;
     for (int i = 0; i < 3; ++i) {

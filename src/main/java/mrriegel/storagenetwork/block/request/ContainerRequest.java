@@ -24,6 +24,42 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRequest extends ContainerNetworkBase {
 
+  private final class SlotCraftingNetworkTBL extends SlotCrafting {
+
+    private final TileRequest tile;
+
+    private SlotCraftingNetworkTBL(EntityPlayer player, InventoryCrafting craftingInventory, IInventory inventoryIn, int slotIndex, int xPosition, int yPosition, TileRequest tile) {
+      super(player, craftingInventory, inventoryIn, slotIndex, xPosition, yPosition);
+      this.tile = tile;
+    }
+
+    @Override
+    public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
+      if (playerIn.world.isRemote) {
+        return stack;
+      }
+      List<ItemStack> lis = Lists.newArrayList();
+      for (int i = 0; i < matrix.getSizeInventory(); i++) {
+        lis.add(matrix.getStackInSlot(i).copy());
+      }
+      onCraftMatrixChanged(matrix);
+      super.onTake(playerIn, stack);
+      TileMaster tileMaster = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
+      detectAndSendChanges();
+      for (int i = 0; i < matrix.getSizeInventory(); i++) {
+        if (matrix.getStackInSlot(i).isEmpty()) {
+          ItemStack req = tileMaster.request(
+              !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
+          if (!req.isEmpty()) {
+            matrix.setInventorySlotContents(i, req);
+          }
+        }
+      }
+      detectAndSendChanges();
+      return stack;
+    }
+  }
+
   public TileRequest tile;
 
   public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
@@ -31,59 +67,8 @@ public class ContainerRequest extends ContainerNetworkBase {
     this.tile = tile;
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
-    //reload saved item stacks FOR the grid
-    //    for (int i = 0; i < 9; i++) {
-    //      if (tile.matrix.get(i) != null && tile.matrix.get(i).isEmpty() == false)
-    //        matrix.setInventorySlotContents(i, tile.matrix.get(i));
-    //    }
-    //crafting output slot
-    SlotCrafting slotCraftOutput = new SlotCrafting(playerInv.player, matrix, result, 0, 101, 128) {
 
-      @Override
-      public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
-        //        if(  result.getStackInSlot(0) == null 
-        //            || result.getStackInSlot(0).isEmpty()){
-        //          StorageNetwork.benchmark("[onTake] EMPTY!!!");
-        //          result.setInventorySlotContents(0, ItemStack.EMPTY);
-        //          return ItemStack.EMPTY;
-        //        }
-        if (playerIn.world.isRemote) {
-          StorageNetwork.benchmark("[onTake] isRemote");
-          return stack;
-        }
-        StorageNetwork.benchmark("[onTake] start!!" + result.getStackInSlot(0));
-        onCraftMatrixChanged(matrix);
-        List<ItemStack> lis = Lists.newArrayList();
-        for (int i = 0; i < matrix.getSizeInventory(); i++) {
-          lis.add(matrix.getStackInSlot(i).copy());
-        }
-        StorageNetwork.benchmark("[onTake] before superOnTake");
-        super.onTake(playerIn, stack);
-        StorageNetwork.benchmark("[onTake] after superOnTake");
-        TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
-        StorageNetwork.benchmark("[onTake] before detectSave");
-        detectAndSendChanges();
-        StorageNetwork.benchmark("[onTake] after detectSave");
-        for (int i = 0; i < matrix.getSizeInventory(); i++) {
-          if (matrix.getStackInSlot(i) == null || matrix.getStackInSlot(i).isEmpty()) {
-            StorageNetwork.benchmark("[onTake] before request " + i);
-            ItemStack req = t.request(
-                !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
-            StorageNetwork.benchmark("[onTake] after request " + i);
-            if (!req.isEmpty()) {
-              matrix.setInventorySlotContents(i, req);
-            }
-          }
-        }
-        StorageNetwork.benchmark("[onTake] after BIG loop");
-        //        List<StackWrapper> list = t.getStacks();
-        //        StorageNetwork.log("ContainerRequest.onTake DISAGBLE stacksMessage");
-        //   PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
-        detectAndSendChanges();
-        StorageNetwork.benchmark("[onTake] end");
-        return stack;
-      }
-    };
+    SlotCrafting slotCraftOutput = new SlotCraftingNetworkTBL(playerInv.player, matrix, result, 0, 101, 128, tile);
     this.addSlotToContainer(slotCraftOutput);
     int index = 0;
     //3x3 crafting grid
