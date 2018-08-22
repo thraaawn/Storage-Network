@@ -204,7 +204,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
         int in = index;
         if (in >= tmp.size())
           break;
-        slots.add(new ItemSlotNetwork(tmp.get(in).getStack(), guiLeft + 8 + ii * 18, guiTop + 10 + jj * 18, tmp.get(in).getSize(), guiLeft, guiTop, true, true, ConfigHandler.smallFont, true));
+        slots.add(new ItemSlotNetwork(this, tmp.get(in).getStack(), guiLeft + 8 + ii * 18, guiTop + 10 + jj * 18, tmp.get(in).getSize(), guiLeft, guiTop, true, true, ConfigHandler.smallFont, true));
         index++;
       }
     }

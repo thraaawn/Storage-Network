@@ -7,8 +7,9 @@ public abstract class AbstractSlot {
   public int x, y, size, guiLeft, guiTop;
   public boolean number, square, smallFont, toolTip;
   protected Minecraft mc;
+  protected GuiContainerBase parent;
 
-  public AbstractSlot(int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
+  public AbstractSlot(GuiContainerBase parent, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
     super();
     this.x = x;
     this.y = y;
@@ -19,6 +20,7 @@ public abstract class AbstractSlot {
     this.square = square;
     this.smallFont = smallFont;
     this.toolTip = toolTip;
+    this.parent = parent;
     mc = Minecraft.getMinecraft();
   }
 

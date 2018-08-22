@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.gui;
 
+import javax.annotation.Nonnull;
 import mrriegel.storagenetwork.util.UtilInventory;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -13,18 +14,26 @@ public abstract class GuiContainerBase extends GuiContainer {
     super(inventorySlotsIn);
   }
 
+  /**
+   * used as the MAIN grid in the network item display
+   * 
+   * also as ghost/filter items in the cable filter slots
+   * 
+   * @author
+   *
+   */
   public class ItemSlotNetwork extends AbstractSlot {
 
     public ItemStack stack;
 
-    public ItemSlotNetwork(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
-      super(x, y, size, guiLeft, guiTop, number, square, smallFont, toolTip);
+    public ItemSlotNetwork(GuiContainerBase parent, @Nonnull ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
+      super(parent, x, y, size, guiLeft, guiTop, number, square, smallFont, toolTip);
       this.stack = stack;
     }
 
     @Override
     public boolean isMouseOverSlot(int mouseX, int mouseY) {
-      return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
+      return parent.isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
     }
 
     @Override
@@ -38,11 +47,11 @@ public abstract class GuiContainerBase extends GuiContainer {
           if (smallFont) {
             GlStateManager.pushMatrix();
             GlStateManager.scale(.5f, .5f, .5f);
-            mc.getRenderItem().renderItemOverlayIntoGUI(fontRenderer, stack, x * 2 + 16, y * 2 + 16, amount);
+            mc.getRenderItem().renderItemOverlayIntoGUI(parent.fontRenderer, stack, x * 2 + 16, y * 2 + 16, amount);
             GlStateManager.popMatrix();
           }
           else {
-            mc.getRenderItem().renderItemOverlayIntoGUI(fontRenderer, stack, x, y, amount);
+            mc.getRenderItem().renderItemOverlayIntoGUI(parent.fontRenderer, stack, x, y, amount);
           }
         }
       }
@@ -62,7 +71,7 @@ public abstract class GuiContainerBase extends GuiContainer {
 
     @Override
     public void drawTooltip(int mx, int my) {
-      if (toolTip && this.isMouseOverSlot(mx, my) && stack != null && !stack.isEmpty()) {
+      if (toolTip && this.isMouseOverSlot(mx, my) && !stack.isEmpty()) {
         renderToolTip(stack, mx, my);
       }
     }

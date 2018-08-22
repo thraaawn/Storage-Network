@@ -102,10 +102,11 @@ public class GuiCable extends GuiContainerBase {
       for (int ii = 0; ii < 9; ii++) {
         int index = ii + (9 * jj);
         StackWrapper wrap = tile.getFilter().get(index);
-        ItemStack s = wrap == null ? null : wrap.getStack();
+        ItemStack s = wrap == null ? ItemStack.EMPTY : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
+
         boolean numShow = tile instanceof TileCable ? ((TileCable) tile).getUpgradesOfType(ItemUpgrade.STOCK) > 0 : false;
-        list.add(new ItemSlotNetwork(s, guiLeft + 8 + ii * 18, guiTop + 26 + jj * 18, num, guiLeft, guiTop, numShow, true, false, true));
+        list.add(new ItemSlotNetwork(this, s, guiLeft + 8 + ii * 18, guiTop + 26 + jj * 18, num, guiLeft, guiTop, numShow, true, false, true));
       }
     }
     for (ItemSlotNetwork s : list) {
@@ -186,7 +187,8 @@ public class GuiCable extends GuiContainerBase {
         btnOperationToggle = new Button(CableDataMessage.TOGGLE_MODE, guiLeft + 28, guiTop + 66, "");
         //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
         this.addButton(btnOperationToggle);
-        operation = new ItemSlotNetwork(cable.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
+
+        operation = new ItemSlotNetwork(this, cable.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
         //      
         checkOre = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, I18n.format("gui.storagenetwork.checkbox.ore"), true);
         checkOre.setIsChecked(tile.getOre());
