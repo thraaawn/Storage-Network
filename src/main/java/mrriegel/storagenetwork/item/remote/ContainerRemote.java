@@ -15,7 +15,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,23 +23,20 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRemote extends ContainerNetworkBase {
 
-  private TileMaster tileMaster;
   private ItemStack remoteItemStack;
 
   public ContainerRemote(final InventoryPlayer playerInv) {
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
     remoteItemStack = playerInv.getCurrentItem();
-    if (!playerInv.player.world.isRemote) {
-      tileMaster = ItemRemote.getTile(remoteItemStack);
-    }
+
     List<ItemStack> storage = new ArrayList<ItemStack>();
     for (int i = 0; i < 9; i++) {
       storage.add(NBTHelper.getItemStack(remoteItemStack, "c" + i));
     }
     matrix = new InventoryCraftingNetwork(this, storage);
     SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(playerInv.player, matrix, result, 0, 101, 128);
-    slotCraftOutput.setTileMaster(this.tileMaster);
+    slotCraftOutput.setTileMaster(this.getTileMaster());
     this.addSlotToContainer(slotCraftOutput);
     int index = 0;
     for (int i = 0; i < 3; ++i) {
@@ -89,6 +85,7 @@ public class ContainerRemote extends ContainerNetworkBase {
     if (playerIn.world.isRemote) {
       return ItemStack.EMPTY;
     }
+    TileMaster tileMaster = this.getTileMaster();
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
     if (slot != null && slot.getHasStack()) {
@@ -115,6 +112,7 @@ public class ContainerRemote extends ContainerNetworkBase {
 
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {
+    TileMaster tileMaster = this.getTileMaster();
     if (tileMaster == null) {
       return false;
     }
@@ -144,12 +142,7 @@ public class ContainerRemote extends ContainerNetworkBase {
   }
 
   @Override
-  public InventoryCrafting getCraftMatrix() {
-    return this.matrix;
-  }
-
-  @Override
   public TileMaster getTileMaster() {
-    return tileMaster;
+    return ItemRemote.getTile(remoteItemStack);
   }
 }

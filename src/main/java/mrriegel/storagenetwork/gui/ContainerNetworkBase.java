@@ -26,7 +26,9 @@ public abstract class ContainerNetworkBase extends Container {
   protected InventoryCraftingNetwork matrix;
   public boolean recipeLocked = false;
 
-  public abstract InventoryCrafting getCraftMatrix();
+  public InventoryCrafting getCraftMatrix() {
+    return this.matrix;
+  }
 
   public abstract TileMaster getTileMaster();
 

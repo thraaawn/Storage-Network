@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -134,12 +133,13 @@ public class ContainerRequest extends ContainerNetworkBase {
 
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {
-    if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
+    TileMaster tileMaster = this.getTileMaster();
+    if (tileMaster == null) {
       return false;
-    TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
+    }
     if (!tile.getWorld().isRemote && tile.getWorld().getTotalWorldTime() % 40 == 0) {
-      List<StackWrapper> list = t.getStacks();
-      PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+      List<StackWrapper> list = tileMaster.getStacks();
+      PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
     }
     return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
   }
@@ -149,10 +149,6 @@ public class ContainerRequest extends ContainerNetworkBase {
     return slot.inventory != this.result && super.canMergeSlot(stack, slot);
   }
 
-  @Override
-  public InventoryCrafting getCraftMatrix() {
-    return this.matrix;
-  }
 
   @Override
   public TileMaster getTileMaster() {
