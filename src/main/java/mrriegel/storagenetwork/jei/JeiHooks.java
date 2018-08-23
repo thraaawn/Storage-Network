@@ -31,11 +31,11 @@ public class JeiHooks {
 
   @Optional.Method(modid = "jei")
   private static void setJeiTextInternal(String s) {
-    mezz.jei.Internal.getRuntime().getItemListOverlay().setFilterText(s);
+    mezz.jei.Internal.getRuntime().getIngredientFilter().setFilterText(s);
   }
 
   @Optional.Method(modid = "jei")
   private static String getJeiTextInternal() {
-    return mezz.jei.Internal.getRuntime().getItemListOverlay().getFilterText();
+    return mezz.jei.Internal.getRuntime().getIngredientFilter().getFilterText();
   }
 }
