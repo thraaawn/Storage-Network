@@ -409,13 +409,14 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.blendFunc(770, 771);
         this.drawTexturedModalRect(this.x, this.y, 162 + 14 * k, 0, width, height);
-        if (id == 0) {
+
+        if (id == directionBtn.id) {
           this.drawTexturedModalRect(this.x + 4, this.y + 3, 176 + (getDownwards() ? 6 : 0), 14, 6, 8);
         }
-        if (id == 1) {
+        if (id == sortBtn.id) {
           this.drawTexturedModalRect(this.x + 4, this.y + 3, 188 + (getSort() == EnumSortType.AMOUNT ? 6 : getSort() == EnumSortType.MOD ? 12 : 0), 14, 6, 8);
         }
-        if (id == 4) {
+        if (id == jeiBtn.id) {
           this.drawTexturedModalRect(this.x + 4, this.y + 3, 176 + (JeiSettings.isJeiSearchSynced() ? 0 : 6), 22, 6, 8);
         }
         this.mouseDragged(mc, x, y);
