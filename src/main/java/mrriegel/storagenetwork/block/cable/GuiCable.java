@@ -259,7 +259,6 @@ public class GuiCable extends GuiContainerBase {
 
   @Override
   protected void keyTyped(char typedChar, int keyCode) throws IOException {
-
     if (!this.checkHotbarKeys(keyCode)) {
       Keyboard.enableRepeatEvents(true);
       String s = "";

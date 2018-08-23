@@ -99,7 +99,6 @@ public class BlockMaster extends BlockContainer {
       return false;
     }
     TileMaster tileMaster = (TileMaster) tileHere;
-
     playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + StorageNetwork.lang("chat.master.emptyslots") + tileMaster.emptySlots()));
     playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + StorageNetwork.lang("chat.master.connectables") + tileMaster.getConnectables().size()));
     Map<String, Integer> mapNamesToCount = new HashMap<String, Integer>();

@@ -16,12 +16,10 @@ import net.minecraft.item.ItemStack;
 public class ContainerCable extends Container {
 
   private static final int UPGRADE_COUNT = 4;
-
   private TileCable tile;
   private IInventory upgrades;
 
   public ContainerCable(TileCable tile, InventoryPlayer playerInv) {
-
     this.setTile(tile);
     upgrades = new InventoryBasic("upgrades", false, UPGRADE_COUNT) {
 
@@ -47,7 +45,6 @@ public class ContainerCable extends Container {
             slotChanged();
             super.onSlotChanged();
           }
-
           //          private boolean in(int meta) {
           //            for (int i = 0; i < upgrades.getSizeInventory(); i++) {
           //              if (upgrades.getStackInSlot(i) != null && upgrades.getStackInSlot(i).getItemDamage() == meta)
@@ -74,12 +71,10 @@ public class ContainerCable extends Container {
   }
 
   public void slotChanged() {
-
-      getTile().setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
-      for (int i = 0; i < upgrades.getSizeInventory(); i++) {
-        getTile().getUpgrades().set(i, upgrades.getStackInSlot(i));
-      }
-
+    getTile().setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
+    for (int i = 0; i < upgrades.getSizeInventory(); i++) {
+      getTile().getUpgrades().set(i, upgrades.getStackInSlot(i));
+    }
   }
 
   @Override

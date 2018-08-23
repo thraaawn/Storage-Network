@@ -11,7 +11,6 @@ import net.minecraft.util.ResourceLocation;
 public class GuiCableButton extends GuiButton {
 
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
-
   private TileCable cable;
 
   public GuiCableButton(int id, int x, int y, String z) {

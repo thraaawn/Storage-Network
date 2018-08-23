@@ -115,9 +115,11 @@ public class StorageNetwork {
     if (player.world.isRemote)
       player.sendStatusMessage(new TextComponentString(lang(message)), true);
   }
+
   public static String lang(String message) {
     return I18n.translateToLocal(message);
   }
+
   private static long lastTime;
 
   public static void benchmark(String s) {

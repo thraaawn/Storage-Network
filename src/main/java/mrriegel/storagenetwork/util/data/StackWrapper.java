@@ -11,7 +11,6 @@ public class StackWrapper {
 
   public StackWrapper(@Nonnull ItemStack stack, int size) {
     super();
-
     this.stack = stack;
     this.size = size;
   }

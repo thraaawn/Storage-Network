@@ -28,7 +28,6 @@ public class ContainerRemote extends ContainerNetworkBase {
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
     remoteItemStack = playerInv.getCurrentItem();
-
     List<ItemStack> storage = new ArrayList<ItemStack>();
     for (int i = 0; i < 9; i++) {
       storage.add(NBTHelper.getItemStack(remoteItemStack, "c" + i));
@@ -53,7 +52,6 @@ public class ContainerRemote extends ContainerNetworkBase {
     }
     matrix.skipEvents = false;
   }
-
 
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {

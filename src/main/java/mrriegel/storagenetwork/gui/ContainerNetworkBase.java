@@ -212,7 +212,6 @@ public abstract class ContainerNetworkBase extends Container {
     if (playerIn.world.isRemote) {
       return ItemStack.EMPTY;
     }
-
     ItemStack itemstack = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(slotIndex);
     if (slot != null && slot.getHasStack()) {

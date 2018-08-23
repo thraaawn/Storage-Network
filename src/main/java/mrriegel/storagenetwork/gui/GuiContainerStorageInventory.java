@@ -331,7 +331,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     if (inSearchbar(mouseX, mouseY)) {
       searchBar.setFocused(true);
       if (mouseButton == MOUSE_BTN_RIGHT) {
-
         searchBar.setText("");
       }
     }
@@ -356,7 +355,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
         PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
         if (searchBar.isFocused() && JeiSettings.isJeiLoaded() && JeiSettings.isJeiSearch()) {
-
           JeiHooks.setFilterText(searchBar.getText()); //  searchBar.setText(JeiHooks.getFilterText());
         }
       }

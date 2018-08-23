@@ -50,7 +50,6 @@ public class TileCable extends AbstractFilterTile {
     return this.blockType == ModBlocks.imKabel || this.blockType == ModBlocks.exKabel;
   }
 
-
   public Map<EnumFacing, EnumConnectType> getConnects() {
     Map<EnumFacing, EnumConnectType> map = Maps.newHashMap();
     map.put(EnumFacing.NORTH, north);

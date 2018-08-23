@@ -75,7 +75,6 @@ public class ItemRemote extends Item {
     int z = NBTHelper.getInteger(itemStackIn, "z");
     BlockPos targetPos = new BlockPos(x, y, z);
     World serverTargetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(itemStackIn, "dim"));
-
     int itemDamage = itemStackIn.getItemDamage();
     if (itemDamage < 0 || itemDamage >= RemoteType.values().length || !NBTHelper.getBoolean(itemStackIn, "bound")) {
       //unbound or invalid data
