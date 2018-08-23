@@ -2,7 +2,7 @@ package mrriegel.storagenetwork.jei;
 public class JeiSettings {
 
   private static boolean jeiLoaded;
-  private static boolean jeiSearch = true;
+  private static boolean jeiSearchSync = true;
 
   public static boolean isJeiLoaded() {
     return jeiLoaded;
@@ -12,11 +12,11 @@ public class JeiSettings {
     JeiSettings.jeiLoaded = jeiLoaded;
   }
 
-  public static boolean isJeiSearch() {
-    return jeiSearch;
+  public static boolean isJeiSearchSynced() {
+    return jeiSearchSync;
   }
 
-  public static void setJeiSearch(boolean jeiSearch) {
-    JeiSettings.jeiSearch = jeiSearch;
+  public static void setJeiSearchSync(boolean jeiSearch) {
+    JeiSettings.jeiSearchSync = jeiSearch;
   }
 }
