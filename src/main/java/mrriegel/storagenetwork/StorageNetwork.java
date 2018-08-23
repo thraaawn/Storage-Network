@@ -1,11 +1,8 @@
 package mrriegel.storagenetwork;
 
 import org.apache.logging.log4j.Logger;
-import mrriegel.storagenetwork.block.cable.BlockCable;
 import mrriegel.storagenetwork.block.cable.TileCable;
-import mrriegel.storagenetwork.block.master.BlockMaster;
 import mrriegel.storagenetwork.block.master.TileMaster;
-import mrriegel.storagenetwork.block.request.BlockRequest;
 import mrriegel.storagenetwork.block.request.TileRequest;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.item.ItemUpgrade;
@@ -17,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -79,12 +77,12 @@ public class StorageNetwork {
 
   @SubscribeEvent
   public void onRegistryEvent(RegistryEvent.Register<Item> event) {
-    event.getRegistry().register(new BlockMaster.ItemMaster(ModBlocks.master).setRegistryName(ModBlocks.master.getRegistryName()));
-    event.getRegistry().register(new BlockRequest.ItemRequest(ModBlocks.request).setRegistryName(ModBlocks.request.getRegistryName()));
-    event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.kabel).setRegistryName(ModBlocks.kabel.getRegistryName()));
-    event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.storageKabel).setRegistryName(ModBlocks.storageKabel.getRegistryName()));
-    event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.exKabel).setRegistryName(ModBlocks.exKabel.getRegistryName()));
-    event.getRegistry().register(new BlockCable.ItemCable(ModBlocks.imKabel).setRegistryName(ModBlocks.imKabel.getRegistryName()));
+    event.getRegistry().register(new ItemBlock(ModBlocks.master).setRegistryName(ModBlocks.master.getRegistryName()));
+    event.getRegistry().register(new ItemBlock(ModBlocks.request).setRegistryName(ModBlocks.request.getRegistryName()));
+    event.getRegistry().register(new ItemBlock(ModBlocks.kabel).setRegistryName(ModBlocks.kabel.getRegistryName()));
+    event.getRegistry().register(new ItemBlock(ModBlocks.storageKabel).setRegistryName(ModBlocks.storageKabel.getRegistryName()));
+    event.getRegistry().register(new ItemBlock(ModBlocks.exKabel).setRegistryName(ModBlocks.exKabel.getRegistryName()));
+    event.getRegistry().register(new ItemBlock(ModBlocks.imKabel).setRegistryName(ModBlocks.imKabel.getRegistryName()));
     event.getRegistry().register(ModItems.upgrade);
     event.getRegistry().register(ModItems.remote.setUnlocalizedName(ModItems.remote.getRegistryName().toString()));
     GameRegistry.registerTileEntity(TileCable.class, "tileKabel");

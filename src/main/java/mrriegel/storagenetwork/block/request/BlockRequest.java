@@ -8,7 +8,6 @@ import mrriegel.storagenetwork.block.AbstractBlockConnectable;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.util.UtilTileEntity;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -18,7 +17,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -100,16 +98,10 @@ public class BlockRequest extends AbstractBlockConnectable {
     super.breakBlock(worldIn, pos, state);
   }
 
-  public static class ItemRequest extends ItemBlock {
-
-    public ItemRequest(Block block) {
-      super(block);
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
-      super.addInformation(stack, playerIn, tooltip, advanced);
-      tooltip.add(I18n.format("tooltip.storagenetwork.request"));
-    }
+  @Override
+  public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
+    super.addInformation(stack, playerIn, tooltip, advanced);
+    tooltip.add(I18n.format("tooltip.storagenetwork.request"));
   }
+
 }

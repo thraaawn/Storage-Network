@@ -24,7 +24,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -323,23 +322,16 @@ public class BlockCable extends AbstractBlockConnectable {
     return new TileCable();
   }
 
-  public static class ItemCable extends ItemBlock {
-
-    public ItemCable(Block block) {
-      super(block);
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
-      super.addInformation(stack, playerIn, tooltip, advanced);
-      if (stack.getItem() == Item.getItemFromBlock(ModBlocks.exKabel))
-        tooltip.add(I18n.format("tooltip.storagenetwork.kabel_E"));
-      else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.imKabel))
-        tooltip.add(I18n.format("tooltip.storagenetwork.kabel_I"));
-      else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.storageKabel))
-        tooltip.add(I18n.format("tooltip.storagenetwork.kabel_S"));
-      else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.kabel))
-        tooltip.add(I18n.format("tooltip.storagenetwork.kabel_L"));
-    }
+  @Override
+  public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
+    super.addInformation(stack, playerIn, tooltip, advanced);
+    if (stack.getItem() == Item.getItemFromBlock(ModBlocks.exKabel))
+      tooltip.add(I18n.format("tooltip.storagenetwork.kabel_E"));
+    else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.imKabel))
+      tooltip.add(I18n.format("tooltip.storagenetwork.kabel_I"));
+    else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.storageKabel))
+      tooltip.add(I18n.format("tooltip.storagenetwork.kabel_S"));
+    else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.kabel))
+      tooltip.add(I18n.format("tooltip.storagenetwork.kabel_L"));
   }
 }

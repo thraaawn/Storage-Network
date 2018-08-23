@@ -20,7 +20,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -125,16 +124,21 @@ public class BlockMaster extends BlockContainer {
     return false;
   }
 
-  public static class ItemMaster extends ItemBlock {
-
-    public ItemMaster(Block block) {
-      super(block);
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
-      super.addInformation(stack, playerIn, tooltip, advanced);
-      tooltip.add(I18n.format("tooltip.storagenetwork.master"));
-    }
+  @Override
+  public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
+    super.addInformation(stack, playerIn, tooltip, advanced);
+    tooltip.add(I18n.format("tooltip.storagenetwork.master"));
   }
+  //  public static class ItemMaster extends ItemBlock {
+  //
+  //    public ItemMaster(Block block) {
+  //      super(block);
+  //    }
+  //
+  //    @Override
+  //    public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
+  //      super.addInformation(stack, playerIn, tooltip, advanced);
+  //      tooltip.add(I18n.format("tooltip.storagenetwork.master"));
+  //    }
+  //  }
 }

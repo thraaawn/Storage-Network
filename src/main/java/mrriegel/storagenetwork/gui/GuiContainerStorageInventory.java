@@ -34,6 +34,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
 
+/**
+ * Base class for Request table inventory and Remote inventory
+ * 
+ *
+ */
 public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
   private static final int MOUSE_BTN_RIGHT = 1;
