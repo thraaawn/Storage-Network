@@ -69,3 +69,7 @@ tooltip.storagenetwork.upgrade_0=Increases the speed of importing/exporting.
 tooltip.storagenetwork.upgrade_1=Activity of the cable depends on the amount of items.
 tooltip.storagenetwork.upgrade_2=Increases the stack size of task.
 tooltip.storagenetwork.upgrade_3=Keeps a specific amount of items in the attached inventory (only in export cable).
+
+
+chat.master.emptyslots=Potential Empty Slots: 
+chat.master.connectables=Connectables: 

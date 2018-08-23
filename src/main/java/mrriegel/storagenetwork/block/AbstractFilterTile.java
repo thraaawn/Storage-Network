@@ -12,6 +12,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 
+/**
+ * Base class for Master and Cable
+ * 
+ */
 public abstract class AbstractFilterTile extends TileConnectable {
 
   public static final int FILTER_SIZE = 18;

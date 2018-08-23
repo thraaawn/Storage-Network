@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -62,14 +63,14 @@ public class TileConnectable extends TileEntity implements IConnectable {
     readFromNBT(pkt.getNbtCompound());
   }
 
-  public static boolean reloadNetworkWhenUnloadChunk;
-
   @Override
   public void onChunkUnload() {
-    if (reloadNetworkWhenUnloadChunk) {
+    if (ConfigHandler.reloadNetworkWhenUnloadChunk && posMaster != null) {
       try {
-        if (posMaster != null && world.getTileEntity(posMaster) instanceof TileMaster)
-          ((TileMaster) world.getTileEntity(posMaster)).refreshNetwork();
+        TileEntity maybeMaster = world.getTileEntity(posMaster);
+        if (maybeMaster instanceof TileMaster) {
+          ((TileMaster) maybeMaster).refreshNetwork();
+        }
       }
       catch (Exception e) {
         StorageNetwork.instance.logger.error("Error on chunk unload ", e);

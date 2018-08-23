@@ -37,24 +37,6 @@ public class UtilInventory {
     return amount;
   }
 
-  public static ItemStack insert(TileEntity tile, ItemStack stack, EnumFacing side) {
-    if (tile == null) {
-      return stack;
-    }
-    IItemHandler inv = getItemHandler(tile, side);
-    return ItemHandlerHelper.insertItemStacked(inv, stack, false);
-  }
-
-  public static int canInsert(IItemHandler inv, ItemStack stack) {
-    if (inv == null || stack == null || stack.isEmpty()) {
-      return 0;
-    }
-    ItemStack s = ItemHandlerHelper.insertItemStacked(inv, stack, true);
-    int rest = s == null ? 0 : s.getCount();
-    stack.shrink(rest);
-    return stack.getCount();
-  }
-
   public static boolean contains(IItemHandler inv, ItemStack stack) {
     for (int i = 0; i < inv.getSlots(); i++) {
       if (ItemHandlerHelper.canItemStacksStack(inv.getStackInSlot(i), stack)) {

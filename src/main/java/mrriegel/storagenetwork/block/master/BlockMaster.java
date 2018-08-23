@@ -100,26 +100,26 @@ public class BlockMaster extends BlockContainer {
       return false;
     }
     TileMaster tileMaster = (TileMaster) tileHere;
-    StorageNetwork.log("TODO master onactivated lang bad ");
-    playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "(Potential) Empty Slots: " + tileMaster.emptySlots()));
-    playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + "Connectables: " + tileMaster.getConnectables().size()));
-    Map<String, Integer> map = new HashMap<String, Integer>();
+
+    playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + StorageNetwork.lang("chat.master.emptyslots") + tileMaster.emptySlots()));
+    playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + StorageNetwork.lang("chat.master.connectables") + tileMaster.getConnectables().size()));
+    Map<String, Integer> mapNamesToCount = new HashMap<String, Integer>();
     for (BlockPos p : tileMaster.getConnectables()) {
       String block = worldIn.getBlockState(p).getBlock().getLocalizedName();
-      map.put(block, map.get(block) != null ? (map.get(block) + 1) : 1);
+      mapNamesToCount.put(block, mapNamesToCount.get(block) != null ? (mapNamesToCount.get(block) + 1) : 1);
     }
-    List<Entry<String, Integer>> lis = Lists.newArrayList();
-    for (Entry<String, Integer> e : map.entrySet()) {
-      lis.add(e);
+    List<Entry<String, Integer>> listDisplayStrings = Lists.newArrayList();
+    for (Entry<String, Integer> e : mapNamesToCount.entrySet()) {
+      listDisplayStrings.add(e);
     }
-    Collections.sort(lis, new Comparator<Entry<String, Integer>>() {
+    Collections.sort(listDisplayStrings, new Comparator<Entry<String, Integer>>() {
 
       @Override
       public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
         return Integer.compare(o2.getValue(), o1.getValue());
       }
     });
-    for (Entry<String, Integer> e : lis) {
+    for (Entry<String, Integer> e : listDisplayStrings) {
       playerIn.sendMessage(new TextComponentString(TextFormatting.AQUA + "    " + e.getKey() + ": " + e.getValue()));
     }
     return false;
