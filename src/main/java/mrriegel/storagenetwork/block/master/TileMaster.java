@@ -1,14 +1,11 @@
 package mrriegel.storagenetwork.block.master;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
@@ -17,7 +14,6 @@ import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
-import mrriegel.storagenetwork.util.NBTHelper;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.EnumFilterDirection;
@@ -27,7 +23,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -35,7 +30,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -46,23 +40,17 @@ public class TileMaster extends TileEntity implements ITickable {
 
   public List<StackWrapper> getStacks() {
     List<StackWrapper> stacks = Lists.newArrayList();
-    List<AbstractFilterTile> invs = Lists.newArrayList();
     if (getConnectables() == null) {
       refreshNetwork();
     }
-    for (BlockPos p : getConnectables()) {
-      if (world.getTileEntity(p) instanceof AbstractFilterTile) {
-        AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(p);
-        if (tile.isStorage() && tile.getInventory() != null) {
-          invs.add(tile);
-        }
-      }
-    }
-    for (AbstractFilterTile t : invs) {
-      IItemHandler inv = t.getInventory();
+    List<AbstractFilterTile> invs = getConnectedFilterTiles();
+    for (AbstractFilterTile tileConnected : invs) {
+      IItemHandler inv = tileConnected.getInventory();
+      ItemStack stack;
       for (int i = 0; i < inv.getSlots(); i++) {
-        if (inv.getStackInSlot(i) != null && !inv.getStackInSlot(i).isEmpty() && t.canTransfer(inv.getStackInSlot(i), EnumFilterDirection.BOTH))
-          addToList(stacks, inv.getStackInSlot(i).copy(), inv.getStackInSlot(i).getCount());
+        stack = inv.getStackInSlot(i);
+        if (!stack.isEmpty() && tileConnected.canTransfer(stack, EnumFilterDirection.BOTH))
+          addToList(stacks, stack.copy(), stack.getCount());
         //        else
         //                  StorageNetwork.log(" reject   " + inv.getStackInSlot(i).getDisplayName());
       }
@@ -70,26 +58,48 @@ public class TileMaster extends TileEntity implements ITickable {
     return stacks;
   }
 
-  public int emptySlots() {
-    int res = 0;
+  private List<AbstractFilterTile> getConnectedFilterTiles() {
     List<AbstractFilterTile> invs = Lists.newArrayList();
+    TileEntity tileHere;
     for (BlockPos p : getConnectables()) {
-      if (world.getTileEntity(p) instanceof AbstractFilterTile) {
-        AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(p);
+      tileHere = world.getTileEntity(p);
+      if (tileHere instanceof AbstractFilterTile) {
+        AbstractFilterTile tile = (AbstractFilterTile) tileHere;
         if (tile.isStorage() && tile.getInventory() != null) {
           invs.add(tile);
         }
       }
     }
-    for (AbstractFilterTile t : invs) {
-      IItemHandler inv = t.getInventory();
-      for (int i = 0; i < inv.getSlots(); i++) {
-        if (inv.getStackInSlot(i) == null || inv.getStackInSlot(i).isEmpty()) {
-          res++;
+    return invs;
+  }
+
+  private List<TileCable> getAttachedCables(List<TileEntity> links, Block kind) {
+    List<TileCable> attachedCables = Lists.newArrayList();
+    for (TileEntity tileIn : links) {
+      if (tileIn instanceof TileCable) {
+        TileCable tile = (TileCable) tileIn;
+        if (tile.getBlockType() == kind && tile.getInventory() != null) {
+          attachedCables.add(tile);
         }
       }
     }
-    return res;
+    sortCablesByPriority(attachedCables);
+    return attachedCables;
+  }
+
+  public int emptySlots() {
+    int countEmpty = 0;
+
+    List<AbstractFilterTile> invs = getConnectedFilterTiles();
+    for (AbstractFilterTile tile : invs) {
+      IItemHandler inv = tile.getInventory();
+      for (int i = 0; i < inv.getSlots(); i++) {
+        if (inv.getStackInSlot(i).isEmpty()) {
+          countEmpty++;
+        }
+      }
+    }
+    return countEmpty;
   }
 
   private void addToList(List<StackWrapper> lis, ItemStack s, int num) {
@@ -122,29 +132,6 @@ public class TileMaster extends TileEntity implements ITickable {
     return size;
   }
 
-  public List<FilterItem> getIngredients(ItemStack template) {
-    Map<Integer, ItemStack> stacks = Maps.<Integer, ItemStack> newHashMap();
-    Map<Integer, Boolean> metas = Maps.<Integer, Boolean> newHashMap();
-    Map<Integer, Boolean> ores = Maps.<Integer, Boolean> newHashMap();
-    NBTTagList invList = template.getTagCompound().getTagList("crunchItem", Constants.NBT.TAG_COMPOUND);
-    for (int i = 0; i < invList.tagCount(); i++) {
-      NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-      int slot = stackTag.getByte("Slot");
-      stacks.put(slot, new ItemStack(stackTag));
-    }
-    List<FilterItem> list = Lists.newArrayList();
-    for (int i = 1; i < 10; i++) {
-      metas.put(i - 1, NBTHelper.getBoolean(template, "meta" + i));
-      ores.put(i - 1, NBTHelper.getBoolean(template, "ore" + i));
-    }
-    for (Entry<Integer, ItemStack> e : stacks.entrySet()) {
-      if (e.getValue() != null) {
-        boolean meta = metas.get(e.getKey()), ore = ores.get(e.getKey());
-        list.add(new FilterItem(e.getValue(), meta, ore, false));
-      }
-    }
-    return list;
-  }
 
   @Override
   public NBTTagCompound getUpdateTag() {
@@ -208,7 +195,7 @@ public class TileMaster extends TileEntity implements ITickable {
   }
 
   public int insertStack(ItemStack stack, BlockPos source, boolean simulate) {
-    if (stack == null || stack.isEmpty()) {
+    if (  stack.isEmpty()) {
       return 0;
     }
     List<AbstractFilterTile> invs = Lists.newArrayList();
@@ -440,20 +427,6 @@ public class TileMaster extends TileEntity implements ITickable {
     }
   }
 
-  private List<TileCable> getAttachedCables(List<TileEntity> links, Block kind) {
-    List<TileCable> attachedCables = Lists.newArrayList();
-    for (TileEntity tileIn : links) {
-      if (tileIn instanceof TileCable) {
-        TileCable tile = (TileCable) tileIn;
-        if (tile.getBlockType() == kind && tile.getInventory() != null) {
-          attachedCables.add(tile);
-        }
-      }
-    }
-    sortCablesByPriority(attachedCables);
-    return attachedCables;
-  }
-
   private void sortCablesByPriority(List<TileCable> attachedCables) {
     Collections.sort(attachedCables, new Comparator<TileCable>() {
 
@@ -469,7 +442,7 @@ public class TileMaster extends TileEntity implements ITickable {
     TileEntity tile = null;
     for (BlockPos p : getConnectables()) {
       tile = world.getTileEntity(p);
-      attachedCables.add(world.getTileEntity(p));
+      attachedCables.add(tile);
     }
     return attachedCables;
   }

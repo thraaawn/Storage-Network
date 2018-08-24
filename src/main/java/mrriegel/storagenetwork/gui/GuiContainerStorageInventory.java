@@ -116,6 +116,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
   protected abstract boolean isScreenValid();
 
+
   @Override
   public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     if (this.isScreenValid() == false) {
@@ -127,33 +128,33 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     int i = (this.width - this.xSize) / 2;
     int j = (this.height - this.ySize) / 2;
     this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
-    String search = searchBar.getText();
-    List<StackWrapper> tmp = search.equals("") ? Lists.newArrayList(stacks) : Lists.<StackWrapper> newArrayList();
-    if (!search.equals("")) {
+    String searchText = searchBar.getText();
+    List<StackWrapper> tmp = searchText.equals("") ? Lists.newArrayList(stacks) : Lists.<StackWrapper> newArrayList();
+    if (!searchText.equals("")) {
       for (StackWrapper s : stacks) {
-        if (search.startsWith("@")) {
+        if (searchText.startsWith("@")) {
           String name = UtilTileEntity.getModNameForItem(s.getStack().getItem());
-          if (name.toLowerCase().contains(search.toLowerCase().substring(1)))
+          if (name.toLowerCase().contains(searchText.toLowerCase().substring(1)))
             tmp.add(s);
         }
-        else if (search.startsWith("#")) {
+        else if (searchText.startsWith("#")) {
           String tooltipString;
           List<String> tooltip = s.getStack().getTooltip(mc.player, TooltipFlags.NORMAL);
           tooltipString = Joiner.on(' ').join(tooltip).toLowerCase();
           tooltipString = ChatFormatting.stripFormatting(tooltipString);
-          if (tooltipString.toLowerCase().contains(search.toLowerCase().substring(1)))
+          if (tooltipString.toLowerCase().contains(searchText.toLowerCase().substring(1)))
             tmp.add(s);
         }
-        else if (search.startsWith("$")) {
+        else if (searchText.startsWith("$")) {
           StringBuilder oreDictStringBuilder = new StringBuilder();
           for (int oreId : OreDictionary.getOreIDs(s.getStack())) {
             String oreName = OreDictionary.getOreName(oreId);
             oreDictStringBuilder.append(oreName).append(' ');
           }
-          if (oreDictStringBuilder.toString().toLowerCase().contains(search.toLowerCase().substring(1)))
+          if (oreDictStringBuilder.toString().toLowerCase().contains(searchText.toLowerCase().substring(1)))
             tmp.add(s);
         }
-        else if (search.startsWith("%")) {
+        else if (searchText.startsWith("%")) {
           StringBuilder creativeTabStringBuilder = new StringBuilder();
           for (CreativeTabs creativeTab : s.getStack().getItem().getCreativeTabs()) {
             if (creativeTab != null) {
@@ -161,11 +162,11 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
               creativeTabStringBuilder.append(creativeTabName).append(' ');
             }
           }
-          if (creativeTabStringBuilder.toString().toLowerCase().contains(search.toLowerCase().substring(1)))
+          if (creativeTabStringBuilder.toString().toLowerCase().contains(searchText.toLowerCase().substring(1)))
             tmp.add(s);
         }
         else {
-          if (s.getStack().getDisplayName().toLowerCase().contains(search.toLowerCase()))
+          if (s.getStack().getDisplayName().toLowerCase().contains(searchText.toLowerCase()))
             tmp.add(s);
         }
       }
