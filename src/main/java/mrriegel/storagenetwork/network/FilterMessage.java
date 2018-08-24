@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.cable.ContainerCable;
 import mrriegel.storagenetwork.util.data.StackWrapper;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -28,13 +29,14 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
 
   @Override
   public IMessage onMessage(final FilterMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+    EntityPlayerMP player = ctx.getServerHandler().player;
+    IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
       public void run() {
-        if (ctx.getServerHandler().player.openContainer instanceof ContainerCable) {
-          ContainerCable con = (ContainerCable) ctx.getServerHandler().player.openContainer;
+        if (player.openContainer instanceof ContainerCable) {
+          ContainerCable con = (ContainerCable) player.openContainer;
           if (message.wrap != null && message.index >= 0) {
             con.getTile().getFilter().put(message.index, message.wrap);
           }

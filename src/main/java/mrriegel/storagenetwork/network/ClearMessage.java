@@ -7,6 +7,7 @@ import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.data.StackWrapper;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -21,12 +22,13 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
 
   @Override
   public IMessage onMessage(final ClearMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+    EntityPlayerMP player = ctx.getServerHandler().player;
+    IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
       public void run() {
-        Container c = ctx.getServerHandler().player.openContainer;
+        Container c = player.openContainer;
         if (c instanceof ContainerNetworkBase) {
           ContainerNetworkBase ctr = (ContainerNetworkBase) c;
           TileMaster m = ctr.getTileMaster();
@@ -50,7 +52,7 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
               craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(s, rest));
           }
           List<StackWrapper> list = m.getStacks();
-          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), ctx.getServerHandler().player);
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), player);
           ctr.detectAndSendChanges();
         }
       }

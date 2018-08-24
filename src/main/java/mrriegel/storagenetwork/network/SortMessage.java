@@ -6,6 +6,7 @@ import mrriegel.storagenetwork.block.request.EnumSortType;
 import mrriegel.storagenetwork.block.request.TileRequest;
 import mrriegel.storagenetwork.item.remote.ContainerRemote;
 import mrriegel.storagenetwork.util.NBTHelper;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
@@ -32,19 +33,20 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 
   @Override
   public IMessage onMessage(final SortMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+    EntityPlayerMP player = ctx.getServerHandler().player;
+    IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
       public void run() {
-        if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote
-          ItemStack s = ctx.getServerHandler().player.inventory.getCurrentItem();
+        if (player.openContainer instanceof ContainerRemote) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote
+          ItemStack s = player.inventory.getCurrentItem();
           NBTHelper.setBoolean(s, "down", message.direction);
           NBTHelper.setString(s, "sort", message.sort.toString());
           return;
         }
-        if (ctx.getServerHandler().player.openContainer instanceof ContainerRequest) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRequest
-          TileEntity t = ctx.getServerHandler().player.world.getTileEntity(message.pos);
+        if (player.openContainer instanceof ContainerRequest) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRequest
+          TileEntity t = player.world.getTileEntity(message.pos);
           if (t instanceof TileRequest) {
             TileRequest tile = (TileRequest) t;
             tile.setSort(message.sort);

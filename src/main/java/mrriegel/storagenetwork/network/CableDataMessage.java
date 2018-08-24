@@ -6,6 +6,7 @@ import mrriegel.storagenetwork.block.cable.ContainerCable;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.StackWrapper;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
@@ -36,12 +37,13 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
 
   @Override
   public IMessage onMessage(final CableDataMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+    EntityPlayerMP player = ctx.getServerHandler().player;
+    IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
       public void run() {
-        TileEntity t = ctx.getServerHandler().player.world.getTileEntity(message.pos);
+        TileEntity t = player.world.getTileEntity(message.pos);
         if (t instanceof AbstractFilterTile) {
           AbstractFilterTile tile = (AbstractFilterTile) t;
           switch (message.id) {
@@ -74,7 +76,7 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
                     continue;
                   }
                   else if (tile instanceof TileCable) {
-                    if (!new ContainerCable((TileCable) tile, ctx.getServerHandler().player.inventory).isInFilter(new StackWrapper(s, 1))) {
+                    if (!new ContainerCable((TileCable) tile, player.inventory).isInFilter(new StackWrapper(s, 1))) {
                       tile.getFilter().put(index, new StackWrapper(s, 1));
                       index++;
                     }

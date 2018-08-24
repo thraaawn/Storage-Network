@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.cable.TileCable;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
@@ -28,12 +29,13 @@ public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMe
 
   @Override
   public IMessage onMessage(final LimitMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+    EntityPlayerMP player = ctx.getServerHandler().player;
+    IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
       public void run() {
-        TileCable tile = (TileCable) ctx.getServerHandler().player.world.getTileEntity(message.pos);
+        TileCable tile = (TileCable) player.world.getTileEntity(message.pos);
         tile.setLimit(message.limit);
         tile.setOperationStack(message.stack);
         tile.markDirty();
