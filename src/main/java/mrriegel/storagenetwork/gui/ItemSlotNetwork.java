@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.gui;
 
 import javax.annotation.Nonnull;
+import org.lwjgl.input.Keyboard;
 import mrriegel.storagenetwork.util.UtilInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -44,7 +45,13 @@ public class ItemSlotNetwork {
     if (!getStack().isEmpty()) {
       RenderHelper.enableGUIStandardItemLighting();
       mc.getRenderItem().renderItemAndEffectIntoGUI(getStack(), x, y);
-      String amount = UtilInventory.formatLargeNumber(size);
+      String amount;
+      //cant sneak in gui
+      //default to short form, show full amount if sneak 
+      if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+        amount = size + "";
+      else
+        amount = UtilInventory.formatLargeNumber(size);
       if (number) {
         GlStateManager.pushMatrix();
         GlStateManager.scale(.5f, .5f, .5f);
