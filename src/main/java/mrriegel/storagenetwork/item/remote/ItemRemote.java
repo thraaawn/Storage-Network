@@ -67,6 +67,11 @@ public class ItemRemote extends Item {
   @Override
   public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand hand) {
     ItemStack itemStackIn = player.getHeldItem(hand);
+    int itemDamage = itemStackIn.getItemDamage();
+    if (itemDamage < 0 || itemDamage >= RemoteType.values().length || !NBTHelper.getBoolean(itemStackIn, "bound")) {
+      //unbound or invalid data
+      return super.onItemRightClick(worldIn, player, hand);
+    }
     int x, y, z, itemStackDim;
     try {
       x = NBTHelper.getInteger(itemStackIn, "x");
@@ -85,12 +90,8 @@ public class ItemRemote extends Item {
       return super.onItemRightClick(worldIn, player, hand);
     }
     BlockPos targetPos = new BlockPos(x, y, z);
-    World serverTargetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(itemStackIn, "dim"));
-    int itemDamage = itemStackIn.getItemDamage();
-    if (itemDamage < 0 || itemDamage >= RemoteType.values().length || !NBTHelper.getBoolean(itemStackIn, "bound")) {
-      //unbound or invalid data
-      return super.onItemRightClick(worldIn, player, hand);
-    }
+    World serverTargetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(itemStackDim);
+
     if (serverTargetWorld.getChunkFromBlockCoords(targetPos).isLoaded() == false) {
       StorageNetwork.chatMessage(player, "item.remote.notloaded");
       return super.onItemRightClick(worldIn, player, hand);
@@ -118,7 +119,7 @@ public class ItemRemote extends Item {
       // ok we found a target
       if (canOpenGUI) {
         player.openGui(StorageNetwork.instance, getGui(), serverTargetWorld, x, y, z);
-        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
       }
       else {// if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() || player.getDistance(x, y, z) > 32))
         //        StorageNetwork.log("out of range");

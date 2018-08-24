@@ -41,7 +41,6 @@ public class InventoryCraftingNetwork extends InventoryCrafting {
       if (matrix.get(i) != null && matrix.get(i).isEmpty() == false)
         this.setInventorySlotContents(i, matrix.get(i));
     }
-    StorageNetwork.benchmark("Constructor B ");
     this.skipEvents = false;
   }
 
@@ -50,7 +49,6 @@ public class InventoryCraftingNetwork extends InventoryCrafting {
     //    this.setInventorySlotContents_NOEVENTSTEST(index, stack);
     this.stackList.set(index, stack);
     if (skipEvents == false) {
-      StorageNetwork.benchmark("PARENT fire matrix change event  ");
       this.eventHandler.onCraftMatrixChanged(this);
     }
   }

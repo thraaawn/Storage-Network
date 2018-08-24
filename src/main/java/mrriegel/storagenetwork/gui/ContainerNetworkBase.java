@@ -81,7 +81,6 @@ public abstract class ContainerNetworkBase extends Container {
   protected void findMatchingRecipe(InventoryCrafting craftMatrix) {
     IRecipe recipe = null;
     try {
-      StorageNetwork.benchmark("findMatchingRecipe start");
       recipe = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
     }
     catch (java.util.NoSuchElementException err) {
@@ -93,13 +92,11 @@ public abstract class ContainerNetworkBase extends Container {
       StorageNetwork.instance.logger.error("Error finding recipe [-1]", e);
     }
     if (recipe != null) {
-      StorageNetwork.benchmark("findMatchingRecipe end success");
       ItemStack itemstack = recipe.getCraftingResult(this.matrix);
       //real way to not lose nbt tags BETTER THAN COPY 
       this.result.setInventorySlotContents(0, itemstack);
     }
     else {
-      StorageNetwork.benchmark("findMatchingRecipe end fail ");
       this.result.setInventorySlotContents(0, ItemStack.EMPTY);
     }
   }
@@ -147,9 +144,19 @@ public abstract class ContainerNetworkBase extends Container {
         player.dropItem(res, false);
       }
       NonNullList<ItemStack> remainder = CraftingManager.getRemainingItems(matrix, player.world);
+
       for (int i = 0; i < remainder.size(); ++i) {
-        ItemStack slot = this.matrix.getStackInSlot(i);
         ItemStack remainderCurrent = remainder.get(i);
+        ItemStack slot = this.matrix.getStackInSlot(i);
+        if (remainderCurrent.isEmpty()) {
+          matrix.setInventorySlotContents(i, ItemStack.EMPTY);
+          continue;
+        }
+
+        if (remainderCurrent.isItemDamaged() && remainderCurrent.getItemDamage() > remainderCurrent.getMaxDamage()) {
+          remainderCurrent = ItemStack.EMPTY;
+        }
+
         if (slot.getItem().getContainerItem() != null) { //is the fix for milk and similar
           slot = new ItemStack(slot.getItem().getContainerItem());
           matrix.setInventorySlotContents(i, slot);
@@ -167,12 +174,10 @@ public abstract class ContainerNetworkBase extends Container {
             this.matrix.setInventorySlotContents(i, remainderCurrent);
           }
           else if (ItemStack.areItemsEqualIgnoreDurability(slot, remainderCurrent)) {
-            //crafting that consumes durability
-            StorageNetwork.benchmark("fix for crafting eating durability");
+            //crafting that consumes durability 
             this.matrix.setInventorySlotContents(i, remainderCurrent);
           }
           else {
-            StorageNetwork.log("Gadd to inventory " + remainderCurrent);
             if (!player.inventory.addItemStackToInventory(remainderCurrent)) {
               player.dropItem(remainderCurrent, false);
             }
