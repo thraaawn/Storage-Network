@@ -113,12 +113,17 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
   protected abstract int getDim();
 
-  protected abstract boolean inField(int mouseX, int mouseY);
+  protected boolean inField(int mouseX, int mouseY) {
+    return mouseX > (guiLeft + 7) && mouseX < (guiLeft + xSize - 7) && mouseY > (guiTop + 7) && mouseY < (guiTop + 90);
+  }
 
-  protected abstract boolean inSearchbar(int mouseX, int mouseY);
+  protected boolean inSearchbar(int mouseX, int mouseY) {
+    return isPointInRegion(81, 96, 85, fontRenderer.FONT_HEIGHT, mouseX, mouseY);
+  }
 
-  protected abstract boolean inX(int mouseX, int mouseY);
-
+  protected boolean inX(int mouseX, int mouseY) {
+    return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
+  }
   protected abstract boolean isScreenValid();
 
   private boolean doesStackMatchSearch(StackWrapper stackWrapper) {
@@ -202,9 +207,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
         stackUnderMouse = slot.getStack();
         //        break;
       }
-      //      else {
-      //        stackUnderMouse = ItemStack.EMPTY;
-      //      }
+
     }
     if (slots.isEmpty()) {
       stackUnderMouse = ItemStack.EMPTY;
