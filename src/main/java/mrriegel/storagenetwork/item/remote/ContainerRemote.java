@@ -61,7 +61,7 @@ public class ContainerRemote extends ContainerNetworkBase {
     }
     if (!playerIn.world.isRemote && playerIn.world.getTotalWorldTime() % 40 == 0) {
       List<StackWrapper> list = tileMaster.getStacks();
-      PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+      PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
     }
     return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.remote;
   }

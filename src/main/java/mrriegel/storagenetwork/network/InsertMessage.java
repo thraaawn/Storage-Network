@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.network;
 
+import java.util.ArrayList;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.master.TileMaster;
@@ -67,7 +68,7 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
           ctx.getServerHandler().player.inventory.setItemStack(send);
           PacketRegistry.INSTANCE.sendTo(new StackMessage(send), ctx.getServerHandler().player);
           List<StackWrapper> list = tile.getStacks();
-          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), ctx.getServerHandler().player);
           c.detectAndSendChanges();
         }
       }

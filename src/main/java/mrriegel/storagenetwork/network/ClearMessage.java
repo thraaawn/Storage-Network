@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.network;
 
+import java.util.ArrayList;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.master.TileMaster;
@@ -49,7 +50,7 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
               craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(s, rest));
           }
           List<StackWrapper> list = m.getStacks();
-          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, m.getCraftableStacks(list)), ctx.getServerHandler().player);
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), ctx.getServerHandler().player);
           ctr.detectAndSendChanges();
         }
       }

@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.gui;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
@@ -233,7 +234,7 @@ public abstract class ContainerNetworkBase extends Container {
         slot.putStack(stack);
         detectAndSendChanges();
         List<StackWrapper> list = tileMaster.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
         if (stack.isEmpty()) {
           return ItemStack.EMPTY;
         }

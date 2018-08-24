@@ -151,7 +151,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
           //now make sure client sync happens.
           ctr.slotChanged();
           List<StackWrapper> list = master.getStacks();
-          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, master.getCraftableStacks(list)), ctx.getServerHandler().player);
+          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), ctx.getServerHandler().player);
         }
       }
       //}

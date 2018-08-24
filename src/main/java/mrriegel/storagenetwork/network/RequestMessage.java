@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.network;
 
+import java.util.ArrayList;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.StorageNetwork;
@@ -87,7 +88,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
           StorageNetwork.log("RequestMessage how did we get empty stack  " + stack + " isCLIENT " + tileMaster.getWorld().isRemote);
         }
         List<StackWrapper> list = tileMaster.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), ctx.getServerHandler().player);
+        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), ctx.getServerHandler().player);
         ctx.getServerHandler().player.openContainer.detectAndSendChanges();
       }
     });

@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.block.master;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -89,34 +90,6 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     }
     return res;
-  }
-
-  public List<StackWrapper> getCraftableStacks(List<StackWrapper> stacks) {
-    List<StackWrapper> craftableStacks = Lists.newArrayList();
-    //    List<AbstractTileContainer> invs = Lists.newArrayList();
-    //    for (BlockPos p : connectables) {
-    //      if (!(world.getTileEntity(p) instanceof AbstractTileContainer))
-    //        continue;
-    ////      AbstractTileContainer tile = (AbstractTileContainer) world.getTileEntity(p);
-    ////      invs.add(tile);
-    //    }
-    //    for (AbstractTileContainer t : invs) {
-    //      for (int i = 0; i < t.getSizeInventory(); i++) {
-    //        if (t.getStackInSlot(i) != null && !t.getStackInSlot(i).isEmpty()) {
-    //          NBTTagCompound res = (NBTTagCompound) t.getStackInSlot(i).getTagCompound().getTag("res");
-    //          if (!Util.contains(stacks, new StackWrapper(new ItemStack(res), 0), new Comparator<StackWrapper>() {
-    //            @Override
-    //            public int compare(StackWrapper o1, StackWrapper o2) {
-    //              if (ItemHandlerHelper.canItemStacksStack(o1.getStack(), o2.getStack())) { return 0; }
-    //              return 1;
-    //            }
-    //          })) {
-    //            addToList(craftableStacks, new ItemStack(res), 0);
-    //          }
-    //        }
-    //      }
-    //    }
-    return craftableStacks;
   }
 
   private void addToList(List<StackWrapper> lis, ItemStack s, int num) {
