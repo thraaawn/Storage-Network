@@ -67,12 +67,23 @@ public class ItemRemote extends Item {
   @Override
   public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand hand) {
     ItemStack itemStackIn = player.getHeldItem(hand);
-    //    if (worldIn.isRemote) {
-    //      return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-    //    }
-    int x = NBTHelper.getInteger(itemStackIn, "x");
-    int y = NBTHelper.getInteger(itemStackIn, "y");
-    int z = NBTHelper.getInteger(itemStackIn, "z");
+    int x, y, z, itemStackDim;
+    try {
+      x = NBTHelper.getInteger(itemStackIn, "x");
+      y = NBTHelper.getInteger(itemStackIn, "y");
+      z = NBTHelper.getInteger(itemStackIn, "z");
+      itemStackDim = NBTHelper.getInteger(itemStackIn, "dim");
+      // validate possible missing data 
+      if (NBTHelper.getString(itemStackIn, "sort") == null) {
+        NBTHelper.setString(itemStackIn, "sort", EnumSortType.NAME.toString());
+      }
+    }
+    catch (Throwable e) {
+      //cant tell if this is NBT error or statistics usage recording issue 
+      //https://github.com/PrinceOfAmber/Storage-Network/issues/93
+      StorageNetwork.instance.logger.error("Invalid remote data ", e);
+      return super.onItemRightClick(worldIn, player, hand);
+    }
     BlockPos targetPos = new BlockPos(x, y, z);
     World serverTargetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(NBTHelper.getInteger(itemStackIn, "dim"));
     int itemDamage = itemStackIn.getItemDamage();
@@ -87,7 +98,7 @@ public class ItemRemote extends Item {
     RemoteType remoteType = RemoteType.values()[itemDamage];
     // first make sure area is loaded, BEFORE getting TE
     if (serverTargetWorld.getTileEntity(targetPos) instanceof TileMaster) {
-      boolean isSameDimension = (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension());
+      boolean isSameDimension = (itemStackDim == worldIn.provider.getDimension());
       boolean isWithinRange = (player.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor);
       boolean canOpenGUI = false;
       switch (remoteType) {
@@ -106,10 +117,6 @@ public class ItemRemote extends Item {
       }
       // ok we found a target
       if (canOpenGUI) {
-        // validate possible missing data 
-        if (NBTHelper.getString(itemStackIn, "sort") == null) {
-          NBTHelper.setString(itemStackIn, "sort", EnumSortType.NAME.toString());
-        }
         player.openGui(StorageNetwork.instance, getGui(), serverTargetWorld, x, y, z);
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
       }
