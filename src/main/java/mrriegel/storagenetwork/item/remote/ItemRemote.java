@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
-import mrriegel.storagenetwork.block.request.TileRequest.EnumSortType;
+import mrriegel.storagenetwork.block.request.EnumSortType;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.util.NBTHelper;

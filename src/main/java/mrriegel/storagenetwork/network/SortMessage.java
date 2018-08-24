@@ -2,8 +2,8 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.request.ContainerRequest;
+import mrriegel.storagenetwork.block.request.EnumSortType;
 import mrriegel.storagenetwork.block.request.TileRequest;
-import mrriegel.storagenetwork.block.request.TileRequest.EnumSortType;
 import mrriegel.storagenetwork.item.remote.ContainerRemote;
 import mrriegel.storagenetwork.util.NBTHelper;
 import net.minecraft.item.ItemStack;
@@ -47,7 +47,7 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
           TileEntity t = ctx.getServerHandler().player.world.getTileEntity(message.pos);
           if (t instanceof TileRequest) {
             TileRequest tile = (TileRequest) t;
-            tile.sort = message.sort;
+            tile.setSort(message.sort);
             tile.setDownwards(message.direction);
           }
           t.markDirty();

@@ -10,7 +10,8 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
-import mrriegel.storagenetwork.block.request.TileRequest.EnumSortType;
+import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.block.request.EnumSortType;
 import mrriegel.storagenetwork.jei.JeiHooks;
 import mrriegel.storagenetwork.jei.JeiSettings;
 import mrriegel.storagenetwork.network.ClearMessage;
@@ -42,15 +43,14 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
   private static final int MOUSE_BTN_RIGHT = 1;
   private static final int MOUSE_BTN_LEFT = 0;
-  protected ResourceLocation texture;
+  private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   protected int page = 1, maxPage = 1;
   public List<StackWrapper> stacks, craftableStacks;
-  protected ItemStack over = ItemStack.EMPTY;
+  protected ItemStack stackUnderMouse = ItemStack.EMPTY;
   protected GuiTextField searchBar;
-  protected GuiStorageButton directionBtn, sortBtn, jeiBtn;
+  protected GuiStorageButton directionBtn, sortBtn, jeiBtn, clearTextBtn;
   protected List<ItemSlotNetwork> slots;
   protected long lastClick;
-  private GuiStorageButton clearTextBtn;
   private boolean forceFocus;
 
   public GuiContainerStorageInventory(ContainerNetworkBase inventorySlotsIn) {
@@ -92,9 +92,14 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     this.addButton(clearTextBtn);
   }
 
-  public abstract int getLines();
 
-  public abstract int getColumns();
+  private int getLines() {
+    return 4;
+  }
+
+  private int getColumns() {
+    return 9;
+  }
 
   public abstract boolean getDownwards();
 
@@ -189,20 +194,20 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   }
 
   private void renderItemSlots(int mouseX, int mouseY) {
+    stackUnderMouse = ItemStack.EMPTY;
     for (ItemSlotNetwork slot : slots) {
       slot.drawSlot(mouseX, mouseY);
-      //    }
-      //    for (ItemSlotNetwork s : slots) {
+
       if (slot.isMouseOverSlot(mouseX, mouseY)) {
-        over = slot.getStack();
-        break;
+        stackUnderMouse = slot.getStack();
+        //        break;
       }
-      else {
-        over = ItemStack.EMPTY;
-      }
+      //      else {
+      //        stackUnderMouse = ItemStack.EMPTY;
+      //      }
     }
     if (slots.isEmpty()) {
-      over = ItemStack.EMPTY;
+      stackUnderMouse = ItemStack.EMPTY;
     }
   }
 
@@ -369,8 +374,8 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       PacketRegistry.INSTANCE.sendToServer(new ClearMessage());
       PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
     }
-    else if (over != null && !over.isEmpty() && (mouseButton == MOUSE_BTN_LEFT || mouseButton == MOUSE_BTN_RIGHT) && mc.player.inventory.getItemStack().isEmpty() && canClick()) {
-      PacketRegistry.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
+    else if (stackUnderMouse != null && !stackUnderMouse.isEmpty() && (mouseButton == MOUSE_BTN_LEFT || mouseButton == MOUSE_BTN_RIGHT) && mc.player.inventory.getItemStack().isEmpty() && canClick()) {
+      PacketRegistry.INSTANCE.sendToServer(new RequestMessage(mouseButton, stackUnderMouse, isShiftKeyDown(), isCtrlKeyDown()));
       lastClick = System.currentTimeMillis();
     }
     else if (mc.player.inventory.getItemStack() != null && !mc.player.inventory.getItemStack().isEmpty() && inField(mouseX, mouseY) && canClick()) {

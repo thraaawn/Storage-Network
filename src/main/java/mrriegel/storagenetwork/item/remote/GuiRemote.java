@@ -1,34 +1,23 @@
 package mrriegel.storagenetwork.item.remote;
 
-import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.block.request.TileRequest.EnumSortType;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import mrriegel.storagenetwork.block.request.EnumSortType;
 import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
 import mrriegel.storagenetwork.util.NBTHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 public class GuiRemote extends GuiContainerStorageInventory {
 
   public GuiRemote(ContainerRemote inventorySlotsIn) {
     super(inventorySlotsIn);
-    texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
-  }
-
-  @Override
-  public int getLines() {
-    return 4;
-  }
-
-  @Override
-  public int getColumns() {
-    return 9;
   }
 
   @Override
   public boolean getDownwards() {
     ItemStack remote = getItemRemote();
-    if (remote != null)
+    if (remote.isEmpty() == false)
       return NBTHelper.getBoolean(remote, "down");
     return false;
   }
@@ -36,26 +25,22 @@ public class GuiRemote extends GuiContainerStorageInventory {
   @Override
   public void setDownwards(boolean d) {
     ItemStack remote = getItemRemote();
-    if (remote != null)
+    if (remote.isEmpty() == false)
       NBTHelper.setBoolean(remote, "down", d);
   }
 
   @Override
-  public EnumSortType getSort() {
+  public @Nullable EnumSortType getSort() {
     ItemStack remote = getItemRemote();
-    if (remote != null)
+    if (remote.isEmpty() == false)
       return EnumSortType.valueOf(NBTHelper.getString(remote, "sort"));
     return null;
   }
 
-  /**
-   * 
-   * @return @Nullable ItemStack
-   */
-  public ItemStack getItemRemote() {
+  public @Nonnull ItemStack getItemRemote() {
     ItemStack remote = mc.player.inventory.getCurrentItem();
     if (remote.getItem() instanceof ItemRemote == false) {
-      return null;
+      return ItemStack.EMPTY;
     }
     return remote;
   }
@@ -63,7 +48,7 @@ public class GuiRemote extends GuiContainerStorageInventory {
   @Override
   public void setSort(EnumSortType s) {
     ItemStack remote = getItemRemote();
-    if (remote != null)
+    if (remote.isEmpty() == false)
       NBTHelper.setString(remote, "sort", s.toString());
   }
 
@@ -75,7 +60,7 @@ public class GuiRemote extends GuiContainerStorageInventory {
   @Override
   protected int getDim() {
     ItemStack remote = getItemRemote();
-    if (remote != null)
+    if (remote.isEmpty() == false)
       return NBTHelper.getInteger(remote, "dim");
     return 0;
   }
@@ -97,6 +82,6 @@ public class GuiRemote extends GuiContainerStorageInventory {
 
   @Override
   protected boolean isScreenValid() {
-    return this.getItemRemote() != null;
+    return this.getItemRemote().isEmpty() == false;
   }
 }

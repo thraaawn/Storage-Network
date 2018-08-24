@@ -12,23 +12,13 @@ public class TileRequest extends TileConnectable {
 
   public Map<Integer, ItemStack> matrix = new HashMap<Integer, ItemStack>();
   private boolean downwards;
-  public EnumSortType sort = EnumSortType.NAME;
-
-  public enum EnumSortType {
-    AMOUNT, NAME, MOD;
-
-    private static EnumSortType[] vals = values();
-
-    public EnumSortType next() {
-      return vals[(this.ordinal() + 1) % vals.length];
-    }
-  }
+  private EnumSortType sort = EnumSortType.NAME;
 
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
     setDownwards(compound.getBoolean("dir"));
-    sort = EnumSortType.valueOf(compound.getString("sort"));
+    setSort(EnumSortType.valueOf(compound.getString("sort")));
     NBTTagList invList = compound.getTagList("matrix", Constants.NBT.TAG_COMPOUND);
     matrix = new HashMap<Integer, ItemStack>();
     for (int i = 0; i < invList.tagCount(); i++) {
@@ -43,7 +33,7 @@ public class TileRequest extends TileConnectable {
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
     compound.setBoolean("dir", isDownwards());
-    compound.setString("sort", sort.toString());
+    compound.setString("sort", getSort().toString());
     NBTTagList invList = new NBTTagList();
     invList = new NBTTagList();
     for (int i = 0; i < 9; i++) {
@@ -64,5 +54,13 @@ public class TileRequest extends TileConnectable {
 
   public void setDownwards(boolean downwards) {
     this.downwards = downwards;
+  }
+
+  public EnumSortType getSort() {
+    return sort;
+  }
+
+  public void setSort(EnumSortType sort) {
+    this.sort = sort;
   }
 }

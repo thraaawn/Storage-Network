@@ -1,19 +1,15 @@
 package mrriegel.storagenetwork.block.request;
 
-import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.block.request.TileRequest.EnumSortType;
 import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 public class GuiRequest extends GuiContainerStorageInventory {
 
-  TileRequest tile;
+  private TileRequest tile;
 
   public GuiRequest(ContainerRequest inventorySlotsIn) {
     super(inventorySlotsIn);
     tile = inventorySlotsIn.getTileRequest();
-    texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   }
 
   @Override
@@ -24,16 +20,6 @@ public class GuiRequest extends GuiContainerStorageInventory {
   @Override
   public void updateScreen() {
     super.updateScreen();
-  }
-
-  @Override
-  public int getLines() {
-    return 4;
-  }
-
-  @Override
-  public int getColumns() {
-    return 9;
   }
 
   @Override
@@ -48,12 +34,12 @@ public class GuiRequest extends GuiContainerStorageInventory {
 
   @Override
   public EnumSortType getSort() {
-    return tile.sort;
+    return tile.getSort();
   }
 
   @Override
   public void setSort(EnumSortType s) {
-    tile.sort = s;
+    tile.setSort(s);
   }
 
   @Override
