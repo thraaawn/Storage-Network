@@ -1,6 +1,10 @@
 package mrriegel.storagenetwork.jei;
 
+import mezz.jei.api.recipe.IFocus;
+import mezz.jei.config.KeyBindings;
+import mezz.jei.gui.Focus;
 import mrriegel.storagenetwork.StorageNetwork;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Optional;
 
 public class JeiHooks {
@@ -37,5 +41,24 @@ public class JeiHooks {
   @Optional.Method(modid = "jei")
   private static String getJeiTextInternal() {
     return mezz.jei.Internal.getRuntime().getIngredientFilter().getFilterText();
+  }
+
+
+
+  @Optional.Method(modid = "jei")
+  public static void testJeiKeybind(int keyCode, ItemStack stackUnderMouse) {
+    final boolean showRecipe = KeyBindings.showRecipe.isActiveAndMatches(keyCode);
+    final boolean showUses = KeyBindings.showUses.isActiveAndMatches(keyCode);
+
+
+    if (showRecipe || showUses) {
+      //      IClickedIngredient<?> clicked = getIngredientUnderMouseForKey(MouseHelper.getX(), MouseHelper.getY());
+      //      if (clicked != null) {
+        IFocus.Mode mode = showRecipe ? IFocus.Mode.OUTPUT : IFocus.Mode.INPUT;
+      mezz.jei.Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(mode, stackUnderMouse));
+      //        clicked.onClickHandled();
+      //        return true;
+      //      }
+    }
   }
 }

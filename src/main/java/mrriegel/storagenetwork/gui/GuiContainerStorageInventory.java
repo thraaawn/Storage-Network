@@ -391,11 +391,14 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   public void keyTyped(char typedChar, int keyCode) throws IOException {
     if (!this.checkHotbarKeys(keyCode)) {
       Keyboard.enableRepeatEvents(true);
-      if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
+      if (searchBar.isFocused() && this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
         PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
-        if (searchBar.isFocused() && JeiSettings.isJeiLoaded() && JeiSettings.isJeiSearchSynced()) {
+        if (JeiSettings.isJeiLoaded() && JeiSettings.isJeiSearchSynced()) {
           JeiHooks.setFilterText(searchBar.getText()); //  searchBar.setText(JeiHooks.getFilterText());
         }
+      }
+      else if (this.stackUnderMouse.isEmpty() == false) {
+        JeiHooks.testJeiKeybind(keyCode, this.stackUnderMouse);
       }
       else {
         super.keyTyped(typedChar, keyCode);
