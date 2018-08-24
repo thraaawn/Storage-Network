@@ -116,64 +116,130 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
   protected abstract boolean isScreenValid();
 
+  private boolean doesStackMatchSearch(StackWrapper stackWrapper) {
+    String searchText = searchBar.getText();
+    if (searchText.startsWith("@")) {
+      String name = UtilTileEntity.getModNameForItem(stackWrapper.getStack().getItem());
+      return name.toLowerCase().contains(searchText.toLowerCase().substring(1));
+    }
+    else if (searchText.startsWith("#")) {
+      String tooltipString;
+      List<String> tooltip = stackWrapper.getStack().getTooltip(mc.player, TooltipFlags.NORMAL);
+      tooltipString = Joiner.on(' ').join(tooltip).toLowerCase();
+      tooltipString = ChatFormatting.stripFormatting(tooltipString);
+      return tooltipString.toLowerCase().contains(searchText.toLowerCase().substring(1));
+    }
+    else if (searchText.startsWith("$")) {
+      StringBuilder oreDictStringBuilder = new StringBuilder();
+      for (int oreId : OreDictionary.getOreIDs(stackWrapper.getStack())) {
+        String oreName = OreDictionary.getOreName(oreId);
+        oreDictStringBuilder.append(oreName).append(' ');
+      }
+      return oreDictStringBuilder.toString().toLowerCase().contains(searchText.toLowerCase().substring(1));
+    }
+    else if (searchText.startsWith("%")) {
+      StringBuilder creativeTabStringBuilder = new StringBuilder();
+      for (CreativeTabs creativeTab : stackWrapper.getStack().getItem().getCreativeTabs()) {
+        if (creativeTab != null) {
+          String creativeTabName = creativeTab.getTranslatedTabLabel();
+          creativeTabStringBuilder.append(creativeTabName).append(' ');
+        }
+      }
+      return creativeTabStringBuilder.toString().toLowerCase().contains(searchText.toLowerCase().substring(1));
+    }
+    else {
+      return stackWrapper.getStack().getDisplayName().toLowerCase().contains(searchText.toLowerCase());
+    }
+  }
 
   @Override
   public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     if (this.isScreenValid() == false) {
       return;
     }
+    renderTextures();
+    List<StackWrapper> stacksToDisplay = applySearchTextToSlots();
+    sortStackWrappers(stacksToDisplay);
+    applyScrollPaging(stacksToDisplay);
+    rebuildItemSlots(stacksToDisplay);
+    renderItemSlots(mouseX, mouseY);
+    searchBar.drawTextBox();
+  }
+
+  private void renderTextures() {
     this.drawDefaultBackground();//dim the background as normal
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     this.mc.getTextureManager().bindTexture(texture);
-    int i = (this.width - this.xSize) / 2;
-    int j = (this.height - this.ySize) / 2;
-    this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
+    int xCenter = (this.width - this.xSize) / 2;
+    int yCenter = (this.height - this.ySize) / 2;
+    this.drawTexturedModalRect(xCenter, yCenter, 0, 0, this.xSize, this.ySize);
+  }
+
+  private List<StackWrapper> applySearchTextToSlots() {
     String searchText = searchBar.getText();
-    List<StackWrapper> tmp = searchText.equals("") ? Lists.newArrayList(stacks) : Lists.<StackWrapper> newArrayList();
+    List<StackWrapper> stacksToDisplay = searchText.equals("") ? Lists.newArrayList(stacks) : Lists.<StackWrapper> newArrayList();
     if (!searchText.equals("")) {
-      for (StackWrapper s : stacks) {
-        if (searchText.startsWith("@")) {
-          String name = UtilTileEntity.getModNameForItem(s.getStack().getItem());
-          if (name.toLowerCase().contains(searchText.toLowerCase().substring(1)))
-            tmp.add(s);
-        }
-        else if (searchText.startsWith("#")) {
-          String tooltipString;
-          List<String> tooltip = s.getStack().getTooltip(mc.player, TooltipFlags.NORMAL);
-          tooltipString = Joiner.on(' ').join(tooltip).toLowerCase();
-          tooltipString = ChatFormatting.stripFormatting(tooltipString);
-          if (tooltipString.toLowerCase().contains(searchText.toLowerCase().substring(1)))
-            tmp.add(s);
-        }
-        else if (searchText.startsWith("$")) {
-          StringBuilder oreDictStringBuilder = new StringBuilder();
-          for (int oreId : OreDictionary.getOreIDs(s.getStack())) {
-            String oreName = OreDictionary.getOreName(oreId);
-            oreDictStringBuilder.append(oreName).append(' ');
-          }
-          if (oreDictStringBuilder.toString().toLowerCase().contains(searchText.toLowerCase().substring(1)))
-            tmp.add(s);
-        }
-        else if (searchText.startsWith("%")) {
-          StringBuilder creativeTabStringBuilder = new StringBuilder();
-          for (CreativeTabs creativeTab : s.getStack().getItem().getCreativeTabs()) {
-            if (creativeTab != null) {
-              String creativeTabName = creativeTab.getTranslatedTabLabel();
-              creativeTabStringBuilder.append(creativeTabName).append(' ');
-            }
-          }
-          if (creativeTabStringBuilder.toString().toLowerCase().contains(searchText.toLowerCase().substring(1)))
-            tmp.add(s);
-        }
-        else {
-          if (s.getStack().getDisplayName().toLowerCase().contains(searchText.toLowerCase()))
-            tmp.add(s);
+      for (StackWrapper stackWrapper : stacks) {
+        if (doesStackMatchSearch(stackWrapper)) {
+          stacksToDisplay.add(stackWrapper);
         }
       }
     }
-    // for (StackWrapper s : craftableStacks)
-    // tmp.add(s);
-    Collections.sort(tmp, new Comparator<StackWrapper>() {
+    return stacksToDisplay;
+  }
+
+  private void renderItemSlots(int mouseX, int mouseY) {
+    for (ItemSlotNetwork slot : slots) {
+      slot.drawSlot(mouseX, mouseY);
+      //    }
+      //    for (ItemSlotNetwork s : slots) {
+      if (slot.isMouseOverSlot(mouseX, mouseY)) {
+        over = slot.getStack();
+        break;
+      }
+      else {
+        over = ItemStack.EMPTY;
+      }
+    }
+    if (slots.isEmpty()) {
+      over = ItemStack.EMPTY;
+    }
+  }
+
+  private void rebuildItemSlots(List<StackWrapper> stacksToDisplay) {
+    slots = Lists.newArrayList();
+    int index = (page - 1) * (getColumns());
+    for (int row = 0; row < getLines(); row++) {
+      for (int col = 0; col < getColumns(); col++) {
+        if (index >= stacksToDisplay.size()) {
+          break;
+        }
+        int in = index;
+        slots.add(new ItemSlotNetwork(this, stacksToDisplay.get(in).getStack(), guiLeft + 8 + col * 18, guiTop + 10 + row * 18, stacksToDisplay.get(in).getSize(), guiLeft, guiTop, true));
+        index++;
+      }
+    }
+  }
+
+  private void applyScrollPaging(List<StackWrapper> stacksToDisplay) {
+    maxPage = stacksToDisplay.size() / (getColumns());
+    if (stacksToDisplay.size() % (getColumns()) != 0) {
+      maxPage++;
+    }
+    maxPage -= (getLines() - 1);
+    if (maxPage < 1) {
+      maxPage = 1;
+    }
+    if (page < 1) {
+      page = 1;
+    }
+    if (page > maxPage) {
+      page = maxPage;
+    }
+  }
+
+  private void sortStackWrappers(List<StackWrapper> stacksToDisplay) {
+    Collections.sort(stacksToDisplay, new Comparator<StackWrapper>() {
 
       int mul = getDownwards() ? -1 : 1;
 
@@ -190,41 +256,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
         return 0;
       }
     });
-    maxPage = tmp.size() / (getColumns());
-    if (tmp.size() % (getColumns()) != 0)
-      maxPage++;
-    maxPage -= (getLines() - 1);
-    if (maxPage < 1)
-      maxPage = 1;
-    if (page < 1)
-      page = 1;
-    if (page > maxPage)
-      page = maxPage;
-    searchBar.drawTextBox();
-    slots = Lists.newArrayList();
-    int index = (page - 1) * (getColumns());
-    for (int jj = 0; jj < getLines(); jj++) {
-      for (int ii = 0; ii < getColumns(); ii++) {
-        int in = index;
-        if (in >= tmp.size())
-          break;
-        slots.add(new ItemSlotNetwork(this, tmp.get(in).getStack(), guiLeft + 8 + ii * 18, guiTop + 10 + jj * 18, tmp.get(in).getSize(), guiLeft, guiTop, true));
-        index++;
-      }
-    }
-    for (ItemSlotNetwork s : slots) {
-      s.drawSlot(mouseX, mouseY);
-    }
-    for (ItemSlotNetwork s : slots) {
-      if (s.isMouseOverSlot(mouseX, mouseY)) {
-        over = s.getStack();
-        break;
-      }
-      else
-        over = ItemStack.EMPTY;
-    }
-    if (slots.isEmpty())
-      over = ItemStack.EMPTY;
   }
 
   @Override
@@ -410,7 +441,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.blendFunc(770, 771);
         this.drawTexturedModalRect(this.x, this.y, 162 + 14 * k, 0, width, height);
-
         if (id == directionBtn.id) {
           this.drawTexturedModalRect(this.x + 4, this.y + 3, 176 + (getDownwards() ? 6 : 0), 14, 6, 8);
         }
