@@ -11,7 +11,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.block.request.EnumSortType;
 import mrriegel.storagenetwork.jei.JeiHooks;
 import mrriegel.storagenetwork.jei.JeiSettings;
 import mrriegel.storagenetwork.network.ClearMessage;
@@ -20,6 +19,7 @@ import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
+import mrriegel.storagenetwork.util.data.EnumSortType;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -41,6 +41,8 @@ import net.minecraftforge.oredict.OreDictionary;
  */
 public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
+  private static final int HEIGHT = 256;
+  private static final int WIDTH = 176;
   private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   protected int page = 1, maxPage = 1;
   public List<StackWrapper> stacks, craftableStacks;
@@ -53,8 +55,8 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
   public GuiContainerStorageInventory(ContainerNetworkBase inventorySlotsIn) {
     super(inventorySlotsIn);
-    this.xSize = 176;
-    this.ySize = 256;
+    this.xSize = WIDTH;
+    this.ySize = HEIGHT;
     this.stacks = Lists.newArrayList();
     this.craftableStacks = Lists.newArrayList();
     PacketRegistry.INSTANCE.sendToServer(new RequestMessage());
@@ -456,13 +458,13 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
         GlStateManager.blendFunc(770, 771);
         this.drawTexturedModalRect(this.x, this.y, 162 + 14 * k, 0, width, height);
         if (id == directionBtn.id) {
-          this.drawTexturedModalRect(this.x + 4, this.y + 3, 176 + (getDownwards() ? 6 : 0), 14, 6, 8);
+          this.drawTexturedModalRect(this.x + 4, this.y + 3, WIDTH + (getDownwards() ? 6 : 0), 14, 6, 8);
         }
         if (id == sortBtn.id) {
           this.drawTexturedModalRect(this.x + 4, this.y + 3, 188 + (getSort() == EnumSortType.AMOUNT ? 6 : getSort() == EnumSortType.MOD ? 12 : 0), 14, 6, 8);
         }
         if (id == jeiBtn.id) {
-          this.drawTexturedModalRect(this.x + 4, this.y + 3, 176 + (JeiSettings.isJeiSearchSynced() ? 0 : 6), 22, 6, 8);
+          this.drawTexturedModalRect(this.x + 4, this.y + 3, WIDTH + (JeiSettings.isJeiSearchSynced() ? 0 : 6), 22, 6, 8);
         }
         this.mouseDragged(mc, x, y);
         int l = 14737632;
