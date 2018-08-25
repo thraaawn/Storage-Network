@@ -75,11 +75,13 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
         e.printStackTrace();
         if (tileMaster instanceof TileMaster) {
           ///seems like i can delete this superhack but im not sure, it never executes
-          for (BlockPos p : ((TileMaster) tileMaster).getConnectables())
-            if (worldIn.getChunkFromBlockCoords(p).isLoaded() && worldIn.getTileEntity(p) instanceof IConnectable) {
-              ((IConnectable) worldIn.getTileEntity(p)).setMaster(null);
-              worldIn.markChunkDirty(p, worldIn.getTileEntity(p));
+          for (BlockPos p : ((TileMaster) tileMaster).getConnectables()) {
+            TileEntity tileCurrent = worldIn.getTileEntity(p);
+            if (worldIn.getChunkFromBlockCoords(p).isLoaded() && tileCurrent instanceof IConnectable) {
+              ((IConnectable) tileCurrent).setMaster(null);
+              worldIn.markChunkDirty(p, tileCurrent);
             }
+          }
         }
       }
       if (refresh && tileMaster instanceof TileMaster) {
