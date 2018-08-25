@@ -14,6 +14,7 @@ import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.PacketRegistry;
+import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -215,11 +216,11 @@ public class GuiCable extends GuiContainerBase {
         }
         else {
           if (x != null) {
-            if (mouseButton == 0)
+            if (mouseButton == UtilTileEntity.MOUSE_BTN_LEFT)
               x.setSize(x.getSize() + (isShiftKeyDown() ? 10 : 1));
-            else if (mouseButton == 1)
+            else if (mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT)
               x.setSize(x.getSize() - (isShiftKeyDown() ? 10 : 1));
-            else if (mouseButton == 2) {
+            else if (mouseButton == UtilTileEntity.MOUSE_BTN_SCROLL) {
               con.getTile().getFilter().put(i, null);
             }
             if (x != null && x.getSize() <= 0) {

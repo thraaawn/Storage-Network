@@ -27,7 +27,9 @@ import net.minecraftforge.oredict.OreDictionary;
 public class UtilTileEntity {
 
   private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
-
+  public static final int MOUSE_BTN_LEFT = 0;
+  public static final int MOUSE_BTN_RIGHT = 1;
+  public static final int MOUSE_BTN_SCROLL = 2;
   public static void init() {
     Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
     for (Map.Entry<String, ModContainer> modEntry : modMap.entrySet()) {

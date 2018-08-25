@@ -41,8 +41,6 @@ import net.minecraftforge.oredict.OreDictionary;
  */
 public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
-  private static final int MOUSE_BTN_RIGHT = 1;
-  private static final int MOUSE_BTN_LEFT = 0;
   private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   protected int page = 1, maxPage = 1;
   public List<StackWrapper> stacks, craftableStacks;
@@ -369,7 +367,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     searchBar.setFocused(false);
     if (inSearchbar(mouseX, mouseY)) {
       searchBar.setFocused(true);
-      if (mouseButton == MOUSE_BTN_RIGHT) {
+      if (mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT) {
         clearSearch();
       }
     }
@@ -377,7 +375,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       PacketRegistry.INSTANCE.sendToServer(new ClearMessage());
       PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
     }
-    else if (stackUnderMouse != null && !stackUnderMouse.isEmpty() && (mouseButton == MOUSE_BTN_LEFT || mouseButton == MOUSE_BTN_RIGHT) && mc.player.inventory.getItemStack().isEmpty() && canClick()) {
+    else if (stackUnderMouse != null && !stackUnderMouse.isEmpty() && (mouseButton == UtilTileEntity.MOUSE_BTN_LEFT || mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT) && mc.player.inventory.getItemStack().isEmpty() && canClick()) {
       PacketRegistry.INSTANCE.sendToServer(new RequestMessage(mouseButton, stackUnderMouse, isShiftKeyDown(), isCtrlKeyDown()));
       lastClick = System.currentTimeMillis();
     }
