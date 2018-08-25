@@ -63,7 +63,7 @@ public class BlockMaster extends BlockContainer {
     for (BlockPos p : UtilTileEntity.getSides(pos)) {
       tileHere = worldIn.getTileEntity(p);
       if (tileHere instanceof IConnectable) {
-        connect = ((IConnectable) worldIn.getTileEntity(p));
+        connect = (IConnectable) tileHere;
         if (connect.getMaster() != null && !connect.getMaster().equals(pos)) {
           masterPos = connect.getMaster();
           break;
@@ -78,8 +78,9 @@ public class BlockMaster extends BlockContainer {
       //      ((TileMaster) worldIn.getTileEntity(masterPos)).refreshNetwork();
     }
     else {//my position is tile so refresh myself 
-      if (worldIn.getTileEntity(pos) != null) {
-        ((TileMaster) worldIn.getTileEntity(pos)).refreshNetwork();
+      TileEntity tileAtPos = worldIn.getTileEntity(pos);
+      if (tileAtPos != null) {
+        ((TileMaster) tileAtPos).refreshNetwork();
       }
     }
   }
