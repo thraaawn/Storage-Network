@@ -375,13 +375,18 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       PacketRegistry.INSTANCE.sendToServer(new ClearMessage());
       PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
     }
-    else if (stackUnderMouse != null && !stackUnderMouse.isEmpty() && (mouseButton == UtilTileEntity.MOUSE_BTN_LEFT || mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT) && mc.player.inventory.getItemStack().isEmpty() && canClick()) {
-      PacketRegistry.INSTANCE.sendToServer(new RequestMessage(mouseButton, stackUnderMouse, isShiftKeyDown(), isCtrlKeyDown()));
-      lastClick = System.currentTimeMillis();
-    }
-    else if (mc.player.inventory.getItemStack() != null && !mc.player.inventory.getItemStack().isEmpty() && inField(mouseX, mouseY) && canClick()) {
-      PacketRegistry.INSTANCE.sendToServer(new InsertMessage(getDim(), mouseButton, mc.player.inventory.getItemStack()));
-      lastClick = System.currentTimeMillis();
+    else {
+      ItemStack stackCarriedByMouse = mc.player.inventory.getItemStack();
+      if (!stackUnderMouse.isEmpty()
+          && (mouseButton == UtilTileEntity.MOUSE_BTN_LEFT || mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT)
+          && stackCarriedByMouse.isEmpty() && canClick()) {
+        PacketRegistry.INSTANCE.sendToServer(new RequestMessage(mouseButton, stackUnderMouse, isShiftKeyDown(), isCtrlKeyDown()));
+        lastClick = System.currentTimeMillis();
+      }
+      else if (!stackCarriedByMouse.isEmpty() && inField(mouseX, mouseY) && canClick()) {
+        PacketRegistry.INSTANCE.sendToServer(new InsertMessage(getDim(), mouseButton, stackCarriedByMouse));
+        lastClick = System.currentTimeMillis();
+      }
     }
   }
 
@@ -392,7 +397,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
       if (searchBar.isFocused() && this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
         PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
         if (JeiSettings.isJeiLoaded() && JeiSettings.isJeiSearchSynced()) {
-          JeiHooks.setFilterText(searchBar.getText()); //  searchBar.setText(JeiHooks.getFilterText());
+          JeiHooks.setFilterText(searchBar.getText());
         }
       }
       else if (this.stackUnderMouse.isEmpty() == false) {
