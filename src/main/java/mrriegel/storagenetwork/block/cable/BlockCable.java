@@ -95,6 +95,37 @@ public class BlockCable extends AbstractBlockConnectable {
   @Override
   public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
     setConnections(worldIn, pos, state, false);
+    //possible bandaid to stop double connects but.. seems to expensive. for an only-visual issue
+    // https://github.com/PrinceOfAmber/Storage-Network/issues/84
+    //    detectLocalMasterNode(worldIn, pos);
+    //    if (worldIn.isRemote) {
+    //      return;
+    //    }
+    //    TileCable here = (TileCable) worldIn.getTileEntity(pos);
+    //
+    //    StorageNetwork.log("!validate cable getConnectedInventory " + here.getConnectedInventory());
+    //    StorageNetwork.log("!validate cable getMaster " + here.getMaster());
+    //    if (here.isStorage() && here.getConnectedInventory() != null && here.getMaster() != null) {
+    //      TileMaster master = (TileMaster) worldIn.getTileEntity(here.getMaster());
+    //      if (master == null || master.getConnectables() == null) {
+    //        return;
+    //      }
+    //      //check 
+    //      for (BlockPos pCon : master.getConnectables()) {
+    //        if (pCon.equals(pos)) {
+    //          continue;//not myself 
+    //        }
+    //        TileEntity tileCon = worldIn.getTileEntity(pCon);
+    //        if (tileCon != null && tileCon instanceof TileCable) {
+    //          TileCable tileOnSameBlock = (TileCable) tileCon;
+    //          if (tileOnSameBlock.getConnectedInventory() != null &&
+    //              tileOnSameBlock.getConnectedInventory().equals(here.getConnectedInventory())) {
+    //            StorageNetwork.log("found doublo ");
+    //THIS IS WHERE  I WOULD DELETE MYSELF TO AIR AND DROP AS ITEM 
+    //          }
+    //        }
+    //      }
+    //    }
   }
 
   @Override
