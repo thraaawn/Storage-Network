@@ -37,21 +37,9 @@ public class ContainerCable extends Container {
 
           @Override
           public boolean isItemValid(ItemStack stack) {
-            return stack.getItem() == ModItems.upgrade;// && ((getStack() != null && getStack().getItemDamage() == stack.getItemDamage()) || !in(stack.getItemDamage()));
+            return stack.getItem() == ModItems.upgrade;
           }
 
-          @Override
-          public void onSlotChanged() {
-            slotChanged();
-            super.onSlotChanged();
-          }
-          //          private boolean in(int meta) {
-          //            for (int i = 0; i < upgrades.getSizeInventory(); i++) {
-          //              if (upgrades.getStackInSlot(i) != null && upgrades.getStackInSlot(i).getItemDamage() == meta)
-          //                return true;
-          //            }
-          //            return false;
-          //          }
         });
       }
     }

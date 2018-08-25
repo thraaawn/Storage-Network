@@ -210,22 +210,18 @@ public class GuiCable extends GuiContainerBase {
       if (itemSlot.isMouseOverSlot(mouseX, mouseY)) {
         ContainerCable container = (ContainerCable) inventorySlots;
         StackWrapper stackWrapper = container.getTile().getFilter().get(i);
-        if (stackCarriedByMouse != null) {
-          if (!container.isInFilter(new StackWrapper(stackCarriedByMouse, 1))) {
-            container.getTile().getFilter().put(i, new StackWrapper(stackCarriedByMouse, stackCarriedByMouse.getCount()));
-          }
+        if (!stackCarriedByMouse.isEmpty() &&
+            !container.isInFilter(new StackWrapper(stackCarriedByMouse, 1))) {
+          container.getTile().getFilter().put(i, new StackWrapper(stackCarriedByMouse, stackCarriedByMouse.getCount()));
         }
         else {
           if (stackWrapper != null) {
-            if (mouseButton == UtilTileEntity.MOUSE_BTN_LEFT)
-              stackWrapper.setSize(stackWrapper.getSize() + (isShiftKeyDown() ? 10 : 1));
-            else if (mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT)
-              stackWrapper.setSize(stackWrapper.getSize() - (isShiftKeyDown() ? 10 : 1));
-            else if (mouseButton == UtilTileEntity.MOUSE_BTN_SCROLL) {
+            if (mouseButton == UtilTileEntity.MOUSE_BTN_LEFT || stackWrapper.getSize() <= 0) {
               container.getTile().getFilter().put(i, null);
+              //              stackWrapper.setSize(stackWrapper.getSize() + (isShiftKeyDown() ? 10 : 1));
             }
-            if (stackWrapper != null && stackWrapper.getSize() <= 0) {
-              container.getTile().getFilter().put(i, null);
+            else if (mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT) {
+              stackWrapper.setSize(stackWrapper.getSize() - (isShiftKeyDown() ? 10 : 1));
             }
           }
         }
