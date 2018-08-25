@@ -197,38 +197,39 @@ public class GuiCable extends GuiContainerBase {
   @Override
   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
+    ItemStack stackCarriedByMouse = mc.player.inventory.getItemStack().copy();
     if (operationItemSlot != null && operationItemSlot.isMouseOverSlot(mouseX, mouseY) && tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
-      tile.setOperationStack(mc.player.inventory.getItemStack());
-      operationItemSlot.setStack(mc.player.inventory.getItemStack());
+      tile.setOperationStack(stackCarriedByMouse);
+      operationItemSlot.setStack(stackCarriedByMouse);
       int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-      PacketRegistry.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.player.inventory.getItemStack()));
+      PacketRegistry.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), stackCarriedByMouse));
       return;
     }
     for (int i = 0; i < list.size(); i++) {
-      ItemSlotNetwork e = list.get(i);
-      if (e.isMouseOverSlot(mouseX, mouseY)) {
-        ContainerCable con = (ContainerCable) inventorySlots;
-        StackWrapper x = con.getTile().getFilter().get(i);
-        if (mc.player.inventory.getItemStack() != null) {
-          if (!con.isInFilter(new StackWrapper(mc.player.inventory.getItemStack(), 1))) {
-            con.getTile().getFilter().put(i, new StackWrapper(mc.player.inventory.getItemStack(), mc.player.inventory.getItemStack().getCount()));
+      ItemSlotNetwork itemSlot = list.get(i);
+      if (itemSlot.isMouseOverSlot(mouseX, mouseY)) {
+        ContainerCable container = (ContainerCable) inventorySlots;
+        StackWrapper stackWrapper = container.getTile().getFilter().get(i);
+        if (stackCarriedByMouse != null) {
+          if (!container.isInFilter(new StackWrapper(stackCarriedByMouse, 1))) {
+            container.getTile().getFilter().put(i, new StackWrapper(stackCarriedByMouse, stackCarriedByMouse.getCount()));
           }
         }
         else {
-          if (x != null) {
+          if (stackWrapper != null) {
             if (mouseButton == UtilTileEntity.MOUSE_BTN_LEFT)
-              x.setSize(x.getSize() + (isShiftKeyDown() ? 10 : 1));
+              stackWrapper.setSize(stackWrapper.getSize() + (isShiftKeyDown() ? 10 : 1));
             else if (mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT)
-              x.setSize(x.getSize() - (isShiftKeyDown() ? 10 : 1));
+              stackWrapper.setSize(stackWrapper.getSize() - (isShiftKeyDown() ? 10 : 1));
             else if (mouseButton == UtilTileEntity.MOUSE_BTN_SCROLL) {
-              con.getTile().getFilter().put(i, null);
+              container.getTile().getFilter().put(i, null);
             }
-            if (x != null && x.getSize() <= 0) {
-              con.getTile().getFilter().put(i, null);
+            if (stackWrapper != null && stackWrapper.getSize() <= 0) {
+              container.getTile().getFilter().put(i, null);
             }
           }
         }
-        con.slotChanged();
+        container.slotChanged();
         PacketRegistry.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(), tile.getMeta()));
         break;
       }
