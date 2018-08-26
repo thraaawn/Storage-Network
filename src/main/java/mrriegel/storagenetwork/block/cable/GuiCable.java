@@ -111,10 +111,6 @@ public class GuiCable extends GuiContainerBase {
     fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
   }
 
-  @Override
-  protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-  }
 
   private void drawTooltips(int mouseX, int mouseY) {
     for (ItemSlotNetwork s : list) {
