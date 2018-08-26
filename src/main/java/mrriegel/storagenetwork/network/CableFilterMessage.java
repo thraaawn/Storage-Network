@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.cable.ContainerCable;
+import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,15 +13,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, IMessage> {
+public class CableFilterMessage implements IMessage, IMessageHandler<CableFilterMessage, IMessage> {
 
   private int index;
   private StackWrapper wrap;
   private boolean ore, meta;
 
-  public FilterMessage() {}
+  public CableFilterMessage() {}
 
-  public FilterMessage(int index, StackWrapper wrap, boolean ore, boolean meta) {
+  public CableFilterMessage(int index, StackWrapper wrap, boolean ore, boolean meta) {
     this.index = index;
     this.wrap = wrap;
     this.ore = ore;
@@ -28,7 +29,7 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
   }
 
   @Override
-  public IMessage onMessage(final FilterMessage message, final MessageContext ctx) {
+  public IMessage onMessage(final CableFilterMessage message, final MessageContext ctx) {
     EntityPlayerMP player = ctx.getServerHandler().player;
     IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
@@ -37,12 +38,13 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
       public void run() {
         if (player.openContainer instanceof ContainerCable) {
           ContainerCable con = (ContainerCable) player.openContainer;
+          TileCable tile = con.getTile();
           if (message.wrap != null && message.index >= 0) {
-            con.getTile().getFilter().put(message.index, message.wrap);
+            tile.getFilter().put(message.index, message.wrap);
           }
-          con.getTile().setOres(message.ore);
-          con.getTile().setMeta(message.meta);
-          con.getTile().markDirty();
+          tile.setOres(message.ore);
+          tile.setMeta(message.meta);
+          tile.markDirty();
           con.slotChanged();
         }
       }

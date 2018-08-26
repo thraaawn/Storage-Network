@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.gui;
 
 import java.util.List;
 import java.util.Map;
-import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.client.util.RecipeItemHelper;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
@@ -30,7 +29,7 @@ public class InventoryCraftingNetwork extends InventoryCrafting {
       if (matrix.get(i) != null && matrix.get(i).isEmpty() == false)
         this.setInventorySlotContents(i, matrix.get(i));
     }
-    StorageNetwork.benchmark("Constructor A ");
+
     skipEvents = false;
   }
 
@@ -46,16 +45,12 @@ public class InventoryCraftingNetwork extends InventoryCrafting {
 
   @Override
   public void setInventorySlotContents(int index, ItemStack stack) {
-    //    this.setInventorySlotContents_NOEVENTSTEST(index, stack);
+
     this.stackList.set(index, stack);
     if (skipEvents == false) {
       this.eventHandler.onCraftMatrixChanged(this);
     }
   }
-  //
-  //  private void setInventorySlotContents_NOEVENTSTEST(int index, ItemStack stack) {
-  //    this.stackList.set(index, stack);
-  //  }
 
   @Override
   public int getSizeInventory() {

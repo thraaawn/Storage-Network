@@ -10,7 +10,7 @@ import mrriegel.storagenetwork.gui.GuiContainerBase;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.network.CableDataMessage;
-import mrriegel.storagenetwork.network.FilterMessage;
+import mrriegel.storagenetwork.network.CableFilterMessage;
 import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.PacketRegistry;
@@ -89,16 +89,16 @@ public class GuiCable extends GuiContainerBase {
       btnOperationToggle.enabled = false;
       btnOperationToggle.visible = false;
     }
-    //    if (tile.getBlockType() != ModBlocks.storageKabel) {
+
     list = Lists.newArrayList();
-    for (int jj = 0; jj < 2; jj++) {
-      for (int ii = 0; ii < 9; ii++) {
-        int index = ii + (9 * jj);
+    for (int row = 0; row < 2; row++) {
+      for (int col = 0; col < 9; col++) {
+        int index = col + (9 * row);
         StackWrapper wrap = tile.getFilter().get(index);
         ItemStack s = wrap == null ? ItemStack.EMPTY : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
         boolean numShow = tile instanceof TileCable ? tile.getUpgradesOfType(ItemUpgrade.STOCK) > 0 : false;
-        list.add(new ItemSlotNetwork(this, s, guiLeft + 8 + ii * 18, guiTop + 26 + jj * 18, num, guiLeft, guiTop, numShow));
+        list.add(new ItemSlotNetwork(this, s, guiLeft + 8 + col * 18, guiTop + 26 + row * 18, num, guiLeft, guiTop, numShow));
       }
     }
     for (ItemSlotNetwork s : list) {
@@ -107,7 +107,7 @@ public class GuiCable extends GuiContainerBase {
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
       operationItemSlot.drawSlot(mouseX, mouseY);
     }
-    //    }
+
     fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
   }
 
@@ -226,7 +226,7 @@ public class GuiCable extends GuiContainerBase {
           }
         }
         container.slotChanged();
-        PacketRegistry.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(), tile.getMeta()));
+        PacketRegistry.INSTANCE.sendToServer(new CableFilterMessage(i, tile.getFilter().get(i), tile.getOre(), tile.getMeta()));
         break;
       }
     }
@@ -251,7 +251,7 @@ public class GuiCable extends GuiContainerBase {
     }
     else if (checkMetaBtn != null && checkOreBtn != null &&
         (button.id == checkMetaBtn.id || button.id == checkOreBtn.id)) {
-      PacketRegistry.INSTANCE.sendToServer(new FilterMessage(-1, null, checkOreBtn.isChecked(), checkMetaBtn.isChecked()));
+      PacketRegistry.INSTANCE.sendToServer(new CableFilterMessage(-1, null, checkOreBtn.isChecked(), checkMetaBtn.isChecked()));
     }
   }
 

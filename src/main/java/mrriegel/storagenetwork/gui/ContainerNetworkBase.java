@@ -267,12 +267,12 @@ public abstract class ContainerNetworkBase extends Container {
       if (playerIn.world.isRemote) {
         return stack;
       }
-      //        this.onCrafting(stack);
+
       List<ItemStack> lis = Lists.newArrayList();
       for (int i = 0; i < matrix.getSizeInventory(); i++) {
         lis.add(matrix.getStackInSlot(i).copy());
       }
-      ///    onCraftMatrixChanged(matrix);
+
       super.onTake(playerIn, stack);
       detectAndSendChanges();
       for (int i = 0; i < matrix.getSizeInventory(); i++) {
@@ -284,11 +284,7 @@ public abstract class ContainerNetworkBase extends Container {
           }
         }
       }
-      if (getTileMaster() != null) {
-        StorageNetwork.log("remote cancel this stacksMessage");
-        //        List<StackWrapper> list = tileMaster.getStacks();
-        //        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
-      }
+
       detectAndSendChanges();
       return stack;
     }
