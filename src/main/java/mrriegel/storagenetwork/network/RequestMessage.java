@@ -58,7 +58,6 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
         int in = tileMaster.getAmount(new FilterItem(message.stack, true, false, true));
         // int in = tile.getAmount(new FilterItem(message.stack, true, false, true));
         ItemStack stack;
-
         int sizeRequested = Math.max(
             message.id == 0 ? message.stack.getMaxStackSize()
                 : message.ctrl ? 1 : Math.min(message.stack.getMaxStackSize() / 2, in / 2),

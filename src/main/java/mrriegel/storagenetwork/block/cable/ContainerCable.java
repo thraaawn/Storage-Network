@@ -39,7 +39,6 @@ public class ContainerCable extends Container {
           public boolean isItemValid(ItemStack stack) {
             return stack.getItem() == ModItems.upgrade;
           }
-
         });
       }
     }

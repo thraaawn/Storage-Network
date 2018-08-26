@@ -43,18 +43,14 @@ public class JeiHooks {
     return mezz.jei.Internal.getRuntime().getIngredientFilter().getFilterText();
   }
 
-
-
   @Optional.Method(modid = "jei")
   public static void testJeiKeybind(int keyCode, ItemStack stackUnderMouse) {
     final boolean showRecipe = KeyBindings.showRecipe.isActiveAndMatches(keyCode);
     final boolean showUses = KeyBindings.showUses.isActiveAndMatches(keyCode);
-
-
     if (showRecipe || showUses) {
       //      IClickedIngredient<?> clicked = getIngredientUnderMouseForKey(MouseHelper.getX(), MouseHelper.getY());
       //      if (clicked != null) {
-        IFocus.Mode mode = showRecipe ? IFocus.Mode.OUTPUT : IFocus.Mode.INPUT;
+      IFocus.Mode mode = showRecipe ? IFocus.Mode.OUTPUT : IFocus.Mode.INPUT;
       mezz.jei.Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(mode, stackUnderMouse));
       //        clicked.onClickHandled();
       //        return true;

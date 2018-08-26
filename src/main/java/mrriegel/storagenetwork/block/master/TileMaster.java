@@ -89,7 +89,6 @@ public class TileMaster extends TileEntity implements ITickable {
 
   public int emptySlots() {
     int countEmpty = 0;
-
     List<AbstractFilterTile> invs = getConnectedFilterTiles();
     for (AbstractFilterTile tile : invs) {
       IItemHandler inv = tile.getInventory();
@@ -131,7 +130,6 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return size;
   }
-
 
   @Override
   public NBTTagCompound getUpdateTag() {
@@ -195,7 +193,7 @@ public class TileMaster extends TileEntity implements ITickable {
   }
 
   public int insertStack(ItemStack stack, BlockPos source, boolean simulate) {
-    if (  stack.isEmpty()) {
+    if (stack.isEmpty()) {
       return 0;
     }
     List<AbstractFilterTile> invs = Lists.newArrayList();

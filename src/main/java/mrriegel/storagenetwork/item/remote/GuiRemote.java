@@ -65,7 +65,6 @@ public class GuiRemote extends GuiContainerStorageInventory {
     return 0;
   }
 
-
   @Override
   protected boolean isScreenValid() {
     return this.getItemRemote().isEmpty() == false;

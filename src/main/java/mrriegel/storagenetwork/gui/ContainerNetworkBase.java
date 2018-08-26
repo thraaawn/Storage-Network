@@ -145,7 +145,6 @@ public abstract class ContainerNetworkBase extends Container {
         player.dropItem(res, false);
       }
       NonNullList<ItemStack> remainder = CraftingManager.getRemainingItems(matrix, player.world);
-
       for (int i = 0; i < remainder.size(); ++i) {
         ItemStack remainderCurrent = remainder.get(i);
         ItemStack slot = this.matrix.getStackInSlot(i);
@@ -153,11 +152,9 @@ public abstract class ContainerNetworkBase extends Container {
           matrix.setInventorySlotContents(i, ItemStack.EMPTY);
           continue;
         }
-
         if (remainderCurrent.isItemDamaged() && remainderCurrent.getItemDamage() > remainderCurrent.getMaxDamage()) {
           remainderCurrent = ItemStack.EMPTY;
         }
-
         if (slot.getItem().getContainerItem() != null) { //is the fix for milk and similar
           slot = new ItemStack(slot.getItem().getContainerItem());
           matrix.setInventorySlotContents(i, slot);

@@ -1,5 +1,4 @@
 package mrriegel.storagenetwork.util.data;
-
 public enum EnumSortType {
   AMOUNT, NAME, MOD;
 

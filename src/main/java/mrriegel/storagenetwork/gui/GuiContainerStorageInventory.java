@@ -92,7 +92,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     this.addButton(clearTextBtn);
   }
 
-
   private int getLines() {
     return 4;
   }
@@ -124,6 +123,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
   protected boolean inX(int mouseX, int mouseY) {
     return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
   }
+
   protected abstract boolean isScreenValid();
 
   private boolean doesStackMatchSearch(StackWrapper stackWrapper) {
@@ -202,12 +202,10 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
     stackUnderMouse = ItemStack.EMPTY;
     for (ItemSlotNetwork slot : slots) {
       slot.drawSlot(mouseX, mouseY);
-
       if (slot.isMouseOverSlot(mouseX, mouseY)) {
         stackUnderMouse = slot.getStack();
         //        break;
       }
-
     }
     if (slots.isEmpty()) {
       stackUnderMouse = ItemStack.EMPTY;
