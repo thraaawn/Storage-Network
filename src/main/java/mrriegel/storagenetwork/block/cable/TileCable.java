@@ -313,7 +313,8 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   @Override
   public boolean isItemValidForSlot(int index, ItemStack stack) {
-    return stack.getItem() == ModItems.upgrade;
+    return false;// this is to stop hoppers/etc getting them in
+    // stack.getItem() == ModItems.upgrade ;
   }
 
   @Override
