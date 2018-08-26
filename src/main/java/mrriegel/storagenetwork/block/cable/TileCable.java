@@ -9,9 +9,12 @@ import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
+import mrriegel.storagenetwork.registry.ModItems;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.data.EnumConnectType;
 import mrriegel.storagenetwork.util.data.FilterItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,11 +24,11 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
-public class TileCable extends AbstractFilterTile {
+public class TileCable extends AbstractFilterTile implements IInventory {
 
   private BlockPos connectedInventory;
   private EnumFacing inventoryFace;
-  private NonNullList<ItemStack> upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
+  private NonNullList<ItemStack> upgrades = NonNullList.withSize(ContainerCable.UPGRADE_COUNT, ItemStack.EMPTY);
   private boolean mode = true;
   private int limit = 0;
   public EnumConnectType north, south, east, west, up, down;
@@ -181,7 +184,7 @@ public class TileCable extends AbstractFilterTile {
     this.inventoryFace = inventoryFace;
   }
 
-  public List<ItemStack> getUpgrades() {
+  public NonNullList<ItemStack> getUpgrades() {
     return upgrades;
   }
 
@@ -189,9 +192,7 @@ public class TileCable extends AbstractFilterTile {
     upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
     int i = 0;
     for (ItemStack s : upgrades) {
-      if (s != null && !s.isEmpty()) {
-        this.upgrades.set(i, s);
-      }
+      this.upgrades.set(i, s);
       i++;
     }
   }
@@ -235,5 +236,101 @@ public class TileCable extends AbstractFilterTile {
   @Override
   public boolean isStorage() {
     return this.getBlockType() == ModBlocks.storageKabel;
+  }
+
+  @Override
+  public String getName() {
+    return blockType.getUnlocalizedName();
+  }
+
+  @Override
+  public boolean hasCustomName() {
+    return false;
+  }
+
+  @Override
+  public int getSizeInventory() {
+    return ContainerCable.UPGRADE_COUNT;
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return false;
+  }
+
+  @Override
+  public ItemStack getStackInSlot(int index) {
+    return upgrades.get(index);
+  }
+
+  @Override
+  public ItemStack decrStackSize(int index, int count) {
+    ItemStack stack = getStackInSlot(index);
+    if (!stack.isEmpty()) {
+      if (stack.getMaxStackSize() <= count) {
+        setInventorySlotContents(index, ItemStack.EMPTY);
+      }
+      else {
+        stack = stack.splitStack(count);
+        if (stack.getMaxStackSize() == 0) {
+          setInventorySlotContents(index, ItemStack.EMPTY);
+        }
+      }
+    }
+    return stack;
+  }
+
+  @Override
+  public ItemStack removeStackFromSlot(int index) {
+    ItemStack stack = getStackInSlot(index);
+    setInventorySlotContents(index, ItemStack.EMPTY);
+    return stack;
+  }
+
+  @Override
+  public void setInventorySlotContents(int index, ItemStack stack) {
+    if (stack.getItem() == ModItems.upgrade)
+    upgrades.set(index, stack);
+  }
+
+  @Override
+  public int getInventoryStackLimit() {
+    return 1;
+  }
+
+  @Override
+  public boolean isUsableByPlayer(EntityPlayer player) {
+    return true;
+  }
+
+  @Override
+  public void openInventory(EntityPlayer player) {
+  }
+
+  @Override
+  public void closeInventory(EntityPlayer player) {
+  }
+
+  @Override
+  public boolean isItemValidForSlot(int index, ItemStack stack) {
+    return stack.getItem() == ModItems.upgrade;
+  }
+
+  @Override
+  public int getField(int id) {
+    return 0;
+  }
+
+  @Override
+  public void setField(int id, int value) {
+  }
+
+  @Override
+  public int getFieldCount() {
+    return 0;
+  }
+
+  @Override
+  public void clear() {
   }
 }

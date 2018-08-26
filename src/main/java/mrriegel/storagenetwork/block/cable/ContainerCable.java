@@ -9,29 +9,29 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public class ContainerCable extends Container {
 
-  private static final int UPGRADE_COUNT = 4;
+  public static final int UPGRADE_COUNT = 4;
   private TileCable tile;
   private IInventory upgrades;
 
   public ContainerCable(TileCable tile, InventoryPlayer playerInv) {
     this.setTile(tile);
-    upgrades = new InventoryBasic("upgrades", false, UPGRADE_COUNT) {
-
-      @Override
-      public int getInventoryStackLimit() {
-        return 1;
-      }
-    };
+    upgrades = tile;
+    //    upgrades = new InventoryBasic("upgrades", false, UPGRADE_COUNT) {
+    //
+    //      @Override
+    //      public int getInventoryStackLimit() {
+    //        return 1;
+    //      }
+    //    };
     if (tile.isUpgradeable()) {
-      for (int i = 0; i < tile.getUpgrades().size(); i++) {
-        upgrades.setInventorySlotContents(i, tile.getUpgrades().get(i));
-      }
+      //      for (int i = 0; i < UPGRADE_COUNT; i++) {
+      //        upgrades.setInventorySlotContents(i, tile.getUpgrades().get(i));
+      //      }
       for (int ii = 0; ii < UPGRADE_COUNT; ii++) {
         this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
 
@@ -66,34 +66,36 @@ public class ContainerCable extends Container {
 
   @Override
   public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
+
     Slot slot = this.inventorySlots.get(slotIndex);
     //in range [4,39] means its coming FROM inventory
     // [0,3] is the filter list
     if (slot != null && slot.getHasStack()) {
-      ItemStack itemstack1 = slot.getStack();
-      if (itemstack1.isEmpty()) {
-        return ItemStack.EMPTY;
-      }
-      if (itemstack1.getItem() instanceof ItemUpgrade) {
+      ItemStack stackInSlot = slot.getStack();
+      //      stack = stackInSlot.copy();
+      //      if (stackInSlot.isEmpty()) {
+      //        return ItemStack.EMPTY;
+      //      }
+      if (stackInSlot.getItem() instanceof ItemUpgrade) {
         if (4 <= slotIndex && slotIndex <= 39) {
           //FROM inventory to upgrade slots
-          if (!this.mergeItemStack(itemstack1, 0, 4, true)) {
+          if (!this.mergeItemStack(stackInSlot, 0, 4, true)) {
             return ItemStack.EMPTY;
           }
         }
         else if (0 <= slotIndex && slotIndex <= 3) {
           //FROM upgrade slots TO inventory
-          if (!this.mergeItemStack(itemstack1, 4, 40, true)) {
+          if (!this.mergeItemStack(stackInSlot, 4, 40, true)) {
             return ItemStack.EMPTY;
           }
         }
       }
-      for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
-        if (getTile().getFilter().get(i) == null && !isInFilter(new StackWrapper(itemstack1, 1))) {
-          getTile().getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.getCount()));
-          break;
-        }
-      }
+      //      for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
+      //        if (getTile().getFilter().get(i) == null && !isInFilter(new StackWrapper(stackInSlot, 1))) {
+      //          getTile().getFilter().put(i, new StackWrapper(stackInSlot.copy(), stackInSlot.getCount()));
+      //          break;
+      //        }
+      //      } 
     }
     return ItemStack.EMPTY;
   }
