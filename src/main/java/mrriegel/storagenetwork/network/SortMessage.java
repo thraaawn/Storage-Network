@@ -39,20 +39,20 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 
       @Override
       public void run() {
-        if (player.openContainer instanceof ContainerRemote) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote
-          ItemStack s = player.inventory.getCurrentItem();
-          NBTHelper.setBoolean(s, "down", message.direction);
-          NBTHelper.setString(s, "sort", message.sort.toString());
+        if (player.openContainer instanceof ContainerRemote) {
+          ItemStack stackPlayerHeld = player.inventory.getCurrentItem();
+          NBTHelper.setBoolean(stackPlayerHeld, "down", message.direction);
+          NBTHelper.setString(stackPlayerHeld, "sort", message.sort.toString());
           return;
         }
-        if (player.openContainer instanceof ContainerRequest) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRequest
-          TileEntity t = player.world.getTileEntity(message.pos);
-          if (t instanceof TileRequest) {
-            TileRequest tile = (TileRequest) t;
+        if (player.openContainer instanceof ContainerRequest) {
+          TileEntity tileEntity = player.world.getTileEntity(message.pos);
+          if (tileEntity instanceof TileRequest) {
+            TileRequest tile = (TileRequest) tileEntity;
             tile.setSort(message.sort);
             tile.setDownwards(message.direction);
           }
-          t.markDirty();
+          tileEntity.markDirty();
         }
       }
     });

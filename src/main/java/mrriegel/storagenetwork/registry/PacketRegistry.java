@@ -5,7 +5,7 @@ import mrriegel.storagenetwork.network.CableDataMessage;
 import mrriegel.storagenetwork.network.ClearRecipeMessage;
 import mrriegel.storagenetwork.network.CableFilterMessage;
 import mrriegel.storagenetwork.network.InsertMessage;
-import mrriegel.storagenetwork.network.LimitMessage;
+import mrriegel.storagenetwork.network.CableLimitMessage;
 import mrriegel.storagenetwork.network.RecipeMessage;
 import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
@@ -26,7 +26,7 @@ public class PacketRegistry {
     INSTANCE.registerMessage(ClearRecipeMessage.class, ClearRecipeMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(SortMessage.class, SortMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(RecipeMessage.class, RecipeMessage.class, id++, Side.SERVER);
-    INSTANCE.registerMessage(LimitMessage.class, LimitMessage.class, id++, Side.SERVER);
+    INSTANCE.registerMessage(CableLimitMessage.class, CableLimitMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(InsertMessage.class, InsertMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(StackMessage.class, StackMessage.class, id++, Side.CLIENT);
     INSTANCE.registerMessage(CableFilterMessage.class, CableFilterMessage.class, id++, Side.SERVER);

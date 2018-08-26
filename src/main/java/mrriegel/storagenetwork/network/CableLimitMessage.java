@@ -12,15 +12,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMessage> {
+public class CableLimitMessage implements IMessage, IMessageHandler<CableLimitMessage, IMessage> {
 
   private int limit;
   private BlockPos pos;
   private ItemStack stack;
 
-  public LimitMessage() {}
+  public CableLimitMessage() {}
 
-  public LimitMessage(int limit, BlockPos pos, ItemStack stack) {
+  public CableLimitMessage(int limit, BlockPos pos, ItemStack stack) {
     super();
     this.limit = limit;
     this.pos = pos;
@@ -28,7 +28,7 @@ public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMe
   }
 
   @Override
-  public IMessage onMessage(final LimitMessage message, final MessageContext ctx) {
+  public IMessage onMessage(final CableLimitMessage message, final MessageContext ctx) {
     EntityPlayerMP player = ctx.getServerHandler().player;
     IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {

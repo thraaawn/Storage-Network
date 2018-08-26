@@ -11,7 +11,7 @@ import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.network.CableDataMessage;
 import mrriegel.storagenetwork.network.CableFilterMessage;
-import mrriegel.storagenetwork.network.LimitMessage;
+import mrriegel.storagenetwork.network.CableLimitMessage;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
@@ -202,7 +202,7 @@ public class GuiCable extends GuiContainerBase {
       tile.setOperationStack(stackCarriedByMouse);
       operationItemSlot.setStack(stackCarriedByMouse);
       int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-      PacketRegistry.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), stackCarriedByMouse));
+      PacketRegistry.INSTANCE.sendToServer(new CableLimitMessage(num, tile.getPos(), stackCarriedByMouse));
       return;
     }
     for (int i = 0; i < list.size(); i++) {
@@ -274,7 +274,7 @@ public class GuiCable extends GuiContainerBase {
           searchBar.setText("0");
         }
         tile.setLimit(num);
-        PacketRegistry.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), operationItemSlot.getStack()));
+        PacketRegistry.INSTANCE.sendToServer(new CableLimitMessage(num, tile.getPos(), operationItemSlot.getStack()));
       }
       else {
         super.keyTyped(typedChar, keyCode);
