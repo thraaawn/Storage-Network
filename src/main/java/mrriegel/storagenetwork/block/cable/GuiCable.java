@@ -225,7 +225,7 @@ public class GuiCable extends GuiContainerBase {
             }
           }
         }
-        container.slotChanged();
+        //        container.slotChanged();
         PacketRegistry.INSTANCE.sendToServer(new CableFilterMessage(i, tile.getFilter().get(i), tile.getOre(), tile.getMeta()));
         break;
       }
