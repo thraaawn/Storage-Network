@@ -45,13 +45,6 @@ public class ContainerCable extends Container {
   public boolean canInteractWith(EntityPlayer playerIn) {
     return playerIn.getDistanceSq(getTile().getPos().getX() + 0.5D, getTile().getPos().getY() + 0.5D, getTile().getPos().getZ() + 0.5D) <= 64.0D;
   }
-  //
-  //  public void slotChanged() {
-  //    getTile().setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
-  //    for (int i = 0; i < upgrades.getSizeInventory(); i++) {
-  //      getTile().getUpgrades().set(i, upgrades.getStackInSlot(i));
-  //    }
-  //  }
 
   @Override
   public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
