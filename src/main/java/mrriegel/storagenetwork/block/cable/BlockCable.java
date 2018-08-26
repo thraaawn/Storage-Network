@@ -40,7 +40,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockCable extends AbstractBlockConnectable {
 
   public BlockCable() {
-    super(Material.IRON);
+    super(Material.ROCK);
     this.setHardness(1.4F);
     this.setCreativeTab(CreativeTab.tab);
   }
