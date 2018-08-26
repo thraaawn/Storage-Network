@@ -8,7 +8,6 @@ import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
@@ -18,42 +17,41 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMessage> {
+public class ClearRecipeMessage implements IMessage, IMessageHandler<ClearRecipeMessage, IMessage> {
 
   @Override
-  public IMessage onMessage(final ClearMessage message, final MessageContext ctx) {
+  public IMessage onMessage(final ClearRecipeMessage message, final MessageContext ctx) {
     EntityPlayerMP player = ctx.getServerHandler().player;
     IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
       public void run() {
-        Container c = player.openContainer;
-        if (c instanceof ContainerNetworkBase) {
-          ContainerNetworkBase ctr = (ContainerNetworkBase) c;
-          TileMaster m = ctr.getTileMaster();
-          InventoryCrafting craftMatrix = ctr.getCraftMatrix();
+        if (player.openContainer instanceof ContainerNetworkBase) {
+          ContainerNetworkBase container = (ContainerNetworkBase) player.openContainer;
+          InventoryCrafting craftMatrix = container.getCraftMatrix();
+          TileMaster tileMaster = container.getTileMaster();
           for (int i = 0; i < 9; i++) {
-            if (m == null) {
+            if (tileMaster == null) {
               break;
             }
-            ItemStack s = craftMatrix.getStackInSlot(i);
-            if (s == null || s.isEmpty()) {
+            ItemStack stackInSlot = craftMatrix.getStackInSlot(i);
+            if (stackInSlot.isEmpty()) {
               continue;
             }
-            int num = s.getCount();
-            int rest = m.insertStack(s.copy(), null, false);
-            if (num == rest) {
+            int numBeforeInsert = stackInSlot.getCount();
+            int remainingAfter = tileMaster.insertStack(stackInSlot.copy(), null, false);
+            if (numBeforeInsert == remainingAfter) {
               continue;
             }
-            if (rest == 0)
+            if (remainingAfter == 0)
               craftMatrix.setInventorySlotContents(i, ItemStack.EMPTY);
             else
-              craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(s, rest));
+              craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(stackInSlot, remainingAfter));
           }
-          List<StackWrapper> list = m.getStacks();
+          List<StackWrapper> list = tileMaster.getStacks();
           PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), player);
-          ctr.detectAndSendChanges();
+          container.detectAndSendChanges();
         }
       }
     });
