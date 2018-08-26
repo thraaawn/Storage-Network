@@ -9,8 +9,8 @@ import mrriegel.storagenetwork.network.CableLimitMessage;
 import mrriegel.storagenetwork.network.RecipeMessage;
 import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
-import mrriegel.storagenetwork.network.StackMessage;
-import mrriegel.storagenetwork.network.StacksMessage;
+import mrriegel.storagenetwork.network.StackResponseClientMessage;
+import mrriegel.storagenetwork.network.StackRefreshClientMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -21,14 +21,14 @@ public class PacketRegistry {
   public static void init() {
     int id = 0;
     INSTANCE.registerMessage(CableDataMessage.class, CableDataMessage.class, id++, Side.SERVER);
-    INSTANCE.registerMessage(StacksMessage.class, StacksMessage.class, id++, Side.CLIENT);
+    INSTANCE.registerMessage(StackRefreshClientMessage.class, StackRefreshClientMessage.class, id++, Side.CLIENT);
     INSTANCE.registerMessage(RequestMessage.class, RequestMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(ClearRecipeMessage.class, ClearRecipeMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(SortMessage.class, SortMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(RecipeMessage.class, RecipeMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(CableLimitMessage.class, CableLimitMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(InsertMessage.class, InsertMessage.class, id++, Side.SERVER);
-    INSTANCE.registerMessage(StackMessage.class, StackMessage.class, id++, Side.CLIENT);
+    INSTANCE.registerMessage(StackResponseClientMessage.class, StackResponseClientMessage.class, id++, Side.CLIENT);
     INSTANCE.registerMessage(CableFilterMessage.class, CableFilterMessage.class, id++, Side.SERVER);
   }
 }

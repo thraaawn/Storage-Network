@@ -50,7 +50,7 @@ public class ClearRecipeMessage implements IMessage, IMessageHandler<ClearRecipe
               craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(stackInSlot, remainingAfter));
           }
           List<StackWrapper> list = tileMaster.getStacks();
-          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), player);
+          PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), player);
           container.detectAndSendChanges();
         }
       }

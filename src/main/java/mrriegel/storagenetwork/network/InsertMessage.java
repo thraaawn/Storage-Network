@@ -67,9 +67,9 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
         }
         //TODO: WHY TWO messages/? 
         player.inventory.setItemStack(send);
-        PacketRegistry.INSTANCE.sendTo(new StackMessage(send), player);
+        PacketRegistry.INSTANCE.sendTo(new StackResponseClientMessage(send), player);
         List<StackWrapper> list = tileMaster.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), player);
+        PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), player);
         player.openContainer.detectAndSendChanges();
       }
     });

@@ -78,11 +78,11 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
           else {
             //when player TAKES an item, go here
             player.inventory.setItemStack(stack);
-            PacketRegistry.INSTANCE.sendTo(new StackMessage(stack), player);
+            PacketRegistry.INSTANCE.sendTo(new StackResponseClientMessage(stack), player);
           }
         }
         List<StackWrapper> list = tileMaster.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), player);
+        PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), player);
         player.openContainer.detectAndSendChanges();
       }
     });

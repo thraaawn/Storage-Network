@@ -5,7 +5,7 @@ import java.util.List;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
-import mrriegel.storagenetwork.network.StacksMessage;
+import mrriegel.storagenetwork.network.StackRefreshClientMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.StackWrapper;
@@ -70,7 +70,7 @@ public class ContainerRequest extends ContainerNetworkBase {
     }
     if (!getTileRequest().getWorld().isRemote && getTileRequest().getWorld().getTotalWorldTime() % 40 == 0) {
       List<StackWrapper> list = tileMaster.getStacks();
-      PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
+      PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
     }
     return playerIn.getDistanceSq(getTileRequest().getPos().getX() + 0.5D, getTileRequest().getPos().getY() + 0.5D, getTileRequest().getPos().getZ() + 0.5D) <= 64.0D;
   }

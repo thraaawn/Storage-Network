@@ -10,18 +10,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class StackMessage implements IMessage, IMessageHandler<StackMessage, IMessage> {
+/**
+ * Used by InsertMessage and RequestMessage as a response back to the client
+ * 
+ *
+ */
+public class StackResponseClientMessage implements IMessage, IMessageHandler<StackResponseClientMessage, IMessage> {
 
   private ItemStack stack;
 
-  public StackMessage() {}
+  public StackResponseClientMessage() {}
 
-  public StackMessage(ItemStack a) {
+  public StackResponseClientMessage(ItemStack a) {
     this.stack = a;
   }
 
   @Override
-  public IMessage onMessage(final StackMessage message, final MessageContext ctx) {
+  public IMessage onMessage(final StackResponseClientMessage message, final MessageContext ctx) {
     //when player TAKES an item, go here... (maybe other cases too)
     IThreadListener mainThread = Minecraft.getMinecraft();
     mainThread.addScheduledTask(new Runnable() {

@@ -13,14 +13,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, IMessage> {
+/**
+ * Refresh the current screen with large data set of stacks.
+ * 
+ * Used by Containers displaying network inventory as well as most other packets that perform small actions
+ *
+ */
+public class StackRefreshClientMessage implements IMessage, IMessageHandler<StackRefreshClientMessage, IMessage> {
 
   private int size, csize;
   private List<StackWrapper> stacks, craftableStacks;
 
-  public StacksMessage() {}
+  public StackRefreshClientMessage() {}
 
-  public StacksMessage(List<StackWrapper> stacks, List<StackWrapper> craftableStacks) {
+  public StackRefreshClientMessage(List<StackWrapper> stacks, List<StackWrapper> craftableStacks) {
     super();
     this.stacks = stacks;
     this.craftableStacks = craftableStacks;
@@ -29,7 +35,7 @@ public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, I
   }
 
   @Override
-  public IMessage onMessage(final StacksMessage message, final MessageContext ctx) {
+  public IMessage onMessage(final StackRefreshClientMessage message, final MessageContext ctx) {
     IThreadListener mainThread = Minecraft.getMinecraft();
     mainThread.addScheduledTask(new Runnable() {
 

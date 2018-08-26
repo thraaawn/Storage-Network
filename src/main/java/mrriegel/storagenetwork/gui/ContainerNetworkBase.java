@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
-import mrriegel.storagenetwork.network.StacksMessage;
+import mrriegel.storagenetwork.network.StackRefreshClientMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.data.FilterItem;
 import mrriegel.storagenetwork.util.data.StackWrapper;
@@ -231,7 +231,7 @@ public abstract class ContainerNetworkBase extends Container {
         slot.putStack(stack);
         detectAndSendChanges();
         List<StackWrapper> list = tileMaster.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
+        PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
         if (stack.isEmpty()) {
           return ItemStack.EMPTY;
         }
