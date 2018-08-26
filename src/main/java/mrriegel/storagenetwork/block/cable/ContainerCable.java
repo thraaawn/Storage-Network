@@ -21,17 +21,7 @@ public class ContainerCable extends Container {
   public ContainerCable(TileCable tile, InventoryPlayer playerInv) {
     this.setTile(tile);
     upgrades = tile;
-    //    upgrades = new InventoryBasic("upgrades", false, UPGRADE_COUNT) {
-    //
-    //      @Override
-    //      public int getInventoryStackLimit() {
-    //        return 1;
-    //      }
-    //    };
     if (tile.isUpgradeable()) {
-      //      for (int i = 0; i < UPGRADE_COUNT; i++) {
-      //        upgrades.setInventorySlotContents(i, tile.getUpgrades().get(i));
-      //      }
       for (int ii = 0; ii < UPGRADE_COUNT; ii++) {
         this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
 
@@ -66,16 +56,11 @@ public class ContainerCable extends Container {
 
   @Override
   public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
-
     Slot slot = this.inventorySlots.get(slotIndex);
     //in range [4,39] means its coming FROM inventory
     // [0,3] is the filter list
     if (slot != null && slot.getHasStack()) {
       ItemStack stackInSlot = slot.getStack();
-      //      stack = stackInSlot.copy();
-      //      if (stackInSlot.isEmpty()) {
-      //        return ItemStack.EMPTY;
-      //      }
       if (stackInSlot.getItem() instanceof ItemUpgrade) {
         if (4 <= slotIndex && slotIndex <= 39) {
           //FROM inventory to upgrade slots
@@ -90,12 +75,6 @@ public class ContainerCable extends Container {
           }
         }
       }
-      //      for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
-      //        if (getTile().getFilter().get(i) == null && !isInFilter(new StackWrapper(stackInSlot, 1))) {
-      //          getTile().getFilter().put(i, new StackWrapper(stackInSlot.copy(), stackInSlot.getCount()));
-      //          break;
-      //        }
-      //      } 
     }
     return ItemStack.EMPTY;
   }

@@ -290,7 +290,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   @Override
   public void setInventorySlotContents(int index, ItemStack stack) {
     if (stack.getItem() == ModItems.upgrade)
-    upgrades.set(index, stack);
+      upgrades.set(index, stack);
   }
 
   @Override
@@ -304,12 +304,10 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   }
 
   @Override
-  public void openInventory(EntityPlayer player) {
-  }
+  public void openInventory(EntityPlayer player) {}
 
   @Override
-  public void closeInventory(EntityPlayer player) {
-  }
+  public void closeInventory(EntityPlayer player) {}
 
   @Override
   public boolean isItemValidForSlot(int index, ItemStack stack) {
@@ -323,8 +321,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   }
 
   @Override
-  public void setField(int id, int value) {
-  }
+  public void setField(int id, int value) {}
 
   @Override
   public int getFieldCount() {
@@ -332,6 +329,5 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   }
 
   @Override
-  public void clear() {
-  }
+  public void clear() {}
 }
