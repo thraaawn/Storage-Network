@@ -1,15 +1,16 @@
 package mrriegel.storagenetwork.network;
 
+import java.util.ArrayList;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.data.StackWrapper;
-import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.block.request.ContainerRequest;
+import mrriegel.storagenetwork.item.remote.ContainerRemote;
 import mrriegel.storagenetwork.registry.PacketRegistry;
-import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.request.ContainerRequest;
-import net.minecraft.inventory.Container;
+import mrriegel.storagenetwork.util.UtilTileEntity;
+import mrriegel.storagenetwork.util.data.StackWrapper;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -22,54 +23,54 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, IMessage> {
 
-  int dim, buttonID;
-  ItemStack stack;
+  private int dim, mouseButton;
+  private ItemStack stack;
 
   public InsertMessage() {}
 
   public InsertMessage(int dim, int buttonID, ItemStack stack) {
     this.dim = dim;
     this.stack = stack;
-    this.buttonID = buttonID;
+    this.mouseButton = buttonID;
   }
 
   @Override
   public IMessage onMessage(final InsertMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+    EntityPlayerMP player = ctx.getServerHandler().player;
+    IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
       public void run() {
-        World w = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
-        TileEntity t = null;
-        Container c = ctx.getServerHandler().player.openContainer;
-        if (c instanceof ContainerRequest)
-          t = w.getTileEntity(((ContainerRequest) c).tile.getMaster());
-        else if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote)
-          t = ((ContainerRemote) c).tileMaster;
-        if (t instanceof TileMaster) {
-          TileMaster tile = (TileMaster) t;
-          int rest;
-          ItemStack send = ItemStack.EMPTY;
-          if (message.buttonID == 0) {
-            rest = tile.insertStack(message.stack, null, false);
-            if (rest != 0)
-              send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
-          }
-          else if (message.buttonID == 1) {
-            ItemStack stack1 = message.stack.copy();
-            stack1.setCount(1);
-            message.stack.shrink(1);
-            rest = tile.insertStack(stack1, null, false) + message.stack.getCount();
-            if (rest != 0)
-              send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
-          }
-          ctx.getServerHandler().player.inventory.setItemStack(send);
-          PacketRegistry.INSTANCE.sendTo(new StackMessage(send), ctx.getServerHandler().player);
-          List<StackWrapper> list = tile.getStacks();
-          PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().player);
-          c.detectAndSendChanges();
+        World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
+        TileMaster tileMaster = null;
+        if (player.openContainer instanceof ContainerRequest) {
+          tileMaster = (TileMaster) world.getTileEntity(((ContainerRequest) player.openContainer).getTileRequest().getMaster());
         }
+        else if (player.openContainer instanceof ContainerRemote) {
+          tileMaster = ((ContainerRemote) player.openContainer).getTileMaster();
+        }
+        int rest;
+        ItemStack send = ItemStack.EMPTY;
+        if (message.mouseButton == UtilTileEntity.MOUSE_BTN_LEFT) {//TODO ENUM OR SOMETHING 
+          rest = tileMaster.insertStack(message.stack, null, false);
+          if (rest != 0)
+            send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
+        }
+        else if (message.mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT) {
+          ItemStack stack1 = message.stack.copy();
+          stack1.setCount(1);
+          message.stack.shrink(1);
+          rest = tileMaster.insertStack(stack1, null, false) + message.stack.getCount();
+          if (rest != 0)
+            send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
+        }
+        //TODO: WHY TWO messages/? 
+        player.inventory.setItemStack(send);
+        PacketRegistry.INSTANCE.sendTo(new StackResponseClientMessage(send), player);
+        List<StackWrapper> list = tileMaster.getStacks();
+        PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), player);
+        player.openContainer.detectAndSendChanges();
       }
     });
     return null;
@@ -79,13 +80,13 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
   public void fromBytes(ByteBuf buf) {
     this.dim = buf.readInt();
     this.stack = ByteBufUtils.readItemStack(buf);
-    this.buttonID = buf.readInt();
+    this.mouseButton = buf.readInt();
   }
 
   @Override
   public void toBytes(ByteBuf buf) {
     buf.writeInt(this.dim);
     ByteBufUtils.writeItemStack(buf, this.stack);
-    buf.writeInt(this.buttonID);
+    buf.writeInt(this.mouseButton);
   }
 }

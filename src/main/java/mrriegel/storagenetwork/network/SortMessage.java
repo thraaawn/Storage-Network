@@ -1,11 +1,12 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.helper.NBTHelper;
-import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.request.ContainerRequest;
-import mrriegel.storagenetwork.request.TileRequest;
-import mrriegel.storagenetwork.request.TileRequest.EnumSortType;
+import mrriegel.storagenetwork.block.request.ContainerRequest;
+import mrriegel.storagenetwork.block.request.TileRequest;
+import mrriegel.storagenetwork.item.remote.ContainerRemote;
+import mrriegel.storagenetwork.util.NBTHelper;
+import mrriegel.storagenetwork.util.data.EnumSortType;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
@@ -18,9 +19,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMessage> {
 
-  BlockPos pos;
-  boolean direction;
-  EnumSortType sort;
+  private BlockPos pos;
+  private boolean direction;
+  private EnumSortType sort;
 
   public SortMessage() {}
 
@@ -32,25 +33,26 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 
   @Override
   public IMessage onMessage(final SortMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+    EntityPlayerMP player = ctx.getServerHandler().player;
+    IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
       public void run() {
-        if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote
-          ItemStack s = ctx.getServerHandler().player.inventory.getCurrentItem();
-          NBTHelper.setBoolean(s, "down", message.direction);
-          NBTHelper.setString(s, "sort", message.sort.toString());
+        if (player.openContainer instanceof ContainerRemote) {
+          ItemStack stackPlayerHeld = player.inventory.getCurrentItem();
+          NBTHelper.setBoolean(stackPlayerHeld, "down", message.direction);
+          NBTHelper.setString(stackPlayerHeld, "sort", message.sort.toString());
           return;
         }
-        if (ctx.getServerHandler().player.openContainer instanceof ContainerRequest) {//|| ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRequest
-          TileEntity t = ctx.getServerHandler().player.world.getTileEntity(message.pos);
-          if (t instanceof TileRequest) {
-            TileRequest tile = (TileRequest) t;
-            tile.sort = message.sort;
-            tile.downwards = message.direction;
+        if (player.openContainer instanceof ContainerRequest) {
+          TileEntity tileEntity = player.world.getTileEntity(message.pos);
+          if (tileEntity instanceof TileRequest) {
+            TileRequest tile = (TileRequest) tileEntity;
+            tile.setSort(message.sort);
+            tile.setDownwards(message.direction);
           }
-          t.markDirty();
+          tileEntity.markDirty();
         }
       }
     });

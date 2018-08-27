@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.registry;
 
-import mrriegel.storagenetwork.items.ItemUpgrade;
-import mrriegel.storagenetwork.remote.ItemRemote;
+import mrriegel.storagenetwork.item.ItemUpgrade;
+import mrriegel.storagenetwork.item.remote.ItemRemote;
 import net.minecraft.item.Item;
 
 public class ModItems {

@@ -1,14 +1,14 @@
 package mrriegel.storagenetwork.gui;
 
-import mrriegel.storagenetwork.cable.ContainerCable;
-import mrriegel.storagenetwork.cable.GuiCable;
-import mrriegel.storagenetwork.helper.UtilTileEntity;
-import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.remote.GuiRemote;
-import mrriegel.storagenetwork.request.ContainerRequest;
-import mrriegel.storagenetwork.request.GuiRequest;
-import mrriegel.storagenetwork.request.TileRequest;
-import mrriegel.storagenetwork.tile.AbstractFilterTile;
+import mrriegel.storagenetwork.block.cable.ContainerCable;
+import mrriegel.storagenetwork.block.cable.GuiCable;
+import mrriegel.storagenetwork.block.cable.TileCable;
+import mrriegel.storagenetwork.block.request.ContainerRequest;
+import mrriegel.storagenetwork.block.request.GuiRequest;
+import mrriegel.storagenetwork.block.request.TileRequest;
+import mrriegel.storagenetwork.item.remote.ContainerRemote;
+import mrriegel.storagenetwork.item.remote.GuiRemote;
+import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,12 +22,13 @@ public class GuiHandler implements IGuiHandler {
 
   @Override
   public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-    UtilTileEntity.updateTile(world, new BlockPos(x, y, z));
+    BlockPos pos = new BlockPos(x, y, z);
+    UtilTileEntity.updateTile(world, pos);
     if (ID == CABLE) {
-      return new ContainerCable((AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+      return new ContainerCable((TileCable) world.getTileEntity(pos), player.inventory);
     }
     if (ID == REQUEST) {
-      return new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+      return new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory);
     }
     if (ID == REMOTE) {
       return new ContainerRemote(player.inventory);
@@ -37,12 +38,13 @@ public class GuiHandler implements IGuiHandler {
 
   @Override
   public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    BlockPos pos = new BlockPos(x, y, z);
     if (ID == CABLE) {
-      AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z));
+      TileCable tile = (TileCable) world.getTileEntity(pos);
       return new GuiCable(new ContainerCable(tile, player.inventory));
     }
     if (ID == REQUEST) {
-      return new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
+      return new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory));
     }
     if (ID == REMOTE) {
       return new GuiRemote(new ContainerRemote(player.inventory));

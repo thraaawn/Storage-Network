@@ -1,11 +1,14 @@
 package mrriegel.storagenetwork.network;
 
+import java.util.HashMap;
+import java.util.Map;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.cable.ContainerCable;
-import mrriegel.storagenetwork.cable.TileCable;
-import mrriegel.storagenetwork.data.StackWrapper;
-import mrriegel.storagenetwork.helper.UtilTileEntity;
-import mrriegel.storagenetwork.tile.AbstractFilterTile;
+import mrriegel.storagenetwork.block.AbstractFilterTile;
+import mrriegel.storagenetwork.block.cable.TileCable;
+import mrriegel.storagenetwork.util.UtilTileEntity;
+import mrriegel.storagenetwork.util.data.StackWrapper;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
@@ -24,8 +27,8 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
   public static final int PRIORITY_UP = 1;
   public static final int PRIORITY_DOWN = 0;
   public static final int TOGGLE_MODE = 4;
-  int id;
-  BlockPos pos;
+  private int id;
+  private BlockPos pos;
 
   public CableDataMessage() {}
 
@@ -36,12 +39,13 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
 
   @Override
   public IMessage onMessage(final CableDataMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+    EntityPlayerMP player = ctx.getServerHandler().player;
+    IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
       public void run() {
-        TileEntity t = ctx.getServerHandler().player.world.getTileEntity(message.pos);
+        TileEntity t = player.world.getTileEntity(message.pos);
         if (t instanceof AbstractFilterTile) {
           AbstractFilterTile tile = (AbstractFilterTile) t;
           switch (message.id) {
@@ -62,22 +66,21 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             case IMPORT_FILTER:
               if (tile.getInventory() != null) {
                 IItemHandler inv = tile.getInventory();
-                int index = 0;
                 tile.setWhite(true);
                 int size = 9 * 2;
                 for (int i = 0; i < size; i++) {
                   tile.getFilter().put(i, null);
                 }
+                //track used so if a chest is full of cobble we dont double up
+                int index = 0;
+                Map<Item, Boolean> used = new HashMap<>();
                 for (int i = 0; i < inv.getSlots() && index < size; i++) {
-                  ItemStack s = inv.getStackInSlot(i);
-                  if (s == null || s.isEmpty()) {
-                    continue;
-                  }
-                  else {
-                    if (!new ContainerCable(tile, ctx.getServerHandler().player.inventory).isInFilter(new StackWrapper(s, 1))) {
-                      tile.getFilter().put(index, new StackWrapper(s, 1));
-                      index++;
-                    }
+                  ItemStack stackHereCopy = inv.getStackInSlot(i);
+                  if (!stackHereCopy.isEmpty() && !used.containsKey(stackHereCopy.getItem())) {
+                    used.put(stackHereCopy.getItem(), true);
+                    stackHereCopy.setCount(1);
+                    tile.getFilter().put(index, new StackWrapper(stackHereCopy, 1));
+                    index++;
                   }
                 }
               }

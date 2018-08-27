@@ -1,15 +1,16 @@
 package mrriegel.storagenetwork.network;
 
+import java.util.ArrayList;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.data.FilterItem;
-import mrriegel.storagenetwork.data.StackWrapper;
-import mrriegel.storagenetwork.master.TileMaster;
+import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.block.request.ContainerRequest;
+import mrriegel.storagenetwork.item.remote.ContainerRemote;
+import mrriegel.storagenetwork.item.remote.ItemRemote;
 import mrriegel.storagenetwork.registry.PacketRegistry;
-import mrriegel.storagenetwork.remote.ContainerRemote;
-import mrriegel.storagenetwork.remote.ItemRemote;
-import mrriegel.storagenetwork.request.ContainerRequest;
+import mrriegel.storagenetwork.util.data.FilterItem;
+import mrriegel.storagenetwork.util.data.StackWrapper;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -21,9 +22,9 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class RequestMessage implements IMessage, IMessageHandler<RequestMessage, IMessage> {
 
-  int id = 0;
-  ItemStack stack = ItemStack.EMPTY;
-  boolean shift, ctrl;
+  private int id = 0;
+  private ItemStack stack = ItemStack.EMPTY;
+  private boolean shift, ctrl;
 
   public RequestMessage() {}
 
@@ -36,27 +37,27 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 
   @Override
   public IMessage onMessage(final RequestMessage message, final MessageContext ctx) {
-    IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+    EntityPlayerMP player = ctx.getServerHandler().player;
+    IThreadListener mainThread = (WorldServer) player.world;
     mainThread.addScheduledTask(new Runnable() {
 
       @Override
       public void run() {
         TileMaster tileMaster = null;
-        if (ctx.getServerHandler().player.openContainer instanceof ContainerRequest) {
-          ContainerRequest ctrRequest = (ContainerRequest) ctx.getServerHandler().player.openContainer;
-          tileMaster = (TileMaster) ctx.getServerHandler().player.world.getTileEntity(ctrRequest.tile.getMaster());
+        if (player.openContainer instanceof ContainerRequest) {
+          ContainerRequest ctrRequest = (ContainerRequest) player.openContainer;
+          tileMaster = (TileMaster) player.world.getTileEntity(ctrRequest.getTileRequest().getMaster());
         }
-        else if (ctx.getServerHandler().player.openContainer instanceof ContainerRemote) {
-          tileMaster = ItemRemote.getTile(ctx.getServerHandler().player.inventory.getCurrentItem());
+        else if (player.openContainer instanceof ContainerRemote) {
+          tileMaster = ItemRemote.getTile(player.inventory.getCurrentItem());
         }
         if (tileMaster == null) {
-          StorageNetwork.log("RequestMessage master is null ");
+          //maybe the table broke after doing this, rare case
           return;
         }
         int in = tileMaster.getAmount(new FilterItem(message.stack, true, false, true));
         // int in = tile.getAmount(new FilterItem(message.stack, true, false, true));
         ItemStack stack;
-        StorageNetwork.log("RequestMessage.stack HUNTIN eh " + message.stack + " message.id = " + message.id);
         int sizeRequested = Math.max(
             message.id == 0 ? message.stack.getMaxStackSize()
                 : message.ctrl ? 1 : Math.min(message.stack.getMaxStackSize() / 2, in / 2),
@@ -64,9 +65,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
         stack = tileMaster.request(
             new FilterItem(message.stack, true, false, true),
             sizeRequested, false);
-        StorageNetwork.log("!RequestMessage AFTER filter " + stack + "? size=" + sizeRequested);
         if (stack.isEmpty()) {
-          StorageNetwork.log("!RequestMessage try again with nbt false");
           //try again with NBT as false 
           stack = tileMaster.request(
               new FilterItem(message.stack, true, false, false),
@@ -74,21 +73,17 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
         }
         if (!stack.isEmpty()) {
           if (message.shift) {
-            ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().player, stack);
+            ItemHandlerHelper.giveItemToPlayer(player, stack);
           }
           else {
             //when player TAKES an item, go here
-            ctx.getServerHandler().player.inventory.setItemStack(stack);
-            PacketRegistry.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().player);
-            StorageNetwork.log("RequestMessage message sStack Single??? " + stack + " isCLIENT " + tileMaster.getWorld().isRemote);
+            player.inventory.setItemStack(stack);
+            PacketRegistry.INSTANCE.sendTo(new StackResponseClientMessage(stack), player);
           }
         }
-        else {//useer clicked on a stack that wasnt found somehow 
-          StorageNetwork.log("RequestMessage how did we get empty stack  " + stack + " isCLIENT " + tileMaster.getWorld().isRemote);
-        }
         List<StackWrapper> list = tileMaster.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StacksMessage(list, tileMaster.getCraftableStacks(list)), ctx.getServerHandler().player);
-        ctx.getServerHandler().player.openContainer.detectAndSendChanges();
+        PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), player);
+        player.openContainer.detectAndSendChanges();
       }
     });
     return null;
