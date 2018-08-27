@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.block.cable;
 
-import java.util.List;
 import java.util.Map;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
@@ -186,15 +185,6 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   public NonNullList<ItemStack> getUpgrades() {
     return upgrades;
-  }
-
-  public void setUpgrades(List<ItemStack> upgrades) {
-    upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
-    int i = 0;
-    for (ItemStack s : upgrades) {
-      this.upgrades.set(i, s);
-      i++;
-    }
   }
 
   public boolean isMode() {
