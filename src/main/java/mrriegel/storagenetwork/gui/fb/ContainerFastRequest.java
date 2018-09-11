@@ -10,6 +10,7 @@ import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -54,7 +55,7 @@ public class ContainerFastRequest extends ContainerFastNetworkCrafter {
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
 		TileMaster tileMaster = this.getTileMaster();
-		if (tileMaster == null) return false; 
+		if (tileMaster == null) return false;
 		if (!getTileRequest().getWorld().isRemote && (forceSync || getTileRequest().getWorld().getTotalWorldTime() % 40 == 0)) {
 			forceSync = false;
 			PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(tileMaster.getStacks(), new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
@@ -78,5 +79,16 @@ public class ContainerFastRequest extends ContainerFastNetworkCrafter {
 	@Override
 	public boolean isRequest() {
 		return true;
+	}
+
+	public static class Client extends ContainerFastRequest {
+
+		public Client(TileRequest tile, EntityPlayer player, World world, BlockPos pos) {
+			super(tile, player, world, pos);
+		}
+
+		@Override
+		public void onCraftMatrixChanged(IInventory inventoryIn) {
+		}
 	}
 }

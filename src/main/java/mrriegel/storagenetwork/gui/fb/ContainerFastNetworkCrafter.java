@@ -52,10 +52,7 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 	}
 
 	@Override
-	//TODO: Fix
 	public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-		if (index != 5004) return super.transferStackInSlot(player, index);
-
 		if (player.world.isRemote) { return ItemStack.EMPTY; }
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(index);
@@ -64,8 +61,7 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 			itemstack = itemstack1.copy();
 			TileMaster tileMaster = this.getTileMaster();
 			if (index == 0) {
-				//craftShift(playerIn, tileMaster);
-				return ItemStack.EMPTY;
+				return super.transferStackInSlot(player, index);
 			} else if (tileMaster != null) {
 				int rest = tileMaster.insertStack(itemstack1, null, false);
 				ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
@@ -85,7 +81,7 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 			if (itemstack1.getCount() == itemstack.getCount()) { return ItemStack.EMPTY; }
 			slot.onTake(player, itemstack1);
 		}
-		return itemstack;
+		return super.transferStackInSlot(player, index);
 	}
 
 	@Override

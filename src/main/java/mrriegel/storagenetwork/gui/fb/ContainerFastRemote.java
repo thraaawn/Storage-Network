@@ -11,6 +11,7 @@ import mrriegel.storagenetwork.util.NBTHelper;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -84,5 +85,16 @@ public class ContainerFastRemote extends ContainerFastNetworkCrafter {
 	@Override
 	public boolean isRequest() {
 		return false;
+	}
+
+	public static class Client extends ContainerFastRemote {
+
+		public Client(EntityPlayer player, World world, BlockPos pos) {
+			super(player, world, pos);
+		}
+
+		@Override
+		public void onCraftMatrixChanged(IInventory inventoryIn) {
+		}
 	}
 }

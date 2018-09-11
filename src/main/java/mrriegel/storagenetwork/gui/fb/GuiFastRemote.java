@@ -7,7 +7,6 @@ import mrriegel.storagenetwork.item.remote.ItemRemote;
 import mrriegel.storagenetwork.util.NBTHelper;
 import mrriegel.storagenetwork.util.data.EnumSortType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,10 +15,7 @@ public class GuiFastRemote extends GuiFastNetworkCrafter {
 
 	public GuiFastRemote(EntityPlayer player, World world) {
 		super(player, world, BlockPos.ORIGIN);
-		this.inventorySlots = new ContainerFastRemote(player, world, BlockPos.ORIGIN) {
-			public void onCraftMatrixChanged(IInventory inventoryIn) {
-			}
-		};
+		this.inventorySlots = new ContainerFastRemote.Client(player, world, BlockPos.ORIGIN);
 	}
 
 	@Override

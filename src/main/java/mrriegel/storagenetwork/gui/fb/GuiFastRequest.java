@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.gui.fb;
 import mrriegel.storagenetwork.block.request.TileRequest;
 import mrriegel.storagenetwork.util.data.EnumSortType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -14,10 +13,7 @@ public class GuiFastRequest extends GuiFastNetworkCrafter {
 	public GuiFastRequest(EntityPlayer player, World world, BlockPos pos) {
 		super(player, world, pos);
 		tile = (TileRequest) world.getTileEntity(pos);
-		this.inventorySlots = new ContainerFastRequest(tile, player, world, pos) {
-			public void onCraftMatrixChanged(IInventory inventoryIn) {
-			};
-		};
+		this.inventorySlots = new ContainerFastRequest.Client(tile, player, world, pos);
 	}
 
 	@Override
