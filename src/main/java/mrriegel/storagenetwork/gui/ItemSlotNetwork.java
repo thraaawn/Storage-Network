@@ -1,7 +1,9 @@
 package mrriegel.storagenetwork.gui;
 
 import javax.annotation.Nonnull;
+
 import org.lwjgl.input.Keyboard;
+
 import mrriegel.storagenetwork.util.UtilInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -21,10 +23,10 @@ public class ItemSlotNetwork {
   private int x, y, size, guiLeft, guiTop;
   private boolean number;
   private Minecraft mc;
-  private GuiContainerBase parent;
+  private IPublicGuiContainer parent;
   private ItemStack stack;
 
-  public ItemSlotNetwork(GuiContainerBase parent, @Nonnull ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number) {
+  public ItemSlotNetwork(IPublicGuiContainer parent, @Nonnull ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number) {
     this.x = x;
     this.y = y;
     this.size = size;

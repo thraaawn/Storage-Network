@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.item.remote;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
@@ -102,5 +103,10 @@ public class ContainerRemote extends ContainerNetworkBase {
       else
         this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
     }
+  }
+
+  @Override
+  public boolean isRequest() {
+	return false;
   }
 }

@@ -6,7 +6,6 @@ import mrriegel.storagenetwork.proxy.CommonProxy;
 import mrriegel.storagenetwork.registry.RegistryEvents;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -55,8 +54,9 @@ public class StorageNetwork {
       player.sendStatusMessage(new TextComponentString(lang(message)), true);
   }
 
+  @SuppressWarnings("deprecation")
   public static String lang(String message) {
-    return I18n.translateToLocal(message);
+    return net.minecraft.util.text.translation.I18n.translateToLocal(message);
   }
 
   private static long lastTime;

@@ -2,7 +2,9 @@ package mrriegel.storagenetwork.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.google.common.collect.Lists;
+
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
@@ -25,7 +27,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
-public abstract class ContainerNetworkBase extends Container {
+public abstract class ContainerNetworkBase extends Container implements IStorageContainer {
 
   protected InventoryPlayer playerInv;
   protected InventoryCraftResult result;
