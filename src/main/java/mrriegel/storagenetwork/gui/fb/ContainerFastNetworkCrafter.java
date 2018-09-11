@@ -59,34 +59,28 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int index) {
 		if (world.isRemote) return ItemStack.EMPTY;
-		ItemStack itemstack = ItemStack.EMPTY;
+		ItemStack slotCopy = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(index);
 		if (slot != null && slot.getHasStack()) {
-			ItemStack itemstack1 = slot.getStack();
-			itemstack = itemstack1.copy();
+			ItemStack slotStack = slot.getStack();
+			slotCopy = slotStack.copy();
 			TileMaster tileMaster = this.getTileMaster();
 			if (index == 0) {
-				itemstack1.getItem().onCreated(itemstack1, this.world, player);
-				if (!this.mergeItemStack(itemstack1, 10, 46, true)) return ItemStack.EMPTY;
-				slot.onSlotChange(itemstack1, itemstack);
+				return super.transferStackInSlot(player, index);
 			} else if (tileMaster != null) {
-				int rest = tileMaster.insertStack(itemstack1, null, false);
-				ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
+				int rest = tileMaster.insertStack(slotStack, null, false);
+				ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(slotStack, rest);
 				slot.putStack(stack);
 				detectAndSendChanges();
 				List<StackWrapper> list = tileMaster.getStacks();
 				PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<>()), (EntityPlayerMP) player);
-				if (stack.isEmpty()) { return ItemStack.EMPTY; }
-				slot.onTake(player, itemstack1);
+				if (stack.isEmpty()) return ItemStack.EMPTY;
+				slot.onTake(player, slotStack);
 				return ItemStack.EMPTY;
 			}
-			if (itemstack1.getCount() == 0) {
-				slot.putStack(ItemStack.EMPTY);
-			} else {
-				slot.onSlotChanged();
-			}
-			if (itemstack1.getCount() == itemstack.getCount()) { return ItemStack.EMPTY; }
-			slot.onTake(player, itemstack1);
+			slot.onSlotChanged();
+			if (slotStack.getCount() == slotCopy.getCount()) return ItemStack.EMPTY;
+			slot.onTake(player, slotStack);
 		}
 		return super.transferStackInSlot(player, index);
 	}
