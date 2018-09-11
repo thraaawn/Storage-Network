@@ -39,7 +39,7 @@ public class ItemSlotNetwork {
   }
 
   public boolean isMouseOverSlot(int mouseX, int mouseY) {
-    return parent.isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
+    return parent.isPointInRegionP(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
   }
 
   public void drawSlot(int mx, int my) {
@@ -67,7 +67,7 @@ public class ItemSlotNetwork {
       int j1 = x;
       int k1 = y;
       GlStateManager.colorMask(true, true, true, false);
-      parent.drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
+      parent.drawGradientRectP(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
       GlStateManager.colorMask(true, true, true, true);
       GlStateManager.enableLighting();
       GlStateManager.enableDepth();
@@ -77,7 +77,7 @@ public class ItemSlotNetwork {
 
   public void drawTooltip(int mx, int my) {
     if (this.isMouseOverSlot(mx, my) && !getStack().isEmpty()) {
-      parent.renderToolTip(getStack(), mx, my);
+      parent.renderToolTipP(getStack(), mx, my);
     }
   }
 

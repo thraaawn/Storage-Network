@@ -87,7 +87,7 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
 	}
 
 	@Override
-	public void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor) {
+	public void drawGradientRectP(int left, int top, int right, int bottom, int startColor, int endColor) {
 		super.drawGradientRect(left, top, right, bottom, startColor, endColor);
 	}
 
@@ -97,12 +97,12 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
 	}
 
 	@Override
-	public boolean isPointInRegion(int rectX, int rectY, int rectWidth, int rectHeight, int pointX, int pointY) {
+	public boolean isPointInRegionP(int rectX, int rectY, int rectWidth, int rectHeight, int pointX, int pointY) {
 		return super.isPointInRegion(rectX, rectY, rectWidth, rectHeight, pointX, pointY);
 	}
 
 	@Override
-	public void renderToolTip(ItemStack stack, int x, int y) {
+	public void renderToolTipP(ItemStack stack, int x, int y) {
 		super.renderToolTip(stack, x, y);
 	}
 

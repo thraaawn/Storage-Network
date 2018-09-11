@@ -9,6 +9,7 @@ import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
@@ -52,7 +53,7 @@ public class ClearRecipeMessage implements IMessage, IMessageHandler<ClearRecipe
           }
           List<StackWrapper> list = tileMaster.getStacks();
           PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), player);
-          container.detectAndSendChanges();
+          ((Container) container).detectAndSendChanges();
         }
       }
     });
