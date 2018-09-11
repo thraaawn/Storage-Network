@@ -16,6 +16,7 @@ import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -23,11 +24,15 @@ import shadows.fastbench.gui.ContainerFastBench;
 import shadows.fastbench.gui.SlotCraftingSucks;
 
 public abstract class ContainerFastNetworkCrafter extends ContainerFastBench implements IStorageContainer {
-	
+
 	protected boolean forceSync = true;
+	protected final World world;
+	protected final EntityPlayer player;
 
 	public ContainerFastNetworkCrafter(EntityPlayer player, World world, BlockPos pos) {
 		super(player, world, pos);
+		this.world = world;
+		this.player = player;
 	}
 
 	public abstract TileMaster getTileMaster();
@@ -53,7 +58,7 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-		if (player.world.isRemote) { return ItemStack.EMPTY; }
+		if (world.isRemote) return ItemStack.EMPTY;
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(index);
 		if (slot != null && slot.getHasStack()) {
@@ -61,14 +66,16 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 			itemstack = itemstack1.copy();
 			TileMaster tileMaster = this.getTileMaster();
 			if (index == 0) {
-				return super.transferStackInSlot(player, index);
+				itemstack1.getItem().onCreated(itemstack1, this.world, player);
+				if (!this.mergeItemStack(itemstack1, 10, 46, true)) return ItemStack.EMPTY;
+				slot.onSlotChange(itemstack1, itemstack);
 			} else if (tileMaster != null) {
 				int rest = tileMaster.insertStack(itemstack1, null, false);
 				ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
 				slot.putStack(stack);
 				detectAndSendChanges();
 				List<StackWrapper> list = tileMaster.getStacks();
-				PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), (EntityPlayerMP) player);
+				PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<>()), (EntityPlayerMP) player);
 				if (stack.isEmpty()) { return ItemStack.EMPTY; }
 				slot.onTake(player, itemstack1);
 				return ItemStack.EMPTY;
@@ -96,27 +103,35 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 	protected final class SlotCraftingNetwork extends SlotCraftingSucks {
 
 		protected TileMaster tileMaster;
+		ItemStack[] lastItems;
+		IRecipe lastLastRecipe;
 
 		public SlotCraftingNetwork(EntityPlayer player, InventoryCrafting matrix, InventoryCraftResult result, int index, int x, int y) {
 			super(ContainerFastNetworkCrafter.this, player, matrix, result, index, x, y);
 		}
 
 		@Override
+		public void onCrafting(ItemStack stack) {
+			super.onCrafting(stack);
+		}
+
+		@Override
 		public ItemStack onTake(EntityPlayer player, ItemStack stack) {
-			if (!player.world.isRemote) {
-				ItemStack[] stacks = new ItemStack[9];
-				for (int i = 0; i < 9; i++) {
-					stacks[i] = this.craftMatrix.getStackInSlot(i).copy(); //Might be expensive if NBT is heavy
+			if (!world.isRemote) {
+				if (ContainerFastNetworkCrafter.this.lastRecipe != lastLastRecipe) {
+					lastLastRecipe = ContainerFastNetworkCrafter.this.lastRecipe;
+					lastItems = new ItemStack[9];
+					for (int i = 0; i < 9; i++) {
+						lastItems[i] = this.craftMatrix.getStackInSlot(i).copy();
+					}
 				}
 
 				ItemStack take = super.onTake(player, stack);
 
 				for (int i = 0; i < 9; i++) {
 					if (craftMatrix.getStackInSlot(i).isEmpty() && getTileMaster() != null) {
-						ItemStack cached = stacks[i];
-						if (!cached.isEmpty()) 
-							if (i != 8) this.craftMatrix.stackList.set(i, getTileMaster().request(new FilterItem(cached, true, false, false), 1, false));
-						else this.craftMatrix.setInventorySlotContents(i, getTileMaster().request(new FilterItem(cached, true, false, false), 1, false));
+						ItemStack cached = lastItems[i];
+						if (!cached.isEmpty()) this.craftMatrix.stackList.set(i, getTileMaster().request(new FilterItem(cached, true, false, false), 1, false));
 					}
 				}
 
