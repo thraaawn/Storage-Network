@@ -12,6 +12,7 @@ import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
@@ -66,7 +67,10 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 			slotCopy = slotStack.copy();
 			TileMaster tileMaster = this.getTileMaster();
 			if (index == 0) {
-				return super.transferStackInSlot(player, index);
+				int num = slotCopy.getMaxStackSize() / slotCopy.getCount();
+				for (int i = 0; i < num; i++)
+					super.transferStackInSlot(player, index);
+				return new ItemStack(Items.STICK);
 			} else if (tileMaster != null) {
 				int rest = tileMaster.insertStack(slotStack, null, false);
 				ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(slotStack, rest);
