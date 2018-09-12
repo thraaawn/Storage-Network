@@ -1,14 +1,18 @@
 package mrriegel.storagenetwork.gui.fb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.data.FilterItem;
 import mrriegel.storagenetwork.util.data.StackWrapper;
+import net.minecraft.client.util.RecipeItemHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -18,6 +22,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -32,6 +37,7 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 
 	public ContainerFastNetworkCrafter(EntityPlayer player, World world, BlockPos pos) {
 		super(player, world, pos);
+		if (player.world.isRemote != world.isRemote) throw new RuntimeException("Player and World remoteness are not the same!");
 		this.world = world;
 		this.player = player;
 	}
@@ -124,14 +130,11 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 					}
 				}
 
+				IRecipe rec = lastRecipe;
+
 				ItemStack take = super.onTake(player, stack);
 
-				for (int i = 0; i < 9; i++) {
-					if (craftMatrix.getStackInSlot(i).isEmpty() && getTileMaster() != null) {
-						ItemStack cached = lastItems[i];
-						if (!cached.isEmpty()) this.craftMatrix.stackList.set(i, getTileMaster().request(new FilterItem(cached, true, false, false), 1, false));
-					}
-				}
+				tryRestockGridEntirely(craftMatrix, this, rec, lastItems);
 
 				detectAndSendChanges();
 				ContainerFastNetworkCrafter.this.onCraftMatrixChanged(ContainerFastNetworkCrafter.this.craftMatrix);
@@ -147,5 +150,110 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 		public void setTileMaster(TileMaster tileMaster) {
 			this.tileMaster = tileMaster;
 		}
+	}
+
+	public static final void tryRestockGridEntirely(InventoryCrafting matrix, SlotCraftingNetwork slot, IRecipe recipe, ItemStack[] requests) {
+
+		//If ingredients are complex, matching may fail, so we use the slow grabbing process.  This does not restock entirely.
+		for (Ingredient ing : recipe.getIngredients()) {
+			if (!ing.isSimple()) {
+				for (int i = 0; i < 9; i++) {
+					if (matrix.getStackInSlot(i).isEmpty() && slot.getTileMaster() != null) {
+						ItemStack cached = requests[i];
+						if (!cached.isEmpty()) matrix.stackList.set(i, slot.getTileMaster().request(new FilterItem(cached, true, false, false), 1, false));
+					}
+				}
+				return;
+			}
+		}
+
+		//If not, these requested stacks must meet an item/meta pair.
+
+		/**
+		 * Grid Layout originally is preserved in the ItemStack[] as
+		 * 0 1 2
+		 * 3 4 5
+		 * 6 7 8
+		 * 
+		 * We need to grab as much as we can and sort into the original pattern equally.
+		 */
+
+		ItemStack[] requested = new ItemStack[9];
+		Arrays.fill(requested, ItemStack.EMPTY);
+
+		//Grab as much as possible
+		for (int i = 0; i < 9; i++) {
+			if (matrix.getStackInSlot(i).isEmpty() && slot.getTileMaster() != null) {
+				ItemStack cached = requests[i];
+				if (!cached.isEmpty()) requested[i] = slot.getTileMaster().request(new FilterItem(cached, true, false, false), 64, false);
+			}
+		}
+
+		//How much of each stack we have
+		Int2IntOpenHashMap collected = new Int2IntOpenHashMap();
+		for (ItemStack s : requested) {
+			if (!s.isEmpty()) {
+				int stack = RecipeItemHelper.pack(s);
+				int num = collected.get(stack);
+				collected.put(stack, num + s.getCount());
+			}
+		}
+
+		//How many stacks of each kind we need
+		Int2IntOpenHashMap types = new Int2IntOpenHashMap();
+		for (ItemStack s : requests) {
+			if (!s.isEmpty()) {
+				int stack = RecipeItemHelper.pack(s);
+				int num = types.get(stack);
+				types.put(stack, ++num);
+			}
+		}
+
+		Int2IntOpenHashMap taken = new Int2IntOpenHashMap();
+
+		//Sort the collected stacks into slots as necessary
+		for (int i = 0; i < 9; i++) {
+			ItemStack oldStack = requests[i];
+			ItemStack curStack = matrix.getStackInSlot(i);
+			if (!curStack.isEmpty()) {
+				int curStackPack = RecipeItemHelper.pack(curStack);
+				float available = collected.get(curStackPack);
+				int desired = Math.max(curStack.getCount(), Math.min((int) Math.floor(available / types.get(curStackPack)), curStack.getMaxStackSize()));
+				taken.put(curStackPack, taken.get(curStackPack) + desired - curStack.getCount());
+				curStack.setCount(desired);
+			} else if (!oldStack.isEmpty()) {
+				int oldStackPack = RecipeItemHelper.pack(oldStack);
+				float available = collected.get(oldStackPack);
+				int desired = Math.min((int) Math.floor(available / types.get(oldStackPack)), oldStack.getMaxStackSize());
+				taken.put(oldStackPack, taken.get(oldStackPack) + desired);
+				ItemStack stack = oldStack.copy();
+				stack.setCount(desired);
+				matrix.stackList.set(i, stack);
+			}
+		}
+		//Deal with the remainder
+		for (Entry ent : taken.int2IntEntrySet()) {
+			int collect = collected.get(ent.getIntKey());
+			collect -= ent.getIntValue();
+			collected.put(ent.getIntKey(), collect);
+		}
+
+		TileMaster master = slot.getTileMaster();
+		for (Entry ent : collected.int2IntEntrySet()) {
+			ItemStack s = RecipeItemHelper.unpack(ent.getIntKey());
+			int num = ent.getIntValue();
+			while (num > 0) {
+				if (num > s.getMaxStackSize()) {
+					ItemStack n = s.copy();
+					n.setCount(s.getMaxStackSize());
+					num -= n.getCount();
+					master.insertStack(n, BlockPos.ORIGIN, false);
+				}
+				s.setCount(num);
+				num -= s.getCount();
+				master.insertStack(s, BlockPos.ORIGIN, false);
+			}
+		}
+
 	}
 }
