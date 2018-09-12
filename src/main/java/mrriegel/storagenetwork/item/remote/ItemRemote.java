@@ -91,7 +91,7 @@ public class ItemRemote extends Item {
     }
     BlockPos targetPos = new BlockPos(x, y, z);
     World serverTargetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(itemStackDim);
-    if (serverTargetWorld.getChunkFromBlockCoords(targetPos).isLoaded() == false) {
+    if (!serverTargetWorld.getChunkFromBlockCoords(targetPos).isLoaded()) {
       StorageNetwork.chatMessage(player, "item.remote.notloaded");
       return super.onItemRightClick(worldIn, player, hand);
     }
@@ -117,7 +117,7 @@ public class ItemRemote extends Item {
       }
       // ok we found a target
       if (canOpenGUI) {
-        player.openGui(StorageNetwork.instance, getGui(), serverTargetWorld, x, y, z);
+        player.openGui(StorageNetwork.instance, getGui(), worldIn, x, y, z);
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
       }
       else {// if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() || player.getDistance(x, y, z) > 32))
