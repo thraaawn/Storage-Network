@@ -201,14 +201,18 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 
 		ItemStack[] requested = new ItemStack[9];
 		Arrays.fill(requested, ItemStack.EMPTY);
+		boolean matrixFull = true;
 
 		//Grab as much as possible
 		for (int i = 0; i < 9; i++) {
 			if (matrix.getStackInSlot(i).isEmpty()) {
 				ItemStack cached = requests[i];
 				if (!cached.isEmpty()) requested[i] = slot.getTileMaster().request(new FilterItem(cached, true, false, false), cached.getMaxStackSize(), false);
+				matrixFull = false;
 			}
 		}
+		
+		if(matrixFull) return; //Early return if we don't need to request anything.
 
 		//How much of each stack we have
 		Int2IntOpenHashMap collected = new Int2IntOpenHashMap();
