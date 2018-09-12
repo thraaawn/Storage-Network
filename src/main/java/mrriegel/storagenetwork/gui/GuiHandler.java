@@ -14,6 +14,7 @@ import mrriegel.storagenetwork.item.remote.ContainerRemote;
 import mrriegel.storagenetwork.item.remote.GuiRemote;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
@@ -37,7 +38,7 @@ public class GuiHandler implements IGuiHandler {
       return FB_LOADED ? new ContainerFastRequest((TileRequest) world.getTileEntity(pos), player, world, pos) : new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory);
     }
     if (ID == REMOTE) {
-      return FB_LOADED ? new ContainerFastRemote(player, world, pos) : new ContainerRemote(player.inventory);
+      return FB_LOADED ? new ContainerFastRemote(player, world, EnumHand.values()[x]) : new ContainerRemote(player.inventory);
     }
     return null;
   }
@@ -53,7 +54,7 @@ public class GuiHandler implements IGuiHandler {
       return FB_LOADED ? new GuiFastRequest(player, world, pos) : new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory));
     }
     if (ID == REMOTE) {
-      return FB_LOADED ? new GuiFastRemote(player, world) : new GuiRemote(new ContainerRemote(player.inventory));
+      return FB_LOADED ? new GuiFastRemote(player, world, EnumHand.values()[x]) : new GuiRemote(new ContainerRemote(player.inventory));
     }
     return null;
   }

@@ -8,14 +8,15 @@ import mrriegel.storagenetwork.util.NBTHelper;
 import mrriegel.storagenetwork.util.data.EnumSortType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class GuiFastRemote extends GuiFastNetworkCrafter {
 
-	public GuiFastRemote(EntityPlayer player, World world) {
+	public GuiFastRemote(EntityPlayer player, World world, EnumHand hand) {
 		super(player, world, BlockPos.ORIGIN);
-		this.inventorySlots = new ContainerFastRemote.Client(player, world, BlockPos.ORIGIN);
+		this.inventorySlots = new ContainerFastRemote.Client(player, world, hand);
 	}
 
 	@Override
@@ -39,8 +40,8 @@ public class GuiFastRemote extends GuiFastNetworkCrafter {
 	}
 
 	public @Nonnull ItemStack getItemRemote() {
-		ItemStack remote = mc.player.inventory.getCurrentItem();
-		if (remote.getItem() instanceof ItemRemote == false) { return ItemStack.EMPTY; }
+		ItemStack remote = ((ContainerFastRemote) this.getContainer()).remoteItemStack;
+		if (remote.getItem() instanceof ItemRemote == false) return ItemStack.EMPTY;
 		return remote;
 	}
 

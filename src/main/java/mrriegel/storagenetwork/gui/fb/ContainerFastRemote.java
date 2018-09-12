@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.item.remote.ItemRemote;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
-import mrriegel.storagenetwork.registry.ModItems;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.NBTHelper;
 import mrriegel.storagenetwork.util.data.StackWrapper;
@@ -14,29 +13,31 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class ContainerFastRemote extends ContainerFastNetworkCrafter {
 
-	private ItemStack remoteItemStack;
+	ItemStack remoteItemStack;
+	protected EnumHand hand;
 
-	public ContainerFastRemote(EntityPlayer player, World world, BlockPos pos) {
-		super(player, world, pos);
-		remoteItemStack = player.inventory.getCurrentItem();
+	public ContainerFastRemote(EntityPlayer player, World world, EnumHand hand) {
+		super(player, world, BlockPos.ORIGIN);
+		remoteItemStack = player.getHeldItem(hand);
 		this.inventorySlots.clear();
 		this.inventoryItemStacks.clear();
 		for (int i = 0; i < 9; i++) {
 			if (i != 8) this.craftMatrix.stackList.set(i, NBTHelper.getItemStack(remoteItemStack, "c" + i));
 			else this.craftMatrix.setInventorySlotContents(i, NBTHelper.getItemStack(remoteItemStack, "c" + i));
 		}
-
 		SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(player, craftMatrix, craftResult, 0, 101, 128);
 		slotCraftOutput.setTileMaster(this.getTileMaster());
 		this.addSlotToContainer(slotCraftOutput);
 		bindGrid();
 		bindPlayerInvo(player.inventory);
 		bindHotbar(player);
+		this.hand = hand;
 	}
 
 	@Override
@@ -47,12 +48,11 @@ public class ContainerFastRemote extends ContainerFastNetworkCrafter {
 			forceSync = false;
 			PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(tileMaster.getStacks(), new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
 		}
-		return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.remote;
+		return playerIn.getHeldItem(this.hand) == remoteItemStack;
 	}
 
 	@Override
 	public void onContainerClosed(EntityPlayer player) {
-		super.onContainerClosed(player);
 		for (int i = 0; i < 9; i++) {
 			NBTHelper.setItemStack(remoteItemStack, "c" + i, craftMatrix.getStackInSlot(i));
 		}
@@ -66,7 +66,7 @@ public class ContainerFastRemote extends ContainerFastNetworkCrafter {
 	@Override
 	public void bindHotbar(EntityPlayer player) {
 		for (int i = 0; i < 9; ++i) {
-			if (i == player.inventory.currentItem) this.addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 232) {
+			if (hand == EnumHand.MAIN_HAND && i == player.inventory.currentItem) this.addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 232) {
 
 				@Override
 				public boolean isItemValid(ItemStack stack) {
@@ -89,8 +89,8 @@ public class ContainerFastRemote extends ContainerFastNetworkCrafter {
 
 	public static class Client extends ContainerFastRemote {
 
-		public Client(EntityPlayer player, World world, BlockPos pos) {
-			super(player, world, pos);
+		public Client(EntityPlayer player, World world, EnumHand hand) {
+			super(player, world, hand);
 		}
 
 		@Override

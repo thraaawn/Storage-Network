@@ -117,7 +117,7 @@ public class ItemRemote extends Item {
       }
       // ok we found a target
       if (canOpenGUI) {
-        player.openGui(StorageNetwork.instance, getGui(), worldIn, x, y, z);
+        player.openGui(StorageNetwork.instance, getGui(), worldIn, hand.ordinal(), y, z);
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
       }
       else {// if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() || player.getDistance(x, y, z) > 32))
