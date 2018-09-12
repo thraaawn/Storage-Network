@@ -74,8 +74,11 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 			TileMaster tileMaster = this.getTileMaster();
 			if (index == 0) {
 				int num = slotCopy.getMaxStackSize() / slotCopy.getCount();
-				for (int i = 0; i < num; i++)
+				IRecipe rec = lastRecipe;
+				for (int i = 0; i < num; i++) {
+					if (rec != lastRecipe) break;
 					super.transferStackInSlot(player, index);
+				}
 				return new ItemStack(Items.STICK);
 			} else if (tileMaster != null) {
 				int rest = tileMaster.insertStack(slotStack, null, false);
@@ -149,17 +152,40 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 
 	public static final void tryRestockGridEntirely(InventoryCrafting matrix, SlotCraftingNetwork slot, IRecipe recipe, ItemStack[] requests) {
 
+		//Can't restock from nowhere.
+		if (slot.getTileMaster() == null) return;
+
 		//If ingredients are complex, matching may fail, so we use the slow grabbing process.  This does not restock entirely.
+		boolean simple = true;
 		for (Ingredient ing : recipe.getIngredients()) {
 			if (!ing.isSimple()) {
-				for (int i = 0; i < 9; i++) {
-					if (matrix.getStackInSlot(i).isEmpty() && slot.getTileMaster() != null) {
-						ItemStack cached = requests[i];
-						if (!cached.isEmpty()) matrix.stackList.set(i, slot.getTileMaster().request(new FilterItem(cached, true, false, false), 1, false));
-					}
-				}
-				return;
+				simple = false;
+				break;
 			}
+		}
+
+		boolean one = false;
+		boolean two = false;
+
+		for (ItemStack i : requests) {
+			if (!i.isEmpty()) {
+				one = true;
+				continue;
+			}
+			if (one && !i.isEmpty()) {
+				two = true;
+				break;
+			}
+		}
+
+		if (!simple) {
+			for (int i = 0; i < 9; i++) {
+				if (matrix.getStackInSlot(i).isEmpty()) {
+					ItemStack cached = requests[i];
+					if (!cached.isEmpty()) matrix.stackList.set(i, slot.getTileMaster().request(new FilterItem(cached, true, false, cached.hasTagCompound()), two ? 1 : cached.getMaxStackSize(), false));
+				}
+			}
+			return;
 		}
 
 		//If not, these requested stacks must meet an item/meta pair.
@@ -178,7 +204,7 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 
 		//Grab as much as possible
 		for (int i = 0; i < 9; i++) {
-			if (matrix.getStackInSlot(i).isEmpty() && slot.getTileMaster() != null) {
+			if (matrix.getStackInSlot(i).isEmpty()) {
 				ItemStack cached = requests[i];
 				if (!cached.isEmpty()) requested[i] = slot.getTileMaster().request(new FilterItem(cached, true, false, false), cached.getMaxStackSize(), false);
 			}
