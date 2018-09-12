@@ -107,8 +107,6 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 	protected final class SlotCraftingNetwork extends SlotCraftingSucks {
 
 		protected TileMaster tileMaster;
-		ItemStack[] lastItems;
-		IRecipe lastLastRecipe;
 
 		public SlotCraftingNetwork(EntityPlayer player, InventoryCrafting matrix, InventoryCraftResult result, int index, int x, int y) {
 			super(ContainerFastNetworkCrafter.this, player, matrix, result, index, x, y);
@@ -122,12 +120,9 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 		@Override
 		public ItemStack onTake(EntityPlayer player, ItemStack stack) {
 			if (!world.isRemote) {
-				if (ContainerFastNetworkCrafter.this.lastRecipe != lastLastRecipe) {
-					lastLastRecipe = ContainerFastNetworkCrafter.this.lastRecipe;
-					lastItems = new ItemStack[9];
-					for (int i = 0; i < 9; i++) {
-						lastItems[i] = this.craftMatrix.getStackInSlot(i).copy();
-					}
+				ItemStack[] lastItems = new ItemStack[9];
+				for (int i = 0; i < 9; i++) {
+					lastItems[i] = this.craftMatrix.getStackInSlot(i).copy();
 				}
 
 				IRecipe rec = lastRecipe;
