@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.block.request;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
@@ -91,5 +92,10 @@ public class ContainerRequest extends ContainerNetworkBase {
 
   public void setTileRequest(TileRequest tileRequest) {
     this.tileRequest = tileRequest;
+  }
+
+  @Override
+  public boolean isRequest() {
+	return true;
   }
 }

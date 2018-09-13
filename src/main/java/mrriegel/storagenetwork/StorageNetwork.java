@@ -6,7 +6,6 @@ import mrriegel.storagenetwork.proxy.CommonProxy;
 import mrriegel.storagenetwork.registry.RegistryEvents;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -16,12 +15,13 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
+@Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.VERSION, updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
 public class StorageNetwork {
 
   public Logger logger;
   public static final String MODID = "storagenetwork";
   public static final String MODNAME = "Simple Storage Network";
+  public static final String VERSION = "@VERSION@";
   @Instance(StorageNetwork.MODID)
   public static StorageNetwork instance;
   @SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")
@@ -55,8 +55,9 @@ public class StorageNetwork {
       player.sendStatusMessage(new TextComponentString(lang(message)), true);
   }
 
+  @SuppressWarnings("deprecation")
   public static String lang(String message) {
-    return I18n.translateToLocal(message);
+    return net.minecraft.util.text.translation.I18n.translateToLocal(message);
   }
 
   private static long lastTime;

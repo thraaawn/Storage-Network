@@ -1,36 +1,30 @@
 package mrriegel.storagenetwork.jei;
 
-import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
-import mezz.jei.api.ISubtypeRegistry;
 import mezz.jei.api.JEIPlugin;
-import mezz.jei.api.ingredients.IModIngredientRegistration;
-import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
+import mrriegel.storagenetwork.block.request.ContainerRequest;
+import mrriegel.storagenetwork.gui.GuiHandler;
+import mrriegel.storagenetwork.gui.fb.ContainerFastRemote;
+import mrriegel.storagenetwork.gui.fb.ContainerFastRequest;
+import mrriegel.storagenetwork.item.remote.ContainerRemote;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import net.minecraft.item.ItemStack;
 
 @JEIPlugin
 public class JeiPlugin implements IModPlugin {
 
-  @SuppressWarnings({ "rawtypes", "deprecation" })
-  @Override
-  public void register(IModRegistry registry) {
-    registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new RequestRecipeTransferHandler());
-    registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new RequestRecipeTransferHandlerRemote());
-    registry.addRecipeCategoryCraftingItem(new ItemStack(ModBlocks.request), VanillaRecipeCategoryUid.CRAFTING);
-  }
-
-  @Override
-  public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {}
-
-  @Override
-  public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {}
-
-  @Override
-  public void registerIngredients(IModIngredientRegistration registry) {}
-
-  @Override
-  public void registerCategories(IRecipeCategoryRegistration registry) {}
+	@Override
+	public void register(IModRegistry registry) {
+		registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new RequestRecipeTransferHandler<>(ContainerRequest.class));
+		registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new RequestRecipeTransferHandlerRemote<>(ContainerRemote.class));
+		registry.addRecipeCatalyst(new ItemStack(ModBlocks.request), VanillaRecipeCategoryUid.CRAFTING);
+		if (GuiHandler.FB_LOADED) {
+			registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new RequestRecipeTransferHandler<>(ContainerFastRequest.class));
+			registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new RequestRecipeTransferHandlerRemote<>(ContainerFastRemote.class));
+			registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new RequestRecipeTransferHandler<>(ContainerFastRequest.Client.class));
+			registry.getRecipeTransferRegistry().addUniversalRecipeTransferHandler(new RequestRecipeTransferHandlerRemote<>(ContainerFastRemote.Client.class));
+		}
+	}
 }

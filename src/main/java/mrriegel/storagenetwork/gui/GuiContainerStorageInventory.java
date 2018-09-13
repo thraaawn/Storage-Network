@@ -25,6 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
@@ -39,7 +40,7 @@ import net.minecraftforge.oredict.OreDictionary;
  * 
  *
  */
-public abstract class GuiContainerStorageInventory extends GuiContainerBase {
+public abstract class GuiContainerStorageInventory extends GuiContainer implements IPublicGuiContainer, IStorageInventory {
 
   private static final int HEIGHT = 256;
   private static final int WIDTH = 176;
@@ -65,6 +66,16 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
   protected boolean canClick() {
     return System.currentTimeMillis() > lastClick + 100L;
+  }
+  
+  @Override
+  public void setStacks(List<StackWrapper> stacks) {
+    this.stacks = stacks;
+  }
+  
+  @Override
+  public void setCraftableStacks(List<StackWrapper> stacks) {
+	this.craftableStacks = stacks;
   }
 
   @Override
@@ -122,6 +133,26 @@ public abstract class GuiContainerStorageInventory extends GuiContainerBase {
 
   protected boolean inX(int mouseX, int mouseY) {
     return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
+  }
+  
+  @Override
+  public void drawGradientRectP(int left, int top, int right, int bottom, int startColor, int endColor) {
+    super.drawGradientRect(left, top, right, bottom, startColor, endColor);
+  }
+
+  @Override
+  public FontRenderer getFont() {
+    return this.fontRenderer;
+  }
+
+  @Override
+  public boolean isPointInRegionP(int rectX, int rectY, int rectWidth, int rectHeight, int pointX, int pointY) {
+    return super.isPointInRegion(rectX, rectY, rectWidth, rectHeight, pointX, pointY);
+  }
+
+  @Override
+  public void renderToolTipP(ItemStack stack, int x, int y) {
+    super.renderToolTip(stack, x, y);
   }
 
   protected abstract boolean isScreenValid();
