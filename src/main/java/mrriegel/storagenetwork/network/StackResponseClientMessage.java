@@ -1,7 +1,6 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
@@ -42,12 +41,10 @@ public class StackResponseClientMessage implements IMessage, IMessageHandler<Sta
   @Override
   public void fromBytes(ByteBuf buf) {
     this.stack = ByteBufUtils.readItemStack(buf);
-    StorageNetwork.log("StackMessage readItemStack  " + stack);
   }
 
   @Override
   public void toBytes(ByteBuf buf) {
     ByteBufUtils.writeItemStack(buf, this.stack);
-    StorageNetwork.log("StackMessage writeItemStack  " + stack);
   }
 }
