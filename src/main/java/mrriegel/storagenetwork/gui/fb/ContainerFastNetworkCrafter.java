@@ -23,6 +23,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -116,11 +117,6 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 		}
 
 		@Override
-		public void onCrafting(ItemStack stack) {
-			super.onCrafting(stack);
-		}
-
-		@Override
 		public ItemStack onTake(EntityPlayer player, ItemStack stack) {
 			if (!world.isRemote) {
 				ItemStack[] lastItems = new ItemStack[9];
@@ -132,13 +128,14 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 
 				ItemStack take = super.onTake(player, stack);
 
-				tryRestockGridEntirely(craftMatrix, this, rec, lastItems);
-
+				if (!world.isRemote) tryRestockGridEntirely(craftMatrix, this, rec, lastItems);
+				onCraftMatrixChanged(craftMatrix);
 				detectAndSendChanges();
-				ContainerFastNetworkCrafter.this.onCraftMatrixChanged(ContainerFastNetworkCrafter.this.craftMatrix);
-				ContainerFastNetworkCrafter.this.forceSync = true;
+				((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(windowId, 0, lastRecipe.getRecipeOutput()));
+				forceSync = true;
 				return take;
-			} else return super.onTake(player, stack);
+			}
+			return stack;
 		}
 
 		public TileMaster getTileMaster() {
@@ -211,8 +208,8 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 				matrixFull = false;
 			}
 		}
-		
-		if(matrixFull) return; //Early return if we don't need to request anything.
+
+		if (matrixFull) return; //Early return if we don't need to request anything.
 
 		//How much of each stack we have
 		Int2IntOpenHashMap collected = new Int2IntOpenHashMap();
