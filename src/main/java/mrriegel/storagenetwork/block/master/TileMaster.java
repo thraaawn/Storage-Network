@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.cable.TileCable;
+import mrriegel.storagenetwork.block.master.RecentPointer.StackSlot;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
@@ -204,7 +206,7 @@ public class TileMaster extends TileEntity implements ITickable {
     world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
   }
 
-  private ItemStack insertStackSingleTarget(AbstractFilterTile tileCable, ItemStack stackInCopy, boolean simulate) {
+  private ItemStack insertStackSingleTarget(AbstractFilterTile tileCable, ItemStack stackInCopy, boolean simulate, int slot) {
     IItemHandler inventoryLinked = tileCable.getInventory();
     if (!UtilInventory.contains(inventoryLinked, stackInCopy))
       return stackInCopy;
@@ -212,13 +214,82 @@ public class TileMaster extends TileEntity implements ITickable {
       return stackInCopy;
     //    if (tileCable.getSource().equals(source))
     //      continue;
-    ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, stackInCopy, simulate);
-    //      if (remain.isEmpty()) {
-    //        return 0;
-    //      }
+    //    if(slot < 0)
+    //    else
+    String key = getStackKey(stackInCopy);
+    int originalSize = stackInCopy.getCount();
+    //      
+    RecentPointer.StackSlot response = insertItemStacked(inventoryLinked, stackInCopy, simulate, slot);
+    ItemStack remain = response.stack;
     stackInCopy = ItemHandlerHelper.copyStackWithSize(stackInCopy, remain.getCount());
-    //    world.markChunkDirty(tileCable.getSource(), world.getTileEntity(tileCable.getSource()));
+    if (stackInCopy.getCount() < originalSize) {
+      //String key = getStackKey(stackInCop y);
+      RecentPointer ptr = new RecentPointer();
+      if (response.slot >= 0)
+        ptr.setSlot(response.slot);
+      ptr.setPos(tileCable.getPos());
+      if (recentImports.containsKey(key) == false) {
+        StorageNetwork.log(key + " insert mapped " + response.slot);
+      } //but i guess still overwrite?
+      recentImports.put(key, ptr);
+    }
     return remain;
+  }
+
+  /**
+   * net.minecraftforge.items.ItemHandlerHelper;
+   * 
+   * CHANGED TO use an existing/cached slot
+   * 
+   * Inserts the ItemStack into the inventory, filling up already present stacks first.
+   * 
+   * This is equivalent to the behaviour of a player picking up an item.
+   * 
+   * Note: This function stacks items without subtypes with different metadata together.
+   */
+  private StackSlot insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, boolean simulate, int existingSlot) {
+    RecentPointer.StackSlot response = new RecentPointer.StackSlot();
+    //    return ItemHandlerHelper.insertItemStacked(inventory, stack, simulate);
+    if (inventory == null || stack.isEmpty())
+      return response;
+    // not stackable -> just insert into a new slot
+    if (!stack.isStackable()) {
+      response.stack = ItemHandlerHelper.insertItem(inventory, stack, simulate);
+      return response;
+    }
+    int sizeInventory = inventory.getSlots();
+    if (existingSlot >= 0) {
+      StorageNetwork.log("Found slot " + existingSlot);
+      stack = inventory.insertItem(existingSlot, stack, simulate);
+    }
+    else {
+      // go through the inventory and try to fill up already existing items
+      for (int i = 0; i < sizeInventory; i++) {
+        ItemStack slot = inventory.getStackInSlot(i);
+        if (ItemHandlerHelper.canItemStacksStackRelaxed(slot, stack)) {
+          stack = inventory.insertItem(i, stack, simulate);
+          if (stack.isEmpty()) {
+            response.slot = i;
+            break;
+          }
+        }
+      }
+    }
+    // insert remainder into empty slots
+    if (!stack.isEmpty()) {
+      // find empty slot
+      for (int i = 0; i < sizeInventory; i++) {
+        if (inventory.getStackInSlot(i).isEmpty()) {
+          stack = inventory.insertItem(i, stack, simulate);
+          if (stack.isEmpty()) {
+            response.slot = i;
+            break;
+          }
+        }
+      }
+    }
+    response.stack = stack;
+    return response;
   }
 
   /**
@@ -231,7 +302,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stack.isEmpty()) {
       return 0;
     }
-    int originalSize = stack.getCount();
+    //    int originalSize = stack.getCount();
     //refactor this garbage why are there too loops LOL 
     List<AbstractFilterTile> invs = getConnectedFilterTiles();
     ItemStack stackInCopy = stack.copy();
@@ -247,7 +318,7 @@ public class TileMaster extends TileEntity implements ITickable {
       }
       else {
         StorageNetwork.log("USE  key" + key);
-        stackInCopy = insertStackSingleTarget(aTile, stackInCopy, simulate);
+        stackInCopy = insertStackSingleTarget(aTile, stackInCopy, simulate, pointer.getSlot());
       }
       //      rest = insertStack(ItemHandlerHelper.copyStackWithSize(stackCurrent, insert), tileCable.getConnectedInventory(), false);
     }
@@ -261,20 +332,11 @@ public class TileMaster extends TileEntity implements ITickable {
         //        continue;
         if (tileCable.getSource().equals(source))
           continue;
-        stackInCopy = insertStackSingleTarget(tileCable, stackInCopy, simulate);
+        stackInCopy = insertStackSingleTarget(tileCable, stackInCopy, simulate, -1);
         //      //      if (remain.isEmpty()) {
         //      //        return 0;
         //      //      }
         //success 
-        if (stackInCopy.getCount() < originalSize) {
-          //String key = getStackKey(stackInCopy);
-          if (recentImports.containsKey(key) == false) {
-            StorageNetwork.log(key + " insert mapped ");
-          } //but i guess still overwrite?
-          RecentPointer ptr = new RecentPointer();
-          ptr.setPos(tileCable.getPos());
-          recentImports.put(key, ptr);
-        }
         //      stackInCopy = ItemHandlerHelper.copyStackWithSize(stackInCopy, remain.getCount());
         world.markChunkDirty(tileCable.getSource(), world.getTileEntity(tileCable.getSource()));
       }
@@ -295,7 +357,6 @@ public class TileMaster extends TileEntity implements ITickable {
         world.markChunkDirty(tileCabl.getSource(), world.getTileEntity(tileCabl.getSource()));
       }
     }
-
     return stackInCopy.getCount();
   }
 
@@ -309,6 +370,9 @@ public class TileMaster extends TileEntity implements ITickable {
    * @param attachedCables
    */
   public void updateImports(List<TileCable> attachedCables) {
+
+    StorageNetwork.log("[KEYSIZE] " + this.recentImports.keySet().size());
+
     //    for (RecentPointer pointer : this.recentImports) {
     //      // TODO: use this first
     //    }

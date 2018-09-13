@@ -8,7 +8,7 @@ public class RecentPointer {
   //Must Be A Copy
   private ItemStack itemStack;
   private BlockPos pos;
-  private int slot;
+  private int slot = -1;
 
   public int getSlot() {
     return slot;
@@ -32,5 +32,11 @@ public class RecentPointer {
 
   public void setItemStack(ItemStack itemStack) {
     this.itemStack = itemStack;
+  }
+
+  public static class StackSlot {
+
+    public int slot = -1;
+    public ItemStack stack = ItemStack.EMPTY;
   }
 }
