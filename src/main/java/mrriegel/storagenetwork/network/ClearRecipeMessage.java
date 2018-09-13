@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.network;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.IStorageContainer;
@@ -30,7 +29,7 @@ public class ClearRecipeMessage implements IMessage, IMessageHandler<ClearRecipe
       @Override
       public void run() {
         if (player.openContainer instanceof IStorageContainer) {
-        	IStorageContainer container = (IStorageContainer) player.openContainer;
+          IStorageContainer container = (IStorageContainer) player.openContainer;
           InventoryCrafting craftMatrix = container.getCraftMatrix();
           TileMaster tileMaster = container.getTileMaster();
           for (int i = 0; i < 9; i++) {

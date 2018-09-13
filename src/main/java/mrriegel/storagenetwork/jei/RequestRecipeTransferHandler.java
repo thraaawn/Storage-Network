@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.jei;
 
 import java.util.List;
 import java.util.Map;
-
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
@@ -22,11 +21,11 @@ import net.minecraft.nbt.NBTTagList;
 public class RequestRecipeTransferHandler<C extends Container & IStorageContainer> implements IRecipeTransferHandler<C> {
 
   Class<C> clazz;
-	
+
   public RequestRecipeTransferHandler(Class<C> clazz) {
     this.clazz = clazz;
   }
-	
+
   @Override
   public Class<C> getContainerClass() {
     return clazz;

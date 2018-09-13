@@ -1,9 +1,7 @@
 package mrriegel.storagenetwork.network;
 
 import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.IStorageInventory;
 import mrriegel.storagenetwork.util.data.StackWrapper;

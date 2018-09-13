@@ -1,9 +1,7 @@
 package mrriegel.storagenetwork.gui;
 
 import javax.annotation.Nonnull;
-
 import org.lwjgl.input.Keyboard;
-
 import mrriegel.storagenetwork.util.UtilInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

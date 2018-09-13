@@ -67,15 +67,15 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
   protected boolean canClick() {
     return System.currentTimeMillis() > lastClick + 100L;
   }
-  
+
   @Override
   public void setStacks(List<StackWrapper> stacks) {
     this.stacks = stacks;
   }
-  
+
   @Override
   public void setCraftableStacks(List<StackWrapper> stacks) {
-	this.craftableStacks = stacks;
+    this.craftableStacks = stacks;
   }
 
   @Override
@@ -134,7 +134,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
   protected boolean inX(int mouseX, int mouseY) {
     return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
   }
-  
+
   @Override
   public void drawGradientRectP(int left, int top, int right, int bottom, int startColor, int endColor) {
     super.drawGradientRect(left, top, right, bottom, startColor, endColor);

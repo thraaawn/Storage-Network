@@ -2,9 +2,7 @@ package mrriegel.storagenetwork.gui;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
@@ -269,12 +267,10 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
       if (playerIn.world.isRemote) {
         return stack;
       }
-
       List<ItemStack> lis = Lists.newArrayList();
       for (int i = 0; i < matrix.getSizeInventory(); i++) {
         lis.add(matrix.getStackInSlot(i).copy());
       }
-
       super.onTake(playerIn, stack);
       detectAndSendChanges();
       for (int i = 0; i < matrix.getSizeInventory(); i++) {
@@ -286,7 +282,6 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
           }
         }
       }
-
       detectAndSendChanges();
       return stack;
     }
