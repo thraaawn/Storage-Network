@@ -13,7 +13,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.cable.TileCable;
-import mrriegel.storagenetwork.block.master.RecentPointer.StackSlot;
+import mrriegel.storagenetwork.block.master.RecentSlotPointer.StackSlot;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
@@ -24,7 +24,6 @@ import mrriegel.storagenetwork.util.data.FilterItem;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -41,7 +40,7 @@ public class TileMaster extends TileEntity implements ITickable {
 
   private Set<BlockPos> connectables;
   private List<BlockPos> storageInventorys;
-  private Map<String, RecentPointer> recentImports = new HashMap<>();
+  private Map<String, RecentSlotPointer> recentImports = new HashMap<>();
 
   public List<StackWrapper> getStacks() {
     List<StackWrapper> stacks = Lists.newArrayList();
@@ -204,6 +203,7 @@ public class TileMaster extends TileEntity implements ITickable {
       StorageNetwork.instance.logger.error("Refresh network error ", e);
     }
     addInventorys();
+
     world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
   }
 
@@ -220,12 +220,12 @@ public class TileMaster extends TileEntity implements ITickable {
     String key = getStackKey(stackInCopy);
     int originalSize = stackInCopy.getCount();
     //      
-    RecentPointer.StackSlot response = insertItemStacked(inventoryLinked, stackInCopy, simulate, slot);
+    RecentSlotPointer.StackSlot response = insertItemStacked(inventoryLinked, stackInCopy, simulate, slot);
     ItemStack remain = response.stack;
     stackInCopy = ItemHandlerHelper.copyStackWithSize(stackInCopy, remain.getCount());
     if (stackInCopy.getCount() < originalSize) {
       //String key = getStackKey(stackInCop y);
-      RecentPointer ptr = new RecentPointer();
+      RecentSlotPointer ptr = new RecentSlotPointer();
       if (response.slot >= 0)
         ptr.setSlot(response.slot);
       ptr.setPos(tileCable.getPos());
@@ -250,9 +250,7 @@ public class TileMaster extends TileEntity implements ITickable {
    * Note: This function stacks items without subtypes with different metadata together.
    */
   private StackSlot insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, boolean simulate, int existingSlot) {
-    RecentPointer.StackSlot response = new RecentPointer.StackSlot();
-    EntityPlayer p;
-    //  p.getEntityWorld()
+    RecentSlotPointer.StackSlot response = new RecentSlotPointer.StackSlot();
     //    return ItemHandlerHelper.insertItemStacked(inventory, stack, simulate);
     if (inventory == null || stack.isEmpty())
       return response;
@@ -314,7 +312,7 @@ public class TileMaster extends TileEntity implements ITickable {
     String key = getStackKey(stackInCopy);
     if (this.recentImports.containsKey(key)) {
 
-      RecentPointer pointer = this.recentImports.get(key);
+      RecentSlotPointer pointer = this.recentImports.get(key);
       AbstractFilterTile aTile = getAbstractFilterTileOrNull(pointer.getPos());
       if (aTile == null) {
         StorageNetwork.log("DELETE key" + key + " KEYSIZE " + this.recentImports.keySet().size());

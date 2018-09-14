@@ -3,10 +3,8 @@ package mrriegel.storagenetwork.block.master;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
-public class RecentPointer {
+public class RecentSlotPointer {
 
-  //Must Be A Copy
-  private ItemStack itemStack;
   private BlockPos pos;
   private int slot = -1;
 
@@ -26,13 +24,6 @@ public class RecentPointer {
     this.pos = pos;
   }
 
-  public ItemStack getItemStack() {
-    return itemStack;
-  }
-
-  public void setItemStack(ItemStack itemStack) {
-    this.itemStack = itemStack;
-  }
 
   public static class StackSlot {
 
