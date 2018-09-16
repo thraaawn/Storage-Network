@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.block.cable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,7 +25,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -113,78 +114,6 @@ public class BlockCable extends AbstractBlockConnectable {
     return false;
   }
 
-  @Override
-  public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
-    StorageNetwork.log("Rotateblock");
-    setConnections(world, pos, world.getBlockState(pos), true);
-    //    TileEntity myselfTile = world.getTileEntity(pos);
-    //    if (myselfTile == null || myselfTile instanceof TileCable == false) {
-    //      return false;
-    //    }
-    //    TileCable cable = (TileCable) myselfTile;
-    //    Map<EnumFacing, EnumConnectType> oldMap = cable.getConnects();
-    //    Map<EnumFacing, EnumConnectType> newMap = Maps.newHashMap();
-    //    EnumFacing next = EnumFacing.random(world.rand);
-    //    for (Entry<EnumFacing, EnumConnectType> e : oldMap.entrySet()) {
-    //      if (e.getValue() == EnumConnectType.STORAGE) {
-    //        EnumFacing stor = e.getKey();
-    //        break;
-    //      }
-    //    }
-    //    cable.setConnects(newMap);
-    //    if (cable.getInventoryFace() != null) {
-    //      cable.setInventoryFace(EnumFacing.random(world.rand));
-    //    }
-    return super.rotateBlock(world, pos, axis);
-  }
-
-  @Override
-  public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-    //    setConnections(worldIn, pos, state, false);
-    StorageNetwork.log("getStateForPlacement :" + facing.toString());
-    //first use facing and try to set storage connection on that
-
-    setConnections(world, pos, world.getBlockState(pos), false);
-    return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
-  }
-  //
-  //  @Override
-  //  public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-  //    StorageNetwork.log("onBlockPlacedBy");
-    //possible bandaid to stop double connects but.. seems to expensive. for an only-visual issue
-    // https://github.com/PrinceOfAmber/Storage-Network/issues/84
-    //    detectLocalMasterNode(worldIn, pos);
-    //    if (worldIn.isRemote) {
-    //      return;
-    //    }
-    //    TileCable here = (TileCable) worldIn.getTileEntity(pos);
-    //
-    //    StorageNetwork.log("!validate cable getConnectedInventory " + here.getConnectedInventory());
-    //    StorageNetwork.log("!validate cable getMaster " + here.getMaster());
-    //    if (here.isStorage() && here.getConnectedInventory() != null && here.getMaster() != null) {
-    //      TileMaster master = (TileMaster) worldIn.getTileEntity(here.getMaster());
-    //      if (master == null || master.getConnectables() == null) {
-    //        return;
-    //      }
-    //      //check 
-    //      for (BlockPos pCon : master.getConnectables()) {
-    //        if (pCon.equals(pos)) {
-    //          continue;//not myself 
-    //        }
-    //        TileEntity tileCon = worldIn.getTileEntity(pCon);
-    //        if (tileCon != null && tileCon instanceof TileCable) {
-    //          TileCable tileOnSameBlock = (TileCable) tileCon;
-    //          if (tileOnSameBlock.getConnectedInventory() != null &&
-    //              tileOnSameBlock.getConnectedInventory().equals(here.getConnectedInventory())) {
-    //            StorageNetwork.log("found doublo ");
-    //THIS IS WHERE  I WOULD DELETE MYSELF TO AIR AND DROP AS ITEM 
-    //          }
-    //        }
-    //      }
-    //    }
-  //  }
-
-
 
   public TileCable getTileCableOrNull(IBlockAccess world, BlockPos pos) {
     TileEntity tileHere = world.getTileEntity(pos);
@@ -193,15 +122,7 @@ public class BlockCable extends AbstractBlockConnectable {
     return null;
   }
 
-  // List<EnumFacing> facingShuffled = Arrays.asList(EnumFacing.values());
-  //    facingShuffled.addAll(oldMap.keySet());
-  //   Collections.shuffle(facingShuffled);
-  //    for (EnumFacing facing : facingShuffled) {
-  //      if (oldMap.get(facing) == EnumConnectType.STORAGE) {
-  //        stor = facing;
-  //        break;
-  //      }
-  //    }
+
   /**
    * What direction is my storage inventory that im connected to?
    * 
@@ -228,13 +149,55 @@ public class BlockCable extends AbstractBlockConnectable {
     return newMap;
   }
 
-  private IBlockState getNewState(IBlockAccess world, BlockPos pos) {
-    //    StorageNetwork.log("getNewState");
+  //TODO: connect to the one getting hit not anything else
+  //problem: tile is null
+  //  @Override
+  //  public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+  //    //    setConnections(worldIn, pos, state, false);
+  //    TileCable here = this.getTileCableOrNull(world, pos);
+  //    StorageNetwork.log("getStateForPlacement :" + facing.toString() + " is tileCable null? " + here);
+  //    //YES tile is null
+  //    //first use facing and try to set storage connection on that
+  //    //if we cant then set old wayyeah
+  //    setConnections(world, pos, world.getBlockState(pos), false);
+  //    return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
+  //  }
+  @Override
+  public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+
+    TileCable tile = getTileCableOrNull(world, pos);
+    if (tile != null) {
+      //wipe previous connection
+      tile.setInventoryFace(null);
+      tile.setConnectedInventory(null);
+      Map<EnumFacing, EnumConnectType> newMap = Maps.newHashMap();
+      tile.setConnects(newMap);
+    }
+    //then find new connection in different order using shuffle
+    IBlockState state = world.getBlockState(pos);
+    List<EnumFacing> shuffled = Arrays.asList(EnumFacing.values());
+    //we could pick smart order instead of shuffle here
+    Collections.shuffle(shuffled);
+
+    state = getNewState(world, pos, shuffled);
+    super.setConnections(world, pos, state, true);
+    UtilTileEntity.updateTile(world, pos);
+    return super.rotateBlock(world, pos, axis);
+  }
+  /**
+   * called by getActualState and setConnections
+   * 
+   * @param world
+   * @param pos
+   * @return
+   */
+  private IBlockState getNewState(IBlockAccess world, BlockPos pos, List<EnumFacing> facingOrder) {
+
     TileCable tile = getTileCableOrNull(world, pos);
     if (tile == null) {
       return world.getBlockState(pos);
     }
-    //  EnumFacing previousFacing = tile.getInventoryFace();
+
     BlockPos con = null;
     Map<EnumFacing, EnumConnectType> newMap = Maps.newHashMap();
     EnumFacing facingStorage = getConFacingByType(tile, EnumConnectType.STORAGE);
@@ -249,7 +212,7 @@ public class BlockCable extends AbstractBlockConnectable {
     }
     //look in all directions // shuffle here??
     // and set newmap to type based on what block lives there
-    for (EnumFacing facing : EnumFacing.values()) {
+    for (EnumFacing facing : facingOrder) {
       if (facingStorage == facing && first) {
         continue;
       }
@@ -303,7 +266,7 @@ public class BlockCable extends AbstractBlockConnectable {
 
   @Override
   public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
-    state = getNewState(worldIn, pos);
+    state = getNewState(worldIn, pos, Arrays.asList(EnumFacing.values()));
     super.setConnections(worldIn, pos, state, refresh);
     if (refresh) {
       UtilTileEntity.updateTile(worldIn, pos);
@@ -314,7 +277,7 @@ public class BlockCable extends AbstractBlockConnectable {
   @Override
   public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
     try {
-      IBlockState foo = getNewState(worldIn, pos);
+      IBlockState foo = getNewState(worldIn, pos, Arrays.asList(EnumFacing.values()));
       return foo;
     }
     catch (Exception e) {
