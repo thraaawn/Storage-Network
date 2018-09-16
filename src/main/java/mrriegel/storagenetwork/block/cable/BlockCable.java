@@ -79,6 +79,15 @@ public class BlockCable extends AbstractBlockConnectable {
   }
 
   @Override
+  public int getMetaFromState(IBlockState state) {
+    return 0;
+  }
+
+  boolean validInventory(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
+    return UtilInventory.hasItemHandler(worldIn, pos, side);
+  }
+
+  @Override
   public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
     return layer == BlockRenderLayer.SOLID;
   }
@@ -133,13 +142,15 @@ public class BlockCable extends AbstractBlockConnectable {
   public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
     //    setConnections(worldIn, pos, state, false);
     StorageNetwork.log("getStateForPlacement :" + facing.toString());
+    //first use facing and try to set storage connection on that
+
+    setConnections(world, pos, world.getBlockState(pos), false);
     return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
   }
-
-  @Override
-  public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-    StorageNetwork.log("onBlockPlacedBy");
-    setConnections(worldIn, pos, state, false);
+  //
+  //  @Override
+  //  public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+  //    StorageNetwork.log("onBlockPlacedBy");
     //possible bandaid to stop double connects but.. seems to expensive. for an only-visual issue
     // https://github.com/PrinceOfAmber/Storage-Network/issues/84
     //    detectLocalMasterNode(worldIn, pos);
@@ -171,16 +182,9 @@ public class BlockCable extends AbstractBlockConnectable {
     //        }
     //      }
     //    }
-  }
+  //  }
 
-  @Override
-  public int getMetaFromState(IBlockState state) {
-    return 0;
-  }
 
-  boolean validInventory(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-    return UtilInventory.hasItemHandler(worldIn, pos, side);
-  }
 
   public TileCable getTileCableOrNull(IBlockAccess world, BlockPos pos) {
     TileEntity tileHere = world.getTileEntity(pos);
