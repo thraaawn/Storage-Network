@@ -98,6 +98,7 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     }
     sortCablesByPriority(attachedCables);
+
     return attachedCables;
   }
 
