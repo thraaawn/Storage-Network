@@ -303,7 +303,12 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
       mc.player.closeScreen();
       return;
     }
-    drawTooltips(mouseX, mouseY);
+    try {
+      drawTooltips(mouseX, mouseY);
+    }
+    catch (Throwable e) {
+      StorageNetwork.error(e.getMessage());
+    }
   }
 
   @Override
@@ -320,9 +325,9 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
     }
   }
 
-  public void drawTooltips(int mouseX, int mouseY) {
+  private void drawTooltips(int mouseX, int mouseY) {
     for (ItemSlotNetwork s : slots) {
-      if (s.isMouseOverSlot(mouseX, mouseY)) {
+      if (s != null && s.isMouseOverSlot(mouseX, mouseY)) {
         s.drawTooltip(mouseX, mouseY);
       }
     }
@@ -339,13 +344,13 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
       }
       drawHoveringText(lis, mouseX, mouseY);
     }
-    if (clearTextBtn.isMouseOver()) {
+    if (clearTextBtn != null && clearTextBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX, mouseY);
     }
-    if (sortBtn.isMouseOver()) {
+    if (sortBtn != null && sortBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX, mouseY);
     }
-    if (directionBtn.isMouseOver()) {
+    if (directionBtn != null && directionBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.sort")), mouseX, mouseY);
     }
     if (jeiBtn != null && jeiBtn.isMouseOver()) {
