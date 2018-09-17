@@ -67,63 +67,68 @@ public class ItemRemote extends Item {
   @Override
   public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand hand) {
     ItemStack itemStackIn = player.getHeldItem(hand);
-    int itemDamage = itemStackIn.getItemDamage();
-    if (itemDamage < 0 || itemDamage >= RemoteType.values().length || !NBTHelper.getBoolean(itemStackIn, "bound")) {
-      //unbound or invalid data
-      return super.onItemRightClick(worldIn, player, hand);
-    }
-    int x, y, z, itemStackDim;
     try {
-      x = NBTHelper.getInteger(itemStackIn, "x");
-      y = NBTHelper.getInteger(itemStackIn, "y");
-      z = NBTHelper.getInteger(itemStackIn, "z");
-      itemStackDim = NBTHelper.getInteger(itemStackIn, "dim");
-      // validate possible missing data 
-      if (NBTHelper.getString(itemStackIn, "sort") == null) {
-        NBTHelper.setString(itemStackIn, "sort", EnumSortType.NAME.toString());
+      int itemDamage = itemStackIn.getItemDamage();
+      if (itemDamage < 0 || itemDamage >= RemoteType.values().length || !NBTHelper.getBoolean(itemStackIn, "bound")) {
+        //unbound or invalid data
+        return super.onItemRightClick(worldIn, player, hand);
+      }
+      int x, y, z, itemStackDim;
+      try {
+        x = NBTHelper.getInteger(itemStackIn, "x");
+        y = NBTHelper.getInteger(itemStackIn, "y");
+        z = NBTHelper.getInteger(itemStackIn, "z");
+        itemStackDim = NBTHelper.getInteger(itemStackIn, "dim");
+        // validate possible missing data 
+        if (NBTHelper.getString(itemStackIn, "sort") == null) {
+          NBTHelper.setString(itemStackIn, "sort", EnumSortType.NAME.toString());
+        }
+      }
+      catch (Throwable e) {
+        //cant tell if this is NBT error or statistics usage recording issue 
+        //https://github.com/PrinceOfAmber/Storage-Network/issues/93
+        StorageNetwork.instance.logger.error("Invalid remote data ", e);
+        return super.onItemRightClick(worldIn, player, hand);
+      }
+      BlockPos targetPos = new BlockPos(x, y, z);
+      World serverTargetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(itemStackDim);
+      if (!serverTargetWorld.getChunkFromBlockCoords(targetPos).isLoaded()) {
+        StorageNetwork.chatMessage(player, "item.remote.notloaded");
+        return super.onItemRightClick(worldIn, player, hand);
+      }
+      RemoteType remoteType = RemoteType.values()[itemDamage];
+      // first make sure area is loaded, BEFORE getting TE
+      if (serverTargetWorld.getTileEntity(targetPos) instanceof TileMaster) {
+        boolean isSameDimension = (itemStackDim == worldIn.provider.getDimension());
+        boolean isWithinRange = (player.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor);
+        boolean canOpenGUI = false;
+        switch (remoteType) {
+          case DIMENSIONAL:
+            //all dimensions, unlimited range
+            canOpenGUI = true;
+          break;
+          case LIMITED:
+            //same dimension AND limited range
+            canOpenGUI = isSameDimension && isWithinRange;
+          break;
+          case UNLIMITED:
+            //unlimited range, but MUST be same dimension
+            canOpenGUI = isSameDimension;
+          break;
+        }
+        // ok we found a target
+        if (canOpenGUI) {
+          player.openGui(StorageNetwork.instance, getGui(), worldIn, hand.ordinal(), y, z);
+          return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
+        }
+        else {// if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() || player.getDistance(x, y, z) > 32))
+          //        StorageNetwork.log("out of range");
+          StorageNetwork.statusMessage(player, "item.remote.outofrange");
+        }
       }
     }
     catch (Throwable e) {
-      //cant tell if this is NBT error or statistics usage recording issue 
-      //https://github.com/PrinceOfAmber/Storage-Network/issues/93
-      StorageNetwork.instance.logger.error("Invalid remote data ", e);
-      return super.onItemRightClick(worldIn, player, hand);
-    }
-    BlockPos targetPos = new BlockPos(x, y, z);
-    World serverTargetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(itemStackDim);
-    if (!serverTargetWorld.getChunkFromBlockCoords(targetPos).isLoaded()) {
-      StorageNetwork.chatMessage(player, "item.remote.notloaded");
-      return super.onItemRightClick(worldIn, player, hand);
-    }
-    RemoteType remoteType = RemoteType.values()[itemDamage];
-    // first make sure area is loaded, BEFORE getting TE
-    if (serverTargetWorld.getTileEntity(targetPos) instanceof TileMaster) {
-      boolean isSameDimension = (itemStackDim == worldIn.provider.getDimension());
-      boolean isWithinRange = (player.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor);
-      boolean canOpenGUI = false;
-      switch (remoteType) {
-        case DIMENSIONAL:
-          //all dimensions, unlimited range
-          canOpenGUI = true;
-        break;
-        case LIMITED:
-          //same dimension AND limited range
-          canOpenGUI = isSameDimension && isWithinRange;
-        break;
-        case UNLIMITED:
-          //unlimited range, but MUST be same dimension
-          canOpenGUI = isSameDimension;
-        break;
-      }
-      // ok we found a target
-      if (canOpenGUI) {
-        player.openGui(StorageNetwork.instance, getGui(), worldIn, hand.ordinal(), y, z);
-        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
-      }
-      else {// if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimension() || player.getDistance(x, y, z) > 32))
-        //        StorageNetwork.log("out of range");
-        StorageNetwork.statusMessage(player, "item.remote.outofrange");
-      }
+      StorageNetwork.error(e.getMessage());
     }
     return super.onItemRightClick(worldIn, player, hand);
   }

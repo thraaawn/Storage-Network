@@ -114,14 +114,12 @@ public class BlockCable extends AbstractBlockConnectable {
     return false;
   }
 
-
   public TileCable getTileCableOrNull(IBlockAccess world, BlockPos pos) {
     TileEntity tileHere = world.getTileEntity(pos);
     if (tileHere instanceof TileCable)
       return (TileCable) tileHere;
     return null;
   }
-
 
   /**
    * What direction is my storage inventory that im connected to?
@@ -164,7 +162,6 @@ public class BlockCable extends AbstractBlockConnectable {
   //  }
   @Override
   public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
-
     TileCable tile = getTileCableOrNull(world, pos);
     if (tile != null) {
       //wipe previous connection
@@ -178,12 +175,12 @@ public class BlockCable extends AbstractBlockConnectable {
     List<EnumFacing> shuffled = Arrays.asList(EnumFacing.values());
     //we could pick smart order instead of shuffle here
     Collections.shuffle(shuffled);
-
     state = getNewState(world, pos, shuffled);
     super.setConnections(world, pos, state, true);
     UtilTileEntity.updateTile(world, pos);
     return super.rotateBlock(world, pos, axis);
   }
+
   /**
    * called by getActualState and setConnections
    * 
@@ -192,12 +189,10 @@ public class BlockCable extends AbstractBlockConnectable {
    * @return
    */
   private IBlockState getNewState(IBlockAccess world, BlockPos pos, List<EnumFacing> facingOrder) {
-
     TileCable tile = getTileCableOrNull(world, pos);
     if (tile == null) {
       return world.getBlockState(pos);
     }
-
     BlockPos con = null;
     Map<EnumFacing, EnumConnectType> newMap = Maps.newHashMap();
     EnumFacing facingStorage = getConFacingByType(tile, EnumConnectType.STORAGE);
@@ -218,7 +213,6 @@ public class BlockCable extends AbstractBlockConnectable {
       }
       //what connection type is possible here before i save it (conn, null, str)
       EnumConnectType connectType = getConnectionTypeBetween(world, pos, pos.offset(facing));
-
       if (connectType == EnumConnectType.STORAGE) {
         //make sure it only picks ONE storage connection to main
         if (!storage) {

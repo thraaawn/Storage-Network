@@ -98,7 +98,6 @@ public class TileMaster extends TileEntity implements ITickable {
       }
     }
     sortCablesByPriority(attachedCables);
-
     return attachedCables;
   }
 
@@ -204,7 +203,6 @@ public class TileMaster extends TileEntity implements ITickable {
       StorageNetwork.instance.logger.error("Refresh network error ", e);
     }
     addInventorys();
-
     world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
   }
 
@@ -262,7 +260,6 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     int sizeInventory = inventory.getSlots();
     if (existingSlot >= 0) {
-
       stack = inventory.insertItem(existingSlot, stack, simulate);
     }
     if (!stack.isEmpty()) {
@@ -312,7 +309,6 @@ public class TileMaster extends TileEntity implements ITickable {
     //only if it does NOT contains
     String key = getStackKey(stackInCopy);
     if (this.recentImports.containsKey(key)) {
-
       RecentSlotPointer pointer = this.recentImports.get(key);
       AbstractFilterTile aTile = getAbstractFilterTileOrNull(pointer.getPos());
       if (aTile == null) {
@@ -372,8 +368,6 @@ public class TileMaster extends TileEntity implements ITickable {
    * @param attachedCables
    */
   public void updateImports(List<TileCable> attachedCables) {
-
-
     //    for (RecentPointer pointer : this.recentImports) {
     //      // TODO: use this first
     //    }

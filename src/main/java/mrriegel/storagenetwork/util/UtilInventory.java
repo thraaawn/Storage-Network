@@ -42,7 +42,7 @@ public class UtilInventory {
       return rounded + "K";
     }
     else if (size < Math.pow(10, 9)) {
-      int rounded = Math.round(size / (float)Math.pow(10, 6));
+      int rounded = Math.round(size / (float) Math.pow(10, 6));
       return rounded + "M";
     }
     else if (size < Math.pow(10, 12)) {

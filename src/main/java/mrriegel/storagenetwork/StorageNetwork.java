@@ -68,6 +68,10 @@ public class StorageNetwork {
     }
   }
 
+  public static void error(String s) {
+    instance.error(s);
+  }
+
   public static void benchmark(String s) {
     long now = System.currentTimeMillis();
     long DIFF = now - lastTime;

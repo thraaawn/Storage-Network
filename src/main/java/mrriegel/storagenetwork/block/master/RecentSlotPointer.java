@@ -24,7 +24,6 @@ public class RecentSlotPointer {
     this.pos = pos;
   }
 
-
   public static class StackSlot {
 
     public int slot = -1;
