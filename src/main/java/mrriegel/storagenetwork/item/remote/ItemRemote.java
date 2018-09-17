@@ -29,10 +29,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemRemote extends Item {
 
-  public enum RemoteType {
-    LIMITED, DIMENSIONAL, UNLIMITED;
-  }
-
   public ItemRemote() {
     super();
     this.setCreativeTab(CreativeTab.tab);
