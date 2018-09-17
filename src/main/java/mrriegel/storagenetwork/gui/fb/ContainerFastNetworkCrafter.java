@@ -42,6 +42,7 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
     this.player = player;
   }
 
+  @Override
   public abstract TileMaster getTileMaster();
 
   public abstract void bindHotbar(EntityPlayer player);
@@ -127,7 +128,10 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
         if (!world.isRemote) tryRestockGridEntirely(craftMatrix, this, rec, lastItems);
         onCraftMatrixChanged(craftMatrix);
         detectAndSendChanges();
-        ((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(windowId, 0, lastRecipe.getRecipeOutput()));
+        if (lastRecipe != null && player instanceof EntityPlayerMP) {
+          EntityPlayerMP mp = ((EntityPlayerMP) player);
+          mp.connection.sendPacket(new SPacketSetSlot(windowId, 0, lastRecipe.getRecipeOutput()));
+        }
         forceSync = true;
         return take;
       }

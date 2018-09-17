@@ -162,15 +162,16 @@ public class TileMaster extends TileEntity implements ITickable {
       if (chunk == null || !chunk.isLoaded()) {
         continue;
       }
-      if (world.getTileEntity(bl) != null && world.getTileEntity(bl) instanceof TileMaster && !bl.equals(this.pos)) {
+      TileEntity tileHere = world.getTileEntity(bl);
+      if (tileHere != null && tileHere instanceof TileMaster && !bl.equals(this.pos)) {
         world.getBlockState(bl).getBlock().dropBlockAsItem(world, bl, world.getBlockState(bl), 0);
         world.setBlockToAir(bl);
         world.removeTileEntity(bl);
         continue;
       }
-      if (world.getTileEntity(bl) != null && world.getTileEntity(bl) instanceof IConnectable && !getConnectables().contains(bl)) {
+      if (tileHere != null && tileHere instanceof IConnectable && !getConnectables().contains(bl)) {
         getConnectables().add(bl);
-        ((IConnectable) world.getTileEntity(bl)).setMaster(this.pos);
+        ((IConnectable) tileHere).setMaster(this.pos);
         chunk.setModified(true);
         addConnectables(bl);
       }
