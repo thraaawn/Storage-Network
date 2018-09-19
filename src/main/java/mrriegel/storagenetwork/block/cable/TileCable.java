@@ -10,7 +10,6 @@ import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.ModItems;
 import mrriegel.storagenetwork.util.UtilInventory;
-import mrriegel.storagenetwork.util.data.EnumConnectType;
 import mrriegel.storagenetwork.util.data.FilterItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -30,7 +29,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   private NonNullList<ItemStack> upgrades = NonNullList.withSize(ContainerCable.UPGRADE_COUNT, ItemStack.EMPTY);
   private boolean mode = true;
   private int limit = 0;
-  public EnumConnectType north, south, east, west, up, down;
+  public EnumCableType north, south, east, west, up, down;
   private ItemStack stack = ItemStack.EMPTY;
 
   public TileCable() {
@@ -52,8 +51,8 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     return this.blockType == ModBlocks.imKabel || this.blockType == ModBlocks.exKabel;
   }
 
-  public Map<EnumFacing, EnumConnectType> getConnects() {
-    Map<EnumFacing, EnumConnectType> map = Maps.newHashMap();
+  public Map<EnumFacing, EnumCableType> getConnects() {
+    Map<EnumFacing, EnumCableType> map = Maps.newHashMap();
     map.put(EnumFacing.NORTH, north);
     map.put(EnumFacing.SOUTH, south);
     map.put(EnumFacing.EAST, east);
@@ -63,7 +62,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     return map;
   }
 
-  public void setConnects(Map<EnumFacing, EnumConnectType> map) {
+  public void setConnects(Map<EnumFacing, EnumCableType> map) {
     north = map.get(EnumFacing.NORTH);
     south = map.get(EnumFacing.SOUTH);
     east = map.get(EnumFacing.EAST);
@@ -103,17 +102,17 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     else
       stack = ItemStack.EMPTY;
     if (compound.hasKey("north"))
-      north = EnumConnectType.valueOf(compound.getString("north"));
+      north = EnumCableType.valueOf(compound.getString("north"));
     if (compound.hasKey("south"))
-      south = EnumConnectType.valueOf(compound.getString("south"));
+      south = EnumCableType.valueOf(compound.getString("south"));
     if (compound.hasKey("east"))
-      east = EnumConnectType.valueOf(compound.getString("east"));
+      east = EnumCableType.valueOf(compound.getString("east"));
     if (compound.hasKey("west"))
-      west = EnumConnectType.valueOf(compound.getString("west"));
+      west = EnumCableType.valueOf(compound.getString("west"));
     if (compound.hasKey("up"))
-      up = EnumConnectType.valueOf(compound.getString("up"));
+      up = EnumCableType.valueOf(compound.getString("up"));
     if (compound.hasKey("down"))
-      down = EnumConnectType.valueOf(compound.getString("down"));
+      down = EnumCableType.valueOf(compound.getString("down"));
     NBTTagList nbttaglist = compound.getTagList("Items", 10);
     upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
     for (int i = 0; i < nbttaglist.tagCount(); ++i) {

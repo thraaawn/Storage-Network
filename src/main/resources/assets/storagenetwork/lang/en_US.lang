@@ -2,6 +2,7 @@ tile.storagenetwork:kabel.name=Storage Cable
 tile.storagenetwork:storage_kabel.name=Storage Link Cable
 tile.storagenetwork:ex_kabel.name=Storage Export Cable
 tile.storagenetwork:im_kabel.name=Storage Import Cable
+tile.storagenetwork:process_kabel.name=Processing Cable
 
 tile.storagenetwork:master.name=Storage Network Master
 tile.storagenetwork:request.name=Storage Request Table

@@ -28,6 +28,7 @@ public class RegistryEvents {
     registry.register(ModBlocks.storageKabel.setUnlocalizedName(ModBlocks.storageKabel.getRegistryName().toString()));
     registry.register(ModBlocks.exKabel.setUnlocalizedName(ModBlocks.exKabel.getRegistryName().toString()));
     registry.register(ModBlocks.imKabel.setUnlocalizedName(ModBlocks.imKabel.getRegistryName().toString()));
+    registry.register(ModBlocks.processKabel.setUnlocalizedName(ModBlocks.processKabel.getRegistryName().toString()));
   }
 
   @SubscribeEvent
@@ -39,6 +40,7 @@ public class RegistryEvents {
     registry.register(new ItemBlock(ModBlocks.storageKabel).setRegistryName(ModBlocks.storageKabel.getRegistryName()));
     registry.register(new ItemBlock(ModBlocks.exKabel).setRegistryName(ModBlocks.exKabel.getRegistryName()));
     registry.register(new ItemBlock(ModBlocks.imKabel).setRegistryName(ModBlocks.imKabel.getRegistryName()));
+    registry.register(new ItemBlock(ModBlocks.processKabel).setRegistryName(ModBlocks.processKabel.getRegistryName()));
     registry.register(ModItems.upgrade);
     registry.register(ModItems.remote.setUnlocalizedName(ModItems.remote.getRegistryName().toString()));
     GameRegistry.registerTileEntity(TileCable.class, "tileKabel");
@@ -52,6 +54,7 @@ public class RegistryEvents {
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.exKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":ex_kabel", "inventory"));
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.storageKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":storage_kabel", "inventory"));
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.imKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":im_kabel", "inventory"));
+    ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.processKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":process_kabel", "inventory"));
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.master), 0, new ModelResourceLocation(StorageNetwork.MODID + ":master", "inventory"));
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.request), 0, new ModelResourceLocation(StorageNetwork.MODID + ":request", "inventory"));
     for (int i = 0; i < ItemUpgrade.NUM; i++) {

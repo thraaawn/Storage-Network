@@ -17,7 +17,6 @@ import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.UtilTileEntity;
-import mrriegel.storagenetwork.util.data.EnumConnectType;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
@@ -127,25 +126,25 @@ public class BlockCable extends AbstractBlockConnectable {
    * @param tile
    * @return facing nullable
    */
-  private EnumFacing getConFacingByType(@Nonnull TileCable tile, EnumConnectType connectType) {
-    Map<EnumFacing, EnumConnectType> previousConnectionMap = tile.getConnects();
-    for (Entry<EnumFacing, EnumConnectType> e : previousConnectionMap.entrySet()) {
+  private EnumFacing getConFacingByType(@Nonnull TileCable tile, EnumCableType connectType) {
+    Map<EnumFacing, EnumCableType> previousConnectionMap = tile.getConnects();
+    for (Entry<EnumFacing, EnumCableType> e : previousConnectionMap.entrySet()) {
       if (e.getValue() == connectType) {
         return e.getKey();
       }
     }
     return null;
   }
-
-  private Map<EnumFacing, EnumConnectType> getConnectionsAllowed(World world, BlockPos pos) {
-    Map<EnumFacing, EnumConnectType> newMap = Maps.newHashMap();
-    for (EnumFacing facing : EnumFacing.values()) {
-      //save all directions. order doesnt matter
-      EnumConnectType connectType = getConnectionTypeBetween(world, pos, pos.offset(facing));
-      newMap.put(facing, connectType);
-    }
-    return newMap;
-  }
+  //
+  //  private Map<EnumFacing, EnumConnectType> getConnectionsAllowed(World world, BlockPos pos) {
+  //    Map<EnumFacing, EnumConnectType> newMap = Maps.newHashMap();
+  //    for (EnumFacing facing : EnumFacing.values()) {
+  //      //save all directions. order doesnt matter
+  //      EnumConnectType connectType = getConnectionTypeBetween(world, pos, pos.offset(facing));
+  //      newMap.put(facing, connectType);
+  //    }
+  //    return newMap;
+  //  }
 
   //TODO: connect to the one getting hit not anything else
   //problem: tile is null
@@ -167,7 +166,7 @@ public class BlockCable extends AbstractBlockConnectable {
       //wipe previous connection
       tile.setInventoryFace(null);
       tile.setConnectedInventory(null);
-      Map<EnumFacing, EnumConnectType> newMap = Maps.newHashMap();
+      Map<EnumFacing, EnumCableType> newMap = Maps.newHashMap();
       tile.setConnects(newMap);
     }
     //then find new connection in different order using shuffle
@@ -194,14 +193,14 @@ public class BlockCable extends AbstractBlockConnectable {
       return world.getBlockState(pos);
     }
     BlockPos con = null;
-    Map<EnumFacing, EnumConnectType> newMap = Maps.newHashMap();
-    EnumFacing facingStorage = getConFacingByType(tile, EnumConnectType.STORAGE);
+    Map<EnumFacing, EnumCableType> newMap = Maps.newHashMap();
+    EnumFacing facingStorage = getConFacingByType(tile, EnumCableType.STORAGE);
     EnumFacing face = null;
     boolean storage = false;
     boolean first = false;
     //fill in newMap based on current storage connection
-    if (facingStorage != null && getConnectionTypeBetween(world, pos, pos.offset(facingStorage)) == EnumConnectType.STORAGE) {
-      newMap.put(facingStorage, EnumConnectType.STORAGE);
+    if (facingStorage != null && getConnectionTypeBetween(world, pos, pos.offset(facingStorage)) == EnumCableType.STORAGE) {
+      newMap.put(facingStorage, EnumCableType.STORAGE);
       storage = true;
       first = true;
     }
@@ -212,8 +211,8 @@ public class BlockCable extends AbstractBlockConnectable {
         continue;
       }
       //what connection type is possible here before i save it (conn, null, str)
-      EnumConnectType connectType = getConnectionTypeBetween(world, pos, pos.offset(facing));
-      if (connectType == EnumConnectType.STORAGE) {
+      EnumCableType connectType = getConnectionTypeBetween(world, pos, pos.offset(facing));
+      if (connectType == EnumCableType.STORAGE) {
         //make sure it only picks ONE storage connection to main
         if (!storage) {
           newMap.put(facing, connectType);
@@ -221,7 +220,7 @@ public class BlockCable extends AbstractBlockConnectable {
         }
         else {
           //replace storage with null
-          newMap.put(facing, EnumConnectType.NULL);
+          newMap.put(facing, EnumCableType.NULL);
         }
       }
       else {//just save it
@@ -229,27 +228,27 @@ public class BlockCable extends AbstractBlockConnectable {
       }
     }
     tile.setConnects(newMap);
-    if (tile.north == EnumConnectType.STORAGE) {
+    if (tile.north == EnumCableType.STORAGE) {
       face = EnumFacing.NORTH;
       con = pos.north();
     }
-    else if (tile.south == EnumConnectType.STORAGE) {
+    else if (tile.south == EnumCableType.STORAGE) {
       face = EnumFacing.SOUTH;
       con = pos.south();
     }
-    else if (tile.east == EnumConnectType.STORAGE) {
+    else if (tile.east == EnumCableType.STORAGE) {
       face = EnumFacing.EAST;
       con = pos.east();
     }
-    else if (tile.west == EnumConnectType.STORAGE) {
+    else if (tile.west == EnumCableType.STORAGE) {
       face = EnumFacing.WEST;
       con = pos.west();
     }
-    else if (tile.down == EnumConnectType.STORAGE) {
+    else if (tile.down == EnumCableType.STORAGE) {
       face = EnumFacing.DOWN;
       con = pos.down();
     }
-    else if (tile.up == EnumConnectType.STORAGE) {
+    else if (tile.up == EnumCableType.STORAGE) {
       face = EnumFacing.UP;
       con = pos.up();
     }
@@ -311,27 +310,27 @@ public class BlockCable extends AbstractBlockConnectable {
     float f4 = 0.3125F;
     float f5 = 0.6875F;
     addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
-    if (tile.north != EnumConnectType.NULL) {
+    if (tile.north != EnumCableType.NULL) {
       f2 = 0f;
       addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
     }
-    if (tile.south != EnumConnectType.NULL) {
+    if (tile.south != EnumCableType.NULL) {
       f3 = 1f;
       addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
     }
-    if (tile.west != EnumConnectType.NULL) {
+    if (tile.west != EnumCableType.NULL) {
       f = 0f;
       addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
     }
-    if (tile.east != EnumConnectType.NULL) {
+    if (tile.east != EnumCableType.NULL) {
       f1 = 1f;
       addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
     }
-    if (tile.down != EnumConnectType.NULL) {
+    if (tile.down != EnumCableType.NULL) {
       f4 = 0f;
       addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
     }
-    if (tile.up != EnumConnectType.NULL) {
+    if (tile.up != EnumCableType.NULL) {
       f5 = 1f;
       addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
     }
@@ -351,41 +350,41 @@ public class BlockCable extends AbstractBlockConnectable {
     float y2 = 0.63F;
     float z1 = 0.37F;
     float z2 = 0.63F;
-    if (tile.north != EnumConnectType.NULL) {
+    if (tile.north != EnumCableType.NULL) {
       y1 = 0f;
     }
-    if (tile.south != EnumConnectType.NULL) {
+    if (tile.south != EnumCableType.NULL) {
       y2 = 1f;
     }
-    if (tile.west != EnumConnectType.NULL) {
+    if (tile.west != EnumCableType.NULL) {
       x1 = 0f;
     }
-    if (tile.east != EnumConnectType.NULL) {
+    if (tile.east != EnumCableType.NULL) {
       x2 = 1f;
     }
-    if (tile.down != EnumConnectType.NULL) {
+    if (tile.down != EnumCableType.NULL) {
       z1 = 0f;
     }
-    if (tile.up != EnumConnectType.NULL) {
+    if (tile.up != EnumCableType.NULL) {
       z2 = 1f;
     }
     return new AxisAlignedBB(x1, z1, y1, x2, z2, y2);
   }
 
-  protected EnumConnectType getConnectionTypeBetween(IBlockAccess world, BlockPos posTarget, BlockPos posHere) {
+  protected EnumCableType getConnectionTypeBetween(IBlockAccess world, BlockPos posTarget, BlockPos posHere) {
     TileEntity tileHere = world.getTileEntity(posHere);
     Block targetBlock = world.getBlockState(posTarget).getBlock();
     if (tileHere instanceof IConnectable || tileHere instanceof TileMaster) {
-      return EnumConnectType.CONNECT;
+      return EnumCableType.CONNECT;
     }
     if (targetBlock == ModBlocks.kabel) {
-      return EnumConnectType.NULL;
+      return EnumCableType.NULL;
     }
     EnumFacing face = getFacingBetween(posTarget, posHere);
     if (!validInventory(world, posHere, face)) {
-      return EnumConnectType.NULL;
+      return EnumCableType.NULL;
     }
-    return EnumConnectType.STORAGE;
+    return EnumCableType.STORAGE;
   }
 
   @Override
@@ -417,5 +416,7 @@ public class BlockCable extends AbstractBlockConnectable {
       tooltip.add(I18n.format("tooltip.storagenetwork.kabel_S"));
     else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.kabel))
       tooltip.add(I18n.format("tooltip.storagenetwork.kabel_L"));
+    else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.processKabel))
+      tooltip.add(I18n.format("tooltip.storagenetwork.kabel_P"));
   }
 }

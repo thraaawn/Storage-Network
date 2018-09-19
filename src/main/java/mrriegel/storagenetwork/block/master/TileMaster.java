@@ -545,6 +545,7 @@ public class TileMaster extends TileEntity implements ITickable {
       updateImports(importCables);
       List<TileCable> exportCables = getAttachedCables(links, ModBlocks.exKabel);
       updateExports(exportCables);
+      List<TileCable> processCables = getAttachedCables(links, ModBlocks.processKabel);
     }
     catch (Throwable e) {
       StorageNetwork.instance.logger.error("Refresh network error ", e);
