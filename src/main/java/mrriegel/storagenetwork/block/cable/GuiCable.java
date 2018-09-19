@@ -28,6 +28,7 @@ import net.minecraftforge.fml.client.config.GuiCheckBox;
 
 public class GuiCable extends GuiContainer implements IPublicGuiContainer {
 
+  private static final int SQ = 18;
   private static final int TEXTBOX_WIDTH = 26;
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
   private GuiCableButton btnPlus, btnMinus, btnWhite, btnOperationToggle, btnImport, btnInputOutputStorage;
@@ -66,23 +67,29 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     int i = (this.width - this.xSize) / 2;
     int j = (this.height - this.ySize) / 2;
     this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
-    //    if (tile.getBlockType() != ModBlocks.storageKabel) {
+    int x = 0, y = 0;
+    int u = 176, v = 34;
     for (int ii = 0; ii < 9; ii++) {
       for (int jj = 0; jj < 2; jj++) {
-        this.drawTexturedModalRect(i + 7 + ii * 18, j + 25 + 18 * jj, 176, 34, 18, 18);
+        x = i + 7 + ii * 18;
+        y = j + 25 + SQ * jj;
+        //        if (jj == 1 && tile.getBlockType() == ModBlocks.processKabel) {
+        //          //move space down
+        //          y += 6;
+        //        }
+        this.drawTexturedModalRect(x, y, u, v, SQ, SQ);
       }
     }
-    //    }
     if (tile.isUpgradeable()) {
       for (int ii = 0; ii < ItemUpgrade.NUM; ii++) {
-        this.drawTexturedModalRect(i + 97 + ii * 18, j + 5, 176, 34, 18, 18);
+        this.drawTexturedModalRect(i + 97 + ii * SQ, j + 5, u, v, SQ, SQ);
       }
     }
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1 && btnOperationToggle != null) {
       btnOperationToggle.enabled = true;
       btnOperationToggle.visible = true;
       this.mc.getTextureManager().bindTexture(texture);
-      this.drawTexturedModalRect(i + 7, j + 65, 176, 34, 18, 18);//the extra slot
+      this.drawTexturedModalRect(i + 7, j + 65, u, v, SQ, SQ);//the extra slot
       //also draw textbox
       this.drawTexturedModalRect(i + 50, j + 67, 0, 171, TEXTBOX_WIDTH, 12);
       searchBar.drawTextBox();
@@ -99,7 +106,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         ItemStack s = wrap == null ? ItemStack.EMPTY : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
         boolean numShow = tile instanceof TileCable ? tile.getUpgradesOfType(ItemUpgrade.STOCK) > 0 : false;
-        list.add(new ItemSlotNetwork(this, s, guiLeft + 8 + col * 18, guiTop + 26 + row * 18, num, guiLeft, guiTop, numShow));
+        list.add(new ItemSlotNetwork(this, s, guiLeft + 8 + col * SQ, guiTop + 26 + row * SQ, num, guiLeft, guiTop, numShow));
       }
     }
     for (ItemSlotNetwork s : list) {
@@ -108,6 +115,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
       operationItemSlot.drawSlot(mouseX, mouseY);
     }
+    if (tile.getBlockType() != ModBlocks.processKabel)
     fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
   }
 
@@ -139,47 +147,52 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   @Override
   public void initGui() {
     super.initGui();
-    btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
-    btnMinus.setCable(tile);
-    this.addButton(btnMinus);
-    btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
-    btnPlus.setCable(tile);
-    this.addButton(btnPlus);
-    btnImport = new GuiCableButton(CableDataMessage.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
-    btnImport.setCable(tile);
-    this.addButton(btnImport);
-    btnWhite = new GuiCableButton(CableDataMessage.TOGGLE_WHITELIST, guiLeft + 58, guiTop + 5, "");
-    btnWhite.setCable(tile);
-    this.addButton(btnWhite);
-    btnWhite.visible = tile.getBlockType() != ModBlocks.exKabel;
-    if (tile.isStorage()) {
-      btnInputOutputStorage = new GuiCableButton(CableDataMessage.TOGGLE_WAY, guiLeft + 115, guiTop + 5, "");
-      btnInputOutputStorage.setCable(tile);
-      this.addButton(btnInputOutputStorage);
+    if (tile.getBlockType() == ModBlocks.processKabel) {
+      //custom buttonies 
     }
-    if (tile.isStorage() == false) {
-      Keyboard.enableRepeatEvents(true);
-      searchBar = new GuiTextField(99, fontRenderer, guiLeft + 54, guiTop + 69, TEXTBOX_WIDTH, fontRenderer.FONT_HEIGHT);
-      searchBar.setMaxStringLength(3);
-      searchBar.setEnableBackgroundDrawing(false);
-      searchBar.setVisible(true);
-      searchBar.setTextColor(16777215);
-      searchBar.setCanLoseFocus(false);
-      searchBar.setFocused(true);
-      searchBar.setText(tile.getLimit() + "");
-      searchBar.width = 20;
-      btnOperationToggle = new GuiCableButton(CableDataMessage.TOGGLE_MODE, guiLeft + 28, guiTop + 66, "");
-      //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
-      btnOperationToggle.setCable(tile);
-      this.addButton(btnOperationToggle);
-      operationItemSlot = new ItemSlotNetwork(this, tile.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false);
-      //      
-      checkOreBtn = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, I18n.format("gui.storagenetwork.checkbox.ore"), true);
-      checkOreBtn.setIsChecked(tile.getOre());
-      this.addButton(checkOreBtn);
-      checkMetaBtn = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, I18n.format("gui.storagenetwork.checkbox.meta"), true);
-      checkMetaBtn.setIsChecked(tile.getMeta());
-      this.addButton(checkMetaBtn);
+    else {
+      btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
+      btnMinus.setCable(tile);
+      this.addButton(btnMinus);
+      btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
+      btnPlus.setCable(tile);
+      this.addButton(btnPlus);
+      btnImport = new GuiCableButton(CableDataMessage.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
+      btnImport.setCable(tile);
+      this.addButton(btnImport);
+      btnWhite = new GuiCableButton(CableDataMessage.TOGGLE_WHITELIST, guiLeft + 58, guiTop + 5, "");
+      btnWhite.setCable(tile);
+      this.addButton(btnWhite);
+      btnWhite.visible = tile.getBlockType() != ModBlocks.exKabel;
+      if (tile.isStorage()) {
+        btnInputOutputStorage = new GuiCableButton(CableDataMessage.TOGGLE_WAY, guiLeft + 115, guiTop + 5, "");
+        btnInputOutputStorage.setCable(tile);
+        this.addButton(btnInputOutputStorage);
+      }
+      else {
+        Keyboard.enableRepeatEvents(true);
+        searchBar = new GuiTextField(99, fontRenderer, guiLeft + 54, guiTop + 69, TEXTBOX_WIDTH, fontRenderer.FONT_HEIGHT);
+        searchBar.setMaxStringLength(3);
+        searchBar.setEnableBackgroundDrawing(false);
+        searchBar.setVisible(true);
+        searchBar.setTextColor(16777215);
+        searchBar.setCanLoseFocus(false);
+        searchBar.setFocused(true);
+        searchBar.setText(tile.getLimit() + "");
+        searchBar.width = 20;
+        btnOperationToggle = new GuiCableButton(CableDataMessage.TOGGLE_MODE, guiLeft + 28, guiTop + 66, "");
+        //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
+        btnOperationToggle.setCable(tile);
+        this.addButton(btnOperationToggle);
+        operationItemSlot = new ItemSlotNetwork(this, tile.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false);
+        //      
+        checkOreBtn = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, I18n.format("gui.storagenetwork.checkbox.ore"), true);
+        checkOreBtn.setIsChecked(tile.getOre());
+        this.addButton(checkOreBtn);
+        checkMetaBtn = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, I18n.format("gui.storagenetwork.checkbox.meta"), true);
+        checkMetaBtn.setIsChecked(tile.getMeta());
+        this.addButton(checkMetaBtn);
+      }
     }
   }
 

@@ -106,6 +106,7 @@ public class BlockCable extends AbstractBlockConnectable {
     if (worldIn.isRemote) {
       return true;
     }
+    //if process - do own gui!
     if (tile.getBlockType() != ModBlocks.kabel) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;

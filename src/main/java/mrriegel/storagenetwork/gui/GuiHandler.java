@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class GuiHandler implements IGuiHandler {
 
-  public static final int CABLE = 0;
+  public static final int CABLE = 0;// EnumCableType.CONNECT.ordinal();
   public static final int REQUEST = 3;
   public static final int REMOTE = 4;
   public static final boolean FB_LOADED = Loader.isModLoaded("fastbench");
