@@ -105,7 +105,10 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         StackWrapper wrap = tile.getFilter().get(index);
         ItemStack s = wrap == null ? ItemStack.EMPTY : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
-        boolean numShow = tile instanceof TileCable ? tile.getUpgradesOfType(ItemUpgrade.STOCK) > 0 : false;
+        boolean numShow = tile instanceof TileCable ? tile.getUpgradesOfType(ItemUpgrade.STOCK) > 0
+            || tile.getBlockType() == ModBlocks.processKabel
+            : false;
+        //actually
         list.add(new ItemSlotNetwork(this, s, guiLeft + 8 + col * SQ, guiTop + 26 + row * SQ, num, guiLeft, guiTop, numShow));
       }
     }
