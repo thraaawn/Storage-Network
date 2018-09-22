@@ -1,6 +1,9 @@
 package mrriegel.storagenetwork.block.cable;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -11,6 +14,7 @@ import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.ModItems;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.data.FilterItem;
+import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -319,4 +323,30 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   @Override
   public void clear() {}
+
+  public List<StackWrapper> getFilterTop() {
+    Map<Integer, StackWrapper> flt = super.getFilter();
+    List<StackWrapper> half = IntStream.range(0, flt.keySet().size())
+        .filter(i -> i <= 8 && flt.get(i).getStack().isEmpty() == false)
+        .mapToObj(i -> flt.get(i))
+        .collect(Collectors.toList());
+    return half;
+  }
+
+  public List<StackWrapper> getFilterBottom() {
+    Map<Integer, StackWrapper> flt = super.getFilter();
+    List<StackWrapper> half = IntStream.range(0, flt.keySet().size())
+        .filter(i -> i >= 9 && flt.get(i).getStack().isEmpty() == false)
+        .mapToObj(i -> flt.get(i))
+        .collect(Collectors.toList());
+    return half;
+  }
+
+  public ProcessRequestModel getTopRequest() {
+    return null;
+  }
+
+  public void deleteRequest(ProcessRequestModel request) {
+    // TODO Auto-generated method stub
+  }
 }

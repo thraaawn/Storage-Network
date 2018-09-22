@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.block.master;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.IConnectable;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.master.RecentSlotPointer.StackSlot;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -368,7 +370,7 @@ public class TileMaster extends TileEntity implements ITickable {
    * 
    * @param attachedCables
    */
-  public void updateImports(List<TileCable> attachedCables) {
+  private void updateImports(List<TileCable> attachedCables) {
     //    for (RecentPointer pointer : this.recentImports) {
     //      // TODO: use this first
     //    }
@@ -410,7 +412,63 @@ public class TileMaster extends TileEntity implements ITickable {
     }
   }
 
-  public void updateExports(List<TileCable> attachedCables) {
+  private void updateProcess(List<TileCable> processCables) {
+    List<ProcessRequestModel> sortedRequestList = new ArrayList<>();
+
+    //take the first X request (constant or configured, max # jobs per tick) 
+    //it knows count, pos to use
+    // run it (import , output, flip)
+    // if remaining == 0 then delete the Request
+    //user will create a request, store in memory list
+    for (TileCable tileCable : processCables) {
+      if (tileCable == null || tileCable.getInventory() == null || tileCable.getBlockType() != ModBlocks.processKabel) {
+        continue;
+      }
+      if ((world.getTotalWorldTime() + 20) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
+        continue;
+      }
+      ProcessRequestModel request = tileCable.getTopRequest();
+      if (request == null) {
+        continue;
+      }
+      //remaining income
+      int remaining = request.getCountRequested() - request.getCountCompleted();
+      if (remaining <= 0) {
+        //delete me
+        tileCable.deleteRequest(request);
+        continue;
+      }
+      //now check item filter for input/output
+      List<StackWrapper> ingredients = tileCable.getFilterTop();
+      //well should this only be a single output? 
+      List<StackWrapper> outputs = tileCable.getFilterBottom();
+      //EXAMPLE REQUEST:
+      //automate a furnace: 
+      // ingredient is one cobblestone 
+      // output is one smoothstone
+      //
+      if (request.isWaitingResult()) {
+        // look for "output" items that can be extracted from target
+        // IF all found 
+        //then complete extraction (and insert into network)
+        //then toggle that waitingResult flag on request (and save)
+        // 
+      }
+      else {
+        //we need to input ingredients FROM network into target
+        //look for full set, 
+        //if we get all
+        //and if we can insert all
+        //then complete transaction (get and put items)
+        //flip that waitingResult flag on request (and save)
+      }
+
+
+    }
+  }
+
+
+  private void updateExports(List<TileCable> attachedCables) {
     for (TileCable tileCable : attachedCables) {
       if (tileCable == null || tileCable.getInventory() == null) {
         continue;
@@ -546,10 +604,18 @@ public class TileMaster extends TileEntity implements ITickable {
       List<TileCable> exportCables = getAttachedCables(links, ModBlocks.exKabel);
       updateExports(exportCables);
       List<TileCable> processCables = getAttachedCables(links, ModBlocks.processKabel);
+      this.updateProcess(processCables);
     }
     catch (Throwable e) {
       StorageNetwork.instance.logger.error("Refresh network error ", e);
     }
+  }
+
+  public static class RequestProcess {
+
+    public int countRequired;
+    public int counted = 0;
+    public BlockPos cableAt;
   }
 
   private void sortCablesByPriority(List<TileCable> attachedCables) {
