@@ -2,6 +2,19 @@ package mrriegel.storagenetwork.block.cable;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+//KNOWN BUGS
+//1: always inserting second ingredient if first one runs dry, fills too much
+//2: have to kickstart, its stuck at start in (inv to network) 
+//3: sided inventories aka furnaces need a solution
+//4: cant turn off (multiple options for features to address)
+//
+//long versions
+//3a: toggle button for "input = bottom; output = north"
+//
+//: its stuck in the "network to inventory" loop. but when it fails to insert 100% of recipe it
+//doesnt roll back and leaves half the ingredients in there
+//1a a bandaid could be "do you have <resin> in your insert-able slots? (ignore output-only slots and autocrafter 3x3)
+//1b another one is to rollback transactions / so if it needs both resin and acorn, but acorn empty, dont insert resin every tick forever  
 public class ProcessRequestModel {
 
   public enum ProcessStatus {
@@ -11,10 +24,7 @@ public class ProcessRequestModel {
 
   //you can request more than 64
   private int count;
-  //import cable = from inventory to network
-  //export cable = from network to inventory
-  //so initial value is filling ingredients = export
-  private ProcessStatus status = ProcessStatus.EXPORTING;
+  private ProcessStatus status = ProcessStatus.IMPORTING;
 
   public int getCount() {
     return count;
