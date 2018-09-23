@@ -440,37 +440,38 @@ public class TileMaster extends TileEntity implements ITickable {
       // output is one smoothstone (network gets-imports this) 
       //
       IItemHandler inventoryLinked = tileCable.getInventory();
-      if (request.getStatus() == ProcessStatus.EXPORTING) {
-        //form network to inventory 
+      if (request.getStatus() == ProcessStatus.EXPORTING) { //from network to inventory 
+        //NEW : this mode more stubborn. ex auto crafter.
+        //if the target already has items, who cares, i was told to be in export mode so export a set if possible right away always.
+        //then (assuming that works or even if not)
+        //check if it has required
         //does the target have everything it needs, yes or no
         //look for full set, 
         //if we get all
-        int satisfied = 0;
+        int numSatisfiedIngredients = 0;
         //we need to input ingredients FROM network into target
         for (StackWrapper ingred : ingredients) {
-          int many = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, ingred.getStack(), ingred.getSize());
-          if (many > 0) {
-            // not satisfied, so how many are needed. request them
+          //  how many are needed. request them
             boolean simulate = true;
-            ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy()), many, simulate);//false means 4real, no simulate
+          ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy()), ingred.getSize(), simulate);//false means 4real, no simulate
             ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
             if (remain.isEmpty()) {
               //then do it for real
               simulate = false;
-              requestedFromNetwork = this.request(new FilterItem(ingred.getStack()), many, simulate);//false means 4real, no simulate
+            requestedFromNetwork = this.request(new FilterItem(ingred.getStack()), ingred.getSize(), simulate);//false means 4real, no simulate
               remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
               //done
               //now count whats needed, SHOULD be zero
-              many = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, ingred.getStack(), ingred.getSize());
-            }
           }
-          //not an else-if, use changes from within ifrst if to update many
-          if (many == 0) {
+
+          int manyMoreNeeded = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, ingred.getStack(), ingred.getSize());
+
+          if (manyMoreNeeded == 0) {
             //ok it has ingredients here
-            satisfied++;
+            numSatisfiedIngredients++;
           }
         }
-        if (satisfied == ingredients.size()) {
+        if (numSatisfiedIngredients == ingredients.size()) {
           //and if we can insert all
           //then complete transaction (get and put items)
           //flip that waitingResult flag on request (and save)
