@@ -75,3 +75,8 @@ tooltip.storagenetwork.upgrade_3=Keeps a specific amount of items in the attache
 
 chat.master.emptyslots=Potential Empty Slots: 
 chat.master.connectables=Connectables: 
+
+
+storagenetwork.process.status0=Halted or Disabled
+storagenetwork.process.status1=Importing status (outdated)
+storagenetwork.process.status2=Exporting status (outdated)

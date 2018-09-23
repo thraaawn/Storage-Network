@@ -95,7 +95,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         if (col == 1 && tile.getBlockType() == ModBlocks.processKabel) {
           //move space down
           // or some other way rearrange process slots 
-          y += 5;
+          //           y += 5;
         }
         this.drawTexturedModalRect(x, y, u, v, SQ, SQ);
       }
@@ -167,18 +167,23 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   }
 
   @Override
+  protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    this.fontRenderer.drawString(StorageNetwork.lang("storagenetwork.process.status" + tile.getField(0)),
+        8, 70, FONTCOLOR);
+  }
+
+  @Override
   public void initGui() {
     super.initGui();
-    if (tile.getBlockType() == ModBlocks.processKabel) {
-      //custom buttonies 
-      btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
-      btnMinus.setCable(tile);
-      this.addButton(btnMinus);
-      btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
-      btnPlus.setCable(tile);
-      this.addButton(btnPlus);
-    }
-    else {
+    //priority for everything 
+    btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
+    btnMinus.setCable(tile);
+    this.addButton(btnMinus);
+    btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
+    btnPlus.setCable(tile);
+    this.addButton(btnPlus);
+    if (tile.getBlockType() != ModBlocks.processKabel) {
       btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
       btnMinus.setCable(tile);
       this.addButton(btnMinus);
