@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.item.ItemUpgrade;
@@ -68,7 +69,22 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     int j = (this.height - this.ySize) / 2;
     this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
     int x = 0, y = 0;
-    int u = 176, v = 34;
+    int u = 176, v = 112;
+    if (tile.getBlockType() == ModBlocks.processKabel) {
+      //TODO: hmm no field. it syncs server-> client only when gui is NOT open 
+      if (tile.getRequest().getStatus() == ProcessStatus.EXPORTING) {
+        this.mc.getTextureManager().bindTexture(texture);
+        this.drawTexturedModalRect(i + 7, j + 65, u, v, SQ - 8, SQ);//the extra slot
+      }
+      else if (tile.getRequest().getStatus() == ProcessStatus.IMPORTING) {
+        // 
+        u = 188;
+        this.mc.getTextureManager().bindTexture(texture);
+        this.drawTexturedModalRect(i + 7, j + 65, u, v, SQ - 8, SQ);//the extra slot
+      }
+    }
+    u = 176;
+    v = 34;
     for (int ii = 0; ii < 9; ii++) {
       for (int jj = 0; jj < 2; jj++) {
         x = i + 7 + ii * 18;
@@ -118,8 +134,8 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
       operationItemSlot.drawSlot(mouseX, mouseY);
     }
-    if (tile.getBlockType() != ModBlocks.processKabel)
-    fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
+
+      fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
   }
 
   private void drawTooltips(int mouseX, int mouseY) {
@@ -152,6 +168,12 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     super.initGui();
     if (tile.getBlockType() == ModBlocks.processKabel) {
       //custom buttonies 
+      btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
+      btnMinus.setCable(tile);
+      this.addButton(btnMinus);
+      btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
+      btnPlus.setCable(tile);
+      this.addButton(btnPlus);
     }
     else {
       btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
