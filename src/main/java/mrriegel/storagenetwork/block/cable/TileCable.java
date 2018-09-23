@@ -351,10 +351,11 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   }
 
   //TODO: also list of requests ordered . and nbt saved
+  // where a process terminal lists some nodes and I "turn node on for 6 cycles" and it keeps track, maybe stuck after 2.
   public ProcessRequestModel getRequest() {
-    //hacktest
+    //hacktest: always one job is requested 
     if (processModel.getCount() == 0)
-      processModel.setCount(5);
+      processModel.setCount(1);
     return processModel;
   }
 

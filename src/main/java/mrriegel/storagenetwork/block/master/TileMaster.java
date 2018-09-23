@@ -430,8 +430,6 @@ public class TileMaster extends TileEntity implements ITickable {
       if (request == null || request.getCount() == 0) {
         continue;
       }
-      StorageNetwork.log("nonempty request wat " + request.getCount() + " " + request.getStatus().name());
-      //      tileCable.readFromNBT(compound);
       //now check item filter for input/output
       List<StackWrapper> ingredients = tileCable.getFilterTop();
       //well should this only be a single output? 
@@ -443,7 +441,6 @@ public class TileMaster extends TileEntity implements ITickable {
       //
       IItemHandler inventoryLinked = tileCable.getInventory();
       if (request.getStatus() == ProcessStatus.EXPORTING) {
-        StorageNetwork.log("EXPORTING  ingredients ");
         //form network to inventory 
         //does the target have everything it needs, yes or no
         //look for full set, 
@@ -451,22 +448,17 @@ public class TileMaster extends TileEntity implements ITickable {
         int satisfied = 0;
         //we need to input ingredients FROM network into target
         for (StackWrapper ingred : ingredients) {
-          //       StorageNetwork.log("ingredient " + ingred.getStack());
           int many = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, ingred.getStack(), ingred.getSize());
-          // StorageNetwork.log("ingredient " + ingred.getStack() + " and we must find " + many);
           if (many > 0) {
             // not satisfied, so how many are needed. request them
             boolean simulate = true;
             ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy()), many, simulate);//false means 4real, no simulate
-            //            StorageNetwork.log("only found " + requestedFromNetwork.getCount() + " OF " + requestedFromNetwork.getDisplayName());
             ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
             if (remain.isEmpty()) {
               //then do it for real
               simulate = false;
               requestedFromNetwork = this.request(new FilterItem(ingred.getStack()), many, simulate);//false means 4real, no simulate
-              //              StorageNetwork.log("extracted from network" + requestedFromNetwork);
               remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
-              //              StorageNetwork.log("extracted from network" + remain);
               //done
               //now count whats needed, SHOULD be zero
               many = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, ingred.getStack(), ingred.getSize());
@@ -486,26 +478,24 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
       else if (request.getStatus() == ProcessStatus.IMPORTING) {
-        StorageNetwork.log("IMPORTING results : size  " + outputs.size());
-        //        request.setStatus(ProcessStatus.EXPORTING);
+
         //from inventory to network
         //try to find/get from the blocks outputs into network
         // look for "output" items that can be   from target
         for (StackWrapper out : outputs) {
-          StorageNetwork.log("IMPORTING: pull this from target " + out.getStack().getDisplayName());
+
           //pull this many from targe 
           boolean simulate = true;
           int targetStillNeeds = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, out.getStack(), out.getSize());//.extractItem(inventoryLinked, new FilterItem(out.getStack().copy()), out.getSize(), simulate);
-          StorageNetwork.log("IMPORTING targetStillNeeds = " + targetStillNeeds);
+
           ItemStack stackToMove = out.getStack().copy();
           stackToMove.setCount(out.getSize());
           int countNotInserted = this.insertStack(stackToMove, tileCable.getPos(), simulate);
-          StorageNetwork.log("IMPORTING countNotInserted " + countNotInserted);
+
           if (countNotInserted == 0 && targetStillNeeds == 0) { //extracted.getCount() == out.getSize() && countNotInserted == extracted.getCount()) {
             //success
             simulate = false;
             ItemStack extracted = UtilInventory.extractItem(inventoryLinked, new FilterItem(out.getStack()), out.getSize(), simulate);
-            StorageNetwork.log("IMPORTING extracted(sb Empty) = " + extracted + " && stackToMove = " + stackToMove);
             countNotInserted = this.insertStack(stackToMove, tileCable.getPos(), simulate);
             // IF all found 
             //then complete extraction (and insert into network)
