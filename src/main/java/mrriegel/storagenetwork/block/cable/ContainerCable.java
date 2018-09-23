@@ -7,9 +7,12 @@ import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ContainerCable extends Container {
 
@@ -80,6 +83,17 @@ public class ContainerCable extends Container {
     return false;
   }
 
+  @Override
+  @SideOnly(Side.CLIENT)
+  public void updateProgressBar(int id, int data) {
+    this.tile.setField(id, data);
+  }
+
+  @Override
+  public void addListener(IContainerListener listener) {
+    super.addListener(listener);
+    listener.sendAllWindowProperties(this, this.tile);
+  }
   public TileCable getTile() {
     return tile;
   }

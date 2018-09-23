@@ -6,7 +6,9 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
@@ -39,6 +41,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   public TileCable() {
     this.setOres(false);
     this.setMeta(true);
+
     processModel = new ProcessRequestModel();
   }
 
@@ -124,7 +127,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     for (int i = 0; i < nbttaglist.tagCount(); ++i) {
       NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
       int j = nbttagcompound.getByte("Slot") & 255;
-      if (j >= 0 && j < 4) {
+      if (j >= 0 && j < 4) {// TODO: 4 const reference
         upgrades.set(j, new ItemStack(nbttagcompound));
       }
     }
@@ -313,15 +316,22 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   @Override
   public int getField(int id) {
+    if (id == 0)
+      return this.processModel.getStatus().ordinal();
     return 0;
   }
 
   @Override
-  public void setField(int id, int value) {}
+  public void setField(int id, int value) {
+    StorageNetwork.log("setfield " + id + "=>" + value);
+    if (id == 0) {
+      this.processModel.setStatus(ProcessStatus.values()[value]);
+    }
+  }
 
   @Override
   public int getFieldCount() {
-    return 0;
+    return 1;
   }
 
   @Override
@@ -329,7 +339,6 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   public List<StackWrapper> getFilterTop() {
     Map<Integer, StackWrapper> flt = super.getFilter();
-
     List<StackWrapper> half = new ArrayList<>();
     for (Integer i : flt.keySet()) {
       if (i <= 8 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false) {

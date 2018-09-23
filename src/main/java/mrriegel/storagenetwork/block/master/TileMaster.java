@@ -307,7 +307,6 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stack.isEmpty()) {
       return 0;
     }
-
     //    int originalSize = stack.getCount();
     //refactor this garbage why are there too loops LOL 
     List<AbstractFilterTile> invs = getConnectedFilterTiles();
@@ -329,7 +328,6 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stackInCopy.isEmpty() == false) {
       //cache pointer failed, use normal way
       for (AbstractFilterTile tileCable : invs) {
-
         if (tileCable.getSource().equals(source))
           continue;
         stackInCopy = insertStackSingleTarget(tileCable, stackInCopy, simulate, -1);
@@ -341,7 +339,6 @@ public class TileMaster extends TileEntity implements ITickable {
         world.markChunkDirty(tileCable.getSource(), world.getTileEntity(tileCable.getSource()));
       }
       //no existing item match found, look for empty slot 
-
       for (AbstractFilterTile tileCabl : invs) {
         IItemHandler inventoryLinked = tileCabl.getInventory();
         if (UtilInventory.contains(inventoryLinked, stackInCopy))
@@ -452,20 +449,18 @@ public class TileMaster extends TileEntity implements ITickable {
         //we need to input ingredients FROM network into target
         for (StackWrapper ingred : ingredients) {
           //  how many are needed. request them
-            boolean simulate = true;
+          boolean simulate = true;
           ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy()), ingred.getSize(), simulate);//false means 4real, no simulate
-            ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
-            if (remain.isEmpty()) {
-              //then do it for real
-              simulate = false;
+          ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
+          if (remain.isEmpty()) {
+            //then do it for real
+            simulate = false;
             requestedFromNetwork = this.request(new FilterItem(ingred.getStack()), ingred.getSize(), simulate);//false means 4real, no simulate
-              remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
-              //done
-              //now count whats needed, SHOULD be zero
+            remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
+            //done
+            //now count whats needed, SHOULD be zero
           }
-
           int manyMoreNeeded = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, ingred.getStack(), ingred.getSize());
-
           if (manyMoreNeeded == 0) {
             //ok it has ingredients here
             numSatisfiedIngredients++;
@@ -476,23 +471,20 @@ public class TileMaster extends TileEntity implements ITickable {
           //then complete transaction (get and put items)
           //flip that waitingResult flag on request (and save)
           request.setStatus(ProcessStatus.IMPORTING);
+          tileCable.setField(0, request.getStatus().ordinal());
         }
       }
       else if (request.getStatus() == ProcessStatus.IMPORTING) {
-
         //from inventory to network
         //try to find/get from the blocks outputs into network
         // look for "output" items that can be   from target
         for (StackWrapper out : outputs) {
-
           //pull this many from targe 
           boolean simulate = true;
           int targetStillNeeds = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, out.getStack(), out.getSize());//.extractItem(inventoryLinked, new FilterItem(out.getStack().copy()), out.getSize(), simulate);
-
           ItemStack stackToMove = out.getStack().copy();
           stackToMove.setCount(out.getSize());
           int countNotInserted = this.insertStack(stackToMove, tileCable.getPos(), simulate);
-
           if (countNotInserted == 0 && targetStillNeeds == 0) { //extracted.getCount() == out.getSize() && countNotInserted == extracted.getCount()) {
             //success
             simulate = false;
@@ -502,14 +494,15 @@ public class TileMaster extends TileEntity implements ITickable {
             //then complete extraction (and insert into network)
             //then toggle that waitingResult flag on request (and save)
             request.setStatus(ProcessStatus.EXPORTING);
+            tileCable.setField(0, request.getStatus().ordinal());
           }
         }
-
       }
       else {
         ModCyclic.logger.error("Status was halted or other " + request.getStatus());
         request.setStatus(ProcessStatus.IMPORTING);//?? i dont know
       }
+      tileCable.setField(0, request.getStatus().ordinal());
       tileCable.setRequest(request);
     }
   }

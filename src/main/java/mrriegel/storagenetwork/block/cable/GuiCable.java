@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.item.ItemUpgrade;
@@ -60,54 +59,59 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     super.drawBackground(tint);
   }
 
+  public final static int FONTCOLOR = 4210752;
+
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     this.drawDefaultBackground();//dim the background as normal
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     this.mc.getTextureManager().bindTexture(texture);
-    int i = (this.width - this.xSize) / 2;
-    int j = (this.height - this.ySize) / 2;
-    this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
+    int xMiddle = (this.width - this.xSize) / 2;
+    int yMiddle = (this.height - this.ySize) / 2;
+    this.drawTexturedModalRect(xMiddle, yMiddle, 0, 0, this.xSize, this.ySize);
     int x = 0, y = 0;
     int u = 176, v = 112;
     if (tile.getBlockType() == ModBlocks.processKabel) {
-      //TODO: hmm no field. it syncs server-> client only when gui is NOT open 
-      if (tile.getRequest().getStatus() == ProcessStatus.EXPORTING) {
-        this.mc.getTextureManager().bindTexture(texture);
-        this.drawTexturedModalRect(i + 7, j + 65, u, v, SQ - 8, SQ);//the extra slot
-      }
-      else if (tile.getRequest().getStatus() == ProcessStatus.IMPORTING) {
-        // 
-        u = 188;
-        this.mc.getTextureManager().bindTexture(texture);
-        this.drawTexturedModalRect(i + 7, j + 65, u, v, SQ - 8, SQ);//the extra slot
-      }
+      // one texture per row
+      //RED IS output, GREEN is input
+      //RED output Means that you can pull out of chest into network, but not put in
+      //GREEN input means yes you can also put into chest from network
+      //this first TOP texture is green
+      int col = 156;
+      this.drawTexturedModalRect(xMiddle + col, yMiddle + 8, u, v, SQ - 8, SQ);
+      //move over on spritesheet and down on gui
+      u = 188;
+      //this bottom one is RED
+      this.mc.getTextureManager().bindTexture(texture);
+      this.drawTexturedModalRect(xMiddle + col, yMiddle + 66, u, v, SQ - 8, SQ);
     }
+    //reset sprite u/v
     u = 176;
     v = 34;
-    for (int ii = 0; ii < 9; ii++) {
-      for (int jj = 0; jj < 2; jj++) {
-        x = i + 7 + ii * 18;
-        y = j + 25 + SQ * jj;
-        //        if (jj == 1 && tile.getBlockType() == ModBlocks.processKabel) {
-        //          //move space down
-        //          y += 6;
-        //        }
+    for (int row = 0; row < 9; row++) {
+      for (int col = 0; col < 2; col++) {
+        x = xMiddle + 7 + row * 18;
+        y = yMiddle + 25 + SQ * col;
+        if (col == 1 && tile.getBlockType() == ModBlocks.processKabel) {
+          //move space down
+          // or some other way rearrange process slots 
+          y += 5;
+        }
         this.drawTexturedModalRect(x, y, u, v, SQ, SQ);
       }
     }
     if (tile.isUpgradeable()) {
       for (int ii = 0; ii < ItemUpgrade.NUM; ii++) {
-        this.drawTexturedModalRect(i + 97 + ii * SQ, j + 5, u, v, SQ, SQ);
+        this.drawTexturedModalRect(xMiddle + 97 + ii * SQ, yMiddle + 5, u, v, SQ, SQ);
       }
     }
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1 && btnOperationToggle != null) {
       btnOperationToggle.enabled = true;
       btnOperationToggle.visible = true;
       this.mc.getTextureManager().bindTexture(texture);
-      this.drawTexturedModalRect(i + 7, j + 65, u, v, SQ, SQ);//the extra slot
+      this.drawTexturedModalRect(xMiddle + 7, yMiddle + 65, u, v, SQ, SQ);//the extra slot
       //also draw textbox
-      this.drawTexturedModalRect(i + 50, j + 67, 0, 171, TEXTBOX_WIDTH, 12);
+      this.drawTexturedModalRect(xMiddle + 50, yMiddle + 67, 0, 171, TEXTBOX_WIDTH, 12);
       searchBar.drawTextBox();
     }
     else if (btnOperationToggle != null) {
@@ -134,8 +138,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
       operationItemSlot.drawSlot(mouseX, mouseY);
     }
-
-      fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
+    fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
   }
 
   private void drawTooltips(int mouseX, int mouseY) {
