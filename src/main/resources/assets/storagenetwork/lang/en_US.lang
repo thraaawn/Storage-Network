@@ -59,6 +59,7 @@ gui.storagenetwork.fil.tooltip_jei_off=JEI search disabled
 tooltip.storagenetwork.kabel_S=Used to connect inventory to the network.
 tooltip.storagenetwork.kabel_E=Exports items from the network into attached inventory.
 tooltip.storagenetwork.kabel_I=Imports items from attached inventory into the network.
+tooltip.storagenetwork.kabel_P=Can automate simple processing transactions.
 tooltip.storagenetwork.kabel_L=Default cable to connect parts of your network.
 tooltip.storagenetwork.master=The heart of the network. Only ONE per network.
 tooltip.storagenetwork.request=Used to overview and request items from the network.
