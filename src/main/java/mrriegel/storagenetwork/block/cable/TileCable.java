@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.item.ItemUpgrade;
@@ -35,10 +36,12 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   private int limit = 0;
   public EnumCableType north, south, east, west, up, down;
   private ItemStack stack = ItemStack.EMPTY;
+  private ProcessRequestModel processModel;
 
   public TileCable() {
     this.setOres(false);
     this.setMeta(true);
+    processModel = new ProcessRequestModel();
   }
 
   public int getUpgradesOfType(int num) {
@@ -97,6 +100,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
+    this.processModel.readFromNBT(compound);
     connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {}.getType());
     inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
     mode = compound.getBoolean("mode");
@@ -131,6 +135,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
+    this.processModel.writeToNBT(compound);
     compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
     if (inventoryFace != null)
       compound.setString("inventoryFace", inventoryFace.toString());
@@ -326,8 +331,9 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   public List<StackWrapper> getFilterTop() {
     Map<Integer, StackWrapper> flt = super.getFilter();
+
     List<StackWrapper> half = IntStream.range(0, flt.keySet().size())
-        .filter(i -> i <= 8 && flt.get(i).getStack().isEmpty() == false)
+        .filter(i -> i <= 8 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false)
         .mapToObj(i -> flt.get(i))
         .collect(Collectors.toList());
     return half;
@@ -335,18 +341,28 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   public List<StackWrapper> getFilterBottom() {
     Map<Integer, StackWrapper> flt = super.getFilter();
+    StorageNetwork.log("filter bot " + flt);
     List<StackWrapper> half = IntStream.range(0, flt.keySet().size())
-        .filter(i -> i >= 9 && flt.get(i).getStack().isEmpty() == false)
+        .filter(i -> i >= 9 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false)
         .mapToObj(i -> flt.get(i))
         .collect(Collectors.toList());
+    StorageNetwork.log("haf sz " + half.size());
     return half;
   }
 
-  public ProcessRequestModel getTopRequest() {
-    return null;
+  //TODO: also list of requests ordered . and nbt saved
+  public ProcessRequestModel getRequest() {
+    //hacktest
+    if (processModel.getCount() == 0)
+      processModel.setCount(5);
+    return processModel;
   }
 
-  public void deleteRequest(ProcessRequestModel request) {
-    // TODO Auto-generated method stub
+  public void deleteRequest() {
+    this.processModel.setCount(0);
+  }
+
+  public void setRequest(ProcessRequestModel request) {
+    this.processModel = request;
   }
 }

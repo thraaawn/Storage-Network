@@ -10,10 +10,12 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.lothrazar.cyclicmagic.ModCyclic;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.master.RecentSlotPointer.StackSlot;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -414,7 +416,6 @@ public class TileMaster extends TileEntity implements ITickable {
 
   private void updateProcess(List<TileCable> processCables) {
     List<ProcessRequestModel> sortedRequestList = new ArrayList<>();
-
     //take the first X request (constant or configured, max # jobs per tick) 
     //it knows count, pos to use
     // run it (import , output, flip)
@@ -427,46 +428,98 @@ public class TileMaster extends TileEntity implements ITickable {
       if ((world.getTotalWorldTime() + 20) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
         continue;
       }
-      ProcessRequestModel request = tileCable.getTopRequest();
-      if (request == null) {
+      ProcessRequestModel request = tileCable.getRequest();
+      if (request == null || request.getCount() == 0) {
         continue;
       }
-      //remaining income
-      int remaining = request.getCountRequested() - request.getCountCompleted();
-      if (remaining <= 0) {
-        //delete me
-        tileCable.deleteRequest(request);
-        continue;
-      }
+      StorageNetwork.log("nonempty request wat " + request.getCount() + " " + request.getStatus().name());
+      //      tileCable.readFromNBT(compound);
       //now check item filter for input/output
       List<StackWrapper> ingredients = tileCable.getFilterTop();
       //well should this only be a single output? 
       List<StackWrapper> outputs = tileCable.getFilterBottom();
       //EXAMPLE REQUEST:
       //automate a furnace: 
-      // ingredient is one cobblestone 
-      // output is one smoothstone
+      // ingredient is one cobblestone (network provides-exports this)
+      // output is one smoothstone (network gets-imports this) 
       //
-      if (request.isWaitingResult()) {
-        // look for "output" items that can be extracted from target
-        // IF all found 
-        //then complete extraction (and insert into network)
-        //then toggle that waitingResult flag on request (and save)
-        // 
-      }
-      else {
-        //we need to input ingredients FROM network into target
+      IItemHandler inventoryLinked = tileCable.getInventory();
+      StorageNetwork.log("inventoryLinked target " + tileCable.getConnectedInventory());
+      if (request.getStatus() == ProcessStatus.EXPORTING) {
+        //form network to inventory 
+        //does the target have everything it needs, yes or no
         //look for full set, 
         //if we get all
-        //and if we can insert all
-        //then complete transaction (get and put items)
-        //flip that waitingResult flag on request (and save)
+        int satisfied = 0;
+        //we need to input ingredients FROM network into target
+        for (StackWrapper ingred : ingredients) {
+          StorageNetwork.log("ingredient " + ingred.getStack());
+          int many = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, ingred.getStack(), ingred.getSize());
+          StorageNetwork.log("ingredient " + ingred.getStack() + " and we must find " + many);
+          if (many > 0) {
+            // not satisfied, so how many are needed. request them
+            boolean simulate = true;
+            ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy()), many, simulate);//false means 4real, no simulate
+            StorageNetwork.log("only found " + requestedFromNetwork.getCount() + " OF " + requestedFromNetwork.getDisplayName());
+            ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
+            if (remain.isEmpty()) {
+              //then do it for real
+              simulate = false;
+              requestedFromNetwork = this.request(new FilterItem(ingred.getStack()), many, simulate);//false means 4real, no simulate
+              StorageNetwork.log("extracted from network" + requestedFromNetwork);
+              remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
+              StorageNetwork.log("extracted from network" + remain);
+              //done
+              //now count whats needed, SHOULD be zero
+              many = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, ingred.getStack(), ingred.getSize());
+            }
+          }
+          //not an else-if, use changes from within ifrst if to update many
+          if (many == 0) {
+            //ok it has ingredients here
+            satisfied++;
+          }
+        }
+        if (satisfied == ingredients.size()) {
+          //and if we can insert all
+          //then complete transaction (get and put items)
+          //flip that waitingResult flag on request (and save)
+          request.setStatus(ProcessStatus.IMPORTING);
+        }
       }
+      else if (request.getStatus() == ProcessStatus.IMPORTING) {
+        StorageNetwork.log("importinG: size  " + outputs.size());
+        //        request.setStatus(ProcessStatus.EXPORTING);
+        //from inventory to network
+        //try to find/get from the blocks outputs into network
+        // look for "output" items that can be   from target
+        for (StackWrapper out : outputs) {
+          StorageNetwork.log("importinG: pull this from target " + out.getStack().getDisplayName());
+          //pull this many from targe 
+          boolean simulate = true;
+          ItemStack extracted = UtilInventory.extractItem(inventoryLinked, new FilterItem(out.getStack()), out.getSize(), simulate);
+          StorageNetwork.log("extracted from target " + extracted);
+          int countInserted = this.insertStack(extracted, tileCable.getPos(), simulate);
+          if (extracted.getCount() == out.getSize() && countInserted == extracted.getCount()) {
+            //success
+            simulate = false;
+            extracted = UtilInventory.extractItem(inventoryLinked, new FilterItem(out.getStack()), out.getSize(), simulate);
+            countInserted = this.insertStack(extracted, tileCable.getPos(), simulate);
+            // IF all found 
+            //then complete extraction (and insert into network)
+            //then toggle that waitingResult flag on request (and save)
+            request.setStatus(ProcessStatus.IMPORTING);
+          }
+        }
 
-
+      }
+      else {
+        ModCyclic.logger.error("Status was halted or other " + request.getStatus());
+        request.setStatus(ProcessStatus.IMPORTING);//?? i dont know
+      }
+      tileCable.setRequest(request);
     }
   }
-
 
   private void updateExports(List<TileCable> attachedCables) {
     for (TileCable tileCable : attachedCables) {

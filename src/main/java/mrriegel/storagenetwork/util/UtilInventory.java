@@ -63,6 +63,19 @@ public class UtilInventory {
     return false;
   }
 
+  public static int containsAtLeastHowManyNeeded(IItemHandler inv, ItemStack stack, int minimumCount) {
+    int found = 0;
+    for (int i = 0; i < inv.getSlots(); i++) {
+      if (ItemHandlerHelper.canItemStacksStack(inv.getStackInSlot(i), stack)) {
+        found += inv.getStackInSlot(i).getCount();
+      }
+    }
+    //do you have all 4? or do you need 2 still
+    if (found >= minimumCount)
+      return 0;
+    return minimumCount - found;
+  }
+
   public static int getAmount(IItemHandler inv, FilterItem fil) {
     if (inv == null || fil == null) {
       return 0;

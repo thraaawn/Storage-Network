@@ -1,43 +1,46 @@
 package mrriegel.storagenetwork.block.cable;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class ProcessRequestModel {
 
-  private BlockPos pos;
-  private int countRequested;
-  private int countCompleted;
-  private boolean waitingResult;
+  public enum ProcessStatus {
+    HALTED, IMPORTING, EXPORTING;
+  }
+  private static final String PREFIX = "sn_process";
 
-  public BlockPos getPos() {
-    return pos;
+  //you can request more than 64
+  private int count;
+  //import cable = from inventory to network
+  //export cable = from network to inventory
+  //so initial value is filling ingredients = export
+  private ProcessStatus status = ProcessStatus.EXPORTING;
+
+  public int getCount() {
+    return count;
   }
 
-  public void setPos(BlockPos pos) {
-    this.pos = pos;
+  public void setCount(int countRequested) {
+    this.count = countRequested;
   }
 
-  public int getCountRequested() {
-    return countRequested;
+
+  public void readFromNBT(NBTTagCompound compound) {
+    this.count = compound.getInteger(PREFIX + "count");
+    this.status = ProcessStatus.values()[compound.getInteger(PREFIX + "status")];
   }
 
-  public void setCountRequested(int countRequested) {
-    this.countRequested = countRequested;
+  public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    compound.setInteger(PREFIX + "count", count);
+    compound.setInteger(PREFIX + "status", status.ordinal());
+    return compound;
   }
 
-  public int getCountCompleted() {
-    return countCompleted;
+  public ProcessStatus getStatus() {
+    return status;
   }
 
-  public void setCountCompleted(int countCompleted) {
-    this.countCompleted = countCompleted;
-  }
-
-  public boolean isWaitingResult() {
-    return waitingResult;
-  }
-
-  public void setWaitingResult(boolean waitingResult) {
-    this.waitingResult = waitingResult;
+  public void setStatus(ProcessStatus status) {
+    this.status = status;
   }
 }
