@@ -129,5 +129,4 @@ public class BlockMaster extends BlockContainer {
     super.addInformation(stack, playerIn, tooltip, advanced);
     tooltip.add(I18n.format("tooltip.storagenetwork.master"));
   }
-
 }

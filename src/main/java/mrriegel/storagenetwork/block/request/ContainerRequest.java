@@ -92,4 +92,9 @@ public class ContainerRequest extends ContainerNetworkBase {
   public void setTileRequest(TileRequest tileRequest) {
     this.tileRequest = tileRequest;
   }
+
+  @Override
+  public boolean isRequest() {
+    return true;
+  }
 }

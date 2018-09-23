@@ -3,7 +3,7 @@ package mrriegel.storagenetwork.network;
 import java.util.List;
 import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
+import mrriegel.storagenetwork.gui.IStorageInventory;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,10 +41,10 @@ public class StackRefreshClientMessage implements IMessage, IMessageHandler<Stac
 
       @Override
       public void run() {
-        if (Minecraft.getMinecraft().currentScreen instanceof GuiContainerStorageInventory) {
-          GuiContainerStorageInventory gui = (GuiContainerStorageInventory) Minecraft.getMinecraft().currentScreen;
-          gui.stacks = message.stacks;
-          gui.craftableStacks = message.craftableStacks;
+        if (Minecraft.getMinecraft().currentScreen instanceof IStorageInventory) {
+          IStorageInventory gui = (IStorageInventory) Minecraft.getMinecraft().currentScreen;
+          gui.setStacks(message.stacks);
+          gui.setCraftableStacks(message.craftableStacks);
         }
       }
     });

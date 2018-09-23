@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.master.TileMaster;
-import mrriegel.storagenetwork.block.request.ContainerRequest;
-import mrriegel.storagenetwork.item.remote.ContainerRemote;
-import mrriegel.storagenetwork.item.remote.ItemRemote;
+import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.data.FilterItem;
 import mrriegel.storagenetwork.util.data.StackWrapper;
@@ -44,12 +42,9 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
       @Override
       public void run() {
         TileMaster tileMaster = null;
-        if (player.openContainer instanceof ContainerRequest) {
-          ContainerRequest ctrRequest = (ContainerRequest) player.openContainer;
-          tileMaster = (TileMaster) player.world.getTileEntity(ctrRequest.getTileRequest().getMaster());
-        }
-        else if (player.openContainer instanceof ContainerRemote) {
-          tileMaster = ItemRemote.getTile(player.inventory.getCurrentItem());
+        if (player.openContainer instanceof IStorageContainer) {
+          IStorageContainer ctr = (IStorageContainer) player.openContainer;
+          tileMaster = ctr.getTileMaster();
         }
         if (tileMaster == null) {
           //maybe the table broke after doing this, rare case

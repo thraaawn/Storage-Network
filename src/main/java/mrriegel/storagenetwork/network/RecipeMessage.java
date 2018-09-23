@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.master.TileMaster;
-import mrriegel.storagenetwork.gui.ContainerNetworkBase;
+import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.data.FilterItem;
@@ -72,10 +72,10 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 
       @Override
       public void run() {
-        if (player.openContainer instanceof ContainerNetworkBase == false) {
+        if (player.openContainer instanceof IStorageContainer == false) {
           return;
         }
-        ContainerNetworkBase ctr = (ContainerNetworkBase) player.openContainer;
+        IStorageContainer ctr = (IStorageContainer) player.openContainer;
         TileMaster master = ctr.getTileMaster();
         if (master == null) {
           return;

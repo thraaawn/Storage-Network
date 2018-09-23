@@ -45,7 +45,6 @@ public class CableFilterMessage implements IMessage, IMessageHandler<CableFilter
           tile.setOres(message.ore);
           tile.setMeta(message.meta);
           tile.markDirty();
-
         }
       }
     });

@@ -103,4 +103,9 @@ public class ContainerRemote extends ContainerNetworkBase {
         this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
     }
   }
+
+  @Override
+  public boolean isRequest() {
+    return false;
+  }
 }

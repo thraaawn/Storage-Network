@@ -3,7 +3,7 @@ package mrriegel.storagenetwork.jei;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mrriegel.storagenetwork.item.remote.ContainerRemote;
+import mrriegel.storagenetwork.gui.IStorageContainer;
 //import mezz.jei.gui.ingredients.GuiIngredient;
 import mrriegel.storagenetwork.network.ClearRecipeMessage;
 import mrriegel.storagenetwork.network.RecipeMessage;
@@ -11,15 +11,18 @@ import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.Optional;
 
-@SuppressWarnings("rawtypes")
-@Optional.Interface(iface = "mezz.jei.api.recipe.transfer.IRecipeTransferHandler", modid = "jei", striprefs = true)
-public class RequestRecipeTransferHandlerRemote<C extends Container> implements IRecipeTransferHandler {
+public class RequestRecipeTransferHandlerRemote<C extends Container & IStorageContainer> implements IRecipeTransferHandler<C> {
+
+  Class<C> clazz;
+
+  public RequestRecipeTransferHandlerRemote(Class<C> clazz) {
+    this.clazz = clazz;
+  }
 
   @Override
-  public Class<? extends Container> getContainerClass() {
-    return ContainerRemote.class;
+  public Class<C> getContainerClass() {
+    return clazz;
   }
 
   @Override

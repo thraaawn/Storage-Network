@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.gui;
+package mrriegel.storagenetwork.gui.fb;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -11,6 +11,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.gui.IPublicGuiContainer;
+import mrriegel.storagenetwork.gui.IStorageInventory;
+import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.jei.JeiHooks;
 import mrriegel.storagenetwork.jei.JeiSettings;
 import mrriegel.storagenetwork.network.ClearRecipeMessage;
@@ -25,22 +28,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import shadows.fastbench.gui.GuiFastBench;
 
 /**
  * Base class for Request table inventory and Remote inventory
  * 
  *
  */
-public abstract class GuiContainerStorageInventory extends GuiContainer implements IPublicGuiContainer, IStorageInventory {
+public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPublicGuiContainer, IStorageInventory {
 
   private static final int HEIGHT = 256;
   private static final int WIDTH = 176;
@@ -54,18 +59,14 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
   protected long lastClick;
   private boolean forceFocus;
 
-  public GuiContainerStorageInventory(ContainerNetworkBase inventorySlotsIn) {
-    super(inventorySlotsIn);
+  public GuiFastNetworkCrafter(EntityPlayer player, World world, BlockPos pos) {
+    super(player.inventory, world, pos);
     this.xSize = WIDTH;
     this.ySize = HEIGHT;
     this.stacks = Lists.newArrayList();
     this.craftableStacks = Lists.newArrayList();
     PacketRegistry.INSTANCE.sendToServer(new RequestMessage());
     lastClick = System.currentTimeMillis();
-  }
-
-  protected boolean canClick() {
-    return System.currentTimeMillis() > lastClick + 100L;
   }
 
   @Override
@@ -76,6 +77,30 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
   @Override
   public void setCraftableStacks(List<StackWrapper> stacks) {
     this.craftableStacks = stacks;
+  }
+
+  protected boolean canClick() {
+    return System.currentTimeMillis() > lastClick + 100L;
+  }
+
+  @Override
+  public void drawGradientRectP(int left, int top, int right, int bottom, int startColor, int endColor) {
+    super.drawGradientRect(left, top, right, bottom, startColor, endColor);
+  }
+
+  @Override
+  public FontRenderer getFont() {
+    return this.fontRenderer;
+  }
+
+  @Override
+  public boolean isPointInRegionP(int rectX, int rectY, int rectWidth, int rectHeight, int pointX, int pointY) {
+    return super.isPointInRegion(rectX, rectY, rectWidth, rectHeight, pointX, pointY);
+  }
+
+  @Override
+  public void renderToolTipP(ItemStack stack, int x, int y) {
+    super.renderToolTip(stack, x, y);
   }
 
   @Override
@@ -133,26 +158,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
 
   protected boolean inX(int mouseX, int mouseY) {
     return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
-  }
-
-  @Override
-  public void drawGradientRectP(int left, int top, int right, int bottom, int startColor, int endColor) {
-    super.drawGradientRect(left, top, right, bottom, startColor, endColor);
-  }
-
-  @Override
-  public FontRenderer getFont() {
-    return this.fontRenderer;
-  }
-
-  @Override
-  public boolean isPointInRegionP(int rectX, int rectY, int rectWidth, int rectHeight, int pointX, int pointY) {
-    return super.isPointInRegion(rectX, rectY, rectWidth, rectHeight, pointX, pointY);
-  }
-
-  @Override
-  public void renderToolTipP(ItemStack stack, int x, int y) {
-    super.renderToolTip(stack, x, y);
   }
 
   protected abstract boolean isScreenValid();
@@ -303,17 +308,12 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
       mc.player.closeScreen();
       return;
     }
-    try {
-      drawTooltips(mouseX, mouseY);
-    }
-    catch (Throwable e) {
-      StorageNetwork.error(e.getMessage());
-    }
+    drawTooltips(mouseX, mouseY);
   }
 
   @Override
   public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    this.fontRenderer.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 4210752);
     if (this.isScreenValid() == false) {
       return;
     }
@@ -325,9 +325,9 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
     }
   }
 
-  private void drawTooltips(int mouseX, int mouseY) {
+  public void drawTooltips(int mouseX, int mouseY) {
     for (ItemSlotNetwork s : slots) {
-      if (s != null && s.isMouseOverSlot(mouseX, mouseY)) {
+      if (s.isMouseOverSlot(mouseX, mouseY)) {
         s.drawTooltip(mouseX, mouseY);
       }
     }
@@ -344,13 +344,13 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
       }
       drawHoveringText(lis, mouseX, mouseY);
     }
-    if (clearTextBtn != null && clearTextBtn.isMouseOver()) {
+    if (clearTextBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX, mouseY);
     }
-    if (sortBtn != null && sortBtn.isMouseOver()) {
+    if (sortBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX, mouseY);
     }
-    if (directionBtn != null && directionBtn.isMouseOver()) {
+    if (directionBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.sort")), mouseX, mouseY);
     }
     if (jeiBtn != null && jeiBtn.isMouseOver()) {
@@ -413,9 +413,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
     }
     else {
       ItemStack stackCarriedByMouse = mc.player.inventory.getItemStack();
-      if (!stackUnderMouse.isEmpty()
-          && (mouseButton == UtilTileEntity.MOUSE_BTN_LEFT || mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT)
-          && stackCarriedByMouse.isEmpty() && canClick()) {
+      if (!stackUnderMouse.isEmpty() && (mouseButton == UtilTileEntity.MOUSE_BTN_LEFT || mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT) && stackCarriedByMouse.isEmpty() && canClick()) {
         PacketRegistry.INSTANCE.sendToServer(new RequestMessage(mouseButton, stackUnderMouse, isShiftKeyDown(), isCtrlKeyDown()));
         lastClick = System.currentTimeMillis();
       }

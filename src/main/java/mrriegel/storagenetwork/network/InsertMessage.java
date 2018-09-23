@@ -4,17 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.master.TileMaster;
-import mrriegel.storagenetwork.block.request.ContainerRequest;
-import mrriegel.storagenetwork.item.remote.ContainerRemote;
+import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -42,13 +39,9 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 
       @Override
       public void run() {
-        World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
         TileMaster tileMaster = null;
-        if (player.openContainer instanceof ContainerRequest) {
-          tileMaster = (TileMaster) world.getTileEntity(((ContainerRequest) player.openContainer).getTileRequest().getMaster());
-        }
-        else if (player.openContainer instanceof ContainerRemote) {
-          tileMaster = ((ContainerRemote) player.openContainer).getTileMaster();
+        if (player.openContainer instanceof IStorageContainer) {
+          tileMaster = ((IStorageContainer) player.openContainer).getTileMaster();
         }
         int rest;
         ItemStack send = ItemStack.EMPTY;

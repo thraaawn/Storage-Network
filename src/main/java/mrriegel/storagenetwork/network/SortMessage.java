@@ -1,9 +1,8 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.block.request.ContainerRequest;
 import mrriegel.storagenetwork.block.request.TileRequest;
-import mrriegel.storagenetwork.item.remote.ContainerRemote;
+import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.util.NBTHelper;
 import mrriegel.storagenetwork.util.data.EnumSortType;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -39,20 +38,22 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 
       @Override
       public void run() {
-        if (player.openContainer instanceof ContainerRemote) {
-          ItemStack stackPlayerHeld = player.inventory.getCurrentItem();
-          NBTHelper.setBoolean(stackPlayerHeld, "down", message.direction);
-          NBTHelper.setString(stackPlayerHeld, "sort", message.sort.toString());
-          return;
-        }
-        if (player.openContainer instanceof ContainerRequest) {
-          TileEntity tileEntity = player.world.getTileEntity(message.pos);
-          if (tileEntity instanceof TileRequest) {
-            TileRequest tile = (TileRequest) tileEntity;
-            tile.setSort(message.sort);
-            tile.setDownwards(message.direction);
+        if (player.openContainer instanceof IStorageContainer) {
+          if (((IStorageContainer) player.openContainer).isRequest()) {
+            TileEntity tileEntity = player.world.getTileEntity(message.pos);
+            if (tileEntity instanceof TileRequest) {
+              TileRequest tile = (TileRequest) tileEntity;
+              tile.setSort(message.sort);
+              tile.setDownwards(message.direction);
+            }
+            tileEntity.markDirty();
           }
-          tileEntity.markDirty();
+          else {
+            ItemStack stackPlayerHeld = player.inventory.getCurrentItem();
+            NBTHelper.setBoolean(stackPlayerHeld, "down", message.direction);
+            NBTHelper.setString(stackPlayerHeld, "sort", message.sort.toString());
+            return;
+          }
         }
       }
     });

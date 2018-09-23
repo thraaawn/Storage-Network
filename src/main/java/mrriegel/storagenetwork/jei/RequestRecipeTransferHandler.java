@@ -6,7 +6,7 @@ import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mrriegel.storagenetwork.block.request.ContainerRequest;
+import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.network.ClearRecipeMessage;
 import mrriegel.storagenetwork.network.RecipeMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
@@ -17,15 +17,18 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.fml.common.Optional;
 
-@SuppressWarnings("rawtypes")
-@Optional.Interface(iface = "mezz.jei.api.recipe.transfer.IRecipeTransferHandler", modid = "jei", striprefs = true)
-public class RequestRecipeTransferHandler<C extends Container> implements IRecipeTransferHandler {
+public class RequestRecipeTransferHandler<C extends Container & IStorageContainer> implements IRecipeTransferHandler<C> {
+
+  Class<C> clazz;
+
+  public RequestRecipeTransferHandler(Class<C> clazz) {
+    this.clazz = clazz;
+  }
 
   @Override
-  public Class<? extends Container> getContainerClass() {
-    return ContainerRequest.class;
+  public Class<C> getContainerClass() {
+    return clazz;
   }
 
   public static NBTTagCompound recipeToTag(Container container, IRecipeLayout recipeLayout) {

@@ -21,10 +21,10 @@ public class ItemSlotNetwork {
   private int x, y, size, guiLeft, guiTop;
   private boolean number;
   private Minecraft mc;
-  private GuiContainerBase parent;
+  private IPublicGuiContainer parent;
   private ItemStack stack;
 
-  public ItemSlotNetwork(GuiContainerBase parent, @Nonnull ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number) {
+  public ItemSlotNetwork(IPublicGuiContainer parent, @Nonnull ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number) {
     this.x = x;
     this.y = y;
     this.size = size;
@@ -37,7 +37,7 @@ public class ItemSlotNetwork {
   }
 
   public boolean isMouseOverSlot(int mouseX, int mouseY) {
-    return parent.isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
+    return parent.isPointInRegionP(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
   }
 
   public void drawSlot(int mx, int my) {
@@ -65,7 +65,7 @@ public class ItemSlotNetwork {
       int j1 = x;
       int k1 = y;
       GlStateManager.colorMask(true, true, true, false);
-      parent.drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
+      parent.drawGradientRectP(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
       GlStateManager.colorMask(true, true, true, true);
       GlStateManager.enableLighting();
       GlStateManager.enableDepth();
@@ -75,7 +75,7 @@ public class ItemSlotNetwork {
 
   public void drawTooltip(int mx, int my) {
     if (this.isMouseOverSlot(mx, my) && !getStack().isEmpty()) {
-      parent.renderToolTip(getStack(), mx, my);
+      parent.renderToolTipP(getStack(), mx, my);
     }
   }
 

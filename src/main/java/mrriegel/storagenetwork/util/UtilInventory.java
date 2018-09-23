@@ -33,8 +33,25 @@ public class UtilInventory {
   }
 
   public static String formatLargeNumber(int size) {
-    String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
-    return amount;
+    if (size < Math.pow(10, 3)) {
+      return size + "";
+    }
+    else if (size < Math.pow(10, 6)) {
+      //      float r = (size) / 1000.0F;
+      int rounded = Math.round(size / 1000.0F);//so 1600 => 1.6 and then rounded to become 2.
+      return rounded + "K";
+    }
+    else if (size < Math.pow(10, 9)) {
+      int rounded = Math.round(size / (float) Math.pow(10, 6));
+      return rounded + "M";
+    }
+    else if (size < Math.pow(10, 12)) {
+      int rounded = Math.round(size / (float) Math.pow(10, 9));
+      return rounded + "B";
+    }
+    return size + "";
+    //    String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
+    //    return amount;
   }
 
   public static boolean contains(IItemHandler inv, ItemStack stack) {

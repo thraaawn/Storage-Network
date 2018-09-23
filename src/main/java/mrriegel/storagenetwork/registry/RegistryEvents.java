@@ -5,7 +5,7 @@ import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.block.request.TileRequest;
 import mrriegel.storagenetwork.item.ItemUpgrade;
-import mrriegel.storagenetwork.item.remote.ItemRemote;
+import mrriegel.storagenetwork.item.remote.RemoteType;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -57,7 +57,7 @@ public class RegistryEvents {
     for (int i = 0; i < ItemUpgrade.NUM; i++) {
       ModelLoader.setCustomModelResourceLocation(ModItems.upgrade, i, new ModelResourceLocation(StorageNetwork.MODID + ":upgrade_" + i, "inventory"));
     }
-    for (int i = 0; i < ItemRemote.RemoteType.values().length; i++) {
+    for (int i = 0; i < RemoteType.values().length; i++) {
       ModelLoader.setCustomModelResourceLocation(ModItems.remote, i, new ModelResourceLocation(StorageNetwork.MODID + ":remote_" + i, "inventory"));
     }
   }

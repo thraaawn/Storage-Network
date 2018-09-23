@@ -29,7 +29,6 @@ public class InventoryCraftingNetwork extends InventoryCrafting {
       if (matrix.get(i) != null && matrix.get(i).isEmpty() == false)
         this.setInventorySlotContents(i, matrix.get(i));
     }
-
     skipEvents = false;
   }
 
@@ -45,7 +44,6 @@ public class InventoryCraftingNetwork extends InventoryCrafting {
 
   @Override
   public void setInventorySlotContents(int index, ItemStack stack) {
-
     this.stackList.set(index, stack);
     if (skipEvents == false) {
       this.eventHandler.onCraftMatrixChanged(this);
