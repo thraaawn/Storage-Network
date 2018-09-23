@@ -1,13 +1,11 @@
 package mrriegel.storagenetwork.block.cable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.item.ItemUpgrade;
@@ -332,21 +330,23 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   public List<StackWrapper> getFilterTop() {
     Map<Integer, StackWrapper> flt = super.getFilter();
 
-    List<StackWrapper> half = IntStream.range(0, flt.keySet().size())
-        .filter(i -> i <= 8 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false)
-        .mapToObj(i -> flt.get(i))
-        .collect(Collectors.toList());
+    List<StackWrapper> half = new ArrayList<>();
+    for (Integer i : flt.keySet()) {
+      if (i <= 8 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false) {
+        half.add(flt.get(i));
+      }
+    }
     return half;
   }
 
   public List<StackWrapper> getFilterBottom() {
     Map<Integer, StackWrapper> flt = super.getFilter();
-    StorageNetwork.log("filter bot " + flt);
-    List<StackWrapper> half = IntStream.range(0, flt.keySet().size())
-        .filter(i -> i >= 9 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false)
-        .mapToObj(i -> flt.get(i))
-        .collect(Collectors.toList());
-    StorageNetwork.log("haf sz " + half.size());
+    List<StackWrapper> half = new ArrayList<>();
+    for (Integer i : flt.keySet()) {
+      if (i >= 9 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false) {
+        half.add(flt.get(i));
+      }
+    }
     return half;
   }
 

@@ -91,14 +91,14 @@ public class UtilInventory {
 
   public static ItemStack extractItem(IItemHandler inv, FilterItem fil, int num, boolean simulate) {
     if (inv == null || fil == null) {
-      return null;
+      return ItemStack.EMPTY;
     }
     int extracted = 0;
     for (int i = 0; i < inv.getSlots(); i++) {
       ItemStack slot = inv.getStackInSlot(i);
       if (fil.match(slot)) {
         ItemStack ex = inv.extractItem(i, 1, simulate);
-        if (ex != null) {
+        if (!ex.isEmpty()) {
           extracted++;
           if (extracted == num)
             return ItemHandlerHelper.copyStackWithSize(slot, num);
@@ -107,6 +107,6 @@ public class UtilInventory {
         }
       }
     }
-    return null;
+    return ItemStack.EMPTY;
   }
 }
