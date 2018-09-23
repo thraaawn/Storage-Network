@@ -6,7 +6,6 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.master.TileMaster;
@@ -323,7 +322,6 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   @Override
   public void setField(int id, int value) {
-    StorageNetwork.log("setfield " + id + "=>" + value);
     if (id == 0) {
       this.processModel.setStatus(ProcessStatus.values()[value]);
     }
