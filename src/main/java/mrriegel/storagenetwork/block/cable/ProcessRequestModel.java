@@ -10,8 +10,10 @@ import net.minecraft.nbt.NBTTagCompound;
 //3: sided inventories aka furnaces need a solution
 //4: cant turn off (multiple options for features to address)
 //5: the numbers going negative when shift right-click in cable phantoms
-//6: no easy way to set count, maybe add scroll wheel support
-//7: if the mode is "importing/1/waiting for recipe output"
+//negatives fixed 
+//new: with middle click and right click for up and down
+//right click when adding and it will set 1 instead of stack size
+//6: if the mode is "importing/1/waiting for recipe output"
 //have button to force it back into insert mode. a "reset" for this cycle 
 
 //FEATURES

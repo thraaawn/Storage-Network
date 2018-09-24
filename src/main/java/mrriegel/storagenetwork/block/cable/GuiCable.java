@@ -242,22 +242,32 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       PacketRegistry.INSTANCE.sendToServer(new CableLimitMessage(num, tile.getPos(), stackCarriedByMouse));
       return;
     }
+    boolean isRightClick = mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT;
+    boolean isLeftClick = mouseButton == UtilTileEntity.MOUSE_BTN_LEFT;
+    boolean isMiddleClick = mouseButton == UtilTileEntity.MOUSE_BTN_MIDDLE_CLICK;
     for (int i = 0; i < list.size(); i++) {
       ItemSlotNetwork itemSlot = list.get(i);
       if (itemSlot.isMouseOverSlot(mouseX, mouseY)) {
+
         ContainerCable container = (ContainerCable) inventorySlots;
         StackWrapper stackWrapper = container.getTile().getFilter().get(i);
-        if (!stackCarriedByMouse.isEmpty() && !container.isInFilter(new StackWrapper(stackCarriedByMouse, 1))) {
-          container.getTile().getFilter().put(i, new StackWrapper(stackCarriedByMouse, stackCarriedByMouse.getCount()));
+        boolean doesExistAlready = container.isInFilter(new StackWrapper(stackCarriedByMouse, 1));
+        //        if (tile.getBlockType() == ModBlocks.processKabel) {
+        if (!stackCarriedByMouse.isEmpty() && !doesExistAlready) {
+          int quantity = (isRightClick) ? 1 : stackCarriedByMouse.getCount();
+          container.getTile().getFilter().put(i, new StackWrapper(stackCarriedByMouse, quantity));
         }
         else {
           if (stackWrapper != null) {
-            if (mouseButton == UtilTileEntity.MOUSE_BTN_LEFT || stackWrapper.getSize() <= 0) {
+            if (isLeftClick || stackWrapper.getSize() <= 0) {
               container.getTile().getFilter().put(i, null);
               //              stackWrapper.setSize(stackWrapper.getSize() + (isShiftKeyDown() ? 10 : 1));
             }
-            else if (mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT) {
-              stackWrapper.setSize(stackWrapper.getSize() - (isShiftKeyDown() ? 10 : 1));
+            else if (isRightClick) {
+              stackWrapper.setSize(stackWrapper.getSize() - 1);
+            }
+            else if (isMiddleClick) {
+              stackWrapper.setSize(stackWrapper.getSize() + 1);
             }
           }
         }
