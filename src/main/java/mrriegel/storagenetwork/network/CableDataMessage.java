@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.StackWrapper;
@@ -21,12 +22,16 @@ import net.minecraftforge.items.IItemHandler;
 
 public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
 
+  //TODO: ENUM 
   public static final int TOGGLE_WAY = 6;
   public static final int IMPORT_FILTER = 5;
   public static final int TOGGLE_WHITELIST = 3;
   public static final int PRIORITY_UP = 1;
   public static final int PRIORITY_DOWN = 0;
   public static final int TOGGLE_MODE = 4;
+  public static final int P_FACE_TOP = 7;
+  public static final int P_FACE_BOTTOM = 8;
+  public static final int TOGGLE_P_RESTARTTRIGGER = 9;
   private int id;
   private BlockPos pos;
 
@@ -49,6 +54,13 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
         if (t instanceof AbstractFilterTile) {
           AbstractFilterTile tile = (AbstractFilterTile) t;
           switch (message.id) {
+            case TOGGLE_P_RESTARTTRIGGER:
+              if (tile instanceof TileCable) {
+                TileCable cable = (TileCable) tile;
+                //stop listening for result, export recipe into block
+                cable.getRequest().setStatus(ProcessStatus.EXPORTING);
+              }
+            break;
             case PRIORITY_DOWN:
               tile.setPriority(tile.getPriority() - 1);
             break;

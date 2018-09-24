@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.item.ItemUpgrade;
@@ -39,6 +40,9 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   private ItemSlotNetwork operationItemSlot;
   private GuiCheckBox checkOreBtn;
   private GuiCheckBox checkMetaBtn;
+  private GuiCableButton pbtnReset;
+  private GuiCableButton pbtnBottomface;
+  private GuiCableButton pbtnTopface;
 
   public GuiCable(ContainerCable inventorySlotsIn) {
     super(inventorySlotsIn);
@@ -180,6 +184,14 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    if (pbtnBottomface != null) {
+      //            this.tile.getRequest().notifyAll();
+      pbtnBottomface.displayString = "F";
+    }
+    if (pbtnTopface != null) {
+      //      this.tile.getRequest().notifyAll();
+      pbtnTopface.displayString = "F";
+    }
     //    this.fontRenderer.drawString(StorageNetwork.lang("storagenetwork.process.status" + tile.getField(0)),
     //        8, 70, FONTCOLOR);
   }
@@ -196,10 +208,25 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     btnPlus.setCable(tile);
     this.addButton(btnPlus);
     if (tile.getBlockType() == ModBlocks.processKabel) {
+      //move priority over
       //      btnMinus.x = btnPlus.x = guiLeft + 26; 
       btnMinus.y = btnPlus.y = guiTop + 36;
+      //add custom buttons 
+      if (this.tile.getRequest().getStatus() == ProcessStatus.IMPORTING) {
+        //a click will swap it to EXPORTING with CableDataMessage 
+      pbtnReset = new GuiCableButton(CableDataMessage.TOGGLE_P_RESTARTTRIGGER, guiLeft + 128, guiTop + 52, "R");
+      pbtnReset.setCable(tile);
+      this.addButton(pbtnReset);
+      }
+      int column = 76, ctr = 38;
+      pbtnBottomface = new GuiCableButton(CableDataMessage.P_FACE_BOTTOM, guiLeft + column, guiTop + ctr + 12, "");
+      pbtnBottomface.setCable(tile);
+      //      this.addButton(pbtnBottomface);
+      pbtnTopface = new GuiCableButton(CableDataMessage.P_FACE_TOP, guiLeft + column, guiTop + ctr - 12, "");
+      pbtnTopface.setCable(tile);
+      //         this.addButton(pbtnTopface);
     }
-    if (tile.getBlockType() != ModBlocks.processKabel) {
+    else {
       btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
       btnMinus.setCable(tile);
       this.addButton(btnMinus);

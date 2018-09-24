@@ -17,6 +17,10 @@ public class GuiCableButton extends GuiButton {
     super(id, x, y, 16, 16, z);
   }
 
+  public GuiCableButton(int id, int x, int y, int w, int h, String z) {
+    super(id, x, y, w, h, z);
+  }
+
   @Override
   public void drawButton(Minecraft mcc, int x, int y, float p) {//drawButon
     if (this.visible) {
