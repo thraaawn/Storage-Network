@@ -24,8 +24,8 @@ gui.storagenetwork.operate.tooltip.more=more
 gui.storagenetwork.operate.tooltip.less=less
 
 
-gui.storagenetwork.checkbox.meta=Use Metadata
-gui.storagenetwork.checkbox.ore=Ore Dictionary
+gui.storagenetwork.checkbox.meta=Meta
+gui.storagenetwork.checkbox.ore=OreDict
 
 gui.storagenetwork.gui.import=Import Filter
 gui.storagenetwork.gui.whitelist=Whitelist

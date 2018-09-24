@@ -28,6 +28,7 @@ import net.minecraftforge.fml.client.config.GuiCheckBox;
 
 public class GuiCable extends GuiContainer implements IPublicGuiContainer {
 
+  private static final int PROCESS_SPACING = 60;
   private static final int SQ = 18;
   private static final int TEXTBOX_WIDTH = 26;
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
@@ -77,13 +78,14 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       //RED output Means that you can pull out of chest into network, but not put in
       //GREEN input means yes you can also put into chest from network
       //this first TOP texture is green
-      int col = 156;
+      int col = -3;
       this.drawTexturedModalRect(xMiddle + col, yMiddle + 8, u, v, SQ - 8, SQ);
       //move over on spritesheet and down on gui
       u = 188;
       //this bottom one is RED
-      this.mc.getTextureManager().bindTexture(texture);
-      this.drawTexturedModalRect(xMiddle + col, yMiddle + 66, u, v, SQ - 8, SQ);
+      //      this.mc.getTextureManager().bindTexture(texture);
+      //PROCESS_SPACING
+      this.drawTexturedModalRect(xMiddle + col, yMiddle + PROCESS_SPACING + 8, u, v, SQ - 8, SQ);
     }
     //reset sprite u/v
     u = 176;
@@ -92,7 +94,8 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       for (int col = 0; col < 2; col++) {
         x = xMiddle + 7 + row * 18;
         y = yMiddle + 25 + SQ * col;
-        if (col == 1 && tile.getBlockType() == ModBlocks.processKabel) {
+        if (tile.getBlockType() == ModBlocks.processKabel) {
+          y = yMiddle + 8 + (col % 2) * PROCESS_SPACING - 1;
           //move space down
           // or some other way rearrange process slots 
           //           y += 5;
@@ -133,7 +136,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         if (tile.getBlockType() == ModBlocks.processKabel) {
           //TODO:
           //redesign
-          // y = 8 + row % 2 * 48;
+          y = 8 + row % 2 * PROCESS_SPACING;
         }
         itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, numShow));
       }
@@ -144,7 +147,9 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
       operationItemSlot.drawSlot(mouseX, mouseY);
     }
-    fontRenderer.drawString(String.valueOf(tile.getPriority()), guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
+    fontRenderer.drawString(String.valueOf(tile.getPriority()),
+        guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2,
+        5 + btnMinus.y, 4210752);
   }
 
   private void drawTooltips(int mouseX, int mouseY) {
@@ -183,12 +188,17 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   public void initGui() {
     super.initGui();
     //priority for everything 
+    int x = 0, y = 0;
     btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
     btnMinus.setCable(tile);
     this.addButton(btnMinus);
     btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
     btnPlus.setCable(tile);
     this.addButton(btnPlus);
+    if (tile.getBlockType() == ModBlocks.processKabel) {
+      //      btnMinus.x = btnPlus.x = guiLeft + 26; 
+      btnMinus.y = btnPlus.y = guiTop + 36;
+    }
     if (tile.getBlockType() != ModBlocks.processKabel) {
       btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
       btnMinus.setCable(tile);
@@ -228,10 +238,17 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       }
     }
     if (tile.isStorage() == false) {
-      checkOreBtn = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, I18n.format("gui.storagenetwork.checkbox.ore"), true);
+      x = 88;
+      y = 62;
+      if (tile.getBlockType() == ModBlocks.processKabel) {
+        x = 120;
+        y = 26;
+      }
+      checkOreBtn = new GuiCheckBox(10, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.ore"), true);
       checkOreBtn.setIsChecked(tile.getOre());
       this.addButton(checkOreBtn);
-      checkMetaBtn = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, I18n.format("gui.storagenetwork.checkbox.meta"), true);
+      y += 12;
+      checkMetaBtn = new GuiCheckBox(11, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.meta"), true);
       checkMetaBtn.setIsChecked(tile.getMeta());
       this.addButton(checkMetaBtn);
     }
