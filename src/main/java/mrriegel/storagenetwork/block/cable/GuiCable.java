@@ -34,7 +34,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   private GuiCableButton btnPlus, btnMinus, btnWhite, btnOperationToggle, btnImport, btnInputOutputStorage;
   private TileCable tile;
   private GuiTextField searchBar;
-  private List<ItemSlotNetwork> list;
+  private List<ItemSlotNetwork> itemSlotsGhost;
   private ItemSlotNetwork operationItemSlot;
   private GuiCheckBox checkOreBtn;
   private GuiCheckBox checkMetaBtn;
@@ -44,7 +44,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     this.xSize = 176;
     this.ySize = 171;
     this.tile = inventorySlotsIn.getTile();
-    list = Lists.newArrayList();
+    itemSlotsGhost = Lists.newArrayList();
   }
 
   @Override
@@ -118,21 +118,27 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       btnOperationToggle.enabled = false;
       btnOperationToggle.visible = false;
     }
-    list = Lists.newArrayList();
+    itemSlotsGhost = Lists.newArrayList();
     for (int row = 0; row < 2; row++) {
       for (int col = 0; col < 9; col++) {
         int index = col + (9 * row);
         StackWrapper wrap = tile.getFilter().get(index);
-        ItemStack s = wrap == null ? ItemStack.EMPTY : wrap.getStack();
+        ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
         boolean numShow = tile instanceof TileCable ? tile.getUpgradesOfType(ItemUpgrade.STOCK) > 0
             || tile.getBlockType() == ModBlocks.processKabel
             : false;
-        //actually
-        list.add(new ItemSlotNetwork(this, s, guiLeft + 8 + col * SQ, guiTop + 26 + row * SQ, num, guiLeft, guiTop, numShow));
+        x = 8 + col * SQ;
+        y = 26 + row * SQ;
+        if (tile.getBlockType() == ModBlocks.processKabel) {
+          //TODO:
+          //redesign
+          // y = 8 + row % 2 * 48;
+        }
+        itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, numShow));
       }
     }
-    for (ItemSlotNetwork s : list) {
+    for (ItemSlotNetwork s : itemSlotsGhost) {
       s.drawSlot(mouseX, mouseY);
     }
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
@@ -142,7 +148,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   }
 
   private void drawTooltips(int mouseX, int mouseY) {
-    for (ItemSlotNetwork s : list) {
+    for (ItemSlotNetwork s : itemSlotsGhost) {
       if (s != null && s.getStack() != null && !s.getStack().isEmpty() && s.isMouseOverSlot(mouseX, mouseY)) this.renderToolTip(s.getStack(), mouseX, mouseY);
     }
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) operationItemSlot.drawTooltip(mouseX, mouseY);
@@ -245,8 +251,8 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     boolean isRightClick = mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT;
     boolean isLeftClick = mouseButton == UtilTileEntity.MOUSE_BTN_LEFT;
     boolean isMiddleClick = mouseButton == UtilTileEntity.MOUSE_BTN_MIDDLE_CLICK;
-    for (int i = 0; i < list.size(); i++) {
-      ItemSlotNetwork itemSlot = list.get(i);
+    for (int i = 0; i < itemSlotsGhost.size(); i++) {
+      ItemSlotNetwork itemSlot = itemSlotsGhost.get(i);
       if (itemSlot.isMouseOverSlot(mouseX, mouseY)) {
 
         ContainerCable container = (ContainerCable) inventorySlots;
