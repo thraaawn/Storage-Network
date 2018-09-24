@@ -2,6 +2,10 @@ package mrriegel.storagenetwork.block.cable;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+//Not done but planned:
+//Target arbitrary face of machine
+//Import button that will attempt to read recipe from machine
+//Method to enable/disable process. Possibly with some sort of request system
 //KNOWN BUGS
 //1: always inserting second ingredient if first one runs dry, fills too much
 //-> fixed 
@@ -15,7 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 //right click when adding and it will set 1 instead of stack size
 //6: if the mode is "importing/1/waiting for recipe output"
 //have button to force it back into insert mode. a "reset" for this cycle 
-
+//DONE 
 //FEATURES
 //added ore/meta checkboxes 
 
