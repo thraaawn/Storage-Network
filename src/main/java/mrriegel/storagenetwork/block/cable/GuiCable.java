@@ -29,7 +29,7 @@ import net.minecraftforge.fml.client.config.GuiCheckBox;
 
 public class GuiCable extends GuiContainer implements IPublicGuiContainer {
 
-  private static final int PROCESS_SPACING = 60;
+  private static final int PROCESS_SPACING = 42;
   private static final int SQ = 18;
   private static final int TEXTBOX_WIDTH = 26;
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
@@ -83,13 +83,13 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       //GREEN input means yes you can also put into chest from network
       //this first TOP texture is green
       int col = -3;
-      this.drawTexturedModalRect(xMiddle + col, yMiddle + 8, u, v, SQ - 8, SQ);
+      this.drawTexturedModalRect(xMiddle + col, yMiddle + 23, u, v, SQ - 8, SQ);
       //move over on spritesheet and down on gui
       u = 188;
       //this bottom one is RED
       //      this.mc.getTextureManager().bindTexture(texture);
-      //PROCESS_SPACING
-      this.drawTexturedModalRect(xMiddle + col, yMiddle + PROCESS_SPACING + 8, u, v, SQ - 8, SQ);
+      //PROCESS_SPAPROCESS_SPACINGCING
+      this.drawTexturedModalRect(xMiddle + col, yMiddle + 26 + PROCESS_SPACING, u, v, SQ - 8, SQ);
     }
     //reset sprite u/v
     u = 176;
@@ -99,10 +99,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         x = xMiddle + 7 + row * 18;
         y = yMiddle + 25 + SQ * col;
         if (tile.getBlockType() == ModBlocks.processKabel) {
-          y = yMiddle + 8 + (col % 2) * PROCESS_SPACING - 1;
-          //move space down
-          // or some other way rearrange process slots 
-          //           y += 5;
+          y = yMiddle + 24 + (col % 2) * PROCESS_SPACING - 1;
         }
         this.drawTexturedModalRect(x, y, u, v, SQ, SQ);
       }
@@ -138,9 +135,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         x = 8 + col * SQ;
         y = 26 + row * SQ;
         if (tile.getBlockType() == ModBlocks.processKabel) {
-          //TODO:
-          //redesign
-          y = 8 + row % 2 * PROCESS_SPACING;
+          y = 24 + row % 2 * PROCESS_SPACING;
         }
         itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, numShow));
       }
@@ -221,13 +216,11 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     btnPlus.setCable(tile);
     this.addButton(btnPlus);
     if (tile.getBlockType() == ModBlocks.processKabel) {
-      //move priority over
-      //      btnMinus.x = btnPlus.x = guiLeft + 26; 
-      btnMinus.y = btnPlus.y = guiTop + 36;
+      //move priority over 
       //add custom buttons 
       if (this.tile.getRequest().getStatus() == ProcessStatus.IMPORTING) {
         //a click will swap it to EXPORTING with CableDataMessage 
-        pbtnReset = new GuiCableButton(CableDataMessage.TOGGLE_P_RESTARTTRIGGER, guiLeft + 120, guiTop + 50, "R");
+        pbtnReset = new GuiCableButton(CableDataMessage.TOGGLE_P_RESTARTTRIGGER, guiLeft + 120, guiTop + 4, "R");
         pbtnReset.setCable(tile);
         this.addButton(pbtnReset);
       }
@@ -281,7 +274,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       y = 62;
       if (tile.getBlockType() == ModBlocks.processKabel) {
         x = 120;
-        y = 26;
+        y = 41;
       }
       checkOreBtn = new GuiCheckBox(10, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.ore"), true);
       checkOreBtn.setIsChecked(tile.getOre());
