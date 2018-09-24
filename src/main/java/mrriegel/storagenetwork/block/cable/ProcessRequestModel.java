@@ -4,9 +4,19 @@ import net.minecraft.nbt.NBTTagCompound;
 
 //KNOWN BUGS
 //1: always inserting second ingredient if first one runs dry, fills too much
+//-> fixed 
 //2: have to kickstart, its stuck at start in (inv to network) 
+//->2 kinda fixed, sstill needs manual reset swithc
 //3: sided inventories aka furnaces need a solution
 //4: cant turn off (multiple options for features to address)
+//5: the numbers going negative when shift right-click in cable phantoms
+//6: no easy way to set count, maybe add scroll wheel support
+//7: if the mode is "importing/1/waiting for recipe output"
+//have button to force it back into insert mode. a "reset" for this cycle 
+
+//FEATURES
+//added ore/meta checkboxes 
+
 //
 //long versions
 //3a: toggle button for "input = bottom; output = north"
@@ -24,7 +34,8 @@ public class ProcessRequestModel {
 
   //you can request more than 64
   private int count;
-  private ProcessStatus status = ProcessStatus.IMPORTING;
+  //start as export == net to inventory
+  private ProcessStatus status = ProcessStatus.EXPORTING;
 
   public int getCount() {
     return count;

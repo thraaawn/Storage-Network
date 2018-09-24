@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.lothrazar.cyclicmagic.ModCyclic;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.IConnectable;
@@ -437,7 +436,13 @@ public class TileMaster extends TileEntity implements ITickable {
       // output is one smoothstone (network gets-imports this) 
       //
       IItemHandler inventoryLinked = tileCable.getInventory();
-      if (request.getStatus() == ProcessStatus.EXPORTING) { //from network to inventory 
+      //      StorageNetwork.log("ST " + request.getStatus() + "  ingredients " + ingredients.size());
+      //we need to input ingredients FROM network into target
+      //PROBLEM: two ingredients: dirt + gravel
+      // network has tons dirt, no gravel. 
+      //it will insert dirt, skip gravel, stay on exporting
+      //and keep sending dirt forever
+      if (request.getStatus() == ProcessStatus.EXPORTING && ingredients.size() > 0) { //from network to inventory . also default state
         //NEW : this mode more stubborn. ex auto crafter.
         //if the target already has items, who cares, i was told to be in export mode so export a set if possible right away always.
         //then (assuming that works or even if not)
@@ -445,36 +450,45 @@ public class TileMaster extends TileEntity implements ITickable {
         //does the target have everything it needs, yes or no
         //look for full set, 
         //if we get all
+        boolean simulate = true;
         int numSatisfiedIngredients = 0;
-        //we need to input ingredients FROM network into target
         for (StackWrapper ingred : ingredients) {
           //  how many are needed. request them
-          boolean simulate = true;
-          ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy()), ingred.getSize(), simulate);//false means 4real, no simulate
+          //true is using nbt 
+          ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy(), tileCable.getMeta(), tileCable.getOre(), true), ingred.getSize(), simulate);//false means 4real, no simulate
+          int found = requestedFromNetwork.getCount();
+          ///  StorageNetwork.log("ingr size " + ingred.getSize() + " found +" + found + " of " + ingred.getStack().getDisplayName());
           ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
-          if (remain.isEmpty()) {
+          if (remain.isEmpty() && found >= ingred.getSize()) {
+            numSatisfiedIngredients++;
             //then do it for real
-            simulate = false;
-            requestedFromNetwork = this.request(new FilterItem(ingred.getStack()), ingred.getSize(), simulate);//false means 4real, no simulate
-            remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
+            //            simulate = false;
+            //            requestedFromNetwork = this.request(new FilterItem(ingred.getStack()), ingred.getSize(), simulate);//false means 4real, no simulate
+            //            remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
             //done
             //now count whats needed, SHOULD be zero
           }
-          int manyMoreNeeded = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, ingred.getStack(), ingred.getSize());
-          if (manyMoreNeeded == 0) {
-            //ok it has ingredients here
-            numSatisfiedIngredients++;
-          }
-        }
+          //          int manyMoreNeeded = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, ingred.getStack(), ingred.getSize());
+          //          if (manyMoreNeeded == 0) {
+          //            //ok it has ingredients here
+          //          }
+        } //end loop on ingredients
+          //NOW do real inserts 
+          //   StorageNetwork.log("satisfied # + " + numSatisfiedIngredients);
         if (numSatisfiedIngredients == ingredients.size()) {
           //and if we can insert all
           //then complete transaction (get and put items)
+          simulate = false;
+          for (StackWrapper ingred : ingredients) {
+            ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack()), ingred.getSize(), simulate);//false means 4real, no simulate
+            ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
+          }
           //flip that waitingResult flag on request (and save)
           request.setStatus(ProcessStatus.IMPORTING);
           tileCable.setField(0, request.getStatus().ordinal());
         }
       }
-      else if (request.getStatus() == ProcessStatus.IMPORTING) {
+      else if (request.getStatus() == ProcessStatus.IMPORTING && outputs.size() > 0) {
         //from inventory to network
         //try to find/get from the blocks outputs into network
         // look for "output" items that can be   from target
@@ -498,10 +512,10 @@ public class TileMaster extends TileEntity implements ITickable {
           }
         }
       }
-      else {
-        ModCyclic.logger.error("Status was halted or other " + request.getStatus());
-        request.setStatus(ProcessStatus.IMPORTING);//?? i dont know
-      }
+      //      else {
+      //        ModCyclic.logger.error("Status was halted or other " + request.getStatus());
+      //        request.setStatus(ProcessStatus.IMPORTING);//?? i dont know
+      //      }
       tileCable.setField(0, request.getStatus().ordinal());
       tileCable.setRequest(request);
     }

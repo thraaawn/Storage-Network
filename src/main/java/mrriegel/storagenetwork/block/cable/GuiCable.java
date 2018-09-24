@@ -169,8 +169,8 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-    this.fontRenderer.drawString(StorageNetwork.lang("storagenetwork.process.status" + tile.getField(0)),
-        8, 70, FONTCOLOR);
+    //    this.fontRenderer.drawString(StorageNetwork.lang("storagenetwork.process.status" + tile.getField(0)),
+    //        8, 70, FONTCOLOR);
   }
 
   @Override
@@ -218,14 +218,16 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         btnOperationToggle.setCable(tile);
         this.addButton(btnOperationToggle);
         operationItemSlot = new ItemSlotNetwork(this, tile.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false);
-        //      
-        checkOreBtn = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, I18n.format("gui.storagenetwork.checkbox.ore"), true);
-        checkOreBtn.setIsChecked(tile.getOre());
-        this.addButton(checkOreBtn);
-        checkMetaBtn = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, I18n.format("gui.storagenetwork.checkbox.meta"), true);
-        checkMetaBtn.setIsChecked(tile.getMeta());
-        this.addButton(checkMetaBtn);
+
       }
+    }
+    if (tile.isStorage() == false) {
+      checkOreBtn = new GuiCheckBox(10, guiLeft + 78, guiTop + 64, I18n.format("gui.storagenetwork.checkbox.ore"), true);
+      checkOreBtn.setIsChecked(tile.getOre());
+      this.addButton(checkOreBtn);
+      checkMetaBtn = new GuiCheckBox(11, guiLeft + 78, guiTop + 76, I18n.format("gui.storagenetwork.checkbox.meta"), true);
+      checkMetaBtn.setIsChecked(tile.getMeta());
+      this.addButton(checkMetaBtn);
     }
   }
 
