@@ -158,12 +158,25 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
 
   private void drawTooltips(int mouseX, int mouseY) {
     for (ItemSlotNetwork s : itemSlotsGhost) {
-      if (s != null && s.getStack() != null && !s.getStack().isEmpty() && s.isMouseOverSlot(mouseX, mouseY)) this.renderToolTip(s.getStack(), mouseX, mouseY);
+      if (s != null && s.getStack() != null && !s.getStack().isEmpty() && s.isMouseOverSlot(mouseX, mouseY)) {
+        this.renderToolTip(s.getStack(), mouseX, mouseY);
+      }
     }
-    if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) operationItemSlot.drawTooltip(mouseX, mouseY);
-    if (btnImport != null && btnImport.isMouseOver()) drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.gui.import")), mouseX, mouseY);
-    if (btnInputOutputStorage != null && btnInputOutputStorage.isMouseOver()) drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX, mouseY);
-    if (mouseX > guiLeft + 20 && mouseX < guiLeft + 50 && mouseY > guiTop + 2 && mouseY < guiTop + 30) this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.priority")), mouseX, mouseY, fontRenderer);
+    if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
+      operationItemSlot.drawTooltip(mouseX, mouseY);
+    }
+    if (pbtnReset != null && pbtnReset.isMouseOver()) {
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.refresh")), mouseX, mouseY);
+    }
+    if (btnImport != null && btnImport.isMouseOver()) {
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.gui.import")), mouseX, mouseY);
+    }
+    if (btnInputOutputStorage != null && btnInputOutputStorage.isMouseOver()) {
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX, mouseY);
+    }
+    if (mouseX > guiLeft + 20 && mouseX < guiLeft + 50 && mouseY > guiTop + 2 && mouseY < guiTop + 30) {
+      this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.priority")), mouseX, mouseY, fontRenderer);
+    }
     if (btnWhite != null && btnWhite.isMouseOver()) {
       String s = tile.isWhitelist() ? I18n.format("gui.storagenetwork.gui.whitelist") : I18n.format("gui.storagenetwork.gui.blacklist");
       this.drawHoveringText(Lists.newArrayList(s), mouseX, mouseY, fontRenderer);
@@ -214,9 +227,9 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       //add custom buttons 
       if (this.tile.getRequest().getStatus() == ProcessStatus.IMPORTING) {
         //a click will swap it to EXPORTING with CableDataMessage 
-      pbtnReset = new GuiCableButton(CableDataMessage.TOGGLE_P_RESTARTTRIGGER, guiLeft + 128, guiTop + 52, "R");
-      pbtnReset.setCable(tile);
-      this.addButton(pbtnReset);
+        pbtnReset = new GuiCableButton(CableDataMessage.TOGGLE_P_RESTARTTRIGGER, guiLeft + 120, guiTop + 50, "R");
+        pbtnReset.setCable(tile);
+        this.addButton(pbtnReset);
       }
       int column = 76, ctr = 38;
       pbtnBottomface = new GuiCableButton(CableDataMessage.P_FACE_BOTTOM, guiLeft + column, guiTop + ctr + 12, "");
@@ -261,7 +274,6 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         btnOperationToggle.setCable(tile);
         this.addButton(btnOperationToggle);
         operationItemSlot = new ItemSlotNetwork(this, tile.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false);
-
       }
     }
     if (tile.isStorage() == false) {
@@ -298,7 +310,6 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     for (int i = 0; i < itemSlotsGhost.size(); i++) {
       ItemSlotNetwork itemSlot = itemSlotsGhost.get(i);
       if (itemSlot.isMouseOverSlot(mouseX, mouseY)) {
-
         ContainerCable container = (ContainerCable) inventorySlots;
         StackWrapper stackWrapper = container.getTile().getFilter().get(i);
         boolean doesExistAlready = container.isInFilter(new StackWrapper(stackCarriedByMouse, 1));
