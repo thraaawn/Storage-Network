@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.network;
 import java.util.HashMap;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
@@ -109,7 +108,6 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
               tile.setWay(tile.getWay().next());
             break;
             case P_FACE_BOTTOM:
-              StorageNetwork.log("?" + message.value);
               if (tileCable != null)
                 tileCable.setField(Fields.FACINGBOTTOMROW.ordinal(), message.value);
                 

@@ -195,10 +195,12 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     if (pbtnBottomface != null) {
-      pbtnBottomface.displayString = EnumFacing.values()[tile.getField(Fields.FACINGBOTTOMROW.ordinal())].name();
+      EnumFacing f = tile.getFacingBottomRow();
+      pbtnBottomface.displayString = f.name();
     }
     if (pbtnTopface != null) {
       //      this.tile.getRequest().notifyAll();
+      EnumFacing f = tile.getFacingTopRow();
       pbtnTopface.displayString = EnumFacing.values()[tile.getField(Fields.FACINGTOPROW.ordinal())].name();
     }
 

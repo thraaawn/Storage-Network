@@ -400,4 +400,12 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   public void setRequest(ProcessRequestModel request) {
     this.processModel = request;
   }
+
+  public EnumFacing getFacingBottomRow() {
+    return EnumFacing.values()[this.getField(Fields.FACINGBOTTOMROW.ordinal())];
+  }
+
+  public EnumFacing getFacingTopRow() {
+    return EnumFacing.values()[this.getField(Fields.FACINGTOPROW.ordinal())];
+  }
 }

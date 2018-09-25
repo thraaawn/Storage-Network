@@ -443,6 +443,8 @@ public class TileMaster extends TileEntity implements ITickable {
       //it will insert dirt, skip gravel, stay on exporting
       //and keep sending dirt forever
       if (request.getStatus() == ProcessStatus.EXPORTING && ingredients.size() > 0) { //from network to inventory . also default state
+        //also TOP ROW 
+        StorageNetwork.log("exportring network->invenoory so top row hey ");
         //NEW : this mode more stubborn. ex auto crafter.
         //if the target already has items, who cares, i was told to be in export mode so export a set if possible right away always.
         //then (assuming that works or even if not)
@@ -455,6 +457,7 @@ public class TileMaster extends TileEntity implements ITickable {
         for (StackWrapper ingred : ingredients) {
           //  how many are needed. request them
           //true is using nbt 
+          inventoryLinked = UtilInventory.getItemHandler(world.getTileEntity(tileCable.getConnectedInventory()), tileCable.getFacingTopRow());
           ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy(), tileCable.getMeta(), tileCable.getOre(), true), ingred.getSize(), simulate);//false means 4real, no simulate
           int found = requestedFromNetwork.getCount();
           ///  StorageNetwork.log("ingr size " + ingred.getSize() + " found +" + found + " of " + ingred.getStack().getDisplayName());
@@ -488,12 +491,13 @@ public class TileMaster extends TileEntity implements ITickable {
           tileCable.setField(0, request.getStatus().ordinal());
         }
       }
-      else if (request.getStatus() == ProcessStatus.IMPORTING && outputs.size() > 0) {
-        //from inventory to network
+      else if (request.getStatus() == ProcessStatus.IMPORTING && outputs.size() > 0) { //from inventory to network
+
         //try to find/get from the blocks outputs into network
         // look for "output" items that can be   from target
         for (StackWrapper out : outputs) {
-          //pull this many from targe 
+          //pull this many from targe  
+          inventoryLinked = UtilInventory.getItemHandler(world.getTileEntity(tileCable.getConnectedInventory()), tileCable.getFacingBottomRow());
           boolean simulate = true;
           int targetStillNeeds = UtilInventory.containsAtLeastHowManyNeeded(inventoryLinked, out.getStack(), out.getSize());//.extractItem(inventoryLinked, new FilterItem(out.getStack().copy()), out.getSize(), simulate);
           ItemStack stackToMove = out.getStack().copy();
@@ -502,6 +506,9 @@ public class TileMaster extends TileEntity implements ITickable {
           if (countNotInserted == 0 && targetStillNeeds == 0) { //extracted.getCount() == out.getSize() && countNotInserted == extracted.getCount()) {
             //success
             simulate = false;
+            //            InventoryHelper.
+            //new extract item using capabilityies
+            StorageNetwork.log("importing acutally a success. send to face " + tileCable.getFacingBottomRow() + "?" + inventoryLinked + "?" + stackToMove.getDisplayName());
             ItemStack extracted = UtilInventory.extractItem(inventoryLinked, new FilterItem(out.getStack()), out.getSize(), simulate);
             countNotInserted = this.insertStack(stackToMove, tileCable.getPos(), simulate);
             // IF all found 
