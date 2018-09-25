@@ -7,6 +7,7 @@ import org.lwjgl.input.Keyboard;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
+import mrriegel.storagenetwork.block.cable.TileCable.Fields;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.item.ItemUpgrade;
@@ -24,6 +25,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
@@ -193,15 +195,13 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     if (pbtnBottomface != null) {
-      //            this.tile.getRequest().notifyAll();
-      pbtnBottomface.displayString = "F";
+      pbtnBottomface.displayString = EnumFacing.values()[tile.getField(Fields.FACINGBOTTOMROW.ordinal())].name();
     }
     if (pbtnTopface != null) {
       //      this.tile.getRequest().notifyAll();
-      pbtnTopface.displayString = "F";
+      pbtnTopface.displayString = EnumFacing.values()[tile.getField(Fields.FACINGTOPROW.ordinal())].name();
     }
-    //    this.fontRenderer.drawString(StorageNetwork.lang("storagenetwork.process.status" + tile.getField(0)),
-    //        8, 70, FONTCOLOR);
+
   }
 
   @Override
@@ -225,20 +225,20 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         this.addButton(pbtnReset);
       }
       int column = 76, ctr = 38;
-      pbtnBottomface = new GuiCableButton(CableDataMessage.P_FACE_BOTTOM, guiLeft + column, guiTop + ctr + 12, "");
+      pbtnBottomface = new GuiCableButton(CableDataMessage.P_FACE_BOTTOM, guiLeft + column + 12, guiTop + ctr + 12, "");
       pbtnBottomface.setCable(tile);
-      //      this.addButton(pbtnBottomface);
-      pbtnTopface = new GuiCableButton(CableDataMessage.P_FACE_TOP, guiLeft + column, guiTop + ctr - 12, "");
+      this.addButton(pbtnBottomface);
+      pbtnTopface = new GuiCableButton(CableDataMessage.P_FACE_TOP, guiLeft + column - 12, guiTop + ctr + 2, "");
       pbtnTopface.setCable(tile);
-      //         this.addButton(pbtnTopface);
+      this.addButton(pbtnTopface);
     }
     else {
-      btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
-      btnMinus.setCable(tile);
-      this.addButton(btnMinus);
-      btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
-      btnPlus.setCable(tile);
-      this.addButton(btnPlus);
+      //      btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
+      //      btnMinus.setCable(tile);
+      //      this.addButton(btnMinus);
+      //      btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
+      //      btnPlus.setCable(tile);
+      //      this.addButton(btnPlus);
       btnImport = new GuiCableButton(CableDataMessage.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
       btnImport.setCable(tile);
       this.addButton(btnImport);
@@ -335,18 +335,35 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   @Override
   protected void actionPerformed(GuiButton button) throws IOException {
     super.actionPerformed(button);
-    PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));
     if (btnMinus != null && button.id == btnMinus.id) {
       tile.setPriority(tile.getPriority() - 1);
+      PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));
     }
     else if (btnPlus != null && button.id == btnPlus.id) {
       tile.setPriority(tile.getPriority() + 1);
+      PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));
     }
     else if (btnWhite != null && button.id == btnWhite.id) {
       tile.setWhite(!tile.isWhitelist());
+      PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));
+    }
+    else if (pbtnTopface != null && button.id == pbtnTopface.id) {
+      int newFace = (tile.getField(TileCable.Fields.FACINGTOPROW.ordinal()) + 1) % EnumFacing.values().length;
+      //todo save this P_FACE_TOP
+    //  tile.setField(TileCable.Fields.FACINGTOPROW.ordinal(), newFace);
+      PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos(), newFace));
+      tile.setField(TileCable.Fields.FACINGTOPROW.ordinal(), newFace);
+    }
+    else if (pbtnBottomface != null && button.id == pbtnBottomface.id) {
+      //
+      int newFace = (tile.getField(TileCable.Fields.FACINGBOTTOMROW.ordinal()) + 1) % EnumFacing.values().length;
+
+      PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos(), newFace));
+      tile.setField(TileCable.Fields.FACINGBOTTOMROW.ordinal(), newFace);
     }
     else if (btnOperationToggle != null && button.id == btnOperationToggle.id) {
       if (tile instanceof TileCable) tile.setMode(!tile.isMode());
+      PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));
     }
     else if (checkMetaBtn != null && checkOreBtn != null && (button.id == checkMetaBtn.id || button.id == checkOreBtn.id)) {
       PacketRegistry.INSTANCE.sendToServer(new CableFilterMessage(-1, null, checkOreBtn.isChecked(), checkMetaBtn.isChecked()));

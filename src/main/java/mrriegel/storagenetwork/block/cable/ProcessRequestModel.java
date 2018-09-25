@@ -1,6 +1,8 @@
 package mrriegel.storagenetwork.block.cable;
 
 import net.minecraft.nbt.NBTTagCompound;
+//new bugs:
+//double clicks on + - priority buttons 
 
 //Not done but planned:
 //Target arbitrary face of machine

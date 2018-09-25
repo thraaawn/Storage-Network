@@ -36,6 +36,12 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   public EnumCableType north, south, east, west, up, down;
   private ItemStack stack = ItemStack.EMPTY;
   private ProcessRequestModel processModel;
+  private EnumFacing processingTop = EnumFacing.UP;
+  private EnumFacing processingBottom = EnumFacing.UP;
+
+  public static enum Fields {
+    STATUS, FACINGTOPROW, FACINGBOTTOMROW;
+  }
 
   public TileCable() {
     this.setOres(false);
@@ -100,6 +106,8 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
+    processingTop = EnumFacing.values()[compound.getInteger("processTop")];
+    processingBottom = EnumFacing.values()[compound.getInteger("processBottm")];
     this.processModel.readFromNBT(compound);
     connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {}.getType());
     inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
@@ -136,6 +144,8 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
     this.processModel.writeToNBT(compound);
+    compound.setInteger("processingBottom", processingBottom.ordinal());
+    compound.setInteger("processingTop", processingTop.ordinal());
     compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
     if (inventoryFace != null)
       compound.setString("inventoryFace", inventoryFace.toString());
@@ -315,21 +325,38 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   @Override
   public int getField(int id) {
-    if (id == 0)
-      return this.processModel.getStatus().ordinal();
+    switch (Fields.values()[id]) {
+      case FACINGBOTTOMROW:
+        return this.processingBottom.ordinal();
+      case FACINGTOPROW:
+        return this.processingTop.ordinal();
+      case STATUS:
+        return this.processModel.getStatus().ordinal();
+    }
     return 0;
   }
 
   @Override
   public void setField(int id, int value) {
-    if (id == 0) {
-      this.processModel.setStatus(ProcessStatus.values()[value]);
+    switch (Fields.values()[id]) {
+      case FACINGBOTTOMROW:
+        this.processingBottom = EnumFacing.VALUES[value];
+      break;
+      case FACINGTOPROW:
+        this.processingTop = EnumFacing.VALUES[value];
+      break;
+      case STATUS:
+        this.processModel.setStatus(ProcessStatus.values()[value]);
+      break;
+      default:
+      break;
     }
+
   }
 
   @Override
   public int getFieldCount() {
-    return 1;
+    return Fields.values().length;
   }
 
   @Override

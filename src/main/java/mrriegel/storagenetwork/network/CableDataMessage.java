@@ -3,10 +3,11 @@ package mrriegel.storagenetwork.network;
 import java.util.HashMap;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
-import mrriegel.storagenetwork.util.UtilTileEntity;
+import mrriegel.storagenetwork.block.cable.TileCable.Fields;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -33,6 +34,7 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
   public static final int P_FACE_BOTTOM = 8;
   public static final int TOGGLE_P_RESTARTTRIGGER = 9;
   private int id;
+  private int value = 0;
   private BlockPos pos;
 
   public CableDataMessage() {}
@@ -40,6 +42,11 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
   public CableDataMessage(int id, BlockPos pos) {
     this.id = id;
     this.pos = pos;
+  }
+
+  public CableDataMessage(int id, BlockPos pos, int value) {
+    this(id, pos);
+    this.value = value;
   }
 
   @Override
@@ -52,14 +59,15 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
       public void run() {
         TileEntity t = player.world.getTileEntity(message.pos);
         if (t instanceof AbstractFilterTile) {
-          AbstractFilterTile tile = (AbstractFilterTile) t;
+          AbstractFilterTile tile = (AbstractFilterTile) t; 
+            TileCable tileCable = null;
+            if(t instanceof TileCable)
+              tileCable= (TileCable) tile;
           switch (message.id) {
             case TOGGLE_P_RESTARTTRIGGER:
-              if (tile instanceof TileCable) {
-                TileCable cable = (TileCable) tile;
                 //stop listening for result, export recipe into block
-                cable.getRequest().setStatus(ProcessStatus.EXPORTING);
-              }
+              if (tileCable != null)
+              tileCable.getRequest().setStatus(ProcessStatus.EXPORTING);
             break;
             case PRIORITY_DOWN:
               tile.setPriority(tile.getPriority() - 1);
@@ -70,10 +78,10 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             case TOGGLE_WHITELIST:
               tile.setWhite(!tile.isWhitelist());
             break;
-            case TOGGLE_MODE://4
-              if (tile instanceof TileCable) {
-                ((TileCable) tile).setMode(!((TileCable) tile).isMode());
-              }
+            case TOGGLE_MODE://4 
+                if (tileCable != null)
+                  tileCable.setMode(!tileCable.isMode());
+
             break;
             case IMPORT_FILTER:
               if (tile.getInventory() != null) {
@@ -100,10 +108,20 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             case TOGGLE_WAY:
               tile.setWay(tile.getWay().next());
             break;
+            case P_FACE_BOTTOM:
+              StorageNetwork.log("?" + message.value);
+              if (tileCable != null)
+                tileCable.setField(Fields.FACINGBOTTOMROW.ordinal(), message.value);
+                
+              break;
+            case P_FACE_TOP:
+              if (tileCable != null)
+                tileCable.setField(Fields.FACINGTOPROW.ordinal(), message.value);
+              break;
           }
           tile.markDirty();
         }
-        UtilTileEntity.updateTile(t.getWorld(), t.getPos());
+        // UtilTileEntity.updateTile(t.getWorld(), t.getPos());
       }
     });
     return null;
@@ -113,11 +131,13 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
   public void fromBytes(ByteBuf buf) {
     this.pos = BlockPos.fromLong(buf.readLong());
     this.id = buf.readInt();
+    value = buf.readInt();
   }
 
   @Override
   public void toBytes(ByteBuf buf) {
     buf.writeLong(this.pos.toLong());
     buf.writeInt(this.id);
+    buf.writeInt(value);
   }
 }
