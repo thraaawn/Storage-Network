@@ -2,12 +2,14 @@ package mrriegel.storagenetwork.block;
 
 import java.util.HashMap;
 import java.util.Map;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.EnumFilterDirection;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
@@ -24,7 +26,10 @@ public abstract class AbstractFilterTile extends TileConnectable {
   private boolean metas = false;
   private boolean isWhitelist;
   private int priority;
-  private EnumFilterDirection way = EnumFilterDirection.BOTH;
+  protected ProcessRequestModel processModel = new ProcessRequestModel();
+  public EnumFacing processingTop = EnumFacing.UP;
+  public EnumFacing processingBottom = EnumFacing.UP;
+  protected EnumFilterDirection way = EnumFilterDirection.BOTH;
 
   @Override
   public void readFromNBT(NBTTagCompound compound) {
@@ -32,7 +37,10 @@ public abstract class AbstractFilterTile extends TileConnectable {
     readSettings(compound);
   }
 
-  public void readSettings(NBTTagCompound compound) {
+  private void readSettings(NBTTagCompound compound) {
+    processingTop = EnumFacing.values()[compound.getInteger("processTop")];
+    processingBottom = EnumFacing.values()[compound.getInteger("processBottm")];
+    this.processModel.readFromNBT(compound);
     isWhitelist = compound.getBoolean("white");
     priority = compound.getInteger("prio");
     NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
@@ -59,7 +67,9 @@ public abstract class AbstractFilterTile extends TileConnectable {
     return compound;
   }
 
-  public void writeSettings(NBTTagCompound compound) {
+  private void writeSettings(NBTTagCompound compound) {
+    compound.setInteger("processingBottom", processingBottom.ordinal());
+    compound.setInteger("processingTop", processingTop.ordinal());
     compound.setBoolean("white", isWhitelist);
     compound.setInteger("prio", priority);
     NBTTagList invList = new NBTTagList();

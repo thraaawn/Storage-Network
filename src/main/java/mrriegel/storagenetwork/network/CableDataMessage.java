@@ -3,15 +3,17 @@ package mrriegel.storagenetwork.network;
 import java.util.HashMap;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
-import mrriegel.storagenetwork.block.cable.TileCable.Fields;
+import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -58,15 +60,15 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
       public void run() {
         TileEntity t = player.world.getTileEntity(message.pos);
         if (t instanceof AbstractFilterTile) {
-          AbstractFilterTile tile = (AbstractFilterTile) t; 
-            TileCable tileCable = null;
-            if(t instanceof TileCable)
-              tileCable= (TileCable) tile;
+          AbstractFilterTile tile = (AbstractFilterTile) t;
+          TileCable tileCable = null;
+          if (t instanceof TileCable)
+            tileCable = (TileCable) tile;
           switch (message.id) {
             case TOGGLE_P_RESTARTTRIGGER:
-                //stop listening for result, export recipe into block
+              //stop listening for result, export recipe into block
               if (tileCable != null)
-              tileCable.getRequest().setStatus(ProcessStatus.EXPORTING);
+                tileCable.getRequest().setStatus(ProcessStatus.EXPORTING);
             break;
             case PRIORITY_DOWN:
               tile.setPriority(tile.getPriority() - 1);
@@ -78,9 +80,8 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
               tile.setWhite(!tile.isWhitelist());
             break;
             case TOGGLE_MODE://4 
-                if (tileCable != null)
-                  tileCable.setMode(!tileCable.isMode());
-
+              if (tileCable != null)
+                tileCable.setMode(!tileCable.isMode());
             break;
             case IMPORT_FILTER:
               if (tile.getInventory() != null) {
@@ -109,17 +110,19 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             break;
             case P_FACE_BOTTOM:
               if (tileCable != null)
-                tileCable.setField(Fields.FACINGBOTTOMROW.ordinal(), message.value);
-                
-              break;
+                tileCable.processingBottom = EnumFacing.values()[message.value];
+            break;
             case P_FACE_TOP:
-              if (tileCable != null)
-                tileCable.setField(Fields.FACINGTOPROW.ordinal(), message.value);
-              break;
-          }
-          tile.markDirty();
-        }
-        // UtilTileEntity.updateTile(t.getWorld(), t.getPos());
+              if (tileCable != null) {
+                tileCable.processingTop = EnumFacing.values()[message.value];
+                StorageNetwork.log(tileCable.processingTop.name() + " server is ?" + message.value);
+              }
+            break;
+          }//end of switch
+          //          tile.markDirty();
+        } //not the right TE
+        if (message.id != P_FACE_TOP && message.id != P_FACE_BOTTOM)
+          UtilTileEntity.updateTile(t.getWorld(), t.getPos());
       }
     });
     return null;

@@ -7,7 +7,6 @@ import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
-import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
@@ -35,9 +34,6 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   private int limit = 0;
   public EnumCableType north, south, east, west, up, down;
   private ItemStack stack = ItemStack.EMPTY;
-  private ProcessRequestModel processModel;
-  private EnumFacing processingTop = EnumFacing.UP;
-  private EnumFacing processingBottom = EnumFacing.UP;
 
   public static enum Fields {
     STATUS, FACINGTOPROW, FACINGBOTTOMROW;
@@ -46,8 +42,6 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   public TileCable() {
     this.setOres(false);
     this.setMeta(true);
-
-    processModel = new ProcessRequestModel();
   }
 
   public int getUpgradesOfType(int num) {
@@ -106,9 +100,6 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
-    processingTop = EnumFacing.values()[compound.getInteger("processTop")];
-    processingBottom = EnumFacing.values()[compound.getInteger("processBottm")];
-    this.processModel.readFromNBT(compound);
     connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {}.getType());
     inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
     mode = compound.getBoolean("mode");
@@ -143,9 +134,6 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
-    this.processModel.writeToNBT(compound);
-    compound.setInteger("processingBottom", processingBottom.ordinal());
-    compound.setInteger("processingTop", processingTop.ordinal());
     compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
     if (inventoryFace != null)
       compound.setString("inventoryFace", inventoryFace.toString());
@@ -325,38 +313,33 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   @Override
   public int getField(int id) {
-    switch (Fields.values()[id]) {
-      case FACINGBOTTOMROW:
-        return this.processingBottom.ordinal();
-      case FACINGTOPROW:
-        return this.processingTop.ordinal();
-      case STATUS:
-        return this.processModel.getStatus().ordinal();
-    }
+//    switch (Fields.values()[id]) {
+//      case FACINGBOTTOMROW:
+//        return this.processingBottom.ordinal();
+//      case FACINGTOPROW:
+//        return this.processingTop.ordinal();
+//      case STATUS:
+//        return this.processModel.getStatus().ordinal();
+//    }
     return 0;
   }
 
   @Override
   public void setField(int id, int value) {
-    switch (Fields.values()[id]) {
-      case FACINGBOTTOMROW:
-        this.processingBottom = EnumFacing.VALUES[value];
-      break;
-      case FACINGTOPROW:
-        this.processingTop = EnumFacing.VALUES[value];
-      break;
-      case STATUS:
-        this.processModel.setStatus(ProcessStatus.values()[value]);
-      break;
-      default:
-      break;
-    }
+//    switch (Fields.values()[id]) {
+//      case FACINGBOTTOMROW:
+//        this.processingBottom = EnumFacing.VALUES[value];
+//      break;
+//      case FACINGTOPROW:
+//        this.processingTop = EnumFacing.VALUES[value];
+//      break;
+//      case STATUS:
+//        this.processModel.setStatus(ProcessStatus.values()[value]);
+//      break;
+//      default:
+//      break;
+//    }
 
-  }
-
-  @Override
-  public int getFieldCount() {
-    return Fields.values().length;
   }
 
   @Override
@@ -407,5 +390,10 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   public EnumFacing getFacingTopRow() {
     return EnumFacing.values()[this.getField(Fields.FACINGTOPROW.ordinal())];
+  }
+
+  @Override
+  public int getFieldCount() {
+    return 0;
   }
 }
