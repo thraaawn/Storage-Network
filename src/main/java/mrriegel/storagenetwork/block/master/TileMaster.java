@@ -487,7 +487,7 @@ public class TileMaster extends TileEntity implements ITickable {
           }
           //flip that waitingResult flag on request (and save)
           request.setStatus(ProcessStatus.IMPORTING);
-          tileCable.setField(0, request.getStatus().ordinal());
+          tileCable.setRequest(request);
         }
       }
       else if (request.getStatus() == ProcessStatus.IMPORTING && outputs.size() > 0) { //from inventory to network
@@ -514,7 +514,7 @@ public class TileMaster extends TileEntity implements ITickable {
             //then complete extraction (and insert into network)
             //then toggle that waitingResult flag on request (and save)
             request.setStatus(ProcessStatus.EXPORTING);
-            tileCable.setField(0, request.getStatus().ordinal());
+            tileCable.setRequest(request);
           }
         }
       }
@@ -522,7 +522,7 @@ public class TileMaster extends TileEntity implements ITickable {
       //        ModCyclic.logger.error("Status was halted or other " + request.getStatus());
       //        request.setStatus(ProcessStatus.IMPORTING);//?? i dont know
       //      }
-      tileCable.setField(0, request.getStatus().ordinal());
+
       tileCable.setRequest(request);
     }
   }

@@ -347,7 +347,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       int newFace = (tile.getFacingTopRow().ordinal() + 1) % EnumFacing.values().length;
 
       StorageNetwork.log("TOP FACE  " + newFace);
-      tile.processingTop = EnumFacing.values()[newFace];
+      //  tile.processingTop = EnumFacing.values()[newFace];
       StorageNetwork.log("TOP FACE  " + tile.processingTop.name());
       PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos(), newFace));
 
@@ -355,7 +355,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     else if (pbtnBottomface != null && button.id == pbtnBottomface.id) {
       //
       int newFace = (tile.getFacingBottomRow().ordinal() + 1) % EnumFacing.values().length;
-      tile.processingBottom = EnumFacing.values()[newFace];
+      // tile.processingBottom = EnumFacing.values()[newFace];
       PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos(), newFace));
 
     }

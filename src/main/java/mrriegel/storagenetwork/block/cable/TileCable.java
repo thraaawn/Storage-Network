@@ -313,32 +313,13 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   @Override
   public int getField(int id) {
-//    switch (Fields.values()[id]) {
-//      case FACINGBOTTOMROW:
-//        return this.processingBottom.ordinal();
-//      case FACINGTOPROW:
-//        return this.processingTop.ordinal();
-//      case STATUS:
-//        return this.processModel.getStatus().ordinal();
-//    }
+
     return 0;
   }
 
   @Override
   public void setField(int id, int value) {
-//    switch (Fields.values()[id]) {
-//      case FACINGBOTTOMROW:
-//        this.processingBottom = EnumFacing.VALUES[value];
-//      break;
-//      case FACINGTOPROW:
-//        this.processingTop = EnumFacing.VALUES[value];
-//      break;
-//      case STATUS:
-//        this.processModel.setStatus(ProcessStatus.values()[value]);
-//      break;
-//      default:
-//      break;
-//    }
+
 
   }
 
@@ -384,16 +365,10 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     this.processModel = request;
   }
 
-  public EnumFacing getFacingBottomRow() {
-    return EnumFacing.values()[this.getField(Fields.FACINGBOTTOMROW.ordinal())];
-  }
-
-  public EnumFacing getFacingTopRow() {
-    return EnumFacing.values()[this.getField(Fields.FACINGTOPROW.ordinal())];
-  }
 
   @Override
   public int getFieldCount() {
     return 0;
   }
+
 }

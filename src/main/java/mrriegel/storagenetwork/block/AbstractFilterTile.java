@@ -202,4 +202,12 @@ public abstract class AbstractFilterTile extends TileConnectable {
   public void setWay(EnumFilterDirection way) {
     this.way = way;
   }
+
+  public EnumFacing getFacingBottomRow() {
+    return this.processingBottom;
+  }
+
+  public EnumFacing getFacingTopRow() {
+    return this.processingTop;
+  }
 }
