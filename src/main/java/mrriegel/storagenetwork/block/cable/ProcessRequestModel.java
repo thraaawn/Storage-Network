@@ -1,38 +1,14 @@
 package mrriegel.storagenetwork.block.cable;
 
 import net.minecraft.nbt.NBTTagCompound;
-//new bugs:
-//double clicks on + - priority buttons 
 
 //Not done but planned:
-//Target arbitrary face of machine
-//Import button that will attempt to read recipe from machine
-//Method to enable/disable process. Possibly with some sort of request system
-//KNOWN BUGS
-//1: always inserting second ingredient if first one runs dry, fills too much
-//-> fixed 
-//2: have to kickstart, its stuck at start in (inv to network) 
-//->2 kinda fixed, sstill needs manual reset swithc
-//3: sided inventories aka furnaces need a solution
-//4: cant turn off (multiple options for features to address)
-//5: the numbers going negative when shift right-click in cable phantoms
-//negatives fixed 
-//new: with middle click and right click for up and down
-//right click when adding and it will set 1 instead of stack size
-//6: if the mode is "importing/1/waiting for recipe output"
-//have button to force it back into insert mode. a "reset" for this cycle 
-//DONE 
-//FEATURES
-//added ore/meta checkboxes 
+//{A}Text box input for priority (all) 
+//{B}CLONE settings between multiple cables 
+//{C}Import button that will attempt to read recipe from machine
+//{D}Method to enable/disable process. Possibly with some sort of request system
 
-//
-//long versions
-//3a: toggle button for "input = bottom; output = north"
-//
-//: its stuck in the "network to inventory" loop. but when it fails to insert 100% of recipe it
-//doesnt roll back and leaves half the ingredients in there
-//1a a bandaid could be "do you have <resin> in your insert-able slots? (ignore output-only slots and autocrafter 3x3)
-//1b another one is to rollback transactions / so if it needs both resin and acorn, but acorn empty, dont insert resin every tick forever  
+
 public class ProcessRequestModel {
 
   public enum ProcessStatus {
