@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.network;
 import java.util.HashMap;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
@@ -115,13 +114,12 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             case P_FACE_TOP:
               if (tileCable != null) {
                 tileCable.processingTop = EnumFacing.values()[message.value];
-                StorageNetwork.log(tileCable.processingTop.name() + " server is ?" + message.value);
+                //                StorageNetwork.log(tileCable.processingTop.name() + " server is ?" + message.value);
               }
             break;
           }//end of switch
-          //          tile.markDirty();
-        } //not the right TE
-        if (message.id != P_FACE_TOP && message.id != P_FACE_BOTTOM)
+          tile.markDirty();
+        } //not the right TE 
           UtilTileEntity.updateTile(t.getWorld(), t.getPos());
       }
     });

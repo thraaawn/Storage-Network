@@ -34,12 +34,9 @@ public abstract class AbstractFilterTile extends TileConnectable {
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
-    readSettings(compound);
-  }
 
-  private void readSettings(NBTTagCompound compound) {
-    processingTop = EnumFacing.values()[compound.getInteger("processTop")];
-    processingBottom = EnumFacing.values()[compound.getInteger("processBottm")];
+    processingTop = EnumFacing.values()[compound.getInteger("processingTop")];
+    processingBottom = EnumFacing.values()[compound.getInteger("processingBottom")];
     this.processModel.readFromNBT(compound);
     isWhitelist = compound.getBoolean("white");
     priority = compound.getInteger("prio");
@@ -63,11 +60,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
-    writeSettings(compound);
-    return compound;
-  }
 
-  private void writeSettings(NBTTagCompound compound) {
     compound.setInteger("processingBottom", processingBottom.ordinal());
     compound.setInteger("processingTop", processingTop.ordinal());
     compound.setBoolean("white", isWhitelist);
@@ -85,6 +78,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
     compound.setBoolean("ores", ores);
     compound.setBoolean("metas", metas);
     compound.setString("way", way.toString());
+    return compound;
   }
 
   private boolean doesWrapperMatchStack(StackWrapper stackWrapper, ItemStack stack) {
