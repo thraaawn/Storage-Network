@@ -5,9 +5,10 @@ import net.minecraft.nbt.NBTTagCompound;
 //Not done but planned:
 //{A}Text box input for priority (all) 
 //{B}CLONE settings between multiple cables 
-//{C}Import button that will attempt to read recipe from machine
+//{C}[DONE]Import button that will attempt to read recipe from machine
 //{D}Method to enable/disable process. Possibly with some sort of request system
-
+//{E}Gui Redesign !!!
+//{F}UPGRADES
 
 public class ProcessRequestModel {
 

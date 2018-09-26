@@ -55,7 +55,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   }
 
   public boolean isUpgradeable() {
-    return this.blockType == ModBlocks.imKabel || this.blockType == ModBlocks.exKabel;
+    return this.blockType == ModBlocks.imKabel || this.blockType == ModBlocks.exKabel || this.blockType == ModBlocks.processKabel;
   }
 
   public Map<EnumFacing, EnumCableType> getConnects() {

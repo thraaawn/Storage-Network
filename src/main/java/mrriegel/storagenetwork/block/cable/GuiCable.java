@@ -95,19 +95,26 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     //reset sprite u/v
     u = 176;
     v = 34;
-    for (int row = 0; row < 9; row++) {
-      for (int col = 0; col < 2; col++) {
-        x = xMiddle + 7 + row * 18;
-        y = yMiddle + 25 + SQ * col;
-        if (tile.getBlockType() == ModBlocks.processKabel) {
-          y = yMiddle + 24 + (col % 2) * PROCESS_SPACING - 1;
+    int rows = 9, cols = 2;
+    if (tile.getBlockType() == ModBlocks.processKabel) {
+      // 
+      rows = 3;
+      cols = 6;//3 on each side
+    }
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        x = xMiddle + 7 + SQ * row + (col / 3) * 108;
+        y = yMiddle + 25 + SQ * col;//if col > 3, add jump
+        if (col > 2) {
+          y -= 3 * SQ;
         }
+    
         this.drawTexturedModalRect(x, y, u, v, SQ, SQ);
       }
     }
     if (tile.isUpgradeable()) {
-      for (int ii = 0; ii < ItemUpgrade.NUM; ii++) {
-        this.drawTexturedModalRect(xMiddle + 97 + ii * SQ, yMiddle + 5, u, v, SQ, SQ);
+      for (int ug = 0; ug < ItemUpgrade.NUM; ug++) {
+        this.drawTexturedModalRect(xMiddle + 97 + ug * SQ, yMiddle + 5, u, v, SQ, SQ);
       }
     }
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1 && btnOperationToggle != null) {
@@ -124,9 +131,9 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       btnOperationToggle.visible = false;
     }
     itemSlotsGhost = Lists.newArrayList();
-    for (int row = 0; row < 2; row++) {
-      for (int col = 0; col < 9; col++) {
-        int index = col + (9 * row);
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        int index = col + (cols * row);
         StackWrapper wrap = tile.getFilter().get(index);
         ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
@@ -136,7 +143,11 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         x = 8 + col * SQ;
         y = 26 + row * SQ;
         if (tile.getBlockType() == ModBlocks.processKabel) {
-          y = 24 + row % 2 * PROCESS_SPACING;
+          x = 8 + SQ * row + (col / 3) * 108;
+          y = 26 + SQ * col;//if col > 3, add jump
+          if (col > 2) {
+            y -= 3 * SQ;
+          }
         }
         itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, numShow));
       }
@@ -269,8 +280,8 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       x = 88;
       y = 62;
       if (tile.getBlockType() == ModBlocks.processKabel) {
-        x = 120;
-        y = 41;
+        x = 72;
+        y = 62;
       }
       checkOreBtn = new GuiCheckBox(10, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.ore"), true);
       checkOreBtn.setIsChecked(tile.getOre());
