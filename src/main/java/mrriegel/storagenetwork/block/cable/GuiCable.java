@@ -194,6 +194,14 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     if (btnMinus != null && btnMinus.isMouseOver()) {
       this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.priority.down")), mouseX, mouseY, fontRenderer);
     }
+    if (pbtnTopface != null && pbtnTopface.isMouseOver()) {
+      this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.processing.recipe")), mouseX, mouseY, fontRenderer);
+      //
+    }
+    if (pbtnBottomface != null && pbtnBottomface.isMouseOver()) {
+      this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.processing.extract")), mouseX, mouseY, fontRenderer);
+      //
+    }
     if (btnOperationToggle != null && btnOperationToggle.isMouseOver()) {
       String s = I18n.format("gui.storagenetwork.operate.tooltip", I18n.format("gui.storagenetwork.operate.tooltip." + (tile.isMode() ? "more" : "less")), tile.getLimit(), tile.getOperationStack() != null ? tile.getOperationStack().getDisplayName() : "Items");
       //   String s = I18n.format("gui.storagenetwork.operate.tooltip");
@@ -206,12 +214,12 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     if (pbtnBottomface != null) {
       EnumFacing f = tile.getFacingBottomRow();
-      pbtnBottomface.displayString = f.name();
+      pbtnBottomface.displayString = f.name().substring(0, 2);
     }
     if (pbtnTopface != null) {
       //      this.tile.getRequest().notifyAll();
       EnumFacing f = tile.getFacingTopRow();
-      pbtnTopface.displayString = f.name();
+      pbtnTopface.displayString = f.name().substring(0, 2);
     }
 
   }
@@ -239,11 +247,11 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         pbtnReset.setCable(tile);
         this.addButton(pbtnReset);
       }
-      int column = 76, ctr = 38;
-      pbtnBottomface = new GuiCableButton(CableDataMessage.P_FACE_BOTTOM, guiLeft + column + 12, guiTop + ctr + 12, "");
+      int column = 76, ctr = 28;
+      pbtnBottomface = new GuiCableButton(CableDataMessage.P_FACE_BOTTOM, guiLeft + column + 20, guiTop + ctr, "");
       pbtnBottomface.setCable(tile);
       this.addButton(pbtnBottomface);
-      pbtnTopface = new GuiCableButton(CableDataMessage.P_FACE_TOP, guiLeft + column - 12, guiTop + ctr + 2, "");
+      pbtnTopface = new GuiCableButton(CableDataMessage.P_FACE_TOP, guiLeft + column - 12, guiTop + ctr, "");
       pbtnTopface.setCable(tile);
       this.addButton(pbtnTopface);
     }

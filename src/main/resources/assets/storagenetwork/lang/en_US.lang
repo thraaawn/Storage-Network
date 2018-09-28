@@ -81,3 +81,6 @@ chat.master.connectables=Connectables:
 storagenetwork.process.status0=Halted or Disabled
 storagenetwork.process.status1=Waiting to import (cached)
 storagenetwork.process.status2=Exporting recipe (cached)
+
+gui.storagenetwork.processing.recipe=Treat 
+gui.storagenetwork.processing.extract=ezxt
