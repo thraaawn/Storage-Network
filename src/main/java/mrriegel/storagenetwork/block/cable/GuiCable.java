@@ -77,21 +77,21 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     this.drawTexturedModalRect(xMiddle, yMiddle, 0, 0, this.xSize, this.ySize);
     int x = 0, y = 0;
     int u = 176, v = 112;
-    if (tile.getBlockType() == ModBlocks.processKabel) {
-      // one texture per row
-      //RED IS output, GREEN is input
-      //RED output Means that you can pull out of chest into network, but not put in
-      //GREEN input means yes you can also put into chest from network
-      //this first TOP texture is green
-      int col = -3;
-      this.drawTexturedModalRect(xMiddle + col, yMiddle + 23, u, v, SQ - 8, SQ);
-      //move over on spritesheet and down on gui
-      u = 188;
-      //this bottom one is RED
-      //      this.mc.getTextureManager().bindTexture(texture);
-      //PROCESS_SPAPROCESS_SPACINGCING
-      this.drawTexturedModalRect(xMiddle + col, yMiddle + 26 + PROCESS_SPACING, u, v, SQ - 8, SQ);
-    }
+    //    if (tile.getBlockType() == ModBlocks.processKabel) {
+    //      // one texture per row
+    //      //RED IS output, GREEN is input
+    //      //RED output Means that you can pull out of chest into network, but not put in
+    //      //GREEN input means yes you can also put into chest from network
+    //      //this first TOP texture is green
+    //      int col = -3;
+    //      this.drawTexturedModalRect(xMiddle + col, yMiddle + 23, u, v, SQ - 8, SQ);
+    //      //move over on spritesheet and down on gui
+    //      u = 188;
+    //      //this bottom one is RED
+    //      //      this.mc.getTextureManager().bindTexture(texture);
+    //      //PROCESS_SPAPROCESS_SPACINGCING
+    //      this.drawTexturedModalRect(xMiddle + col, yMiddle + 26 + PROCESS_SPACING, u, v, SQ - 8, SQ);
+    //    }
     //reset sprite u/v
     u = 176;
     v = 34;
@@ -131,6 +131,8 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       btnOperationToggle.visible = false;
     }
     itemSlotsGhost = Lists.newArrayList();
+    rows = 2;
+    cols = 9;
     if (tile.getBlockType() == ModBlocks.processKabel) {
       // left side 
       for (int row = 0; row < 3; row++) {
