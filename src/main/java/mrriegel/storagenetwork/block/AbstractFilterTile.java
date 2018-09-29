@@ -28,7 +28,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
   private int priority;
   protected ProcessRequestModel processModel = new ProcessRequestModel();
   public EnumFacing processingTop = EnumFacing.UP;
-  public EnumFacing processingBottom = EnumFacing.UP;
+  public EnumFacing processingBottom = EnumFacing.DOWN;
   protected EnumFilterDirection way = EnumFilterDirection.BOTH;
 
   @Override

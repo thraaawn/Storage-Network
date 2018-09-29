@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.item.ItemUpgrade;
@@ -330,6 +331,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     Map<Integer, StackWrapper> flt = super.getFilter();
     List<StackWrapper> half = new ArrayList<>();
     for (Integer i : flt.keySet()) {
+      StorageNetwork.log(i + " " + flt.get(i).getStack().getDisplayName());
       if (i <= 8 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false) {
         half.add(flt.get(i));
       }
@@ -341,6 +343,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     Map<Integer, StackWrapper> flt = super.getFilter();
     List<StackWrapper> half = new ArrayList<>();
     for (Integer i : flt.keySet()) {
+      StorageNetwork.log(i + " " + flt.get(i).getStack().getDisplayName());
       if (i >= 9 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false) {
         half.add(flt.get(i));
       }
