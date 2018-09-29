@@ -82,5 +82,5 @@ storagenetwork.process.status0=Halted or Disabled
 storagenetwork.process.status1=Waiting to import (cached)
 storagenetwork.process.status2=Exporting recipe (cached)
 
-gui.storagenetwork.processing.recipe=Treat 
-gui.storagenetwork.processing.extract=ezxt
+gui.storagenetwork.processing.recipe=Ingredients for each cycle will be sent as if coming from this block-side
+gui.storagenetwork.processing.extract=When pulling processing results it will be taken as if from this block-side

@@ -277,7 +277,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       //add custom buttons 
       // if (this.tile.getRequest().getStatus() == ProcessStatus.IMPORTING) {
         //a click will swap it to EXPORTING with CableDataMessage 
-        pbtnReset = new GuiCableButton(CableDataMessage.TOGGLE_P_RESTARTTRIGGER, guiLeft + 120, guiTop + 4, "R");
+      pbtnReset = new GuiCableButton(CableDataMessage.TOGGLE_P_RESTARTTRIGGER, guiLeft + 60, guiTop + 5, "R");
         pbtnReset.setCable(tile);
         this.addButton(pbtnReset);
       //  }
