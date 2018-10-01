@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.block.request;
+package mrriegel.storagenetwork.block.control;
 
 import java.util.List;
 import javax.annotation.Nullable;
@@ -7,7 +7,6 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractBlockConnectable;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.gui.GuiHandler;
-import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -25,11 +24,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockRequest extends AbstractBlockConnectable {
+public class BlockControl extends AbstractBlockConnectable {
 
   public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
-  public BlockRequest() {
+  public BlockControl() {
     super(Material.IRON);
     this.setHardness(3.0F);
     this.setCreativeTab(CreativeTab.tab);
@@ -39,7 +38,7 @@ public class BlockRequest extends AbstractBlockConnectable {
 
   @Override
   public TileEntity createNewTileEntity(World worldIn, int meta) {
-    return new TileRequest();
+    return new TileControl();
   }
 
   @Override
@@ -79,23 +78,12 @@ public class BlockRequest extends AbstractBlockConnectable {
     }
     IConnectable tile = (IConnectable) tileHere;
     if (!worldIn.isRemote && tile.getMaster() != null) {
-      playerIn.openGui(StorageNetwork.instance, GuiHandler.REQUEST, worldIn, pos.getX(), pos.getY(), pos.getZ());
+      playerIn.openGui(StorageNetwork.instance, GuiHandler.CONTROLLER, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }
     return true;
   }
 
-  @Override
-  public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-    TileEntity tileentity = worldIn.getTileEntity(pos);
-    if (tileentity instanceof TileRequest) {
-      TileRequest tile = (TileRequest) tileentity;
-      for (int i = 0; i < 9; i++) {
-        UtilTileEntity.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.matrix.get(i));
-      }
-    }
-    super.breakBlock(worldIn, pos, state);
-  }
 
   @Override
   public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
