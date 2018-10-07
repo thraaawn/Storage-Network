@@ -1,15 +1,21 @@
 package mrriegel.storagenetwork.block.control;
 
-import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
-import mrriegel.storagenetwork.util.data.EnumSortType;
-import net.minecraft.util.math.BlockPos;
+import mrriegel.storagenetwork.StorageNetwork;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 
-public class GuiControl extends GuiContainerStorageInventory {
+public class GuiControl extends GuiContainer {
 
+  private static final int HEIGHT = 256;
+  private static final int WIDTH = 176;
+  private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request_full.png");
   private TileControl tile;
 
   public GuiControl(ContainerControl inventorySlotsIn) {
     super(inventorySlotsIn);
+    this.xSize = WIDTH;
+    this.ySize = HEIGHT;
     tile = inventorySlotsIn.getTileRequest();
   }
 
@@ -22,39 +28,32 @@ public class GuiControl extends GuiContainerStorageInventory {
   public void updateScreen() {
     super.updateScreen();
   }
+  //  @Override
+  //  public BlockPos getPos() {
+  //    return tile.getPos();
+  //  }
+  //
+  //  @Override
+  //  protected int getDim() {
+  //    return tile.getWorld().provider.getDimension();
+  //  }
+  //
+  //  @Override
+  //  protected boolean isScreenValid() {
+  //    return true;
+  //  }
 
   @Override
-  public boolean getDownwards() {
-    return tile.isDownwards();
+  protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    renderTextures();
   }
 
-  @Override
-  public void setDownwards(boolean d) {
-    tile.setDownwards(d);
-  }
-
-  @Override
-  public EnumSortType getSort() {
-    return tile.getSort();
-  }
-
-  @Override
-  public void setSort(EnumSortType s) {
-    tile.setSort(s);
-  }
-
-  @Override
-  public BlockPos getPos() {
-    return tile.getPos();
-  }
-
-  @Override
-  protected int getDim() {
-    return tile.getWorld().provider.getDimension();
-  }
-
-  @Override
-  protected boolean isScreenValid() {
-    return true;
+  private void renderTextures() {
+    this.drawDefaultBackground();//dim the background as normal
+    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+    this.mc.getTextureManager().bindTexture(texture);
+    int xCenter = (this.width - this.xSize) / 2;
+    int yCenter = (this.height - this.ySize) / 2;
+    this.drawTexturedModalRect(xCenter, yCenter, 0, 0, this.xSize, this.ySize);
   }
 }
