@@ -34,12 +34,32 @@ public class GuiControl extends GuiContainer {
   @Override
   public void initGui() {
     super.initGui();
+    //TODO: buttons broken because not set up when this fires
+    int x = guiLeft + 8;
+    int y = guiTop + 8;
+    int currentPage = 0;// offset for scroll? pge btns? 
+    int spacer = 22;
+
+    for (ProcessWrapper p : processors) {
+      //      x += 54;    
+      GuiCableButton btnOnOff = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
+          x + spacer, y, "1/0");
+      this.addButton(btnOnOff);
+      GuiCableButton btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
+          x + 2 * spacer, y, "-");
+      this.addButton(btnMinus);
+      GuiCableButton btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
+          x + 3 * spacer, y, "+");
+      this.addButton(btnPlus);
+      y += 25;
+    }
   }
 
   @Override
   public void updateScreen() {
     super.updateScreen();
   }
+
 
   int FONT = 14737632;
   @Override
@@ -64,22 +84,9 @@ public class GuiControl extends GuiContainer {
         n = p.name;
       }
       //TODO maybe tooltip for this
-      this.drawCenteredString(this.fontRenderer, n,
-          x + 6, y + 4, FONT);
-      //      this.drawCenteredString(this.fontRenderer, p.alwaysOn + "",
-      //          x + 25, y + 4, FONT);
-      // ADD BUTTON
-      x += 54;
-      GuiCableButton btnOnOff = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
-          x + spacer, y, "1/0");
-      this.addButton(btnOnOff);
-      GuiCableButton btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
-          x + 2 * spacer, y, "-");
-      this.addButton(btnMinus);
-      GuiCableButton btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
-          x + 3 * spacer, y, "+");
-      this.addButton(btnPlus);
-      y += 25;
+      this.drawString(this.fontRenderer, n, x, y + 4, FONT);
+
+      y += 22;
     }
   }
 
