@@ -26,7 +26,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
   private boolean metas = false;
   private boolean isWhitelist;
   private int priority;
-  protected ProcessRequestModel processModel = new ProcessRequestModel();
+  private ProcessRequestModel processModel = new ProcessRequestModel();
   public EnumFacing processingTop = EnumFacing.UP;
   public EnumFacing processingBottom = EnumFacing.DOWN;
   protected EnumFilterDirection way = EnumFilterDirection.BOTH;
@@ -37,7 +37,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 
     processingTop = EnumFacing.values()[compound.getInteger("processingTop")];
     processingBottom = EnumFacing.values()[compound.getInteger("processingBottom")];
-    this.processModel.readFromNBT(compound);
+    this.getProcessModel().readFromNBT(compound);
     isWhitelist = compound.getBoolean("white");
     priority = compound.getInteger("prio");
     NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
@@ -203,5 +203,13 @@ public abstract class AbstractFilterTile extends TileConnectable {
 
   public EnumFacing getFacingTopRow() {
     return this.processingTop;
+  }
+
+  public ProcessRequestModel getProcessModel() {
+    return processModel;
+  }
+
+  public void setProcessModel(ProcessRequestModel processModel) {
+    this.processModel = processModel;
   }
 }

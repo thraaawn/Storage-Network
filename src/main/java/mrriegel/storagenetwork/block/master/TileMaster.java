@@ -89,7 +89,7 @@ public class TileMaster extends TileEntity implements ITickable {
     return invs;
   }
 
-  private List<TileCable> getAttachedCables(List<TileEntity> links, Block kind) {
+  public List<TileCable> getAttachedCables(List<TileEntity> links, Block kind) {
     List<TileCable> attachedCables = Lists.newArrayList();
     for (TileEntity tileIn : links) {
       if (tileIn instanceof TileCable) {
@@ -690,7 +690,7 @@ public class TileMaster extends TileEntity implements ITickable {
     });
   }
 
-  private List<TileEntity> getAttachedTileEntities() {
+  public List<TileEntity> getAttachedTileEntities() {
     List<TileEntity> attachedCables = Lists.newArrayList();
     TileEntity tile = null;
     for (BlockPos p : getConnectables()) {

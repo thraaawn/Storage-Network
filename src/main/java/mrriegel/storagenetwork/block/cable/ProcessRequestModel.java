@@ -19,11 +19,17 @@ public class ProcessRequestModel {
 
   //you can request more than 64
   private int count;
-  //start as export == net to inventory
+  private boolean alwaysActive;
   private ProcessStatus status = ProcessStatus.EXPORTING;
 
   public int getCount() {
     return count;
+  }
+
+  public void reduceCount() {
+    if (count > 0) {
+      count--;
+    }
   }
 
   public void setCount(int countRequested) {
@@ -34,11 +40,13 @@ public class ProcessRequestModel {
   public void readFromNBT(NBTTagCompound compound) {
     this.count = compound.getInteger(PREFIX + "count");
     this.status = ProcessStatus.values()[compound.getInteger(PREFIX + "status")];
+    this.alwaysActive = compound.getBoolean("always");
   }
 
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     compound.setInteger(PREFIX + "count", count);
     compound.setInteger(PREFIX + "status", status.ordinal());
+    compound.setBoolean("always", alwaysActive);
     return compound;
   }
 
@@ -48,5 +56,13 @@ public class ProcessRequestModel {
 
   public void setStatus(ProcessStatus status) {
     this.status = status;
+  }
+
+  public boolean isAlwaysActive() {
+    return alwaysActive;
+  }
+
+  public void setAlwaysActive(boolean alwaysActive) {
+    this.alwaysActive = alwaysActive;
   }
 }

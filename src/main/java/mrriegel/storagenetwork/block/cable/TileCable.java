@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.block.cable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -352,17 +353,17 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   // where a process terminal lists some nodes and I "turn node on for 6 cycles" and it keeps track, maybe stuck after 2.
   public ProcessRequestModel getRequest() {
     //hacktest: always one job is requested 
-    if (processModel.getCount() == 0)
-      processModel.setCount(1);
-    return processModel;
+    if (getProcessModel().getCount() == 0)
+      getProcessModel().setCount(1);
+    return getProcessModel();
   }
 
   public void deleteRequest() {
-    this.processModel.setCount(0);
+    this.getProcessModel().setCount(0);
   }
 
   public void setRequest(ProcessRequestModel request) {
-    this.processModel = request;
+    this.setProcessModel(request);
   }
 
 
@@ -371,4 +372,12 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     return 0;
   }
 
+  @Nonnull
+  public ItemStack getFirstRecipeOut() {
+    List<StackWrapper> topRow = getFilterTop();
+    if (topRow.size() == 0) {
+      return ItemStack.EMPTY;
+    }
+    return topRow.get(0).getStack();
+  }
 }
