@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import org.lwjgl.input.Keyboard;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.block.cable.GuiCableButton;
 import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import mrriegel.storagenetwork.network.RequestCableMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
@@ -24,6 +23,7 @@ public class GuiControl extends GuiContainer {
   private static final int HEIGHT = 256;
   private static final int WIDTH = 176;
   private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request_full.png");
+  //
   private TileControl tile;
   protected GuiTextField searchBar;
   private List<ProcessWrapper> processors = null;
@@ -65,7 +65,7 @@ public class GuiControl extends GuiContainer {
 
   public class CableRow {
 
-    public CableRow(ProcessWrapper p, GuiCableButton btnOnOff, GuiCableButton btnMinus, GuiCableButton btnPlus) {
+    public CableRow(ProcessWrapper p, GuiControlButton btnOnOff, GuiControlButton btnMinus, GuiControlButton btnPlus) {
       super();
       this.p = p;
       this.btnOnOff = btnOnOff;
@@ -74,9 +74,9 @@ public class GuiControl extends GuiContainer {
     }
 
     ProcessWrapper p;
-    GuiCableButton btnOnOff;
-    GuiCableButton btnMinus;
-    GuiCableButton btnPlus;
+    GuiControlButton btnOnOff;
+    GuiControlButton btnMinus;
+    GuiControlButton btnPlus;
   }
 
   private void addButtons() {
@@ -89,14 +89,14 @@ public class GuiControl extends GuiContainer {
     final int rowHeight = 25;
     int row = 0;
     for (ProcessWrapper p : processors) {
-      GuiCableButton btnOnOff = new GuiCableButton(CableMessageType.P_ONOFF,
-          x + spacer, y, "1/0");
+      GuiControlButton btnOnOff = new GuiControlButton(CableMessageType.P_ONOFF,
+          x + spacer, y, 26, 16, "1/0");
       btnOnOff.displayString = (p.alwaysOn) ? "ON" : "OFF";
       this.addButton(btnOnOff);
-      GuiCableButton btnMinus = new GuiCableButton(CableMessageType.P_CTRL_LESS,
+      GuiControlButton btnMinus = new GuiControlButton(CableMessageType.P_CTRL_LESS,
           x + 2 * spacer, y, "-");
       this.addButton(btnMinus);
-      GuiCableButton btnPlus = new GuiCableButton(CableMessageType.P_CTRL_MORE,
+      GuiControlButton btnPlus = new GuiControlButton(CableMessageType.P_CTRL_MORE,
           x + 3 * spacer + 12, y, "+");
       this.addButton(btnPlus);
       y += rowHeight;
@@ -124,6 +124,7 @@ public class GuiControl extends GuiContainer {
       //      this.drawTexturedModalRect(searchBar.x, searchBar.y, 0, 171, 26, 12);
       this.searchBar.drawTextBox();
     }
+
   }
 
   int FONT = 14737632;
@@ -132,7 +133,6 @@ public class GuiControl extends GuiContainer {
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     renderTextures();
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-    //    this.mc.getTextureManager().bindTexture(texture);
     int x = guiLeft + 8;
     int y = guiTop + 8;
     int currentPage = 0;// offset for scroll? pge btns? 

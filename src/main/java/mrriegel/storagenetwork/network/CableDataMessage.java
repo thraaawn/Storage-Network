@@ -115,8 +115,19 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             break;
             case P_ONOFF:
             //process cable toggle always on
+              if (tileCable != null) {
+              }
+                tileCable.getProcessModel().setAlwaysActive(message.value == 1);
             break;
-            default:
+            case P_CTRL_LESS:
+              if (tileCable != null) {
+                tileCable.getProcessModel().setCount(message.value);
+              }
+            break;
+            case P_CTRL_MORE:
+              if (tileCable != null) {
+                tileCable.getProcessModel().setCount(message.value);
+              }
             break;
           }//end of switch
           tile.markDirty();
