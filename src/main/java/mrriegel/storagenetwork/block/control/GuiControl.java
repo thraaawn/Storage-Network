@@ -1,70 +1,138 @@
 package mrriegel.storagenetwork.block.control;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.lwjgl.input.Keyboard;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.cable.GuiCableButton;
-import mrriegel.storagenetwork.network.CableDataMessage;
+import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import mrriegel.storagenetwork.network.RequestCableMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class GuiControl extends GuiContainer {
 
   private static final int HEIGHT = 256;
   private static final int WIDTH = 176;
   private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request_full.png");
   private TileControl tile;
-  private List<ProcessWrapper> processors;
+  protected GuiTextField searchBar;
+  private List<ProcessWrapper> processors = null;
+  int currentPage = 0;// offset for scroll? pge btns?   
+  Map<Integer, CableRow> allRows = new HashMap<>();
+  private boolean buttonsInit;
 
   public GuiControl(ContainerControl inventorySlotsIn) {
     super(inventorySlotsIn);
     processors = new ArrayList<>();
-
     this.xSize = WIDTH;
     this.ySize = HEIGHT;
     tile = inventorySlotsIn.getTileRequest();
     //  request the list of tiles 
-
+    buttonsInit = false;
     PacketRegistry.INSTANCE.sendToServer(new RequestCableMessage());
   }
 
   @Override
   public void initGui() {
     super.initGui();
-    //TODO: buttons broken because not set up when this fires
-    int x = guiLeft + 8;
-    int y = guiTop + 8;
-    int currentPage = 0;// offset for scroll? pge btns? 
-    int spacer = 22;
+    Keyboard.enableRepeatEvents(true);
+    searchBar = new GuiTextField(0, fontRenderer,
+        12, 162, 85, fontRenderer.FONT_HEIGHT);
+    searchBar.setMaxStringLength(30);
+    searchBar.setEnableBackgroundDrawing(false);
+    searchBar.setVisible(true);
+    searchBar.setTextColor(16777215);
+    searchBar.setFocused(true);
+    //mock data only
+    searchBar.setText("abc123abc123abc");
+  }
 
+  @Override
+  public void onGuiClosed() {
+    super.onGuiClosed();
+    Keyboard.enableRepeatEvents(false);
+  }
+
+  public class CableRow {
+
+    public CableRow(ProcessWrapper p, GuiCableButton btnOnOff, GuiCableButton btnMinus, GuiCableButton btnPlus) {
+      super();
+      this.p = p;
+      this.btnOnOff = btnOnOff;
+      this.btnMinus = btnMinus;
+      this.btnPlus = btnPlus;
+    }
+
+    ProcessWrapper p;
+    GuiCableButton btnOnOff;
+    GuiCableButton btnMinus;
+    GuiCableButton btnPlus;
+  }
+
+  private void addButtons() {
+    if (buttonsInit) {
+      return;
+    }
+    int x = guiLeft + 62;
+    int y = guiTop + 8;
+    final int spacer = 22;
+    final int rowHeight = 25;
+    int row = 0;
     for (ProcessWrapper p : processors) {
-      //      x += 54;    
-      GuiCableButton btnOnOff = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
+      GuiCableButton btnOnOff = new GuiCableButton(CableMessageType.P_ONOFF,
           x + spacer, y, "1/0");
+      btnOnOff.displayString = (p.alwaysOn) ? "ON" : "OFF";
       this.addButton(btnOnOff);
-      GuiCableButton btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
+      GuiCableButton btnMinus = new GuiCableButton(CableMessageType.P_CTRL_LESS,
           x + 2 * spacer, y, "-");
       this.addButton(btnMinus);
-      GuiCableButton btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
-          x + 3 * spacer, y, "+");
+      GuiCableButton btnPlus = new GuiCableButton(CableMessageType.P_CTRL_MORE,
+          x + 3 * spacer + 12, y, "+");
       this.addButton(btnPlus);
-      y += 25;
+      y += rowHeight;
+      StorageNetwork.log("bth row added");
+      this.allRows.put(row, new CableRow(p, btnOnOff, btnMinus, btnPlus));
+      row++;
     }
+    buttonsInit = true;
   }
 
   @Override
   public void updateScreen() {
     super.updateScreen();
+    if (searchBar != null) {
+      searchBar.updateCursorCounter();
+    }
+    if (processors != null && processors.size() > 0) {
+      addButtons();
+    }
   }
 
+  @Override
+  protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    if (this.searchBar != null) {
+      //      this.drawTexturedModalRect(searchBar.x, searchBar.y, 0, 171, 26, 12);
+      this.searchBar.drawTextBox();
+    }
+  }
 
   int FONT = 14737632;
+
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     renderTextures();
+    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+    //    this.mc.getTextureManager().bindTexture(texture);
     int x = guiLeft + 8;
     int y = guiTop + 8;
     int currentPage = 0;// offset for scroll? pge btns? 
@@ -84,8 +152,8 @@ public class GuiControl extends GuiContainer {
         n = p.name;
       }
       //TODO maybe tooltip for this
-      this.drawString(this.fontRenderer, n, x, y + 4, FONT);
-
+      this.drawString(this.fontRenderer, p.name, x, y + 4, FONT);
+      this.drawString(this.fontRenderer, p.currentRequests + "", x + 96, y + 4, FONT);
       y += 22;
     }
   }
@@ -97,6 +165,17 @@ public class GuiControl extends GuiContainer {
     int xCenter = (this.width - this.xSize) / 2;
     int yCenter = (this.height - this.ySize) / 2;
     this.drawTexturedModalRect(xCenter, yCenter, 0, 0, this.xSize, this.ySize);
+  }
+
+  @Override
+  protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    super.keyTyped(typedChar, keyCode);
+    if (searchBar != null && searchBar.isFocused()) {
+      searchBar.textboxKeyTyped(typedChar, keyCode);
+      //also sync?
+      //      ((ITileTextbox) tile).setText(searchBar.getText());
+      //      ModCyclic.network.sendToServer(new PacketTileTextbox(searchBar.getText(), tile.getPos()));
+    }
   }
 
   /**

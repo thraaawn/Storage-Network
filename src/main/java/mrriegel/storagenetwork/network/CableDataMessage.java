@@ -23,16 +23,11 @@ import net.minecraftforge.items.IItemHandler;
 
 public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
 
-  //TODO: ENUM 
-  public static final int TOGGLE_WAY = 6;
-  public static final int IMPORT_FILTER = 5;
-  public static final int TOGGLE_WHITELIST = 3;
-  public static final int PRIORITY_UP = 1;
-  public static final int PRIORITY_DOWN = 0;
-  public static final int TOGGLE_MODE = 4;
-  public static final int P_FACE_TOP = 7;
-  public static final int P_FACE_BOTTOM = 8;
-  public static final int TOGGLE_P_RESTARTTRIGGER = 9;
+  public enum CableMessageType{
+    PRIORITY_DOWN, PRIORITY_UP, P_ONOFF, TOGGLE_WHITELIST, TOGGLE_MODE,
+    IMPORT_FILTER, TOGGLE_WAY, P_FACE_TOP, P_FACE_BOTTOM, TOGGLE_P_RESTARTTRIGGER, P_CTRL_MORE, P_CTRL_LESS;
+  }
+
   private int id;
   private int value = 0;
   private BlockPos pos;
@@ -63,7 +58,8 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
           TileCable tileCable = null;
           if (t instanceof TileCable)
             tileCable = (TileCable) tile;
-          switch (message.id) {
+          CableMessageType type = CableMessageType.values()[message.id];
+          switch (type) {
             case TOGGLE_P_RESTARTTRIGGER:
               //stop listening for result, export recipe into block
               if (tileCable != null)
@@ -116,6 +112,11 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
                 tileCable.processingTop = EnumFacing.values()[message.value];
                 //                StorageNetwork.log(tileCable.processingTop.name() + " server is ?" + message.value);
               }
+            break;
+            case P_ONOFF:
+            //process cable toggle always on
+            break;
+            default:
             break;
           }//end of switch
           tile.markDirty();

@@ -11,6 +11,7 @@ import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.network.CableDataMessage;
+import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import mrriegel.storagenetwork.network.CableFilterMessage;
 import mrriegel.storagenetwork.network.CableLimitMessage;
 import mrriegel.storagenetwork.registry.ModBlocks;
@@ -26,6 +27,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
 public class GuiCable extends GuiContainer implements IPublicGuiContainer {
@@ -258,6 +260,17 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       pbtnTopface.displayString = f.name().substring(0, 2);
     }
 
+    if (tile.getBlockType() == ModBlocks.processKabel) {
+    ProcessRequestModel p = tile.getProcessModel();
+    int FONT = 14737632;
+      int x = this.xSize + 10;
+      int y = 4;
+    //    p.getCount()
+    //    p.isAlwaysActive()
+      TextFormatting f = (p.isAlwaysActive()) ? TextFormatting.GREEN
+          : TextFormatting.BLUE;
+      this.drawString(this.fontRenderer, f + (p.getCount() + ""), x, y, FONT);
+  }
   }
 
   @Override
@@ -265,13 +278,13 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     super.initGui();
     //priority for everything 
     int x = 0, y = 0;
-    btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
+    btnMinus = new GuiCableButton(CableMessageType.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
     btnMinus.setCable(tile);
     this.addButton(btnMinus);
-    btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
+    btnPlus = new GuiCableButton(CableMessageType.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
     btnPlus.setCable(tile);
     this.addButton(btnPlus);
-    btnImport = new GuiCableButton(CableDataMessage.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
+    btnImport = new GuiCableButton(CableMessageType.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
     btnImport.setCable(tile);
     this.addButton(btnImport);
     if (tile.getBlockType() == ModBlocks.processKabel) {
@@ -279,26 +292,26 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       //add custom buttons 
       // if (this.tile.getRequest().getStatus() == ProcessStatus.IMPORTING) {
         //a click will swap it to EXPORTING with CableDataMessage 
-      pbtnReset = new GuiCableButton(CableDataMessage.TOGGLE_P_RESTARTTRIGGER, guiLeft + 60, guiTop + 5, "R");
+      pbtnReset = new GuiCableButton(CableMessageType.TOGGLE_P_RESTARTTRIGGER, guiLeft + 60, guiTop + 5, "R");
         pbtnReset.setCable(tile);
         this.addButton(pbtnReset);
       //  }
       int column = 76, ctr = 28;
-      pbtnBottomface = new GuiCableButton(CableDataMessage.P_FACE_BOTTOM, guiLeft + column + 20, guiTop + ctr, "");
+      pbtnBottomface = new GuiCableButton(CableMessageType.P_FACE_BOTTOM, guiLeft + column + 20, guiTop + ctr, "");
       pbtnBottomface.setCable(tile);
       this.addButton(pbtnBottomface);
-      pbtnTopface = new GuiCableButton(CableDataMessage.P_FACE_TOP, guiLeft + column - 12, guiTop + ctr, "");
+      pbtnTopface = new GuiCableButton(CableMessageType.P_FACE_TOP, guiLeft + column - 12, guiTop + ctr, "");
       pbtnTopface.setCable(tile);
       this.addButton(pbtnTopface);
     }
     else {
 
-      btnWhite = new GuiCableButton(CableDataMessage.TOGGLE_WHITELIST, guiLeft + 58, guiTop + 5, "");
+      btnWhite = new GuiCableButton(CableMessageType.TOGGLE_WHITELIST, guiLeft + 58, guiTop + 5, "");
       btnWhite.setCable(tile);
       this.addButton(btnWhite);
       btnWhite.visible = tile.getBlockType() != ModBlocks.exKabel;
       if (tile.isStorage()) {
-        btnInputOutputStorage = new GuiCableButton(CableDataMessage.TOGGLE_WAY, guiLeft + 115, guiTop + 5, "");
+        btnInputOutputStorage = new GuiCableButton(CableMessageType.TOGGLE_WAY, guiLeft + 115, guiTop + 5, "");
         btnInputOutputStorage.setCable(tile);
         this.addButton(btnInputOutputStorage);
       }
@@ -313,7 +326,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         searchBar.setFocused(true);
         searchBar.setText(tile.getLimit() + "");
         searchBar.width = 20;
-        btnOperationToggle = new GuiCableButton(CableDataMessage.TOGGLE_MODE, guiLeft + 28, guiTop + 66, "");
+        btnOperationToggle = new GuiCableButton(CableMessageType.TOGGLE_MODE, guiLeft + 28, guiTop + 66, "");
         //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
         btnOperationToggle.setCable(tile);
         this.addButton(btnOperationToggle);
