@@ -18,7 +18,7 @@ public class ProcessWrapper {
   }
 
   public void readFromNBT(NBTTagCompound compound) {
-    name = compound.getString("name");
+    name = compound.getString("sname");
     alwaysOn = compound.getBoolean("aon");
     int x = compound.getInteger("xx");
     int y = compound.getInteger("yy");

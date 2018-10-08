@@ -48,7 +48,8 @@ public class RequestCableMessage implements IMessage, IMessageHandler<RequestCab
           String name = player.world.getBlockState(c.getConnectedInventory()).getBlock().getLocalizedName();
 
           ProcessRequestModel proc = c.getProcessModel();
-          list.add(new ProcessWrapper(c.getPos(), c.getFirstRecipeOut(), proc.getCount(), name, proc.isAlwaysActive()));
+          list.add(new ProcessWrapper(c.getPos(), c.getFirstRecipeOut(),
+              proc.getCount(), name, proc.isAlwaysActive()));
         }
         //now all cables have been wraped to send related info 
         //now send wrappers back to gui

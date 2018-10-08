@@ -3,6 +3,8 @@ package mrriegel.storagenetwork.block.control;
 import java.util.ArrayList;
 import java.util.List;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.block.cable.GuiCableButton;
+import mrriegel.storagenetwork.network.CableDataMessage;
 import mrriegel.storagenetwork.network.RequestCableMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -43,16 +45,41 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     renderTextures();
-    int x, y;
+    int x = guiLeft + 8;
+    int y = guiTop + 8;
+    int currentPage = 0;// offset for scroll? pge btns? 
+    int spacer = 22;
     for (ProcessWrapper p : processors) {
-      //draw me 
-      x = guiLeft + 30;
-      y = guiTop + 8;
+      x = guiLeft + 8;
+      //draw me  
+      mc.getRenderItem().renderItemAndEffectIntoGUI(p.output, x, y);
+      x += 22;
       /// TODO target blockname  text
       //AND OR  recipe ing list as text 
-      this.drawCenteredString(this.fontRenderer, p.alwaysOn + ":" + p.currentRequests,
-          x - 12, y + 3, FONT);
-      mc.getRenderItem().renderItemAndEffectIntoGUI(p.output, x, y);
+      String n = "";
+      if (p.alwaysOn) {
+        n = "processing.alwayson";
+      }
+      else {
+        n = p.name;
+      }
+      //TODO maybe tooltip for this
+      this.drawCenteredString(this.fontRenderer, n,
+          x + 6, y + 4, FONT);
+      //      this.drawCenteredString(this.fontRenderer, p.alwaysOn + "",
+      //          x + 25, y + 4, FONT);
+      // ADD BUTTON
+      x += 54;
+      GuiCableButton btnOnOff = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
+          x + spacer, y, "1/0");
+      this.addButton(btnOnOff);
+      GuiCableButton btnMinus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
+          x + 2 * spacer, y, "-");
+      this.addButton(btnMinus);
+      GuiCableButton btnPlus = new GuiCableButton(CableDataMessage.PRIORITY_DOWN,
+          x + 3 * spacer, y, "+");
+      this.addButton(btnPlus);
+      y += 25;
     }
   }
 
