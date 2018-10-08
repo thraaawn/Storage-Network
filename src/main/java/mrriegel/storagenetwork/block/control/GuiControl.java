@@ -47,14 +47,14 @@ public class GuiControl extends GuiContainer {
     super.initGui();
     Keyboard.enableRepeatEvents(true);
     searchBar = new GuiTextField(0, fontRenderer,
-        12, 162, 85, fontRenderer.FONT_HEIGHT);
+        10, 160, 158, fontRenderer.FONT_HEIGHT);
     searchBar.setMaxStringLength(30);
     searchBar.setEnableBackgroundDrawing(false);
     searchBar.setVisible(true);
     searchBar.setTextColor(16777215);
     searchBar.setFocused(true);
     //mock data only
-    searchBar.setText("abc123abc123abc");
+    searchBar.setText("abc123abc123abc123abc123abc123abc");
   }
 
   @Override
