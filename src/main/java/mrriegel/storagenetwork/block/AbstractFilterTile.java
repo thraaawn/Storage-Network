@@ -37,7 +37,9 @@ public abstract class AbstractFilterTile extends TileConnectable {
 
     processingTop = EnumFacing.values()[compound.getInteger("processingTop")];
     processingBottom = EnumFacing.values()[compound.getInteger("processingBottom")];
-    this.getProcessModel().readFromNBT(compound);
+    ProcessRequestModel pm = new ProcessRequestModel();
+    pm.readFromNBT(compound);
+    this.setProcessModel(pm);
     isWhitelist = compound.getBoolean("white");
     priority = compound.getInteger("prio");
     NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
@@ -60,7 +62,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
-
+    this.processModel.writeToNBT(compound);
     compound.setInteger("processingBottom", processingBottom.ordinal());
     compound.setInteger("processingTop", processingTop.ordinal());
     compound.setBoolean("white", isWhitelist);

@@ -10,6 +10,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import mrriegel.storagenetwork.network.RequestCableMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -88,16 +89,20 @@ public class GuiControl extends GuiContainer {
     final int spacer = 22;
     final int rowHeight = 25;
     int row = 0;
+    int btnid = 0;
     for (ProcessWrapper p : processors) {
-      GuiControlButton btnOnOff = new GuiControlButton(CableMessageType.P_ONOFF,
+      GuiControlButton btnOnOff = new GuiControlButton(btnid++, CableMessageType.P_ONOFF,
           x + spacer, y, 26, 16, "1/0");
       btnOnOff.displayString = (p.alwaysOn) ? "ON" : "OFF";
+      btnOnOff.cable = p;
       this.addButton(btnOnOff);
-      GuiControlButton btnMinus = new GuiControlButton(CableMessageType.P_CTRL_LESS,
-          x + 2 * spacer, y, "-");
+      GuiControlButton btnMinus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_LESS,
+          x + 2 * spacer, y, 16, 16, "-");
+      btnMinus.cable = p;
       this.addButton(btnMinus);
-      GuiControlButton btnPlus = new GuiControlButton(CableMessageType.P_CTRL_MORE,
-          x + 3 * spacer + 12, y, "+");
+      GuiControlButton btnPlus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_MORE,
+          x + 3 * spacer + 12, y, 16, 16, "+");
+      btnPlus.cable = p;
       this.addButton(btnPlus);
       y += rowHeight;
       StorageNetwork.log("bth row added");
@@ -108,6 +113,20 @@ public class GuiControl extends GuiContainer {
   }
 
   @Override
+  protected void actionPerformed(GuiButton button) throws IOException {
+    super.actionPerformed(button);
+    for (GuiButton b : this.buttonList) {
+      if (button.id == b.id && b instanceof GuiControlButton) {
+        GuiControlButton btn = (GuiControlButton) b;
+        // do the thing 
+        btn.actionPerformed();
+        StorageNetwork.log("btn id " + button.id);
+        break;
+      }
+    }
+  }
+
+  @Override
   public void updateScreen() {
     super.updateScreen();
     if (searchBar != null) {
@@ -115,6 +134,22 @@ public class GuiControl extends GuiContainer {
     }
     if (processors != null && processors.size() > 0) {
       addButtons();
+    }
+    for (GuiButton btn : this.buttonList) {
+      if (btn instanceof GuiControlButton) {
+        GuiControlButton b = (GuiControlButton) btn;
+        //update texture 
+        if (b.cable.alwaysOn) {
+          //set green
+          b.textureX = 0;
+          b.textureY = 449;
+        }
+        else {
+          //set grey 
+          b.textureX = 94;
+          b.textureY = 449;
+        }
+      }
     }
   }
 

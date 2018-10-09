@@ -420,9 +420,12 @@ public class TileMaster extends TileEntity implements ITickable {
       if ((world.getTotalWorldTime() + 20) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
         continue;
       }
-      ProcessRequestModel request = tileCable.getRequest();
-      if (request == null || request.getCount() == 0) {
+      ProcessRequestModel processRequest = tileCable.getRequest();
+      if (processRequest == null) {
         continue;
+      }
+      if (processRequest.isAlwaysActive() == false || processRequest.getCount() <= 0) {
+        continue; //no more left to do 
       }
       //now check item filter for input/output
       List<StackWrapper> ingredients = tileCable.getFilterTop();
@@ -441,7 +444,7 @@ public class TileMaster extends TileEntity implements ITickable {
       //it will insert dirt, skip gravel, stay on exporting
       //and keep sending dirt forever
       StorageNetwork.log("exporting SIZE = " + ingredients.size() + "/" + tileCable.getPos());
-      if (request.getStatus() == ProcessStatus.EXPORTING && ingredients.size() > 0) { //from network to inventory . also default state
+      if (processRequest.getStatus() == ProcessStatus.EXPORTING && ingredients.size() > 0) { //from network to inventory . also default state
         //also TOP ROW  
         //NEW : this mode more stubborn. ex auto crafter.
         //if the target already has items, who cares, i was told to be in export mode so export a set if possible right away always.
@@ -485,11 +488,11 @@ public class TileMaster extends TileEntity implements ITickable {
             ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
           }
           //flip that waitingResult flag on request (and save)
-          request.setStatus(ProcessStatus.IMPORTING);
-          tileCable.setRequest(request);
+          processRequest.setStatus(ProcessStatus.IMPORTING);
+          tileCable.setRequest(processRequest);
         }
       }
-      else if (request.getStatus() == ProcessStatus.IMPORTING && outputs.size() > 0) { //from inventory to network
+      else if (processRequest.getStatus() == ProcessStatus.IMPORTING && outputs.size() > 0) { //from inventory to network
 
         //try to find/get from the blocks outputs into network
         // look for "output" items that can be   from target
@@ -515,9 +518,13 @@ public class TileMaster extends TileEntity implements ITickable {
             // IF all found 
             //then complete extraction (and insert into network)
             //then toggle that waitingResult flag on request (and save)
-            request.setStatus(ProcessStatus.EXPORTING);
+            processRequest.setStatus(ProcessStatus.EXPORTING);
             StorageNetwork.log("IMPORTING: TO STATUS EXPORTING  ");
-            tileCable.setRequest(request);
+            tileCable.setRequest(processRequest);
+            //we got what we needed 
+            if (processRequest.isAlwaysActive() == false) {
+              processRequest.reduceCount();
+            }
           }
         }
       }
@@ -526,7 +533,7 @@ public class TileMaster extends TileEntity implements ITickable {
       //        request.setStatus(ProcessStatus.IMPORTING);//?? i dont know
       //      }
 
-      tileCable.setRequest(request);
+      tileCable.setRequest(processRequest);
     }
   }
 

@@ -3,7 +3,9 @@ package mrriegel.storagenetwork.network;
 import java.util.HashMap;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.util.UtilTileEntity;
@@ -23,9 +25,8 @@ import net.minecraftforge.items.IItemHandler;
 
 public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
 
-  public enum CableMessageType{
-    PRIORITY_DOWN, PRIORITY_UP, P_ONOFF, TOGGLE_WHITELIST, TOGGLE_MODE,
-    IMPORT_FILTER, TOGGLE_WAY, P_FACE_TOP, P_FACE_BOTTOM, TOGGLE_P_RESTARTTRIGGER, P_CTRL_MORE, P_CTRL_LESS;
+  public enum CableMessageType {
+    PRIORITY_DOWN, PRIORITY_UP, P_ONOFF, TOGGLE_WHITELIST, TOGGLE_MODE, IMPORT_FILTER, TOGGLE_WAY, P_FACE_TOP, P_FACE_BOTTOM, TOGGLE_P_RESTARTTRIGGER, P_CTRL_MORE, P_CTRL_LESS;
   }
 
   private int id;
@@ -114,25 +115,33 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
               }
             break;
             case P_ONOFF:
-            //process cable toggle always on
+              //process cable toggle always on
               if (tileCable != null) {
+                ProcessRequestModel m = tileCable.getProcessModel();
+                m.setAlwaysActive(message.value == 1);
+                tileCable.setProcessModel(m);
+                StorageNetwork.log("onoff message " + message.value);
               }
-                tileCable.getProcessModel().setAlwaysActive(message.value == 1);
             break;
             case P_CTRL_LESS:
               if (tileCable != null) {
                 tileCable.getProcessModel().setCount(message.value);
+                StorageNetwork.log("less message" + message.value);
               }
             break;
             case P_CTRL_MORE:
               if (tileCable != null) {
-                tileCable.getProcessModel().setCount(message.value);
+                ProcessRequestModel m = tileCable.getProcessModel();
+                m.setCount(message.value);
+                tileCable.setProcessModel(m);
+                StorageNetwork.log("more   message" + message.value);
+                StorageNetwork.log("more after save " + tileCable.getProcessModel().getCount());
               }
             break;
           }//end of switch
           tile.markDirty();
-        } //not the right TE 
           UtilTileEntity.updateTile(t.getWorld(), t.getPos());
+        } //not the right TE 
       }
     });
     return null;

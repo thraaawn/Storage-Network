@@ -101,6 +101,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
+
     connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {}.getType());
     inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
     mode = compound.getBoolean("mode");
@@ -352,15 +353,9 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   //TODO: also list of requests ordered . and nbt saved
   // where a process terminal lists some nodes and I "turn node on for 6 cycles" and it keeps track, maybe stuck after 2.
   public ProcessRequestModel getRequest() {
-    //hacktest: always one job is requested 
-    if (getProcessModel().getCount() == 0)
-      getProcessModel().setCount(1);
     return getProcessModel();
   }
 
-  public void deleteRequest() {
-    this.getProcessModel().setCount(0);
-  }
 
   public void setRequest(ProcessRequestModel request) {
     this.setProcessModel(request);

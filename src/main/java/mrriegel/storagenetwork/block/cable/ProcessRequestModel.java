@@ -15,7 +15,8 @@ public class ProcessRequestModel {
   public enum ProcessStatus {
     HALTED, IMPORTING, EXPORTING;
   }
-  private static final String PREFIX = "sn_process";
+
+  private static final String PREFIX = "sn_process_";
 
   //you can request more than 64
   private int count;
@@ -40,13 +41,13 @@ public class ProcessRequestModel {
   public void readFromNBT(NBTTagCompound compound) {
     this.count = compound.getInteger(PREFIX + "count");
     this.status = ProcessStatus.values()[compound.getInteger(PREFIX + "status")];
-    this.alwaysActive = compound.getBoolean("always");
+    this.alwaysActive = compound.getBoolean(PREFIX + "always");
   }
 
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     compound.setInteger(PREFIX + "count", count);
     compound.setInteger(PREFIX + "status", status.ordinal());
-    compound.setBoolean("always", alwaysActive);
+    compound.setBoolean(PREFIX + "always", alwaysActive);
     return compound;
   }
 

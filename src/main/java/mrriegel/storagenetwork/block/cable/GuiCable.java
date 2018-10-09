@@ -269,7 +269,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     //    p.isAlwaysActive()
       TextFormatting f = (p.isAlwaysActive()) ? TextFormatting.GREEN
           : TextFormatting.BLUE;
-      this.drawString(this.fontRenderer, f + (p.getCount() + ""), x, y, FONT);
+      this.drawString(this.fontRenderer, f + (p.getCount() + "" + p.isAlwaysActive()), x, y, FONT);
   }
   }
 
