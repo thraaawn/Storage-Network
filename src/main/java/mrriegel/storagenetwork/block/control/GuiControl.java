@@ -82,6 +82,7 @@ public class GuiControl extends GuiContainer {
     GuiControlButton btnOnOff;
     GuiControlButton btnMinus;
     GuiControlButton btnPlus;
+    public GuiTextFieldProcCable txtBox;
   }
 
   private void addButtons() {
@@ -89,22 +90,23 @@ public class GuiControl extends GuiContainer {
       return;
     }
     textBoxes = new ArrayList<>();
-    int x = guiLeft + 62;
-    int y = guiTop + 8;
+    int x = guiLeft + 72;
+    int y = guiTop + 10;
     final int spacer = 22;
     final int rowHeight = 25;
     int row = 0;
     int btnid = 1;
     for (ProcessWrapper p : processors) {
       GuiControlButton btnOnOff = new GuiControlButton(btnid++, CableMessageType.P_ONOFF,
-          x + spacer, y, 16, 16, "");
+          guiLeft + 8, y, 16, 16, "");
       btnOnOff.cable = p;
+      btnOnOff.visible = false;
       this.addButton(btnOnOff);
-      GuiTextField txt = new GuiTextField(btnid++, fontRenderer,
-          x - guiLeft + 64, y - guiTop + 4, 22, fontRenderer.FONT_HEIGHT);
+      GuiTextFieldProcCable txt = new GuiTextFieldProcCable(btnid++, fontRenderer,
+          x - guiLeft + 64, y - guiTop + 4);
       txt.setMaxStringLength(4);
       txt.setEnableBackgroundDrawing(false);
-      txt.setVisible(true);
+      txt.setVisible(false);
       txt.setTextColor(16777215);
       txt.setFocused(true);
       //mock data only
@@ -113,13 +115,17 @@ public class GuiControl extends GuiContainer {
       GuiControlButton btnMinus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_LESS,
           x + 2 * spacer, y, 16, 16, "-");
       btnMinus.cable = p;
+      btnMinus.visible = false;
       this.addButton(btnMinus);
       GuiControlButton btnPlus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_MORE,
           x + 3 * spacer + 12, y, 16, 16, "+");
       btnPlus.cable = p;
+      btnPlus.visible = false;
       this.addButton(btnPlus);
       y += rowHeight;
-      this.allRows.put(row, new CableRow(p, btnOnOff, btnMinus, btnPlus));
+      CableRow rowModel = new CableRow(p, btnOnOff, btnMinus, btnPlus);
+      rowModel.txtBox = txt;
+      this.allRows.put(row, rowModel);
       row++;
     }
     buttonsInit = true;
@@ -169,8 +175,15 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-    for (GuiTextField txt : this.textBoxes) {
-      txt.drawTextBox();
+    if (this.searchBar != null)
+      this.searchBar.drawTextBox();
+    for (CableRow row : this.allRows.values()) {
+      row.txtBox.drawTextBox();
+      row.btnOnOff.visible = true;
+      row.txtBox.setVisible(!row.p.alwaysOn);
+      row.btnMinus.visible = (!row.p.alwaysOn);
+      row.btnPlus.visible = (!row.p.alwaysOn);
+      //      row.txtBox.setVisible(  !row.p.alwaysOn);
     }
 
 
@@ -182,17 +195,17 @@ public class GuiControl extends GuiContainer {
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     renderTextures();
     int x = guiLeft + 8;
-    int y = guiTop + 8;
+    int y = guiTop + 10;
     int currentPage = 0;// offset for scroll? pge btns? 
     int spacer = 22;
     GlStateManager.pushMatrix();
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     RenderHelper.enableGUIStandardItemLighting();
     for (ProcessWrapper p : processors) {
-      x = guiLeft + 8;
+      x = guiLeft + 24;
       //draw me  
       mc.getRenderItem().renderItemAndEffectIntoGUI(p.output, x, y);
-      x += 22;
+      x += 20;
       /// TODO target blockname  text
       //AND OR  recipe ing list as text 
 

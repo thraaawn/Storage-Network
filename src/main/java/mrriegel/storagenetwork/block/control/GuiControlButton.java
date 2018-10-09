@@ -25,7 +25,7 @@ public class GuiControlButton extends GuiButtonExt {
     super.drawButton(mc, mouseX, mouseY, partial);
     mc.getTextureManager().bindTexture(widgets);
     //green check 
-    if (messageType == CableMessageType.P_ONOFF) {
+    if (messageType == CableMessageType.P_ONOFF && this.visible) {
       this.drawTexturedModalRect(x, y, textureX, textureY, 16, 16);
     }
   }
