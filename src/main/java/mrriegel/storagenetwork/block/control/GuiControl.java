@@ -84,6 +84,7 @@ public class GuiControl extends GuiContainer {
     public GuiTextFieldProcCable txtBox;
   }
 
+
   private void addButtons() {
     if (buttonsInit) {
       return;
@@ -100,6 +101,7 @@ public class GuiControl extends GuiContainer {
           guiLeft + 8, y, 16, 16, "");
       btnOnOff.cable = p;
       btnOnOff.visible = false;
+      btnOnOff.addTooltip("onoff");
       this.addButton(btnOnOff);
       //      GuiTextFieldProcCable txt = new GuiTextFieldProcCable(btnid++, fontRenderer,
       //          x + 64, y + 4);
@@ -113,12 +115,14 @@ public class GuiControl extends GuiContainer {
       GuiControlButton btnMinus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_LESS,
           x + 2 * spacer, y, 16, 16, "-");
       btnMinus.cable = p;
+      btnMinus.addTooltip("a");
       btnMinus.visible = false;
       this.addButton(btnMinus);
       GuiControlButton btnPlus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_MORE,
           x + 3 * spacer + 12, y, 16, 16, "+");
       btnPlus.cable = p;
       btnPlus.visible = false;
+      btnPlus.addTooltip("plus");
       this.addButton(btnPlus);
       y += rowHeight;
       CableRow rowModel = new CableRow(p, btnOnOff, btnMinus, btnPlus);
@@ -188,9 +192,11 @@ public class GuiControl extends GuiContainer {
       //  row.txtBox.drawTextBox();
     }
     for (GuiButton btn : this.buttonList) {
-      if (btn.isMouseOver()) {
+      if (btn.isMouseOver() && btn instanceof GuiControlButton) {
         //TOOLTIP 
-        //      this.drawHoveringText(textLines, x, y);
+        GuiControlButton button = (GuiControlButton) btn;
+        this.drawHoveringText(button.getTooltips(), x, y);
+        //      this.drawHoveringText(textLines, x, y)oh ;
       }
     }
   }

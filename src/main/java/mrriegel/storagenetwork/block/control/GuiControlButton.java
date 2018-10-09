@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.block.control;
 
+import java.util.ArrayList;
+import java.util.List;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.network.CableDataMessage;
 import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
@@ -14,12 +16,20 @@ public class GuiControlButton extends GuiButtonExt {
   public ProcessWrapper cable;
   CableMessageType messageType;
   public int textureX, textureY;
+  private List<String> tooltips = new ArrayList<>();
 
   public GuiControlButton(int id, CableMessageType type, int x, int y, int w, int h, String z) {
     super(id, x, y, w, h, z);
     messageType = type;
   }
 
+  public void addTooltip(String s) {
+    tooltips.add(s);
+  }
+
+  public List<String> getTooltips() {
+    return tooltips;
+  }
   @Override
   public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {//drawButon
     super.drawButton(mc, mouseX, mouseY, partial);
