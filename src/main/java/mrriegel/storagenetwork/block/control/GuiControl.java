@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import mrriegel.storagenetwork.network.RequestCableMessage;
@@ -31,10 +32,12 @@ public class GuiControl extends GuiContainer {
   //list includes search bar 
   //private List<GuiTextField> textBoxes = new ArrayList<>();
   private List<ProcessWrapper> processors = null;
-  int currentPage = 0;// offset for scroll? pge btns?   
   Map<Integer, CableRow> allRows = new HashMap<>();
-  List<CableRow> visibleRows = new ArrayList<>();
+  //  List<CableRow> visibleRows = new ArrayList<>();
   private boolean rowsCreated;
+  //how many rows to skip over
+  private int page = 0;
+  private int maxPage = 0;//TODO 
 
   public GuiControl(ContainerControl inventorySlotsIn) {
     super(inventorySlotsIn);
@@ -47,7 +50,6 @@ public class GuiControl extends GuiContainer {
     PacketRegistry.INSTANCE.sendToServer(new RequestCableMessage());
   }
 
-
   @Override
   public void initGui() {
     super.initGui();
@@ -59,8 +61,7 @@ public class GuiControl extends GuiContainer {
     searchBar.setVisible(true);
     searchBar.setFocused(true);
     searchBar.setTextColor(16777215);
-    //mock data only 
-    //    this.textBoxes.add(searchBar);
+    //mock data only  
   }
 
   @Override
@@ -71,12 +72,9 @@ public class GuiControl extends GuiContainer {
 
   public class CableRow {
 
-    public CableRow(ProcessWrapper p, GuiControlButton btnOnOff, GuiControlButton btnMinus, GuiControlButton btnPlus) {
+    public CableRow(ProcessWrapper p) {
       super();
       this.p = p;
-      this.btnOnOff = btnOnOff;
-      this.btnMinus = btnMinus;
-      this.btnPlus = btnPlus;
     }
 
     ProcessWrapper p;
@@ -88,6 +86,7 @@ public class GuiControl extends GuiContainer {
     public int y;
     public int width;
     public int height;
+    public int index;
 
     public boolean isInside(int mouseX, int mouseY) {
       return x < mouseX && mouseX < x + width &&
@@ -98,7 +97,6 @@ public class GuiControl extends GuiContainer {
       StorageNetwork.log("row clicked at " + p.output.getDisplayName());
     }
   }
-
 
   private void createAllRows() {
     if (rowsCreated) {
@@ -112,12 +110,23 @@ public class GuiControl extends GuiContainer {
     int row = 0;
     int btnid = 1;
     for (ProcessWrapper p : processors) {
+      if (p.output.isEmpty()) {
+        continue;
+      }
+      CableRow rowModel = new CableRow(p);
+      rowModel.index = row;
+      rowModel.x = guiLeft + 8;
+      rowModel.y = y;
+      rowModel.width = 150;
+      rowModel.height = 20;
+      //buttons come later
       GuiControlButton btnOnOff = new GuiControlButton(btnid++, CableMessageType.P_ONOFF,
-          guiLeft + 8, y, 16, 16, "");
+          rowModel.x, rowModel.y, 16, 16, "");
       btnOnOff.cable = p;
       btnOnOff.visible = false;
       btnOnOff.addTooltip("onoff");
-      this.addButton(btnOnOff);
+      rowModel.btnOnOff = btnOnOff;
+      this.addButton(rowModel.btnOnOff);
       //      GuiTextFieldProcCable txt = new GuiTextFieldProcCable(btnid++, fontRenderer,
       //          x + 64, y + 4);
       //      txt.setMaxStringLength(4);
@@ -127,28 +136,27 @@ public class GuiControl extends GuiContainer {
       //      //mock data only
       //      txt.setText("" + p.count);
       //  textBoxes.add(txt);
+      int offset = 66;
       GuiControlButton btnMinus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_LESS,
-          x + 2 * spacer, y, 16, 16, "-");
+          rowModel.x + offset + 2 * spacer, rowModel.y, 16, 16, "-");
       btnMinus.cable = p;
       btnMinus.addTooltip("a");
       btnMinus.visible = false;
       this.addButton(btnMinus);
+      rowModel.btnMinus = btnMinus;
       GuiControlButton btnPlus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_MORE,
-          x + 3 * spacer + 12, y, 16, 16, "+");
+          rowModel.x + offset + 12 + 3 * spacer, rowModel.y, 16, 16, "+");
       btnPlus.cable = p;
       btnPlus.visible = false;
       btnPlus.addTooltip("plus");
       this.addButton(btnPlus);
-      CableRow rowModel = new CableRow(p, btnOnOff, btnMinus, btnPlus);
-      rowModel.x = guiLeft + 8;
-      rowModel.y = y;
-      rowModel.width = 150;
-      rowModel.height = 20;
+      rowModel.btnPlus = btnPlus;
       //  rowModel.txtBox = txt;
       this.allRows.put(row, rowModel);
       row++;
       y += rowHeight;
     }
+    this.maxPage = this.allRows.size() - 1;
     rowsCreated = true;
   }
 
@@ -202,6 +210,7 @@ public class GuiControl extends GuiContainer {
     if (this.searchBar != null) {
       this.searchBar.drawTextBox();
     }
+    //todo: visible rows
     for (CableRow row : this.allRows.values()) {
       row.btnOnOff.visible = true;
       //     row.txtBox.setVisible(!row.p.alwaysOn);
@@ -209,6 +218,13 @@ public class GuiControl extends GuiContainer {
       row.btnPlus.visible = (!row.p.alwaysOn);
       //      row.txtBox.setVisible(  !row.p.alwaysOn);
       //  row.txtBox.drawTextBox();
+      //toggle based on stage
+      int mockIndex = row.index - this.page;
+      final int rowHeight = 25;
+      row.y = guiTop + 10 + mockIndex * rowHeight;
+      row.btnMinus.y = row.y;
+      row.btnPlus.y = row.y;
+      row.btnOnOff.y = row.y;
     }
     for (GuiButton btn : this.buttonList) {
       if (btn.isMouseOver() && btn instanceof GuiControlButton) {
@@ -230,25 +246,18 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     renderTextures();
-    int x = guiLeft + 8;
-    int y = guiTop + 10;
-    int currentPage = 0;// offset for scroll? pge btns? 
-    int spacer = 22;
+
     GlStateManager.pushMatrix();
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     RenderHelper.enableGUIStandardItemLighting();
-    for (ProcessWrapper p : processors) {
-      x = guiLeft + 24;
+    for (CableRow row : this.allRows.values()) {
       //draw me  
-      mc.getRenderItem().renderItemAndEffectIntoGUI(p.output, x, y);
-      x += 20;
+      mc.getRenderItem().renderItemAndEffectIntoGUI(row.p.output, row.x + 20, row.y);
       /// TODO target blockname  text
       //AND OR  recipe ing list as text 
       //TODO maybe tooltip for this
-      y += 3;
-      this.drawString(this.fontRenderer, p.name, x, y, FONT);
-      this.drawString(this.fontRenderer, p.count + "", x + 92, y, FONT);
-      y += spacer;
+      this.drawString(this.fontRenderer, row.p.name, row.x + 40, row.y + 3, FONT);
+      this.drawString(this.fontRenderer, row.p.count + "", row.x + 128, row.y + 3, FONT);
     }
     GlStateManager.popMatrix();
   }
@@ -263,17 +272,35 @@ public class GuiControl extends GuiContainer {
   }
 
   @Override
+  public void handleMouseInput() throws IOException {
+    super.handleMouseInput();
+    int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
+    int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+    if (inField(mouseX, mouseY)) {
+      int mouse = Mouse.getEventDWheel();
+      if (mouse > 0 && page > 0) {
+        page--;
+      }
+      if (mouse < 0 && page < maxPage) {
+        page++;
+      }
+    }
+  }
+
+  protected boolean inField(int mouseX, int mouseY) {
+    return mouseX > (guiLeft + 7) && mouseX < (guiLeft + xSize - 7) && mouseY > (guiTop + 7) && mouseY < (guiTop + 90);
+  }
+
+  @Override
   protected void mouseClicked(int x, int y, int btn) throws IOException {
     super.mouseClicked(x, y, btn);
     if (this.searchBar != null) {
       this.searchBar.mouseClicked(x, y, btn);
-
     }
     for (CableRow row : this.allRows.values()) {
       if (row.isInside(x, y)) {
         row.mouseClicked(x, y, btn);
       }
-      //todo: visible rows
     }
     //    for (GuiTextField txtNew : this.textBoxes)
     //      txtNew.mouseClicked(x, y, btn);
