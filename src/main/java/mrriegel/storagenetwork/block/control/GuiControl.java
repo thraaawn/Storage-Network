@@ -51,14 +51,14 @@ public class GuiControl extends GuiContainer {
     super.initGui();
     Keyboard.enableRepeatEvents(true);
     searchBar = new GuiTextField(0, fontRenderer,
-        10, 160, 158, fontRenderer.FONT_HEIGHT);
+        guiLeft + 10, guiTop + 160, 158, fontRenderer.FONT_HEIGHT);
     searchBar.setMaxStringLength(30);
     searchBar.setEnableBackgroundDrawing(false);
     searchBar.setVisible(true);
-    searchBar.setTextColor(16777215);
+    //    searchBar.setTextColor(16777215);
     searchBar.setFocused(true);
     //mock data only
-    searchBar.setText("abc123abc123abc123abc123abc123abc");
+    searchBar.setText("  ac");
     this.textBoxes.add(searchBar);
   }
 
@@ -103,12 +103,11 @@ public class GuiControl extends GuiContainer {
       btnOnOff.visible = false;
       this.addButton(btnOnOff);
       GuiTextFieldProcCable txt = new GuiTextFieldProcCable(btnid++, fontRenderer,
-          x - guiLeft + 64, y - guiTop + 4);
+          x + 64, y + 4);
       txt.setMaxStringLength(4);
       txt.setEnableBackgroundDrawing(false);
-      txt.setVisible(false);
+      txt.setVisible(true);
       txt.setTextColor(16777215);
-      txt.setFocused(true);
       //mock data only
       txt.setText("" + p.count);
       textBoxes.add(txt);
@@ -147,12 +146,11 @@ public class GuiControl extends GuiContainer {
   @Override
   public void updateScreen() {
     super.updateScreen();
-    for (GuiTextField txt : this.textBoxes) {
-      txt.updateCursorCounter();
-    }
-
     if (processors != null && processors.size() > 0) {
       addButtons();
+    }
+    for (GuiTextField txt : this.textBoxes) {
+      txt.updateCursorCounter();
     }
     for (GuiButton btn : this.buttonList) {
       if (btn instanceof GuiControlButton) {
@@ -173,20 +171,30 @@ public class GuiControl extends GuiContainer {
   }
 
   @Override
-  protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+  public void drawScreen(int x, int y, float par3) {
+    //  drawDefaultBackground();
+    super.drawScreen(x, y, par3);
     if (this.searchBar != null)
       this.searchBar.drawTextBox();
     for (CableRow row : this.allRows.values()) {
-      row.txtBox.drawTextBox();
       row.btnOnOff.visible = true;
       row.txtBox.setVisible(!row.p.alwaysOn);
       row.btnMinus.visible = (!row.p.alwaysOn);
       row.btnPlus.visible = (!row.p.alwaysOn);
       //      row.txtBox.setVisible(  !row.p.alwaysOn);
+      row.txtBox.drawTextBox();
     }
+    for (GuiButton btn : this.buttonList) {
+      if (btn.isMouseOver()) {
+        //TOOLTIP 
+        //      this.drawHoveringText(textLines, x, y);
+      }
+    }
+  }
 
-
+  @Override
+  protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    super.drawGuiContainerForegroundLayer(mouseX, mouseY);
   }
 
   int FONT = 14737632;
@@ -208,9 +216,8 @@ public class GuiControl extends GuiContainer {
       x += 20;
       /// TODO target blockname  text
       //AND OR  recipe ing list as text 
-
       //TODO maybe tooltip for this
-      y += 3;   
+      y += 3;
       this.drawString(this.fontRenderer, p.name, x, y, FONT);
       //      this.drawString(this.fontRenderer, p.count + "", x + 96, y, FONT);
       y += spacer;
@@ -228,6 +235,13 @@ public class GuiControl extends GuiContainer {
   }
 
   @Override
+  protected void mouseClicked(int x, int y, int btn) throws IOException {
+    super.mouseClicked(x, y, btn);
+    for (GuiTextField txtNew : this.textBoxes)
+      txtNew.mouseClicked(x, y, btn);
+  }
+
+  @Override
   protected void keyTyped(char typedChar, int keyCode) throws IOException {
     super.keyTyped(typedChar, keyCode);
     for (GuiTextField txt : this.textBoxes) {
@@ -236,7 +250,6 @@ public class GuiControl extends GuiContainer {
         break;
       }
     }
-
   }
 
   /**
