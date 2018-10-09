@@ -424,7 +424,7 @@ public class TileMaster extends TileEntity implements ITickable {
       if (processRequest == null) {
         continue;
       }
-      StorageNetwork.log(processRequest.isAlwaysActive() + " pc " + processRequest.getCount());
+      //StorageNetwork.log(processRequest.isAlwaysActive() + " pc " + processRequest.getCount());
       if (processRequest.isAlwaysActive() == false && processRequest.getCount() <= 0) {
         continue; //no more left to do 
       }

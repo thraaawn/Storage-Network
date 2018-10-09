@@ -33,7 +33,8 @@ public class GuiControl extends GuiContainer {
   private List<ProcessWrapper> processors = null;
   int currentPage = 0;// offset for scroll? pge btns?   
   Map<Integer, CableRow> allRows = new HashMap<>();
-  private boolean buttonsInit;
+  List<CableRow> visibleRows = new ArrayList<>();
+  private boolean rowsCreated;
 
   public GuiControl(ContainerControl inventorySlotsIn) {
     super(inventorySlotsIn);
@@ -42,9 +43,10 @@ public class GuiControl extends GuiContainer {
     this.ySize = HEIGHT;
     tile = inventorySlotsIn.getTileRequest();
     //  request the list of tiles 
-    buttonsInit = false;
+    rowsCreated = false;
     PacketRegistry.INSTANCE.sendToServer(new RequestCableMessage());
   }
+
 
   @Override
   public void initGui() {
@@ -82,11 +84,24 @@ public class GuiControl extends GuiContainer {
     GuiControlButton btnMinus;
     GuiControlButton btnPlus;
     public GuiTextFieldProcCable txtBox;
+    public int x;
+    public int y;
+    public int width;
+    public int height;
+
+    public boolean isInside(int mouseX, int mouseY) {
+      return x < mouseX && mouseX < x + width &&
+          y < mouseY && mouseY < y + height;
+    }
+
+    public void mouseClicked(int mouseX, int mouseY, int btn) {
+      StorageNetwork.log("row clicked at " + p.output.getDisplayName());
+    }
   }
 
 
-  private void addButtons() {
-    if (buttonsInit) {
+  private void createAllRows() {
+    if (rowsCreated) {
       return;
     }
     //textBoxes = new ArrayList<>();
@@ -124,13 +139,17 @@ public class GuiControl extends GuiContainer {
       btnPlus.visible = false;
       btnPlus.addTooltip("plus");
       this.addButton(btnPlus);
-      y += rowHeight;
       CableRow rowModel = new CableRow(p, btnOnOff, btnMinus, btnPlus);
+      rowModel.x = guiLeft + 8;
+      rowModel.y = y;
+      rowModel.width = 150;
+      rowModel.height = 20;
       //  rowModel.txtBox = txt;
       this.allRows.put(row, rowModel);
       row++;
+      y += rowHeight;
     }
-    buttonsInit = true;
+    rowsCreated = true;
   }
 
   @Override
@@ -150,7 +169,7 @@ public class GuiControl extends GuiContainer {
   public void updateScreen() {
     super.updateScreen();
     if (processors != null && processors.size() > 0) {
-      addButtons();
+      createAllRows();
     }
     if (searchBar != null) {
       searchBar.updateCursorCounter();
@@ -248,6 +267,13 @@ public class GuiControl extends GuiContainer {
     super.mouseClicked(x, y, btn);
     if (this.searchBar != null) {
       this.searchBar.mouseClicked(x, y, btn);
+
+    }
+    for (CableRow row : this.allRows.values()) {
+      if (row.isInside(x, y)) {
+        row.mouseClicked(x, y, btn);
+      }
+      //todo: visible rows
     }
     //    for (GuiTextField txtNew : this.textBoxes)
     //      txtNew.mouseClicked(x, y, btn);
