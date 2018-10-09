@@ -32,14 +32,17 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
   protected InventoryCraftingNetwork matrix;
   protected boolean recipeLocked = false;
 
+  @Override
   public InventoryCrafting getCraftMatrix() {
     return this.matrix;
   }
 
+  @Override
   public abstract TileMaster getTileMaster();
 
   public abstract void bindHotbar();
 
+  @Override
   public abstract void slotChanged();
 
   boolean test = false;
@@ -128,10 +131,10 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
     int sizePerCraft = res.getCount();
     int sizeFull = res.getMaxStackSize();
     int numberToCraft = sizeFull / sizePerCraft;
-    StorageNetwork.log("numberToCraft = " + numberToCraft + " for stack " + res);
+    //    StorageNetwork.log("numberToCraft = " + numberToCraft + " for stack " + res);
     while (crafted + sizePerCraft <= res.getMaxStackSize()) {
       res = recipeCurrent.getCraftingResult(matrix);
-      StorageNetwork.log("crafted = " + crafted + " ; res.count() = " + res.getCount() + " MAX=" + res.getMaxStackSize());
+      //      StorageNetwork.log("crafted = " + crafted + " ; res.count() = " + res.getCount() + " MAX=" + res.getMaxStackSize());
       if (!ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res, true).isEmpty()) {
         break;
       }

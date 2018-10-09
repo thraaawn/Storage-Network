@@ -25,6 +25,7 @@ public class ProcessWrapper {
     int z = compound.getInteger("zz");
     pos = new BlockPos(x, y, z);
     output = new ItemStack(compound);
+    this.currentRequests = compound.getInteger("cou");
   }
 
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -34,6 +35,7 @@ public class ProcessWrapper {
     compound.setInteger("xx", pos.getX());
     compound.setInteger("yy", pos.getY());
     compound.setInteger("zz", pos.getZ());
+    compound.setInteger("cou", currentRequests);
     return compound;
   }
 

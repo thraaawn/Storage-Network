@@ -105,7 +105,6 @@ public class GuiControl extends GuiContainer {
       btnPlus.cable = p;
       this.addButton(btnPlus);
       y += rowHeight;
-      StorageNetwork.log("bth row added");
       this.allRows.put(row, new CableRow(p, btnOnOff, btnMinus, btnPlus));
       row++;
     }
@@ -120,7 +119,6 @@ public class GuiControl extends GuiContainer {
         GuiControlButton btn = (GuiControlButton) b;
         // do the thing 
         btn.actionPerformed();
-        StorageNetwork.log("btn id " + button.id);
         break;
       }
     }

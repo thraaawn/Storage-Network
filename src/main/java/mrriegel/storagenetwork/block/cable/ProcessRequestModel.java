@@ -20,7 +20,7 @@ public class ProcessRequestModel {
 
   //you can request more than 64
   private int count;
-  private boolean alwaysActive;
+  private boolean alwaysActive = true;
   private ProcessStatus status = ProcessStatus.EXPORTING;
 
   public int getCount() {

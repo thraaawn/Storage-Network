@@ -369,7 +369,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   @Nonnull
   public ItemStack getFirstRecipeOut() {
-    List<StackWrapper> topRow = getFilterTop();
+    List<StackWrapper> topRow = getFilterBottom();
     if (topRow.size() == 0) {
       return ItemStack.EMPTY;
     }

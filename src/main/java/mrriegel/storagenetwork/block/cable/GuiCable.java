@@ -263,13 +263,19 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     if (tile.getBlockType() == ModBlocks.processKabel) {
     ProcessRequestModel p = tile.getProcessModel();
     int FONT = 14737632;
-      int x = this.xSize + 10;
+      int x = -90;
       int y = 4;
-    //    p.getCount()
-    //    p.isAlwaysActive()
+      this.drawString(this.fontRenderer, StorageNetwork.lang("tile.storagenetwork:controller.name"),
+          x, y, FONT);
+      x += 12;
+      y += 18;
       TextFormatting f = (p.isAlwaysActive()) ? TextFormatting.GREEN
           : TextFormatting.BLUE;
-      this.drawString(this.fontRenderer, f + (p.getCount() + "" + p.isAlwaysActive()), x, y, FONT);
+      String txt = StorageNetwork.lang("processing.alwayson." + p.isAlwaysActive());
+      if (!p.isAlwaysActive()) {
+        txt += p.getCount();
+      }
+      this.drawString(this.fontRenderer, f + txt, x, y, FONT);
   }
   }
 

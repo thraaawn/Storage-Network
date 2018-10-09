@@ -48,6 +48,7 @@ public class RequestCableMessage implements IMessage, IMessageHandler<RequestCab
           String name = player.world.getBlockState(c.getConnectedInventory()).getBlock().getLocalizedName();
 
           ProcessRequestModel proc = c.getProcessModel();
+          //          StorageNetwork.log("request cable message get count of " + name + proc.getCount());
           list.add(new ProcessWrapper(c.getPos(), c.getFirstRecipeOut(),
               proc.getCount(), name, proc.isAlwaysActive()));
         }

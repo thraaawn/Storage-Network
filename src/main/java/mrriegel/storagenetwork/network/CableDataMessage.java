@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.network;
 import java.util.HashMap;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
@@ -120,13 +119,11 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
                 ProcessRequestModel m = tileCable.getProcessModel();
                 m.setAlwaysActive(message.value == 1);
                 tileCable.setProcessModel(m);
-                StorageNetwork.log("onoff message " + message.value);
               }
             break;
             case P_CTRL_LESS:
               if (tileCable != null) {
                 tileCable.getProcessModel().setCount(message.value);
-                StorageNetwork.log("less message" + message.value);
               }
             break;
             case P_CTRL_MORE:
@@ -134,8 +131,6 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
                 ProcessRequestModel m = tileCable.getProcessModel();
                 m.setCount(message.value);
                 tileCable.setProcessModel(m);
-                StorageNetwork.log("more   message" + message.value);
-                StorageNetwork.log("more after save " + tileCable.getProcessModel().getCount());
               }
             break;
           }//end of switch
