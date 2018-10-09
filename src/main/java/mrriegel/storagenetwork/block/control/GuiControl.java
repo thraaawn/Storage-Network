@@ -96,6 +96,33 @@ public class GuiControl extends GuiContainer {
     public void mouseClicked(int mouseX, int mouseY, int btn) {
       StorageNetwork.log("row clicked at " + p.output.getDisplayName());
     }
+
+    public boolean isHidden() {
+      //above the top, or below the bottom
+      return this.y < guiTop || this.y > guiTop + 150;
+    }
+
+    public void drawScreen() {
+      btnOnOff.visible = true;
+      //     row.txtBox.setVisible(!row.p.alwaysOn);
+      btnMinus.visible = (!p.alwaysOn);
+      btnPlus.visible = (!p.alwaysOn);
+    }
+
+    public void hideComponents() {
+      this.btnOnOff.visible = false;
+      this.btnMinus.visible = false;
+      this.btnPlus.visible = false;
+    }
+
+    public void updatePagePosition(final int page) {
+      final int mockIndex = index - page;
+      final int rowHeight = 25;
+      this.y = guiTop + 10 + mockIndex * rowHeight;
+      btnMinus.y = this.y;
+      btnPlus.y = this.y;
+      btnOnOff.y = this.y;
+    }
   }
 
   private void createAllRows() {
@@ -109,6 +136,7 @@ public class GuiControl extends GuiContainer {
     final int rowHeight = 25;
     int row = 0;
     int btnid = 1;
+    Map<Integer, CableRow> rows = new HashMap<>();
     for (ProcessWrapper p : processors) {
       if (p.output.isEmpty()) {
         continue;
@@ -152,11 +180,13 @@ public class GuiControl extends GuiContainer {
       this.addButton(btnPlus);
       rowModel.btnPlus = btnPlus;
       //  rowModel.txtBox = txt;
-      this.allRows.put(row, rowModel);
+      rows.put(row, rowModel);
       row++;
       y += rowHeight;
     }
-    this.maxPage = this.allRows.size() - 1;
+    this.maxPage = rows.size() - 1;
+    StorageNetwork.log("MP" + maxPage);
+    this.allRows = rows;
     rowsCreated = true;
   }
 
@@ -212,19 +242,15 @@ public class GuiControl extends GuiContainer {
     }
     //todo: visible rows
     for (CableRow row : this.allRows.values()) {
-      row.btnOnOff.visible = true;
-      //     row.txtBox.setVisible(!row.p.alwaysOn);
-      row.btnMinus.visible = (!row.p.alwaysOn);
-      row.btnPlus.visible = (!row.p.alwaysOn);
-      //      row.txtBox.setVisible(  !row.p.alwaysOn);
-      //  row.txtBox.drawTextBox();
-      //toggle based on stage
-      int mockIndex = row.index - this.page;
-      final int rowHeight = 25;
-      row.y = guiTop + 10 + mockIndex * rowHeight;
-      row.btnMinus.y = row.y;
-      row.btnPlus.y = row.y;
-      row.btnOnOff.y = row.y;
+      //update row location based on page index
+      row.updatePagePosition(this.page);
+      // is it visible or hidden 
+      if (row.isHidden()) {
+        row.hideComponents();
+      }
+      else {
+        row.drawScreen();
+      }
     }
     for (GuiButton btn : this.buttonList) {
       if (btn.isMouseOver() && btn instanceof GuiControlButton) {
@@ -246,18 +272,19 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     renderTextures();
-
     GlStateManager.pushMatrix();
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     RenderHelper.enableGUIStandardItemLighting();
     for (CableRow row : this.allRows.values()) {
       //draw me  
-      mc.getRenderItem().renderItemAndEffectIntoGUI(row.p.output, row.x + 20, row.y);
-      /// TODO target blockname  text
-      //AND OR  recipe ing list as text 
-      //TODO maybe tooltip for this
-      this.drawString(this.fontRenderer, row.p.name, row.x + 40, row.y + 3, FONT);
-      this.drawString(this.fontRenderer, row.p.count + "", row.x + 128, row.y + 3, FONT);
+      if (row.isHidden() == false) {
+        mc.getRenderItem().renderItemAndEffectIntoGUI(row.p.output, row.x + 20, row.y);
+        /// TODO target blockname  text
+        //AND OR  recipe ing list as text 
+        //TODO maybe tooltip for this
+        this.drawString(this.fontRenderer, row.p.name, row.x + 40, row.y + 3, FONT);
+        this.drawString(this.fontRenderer, row.p.count + "", row.x + 128, row.y + 3, FONT);
+      }
     }
     GlStateManager.popMatrix();
   }
