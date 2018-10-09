@@ -14,6 +14,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -92,8 +93,7 @@ public class GuiControl extends GuiContainer {
     int btnid = 0;
     for (ProcessWrapper p : processors) {
       GuiControlButton btnOnOff = new GuiControlButton(btnid++, CableMessageType.P_ONOFF,
-          x + spacer, y, 26, 16, "1/0");
-      btnOnOff.displayString = (p.alwaysOn) ? "ON" : "OFF";
+          x + spacer, y, 16, 16, "");
       btnOnOff.cable = p;
       this.addButton(btnOnOff);
       GuiControlButton btnMinus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_LESS,
@@ -144,7 +144,7 @@ public class GuiControl extends GuiContainer {
         }
         else {
           //set grey 
-          b.textureX = 94;
+          b.textureX = 95;
           b.textureY = 449;
         }
       }
@@ -153,6 +153,7 @@ public class GuiControl extends GuiContainer {
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     if (this.searchBar != null) {
       //      this.drawTexturedModalRect(searchBar.x, searchBar.y, 0, 171, 26, 12);
       this.searchBar.drawTextBox();
@@ -165,11 +166,13 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     renderTextures();
-    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     int x = guiLeft + 8;
     int y = guiTop + 8;
     int currentPage = 0;// offset for scroll? pge btns? 
     int spacer = 22;
+    GlStateManager.pushMatrix();
+    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+    RenderHelper.enableGUIStandardItemLighting();
     for (ProcessWrapper p : processors) {
       x = guiLeft + 8;
       //draw me  
@@ -177,18 +180,14 @@ public class GuiControl extends GuiContainer {
       x += 22;
       /// TODO target blockname  text
       //AND OR  recipe ing list as text 
-      String n = "";
-      if (p.alwaysOn) {
-        n = "processing.alwayson";
-      }
-      else {
-        n = p.name;
-      }
+
       //TODO maybe tooltip for this
-      this.drawString(this.fontRenderer, p.name, x, y + 4, FONT);
-      this.drawString(this.fontRenderer, p.currentRequests + "", x + 96, y + 4, FONT);
-      y += 22;
+      y += 3;   
+      this.drawString(this.fontRenderer, p.name, x, y, FONT);
+      this.drawString(this.fontRenderer, p.currentRequests + "", x + 96, y, FONT);
+      y += spacer;
     }
+    GlStateManager.popMatrix();
   }
 
   private void renderTextures() {
