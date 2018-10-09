@@ -28,6 +28,8 @@ public class GuiControl extends GuiContainer {
   //
   private TileControl tile;
   protected GuiTextField searchBar;
+  //list includes search bar 
+  private List<GuiTextField> textBoxes = new ArrayList<>();
   private List<ProcessWrapper> processors = null;
   int currentPage = 0;// offset for scroll? pge btns?   
   Map<Integer, CableRow> allRows = new HashMap<>();
@@ -57,6 +59,7 @@ public class GuiControl extends GuiContainer {
     searchBar.setFocused(true);
     //mock data only
     searchBar.setText("abc123abc123abc123abc123abc123abc");
+    this.textBoxes.add(searchBar);
   }
 
   @Override
@@ -85,17 +88,28 @@ public class GuiControl extends GuiContainer {
     if (buttonsInit) {
       return;
     }
+    textBoxes = new ArrayList<>();
     int x = guiLeft + 62;
     int y = guiTop + 8;
     final int spacer = 22;
     final int rowHeight = 25;
     int row = 0;
-    int btnid = 0;
+    int btnid = 1;
     for (ProcessWrapper p : processors) {
       GuiControlButton btnOnOff = new GuiControlButton(btnid++, CableMessageType.P_ONOFF,
           x + spacer, y, 16, 16, "");
       btnOnOff.cable = p;
       this.addButton(btnOnOff);
+      GuiTextField txt = new GuiTextField(btnid++, fontRenderer,
+          x - guiLeft + 64, y - guiTop + 4, 22, fontRenderer.FONT_HEIGHT);
+      txt.setMaxStringLength(4);
+      txt.setEnableBackgroundDrawing(false);
+      txt.setVisible(true);
+      txt.setTextColor(16777215);
+      txt.setFocused(true);
+      //mock data only
+      txt.setText("" + p.count);
+      textBoxes.add(txt);
       GuiControlButton btnMinus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_LESS,
           x + 2 * spacer, y, 16, 16, "-");
       btnMinus.cable = p;
@@ -127,9 +141,10 @@ public class GuiControl extends GuiContainer {
   @Override
   public void updateScreen() {
     super.updateScreen();
-    if (searchBar != null) {
-      searchBar.updateCursorCounter();
+    for (GuiTextField txt : this.textBoxes) {
+      txt.updateCursorCounter();
     }
+
     if (processors != null && processors.size() > 0) {
       addButtons();
     }
@@ -154,10 +169,10 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-    if (this.searchBar != null) {
-      //      this.drawTexturedModalRect(searchBar.x, searchBar.y, 0, 171, 26, 12);
-      this.searchBar.drawTextBox();
+    for (GuiTextField txt : this.textBoxes) {
+      txt.drawTextBox();
     }
+
 
   }
 
@@ -184,7 +199,7 @@ public class GuiControl extends GuiContainer {
       //TODO maybe tooltip for this
       y += 3;   
       this.drawString(this.fontRenderer, p.name, x, y, FONT);
-      this.drawString(this.fontRenderer, p.currentRequests + "", x + 96, y, FONT);
+      //      this.drawString(this.fontRenderer, p.count + "", x + 96, y, FONT);
       y += spacer;
     }
     GlStateManager.popMatrix();
@@ -202,12 +217,13 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void keyTyped(char typedChar, int keyCode) throws IOException {
     super.keyTyped(typedChar, keyCode);
-    if (searchBar != null && searchBar.isFocused()) {
-      searchBar.textboxKeyTyped(typedChar, keyCode);
-      //also sync?
-      //      ((ITileTextbox) tile).setText(searchBar.getText());
-      //      ModCyclic.network.sendToServer(new PacketTileTextbox(searchBar.getText(), tile.getPos()));
+    for (GuiTextField txt : this.textBoxes) {
+      if (txt.isFocused()) {
+        txt.textboxKeyTyped(typedChar, keyCode);
+        break;
+      }
     }
+
   }
 
   /**

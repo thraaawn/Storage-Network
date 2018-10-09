@@ -37,10 +37,10 @@ public class GuiControlButton extends GuiButtonExt {
       value = cable.alwaysOn ? 1 : 0;
     }
     else if (this.messageType == CableMessageType.P_CTRL_LESS) {
-      value = cable.currentRequests - 1;
+      value = cable.count - 1;
     }
     else if (this.messageType == CableMessageType.P_CTRL_MORE) {
-      value = cable.currentRequests++; // 
+      value = cable.count++; // 
     }
     //    this.messageType
     //    int newval = cable.alwaysOn ? 1 : 0;//inverted because we flippy
