@@ -12,6 +12,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import mrriegel.storagenetwork.network.RequestCableMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
+import mrriegel.storagenetwork.util.UtilInventory;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -96,21 +97,19 @@ public class GuiControl extends GuiContainer {
 
     public void mouseClicked(int mouseX, int mouseY, int btn) {
       StorageNetwork.log("row clicked at " + p.output.getDisplayName());
-
     }
 
     public boolean compareSearch() {
-      boolean searchDoesMatch = true;
-      if (searchBar.getText().isEmpty() == false) {
-        String slower = searchBar.getText().toLowerCase();
-        searchDoesMatch = slower.contains(this.p.name.toLowerCase())
-            || this.p.name.toLowerCase().contains(slower);
+      if (searchBar.getText().isEmpty()) {
+        return true;//hide none, sho wall
       }
-      return searchDoesMatch;
+      return UtilInventory.doOverlap(searchBar.getText(), p.name)
+          || UtilInventory.doOverlap(searchBar.getText(), p.output.getDisplayName());
     }
-    public boolean isHidden() {
+
+    public boolean isOffscreen() {
       //above the top, or below the bottom
-      return this.y < guiTop || this.y > guiTop + 150;
+      return this.x < 0 || this.y < guiTop || this.y > guiTop + 150;
     }
 
     public void drawScreen() {
@@ -118,12 +117,14 @@ public class GuiControl extends GuiContainer {
       //     row.txtBox.setVisible(!row.p.alwaysOn);
       btnMinus.visible = (!p.alwaysOn);
       btnPlus.visible = (!p.alwaysOn);
+
     }
 
     public void hideComponents() {
       this.btnOnOff.visible = false;
       this.btnMinus.visible = false;
       this.btnPlus.visible = false;
+
     }
 
     public void updatePagePosition(final int page, int hiddenOffset) {
@@ -142,9 +143,6 @@ public class GuiControl extends GuiContainer {
     if (rowsCreated) {
       return;
     }
-    //textBoxes = new ArrayList<>();
-    int x = guiLeft + 72;
-    int y = guiTop + 10;
     final int spacer = 22;
     final int rowHeight = 25;
     int row = 0;
@@ -157,7 +155,7 @@ public class GuiControl extends GuiContainer {
       CableRow rowModel = new CableRow(p);
       rowModel.index = row;
       rowModel.x = guiLeft + 8;
-      rowModel.y = y;
+      rowModel.y = guiTop + 10;
       rowModel.width = 150;
       rowModel.height = 20;
       //buttons come later
@@ -186,7 +184,8 @@ public class GuiControl extends GuiContainer {
       this.addButton(btnMinus);
       rowModel.btnMinus = btnMinus;
       GuiControlButton btnPlus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_MORE,
-          rowModel.x + offset + 12 + 3 * spacer, rowModel.y, 16, 16, "+");
+          rowModel.x + offset + 12 + 3 * spacer,
+          rowModel.y, 16, 16, "+");
       btnPlus.cable = p;
       btnPlus.visible = false;
       btnPlus.addTooltip("plus");
@@ -195,7 +194,7 @@ public class GuiControl extends GuiContainer {
       //  rowModel.txtBox = txt;
       rows.put(row, rowModel);
       row++;
-      y += rowHeight;
+      //      y += rowHeight;
     }
     this.maxPage = rows.size() - 1;
     StorageNetwork.log("MP" + maxPage);
@@ -206,14 +205,36 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void actionPerformed(GuiButton button) throws IOException {
     super.actionPerformed(button);
-    for (GuiButton b : this.buttonList) {
-      if (button.id == b.id && b instanceof GuiControlButton) {
-        GuiControlButton btn = (GuiControlButton) b;
-        // do the thing 
-        btn.actionPerformed();
-        break;
-      }
+    if (button instanceof GuiControlButton) {
+      GuiControlButton btn = (GuiControlButton) button;
+      btn.actionPerformed();
     }
+    //    for (CableRow row : this.allRows.values()) {
+    //      if (row.isOffscreen()) {
+    //        continue;
+    //      }
+    //      if (row.btnMinus.id == button.id) {
+    //        row.btnMinus.actionPerformed();
+    //        break;
+    //      }
+    //      if (row.btnPlus.id == button.id) {
+    //        row.btnPlus.actionPerformed();
+    //        break;
+    //      }
+    //      if (row.btnOnOff.id == button.id) {
+    //        row.btnOnOff.actionPerformed();
+    //        break;
+    //      }
+    //    }
+    //    for (GuiButton b : this.buttonList) {
+    //      if (button.id == b.id && b instanceof GuiControlButton) {
+    //        GuiControlButton btn = (GuiControlButton) b;
+    //        // do the thing 
+    //        if(btn.cable.hi)
+    //        btn.actionPerformed();
+    //        break;
+    //      }
+    //    }
   }
 
   @Override
@@ -225,7 +246,6 @@ public class GuiControl extends GuiContainer {
     if (searchBar != null) {
       searchBar.updateCursorCounter();
     }
-
     for (GuiButton btn : this.buttonList) {
       if (btn instanceof GuiControlButton) {
         GuiControlButton b = (GuiControlButton) btn;
@@ -256,14 +276,19 @@ public class GuiControl extends GuiContainer {
     for (CableRow row : this.allRows.values()) {
       //update row location based on page index
       if (row.compareSearch() == false) {
+        row.x = -199;
         hiddenOffset++;
+      }
+      else {
+        row.x = guiLeft + 8;
       }
       row.updatePagePosition(this.page, hiddenOffset);
       // is it visible or hidden 
-      if (row.isHidden()) {
+      if (row.isOffscreen()) {
         row.hideComponents();
       }
       else {
+        //        StorageNetwork.log("hidden == false for " + row.p.output);
         row.drawScreen();
       }
     }
@@ -292,12 +317,13 @@ public class GuiControl extends GuiContainer {
     RenderHelper.enableGUIStandardItemLighting();
     for (CableRow row : this.allRows.values()) {
       //draw me  
-      if (row.isHidden() == false) {
+      if (row.isOffscreen() == false) {
         mc.getRenderItem().renderItemAndEffectIntoGUI(row.p.output, row.x + 20, row.y);
         /// TODO target blockname  text
         //AND OR  recipe ing list as text 
         //TODO maybe tooltip for this
         this.drawString(this.fontRenderer, row.p.name, row.x + 40, row.y + 3, FONT);
+        if (row.p.alwaysOn == false)
         this.drawString(this.fontRenderer, row.p.count + "", row.x + 128, row.y + 3, FONT);
       }
     }

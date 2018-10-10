@@ -20,6 +20,10 @@ public class UtilInventory {
     return getItemHandler(world.getTileEntity(pos), facing) != null;
   }
 
+  public static boolean doOverlap(final String text, final String name) {
+    return text.toLowerCase().contains(name.toLowerCase())
+        || name.toLowerCase().contains(text.toLowerCase());
+  }
   public static IItemHandler getItemHandler(TileEntity tile, EnumFacing side) {
     if (tile == null)
       return null;

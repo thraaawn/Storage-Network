@@ -47,11 +47,12 @@ public class GuiControlButton extends GuiButtonExt {
       value = cable.alwaysOn ? 1 : 0;
     }
     else if (this.messageType == CableMessageType.P_CTRL_LESS) {
-      value = cable.count - 1;
+      value = cable.count--;
     }
     else if (this.messageType == CableMessageType.P_CTRL_MORE) {
       value = cable.count++; // 
     }
+    StorageNetwork.log(messageType + "click " + value + " at +" + cable.pos + cable.output);
     //    this.messageType
     //    int newval = cable.alwaysOn ? 1 : 0;//inverted because we flippy
     PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(messageType.ordinal(), cable.pos, value));
