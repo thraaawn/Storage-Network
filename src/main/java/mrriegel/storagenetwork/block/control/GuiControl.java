@@ -318,6 +318,8 @@ public class GuiControl extends GuiContainer {
     super.handleMouseInput();
     int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
     int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+    //      if (Mouse.getEventDWheel() != 0)
+    //      StorageNetwork.log(page + "/" + maxPage + "  scrol" + mouseX + "?" + mouseY);
     if (inField(mouseX, mouseY)) {
       int mouse = Mouse.getEventDWheel();
       if (mouse > 0 && page > 0) {
@@ -330,7 +332,8 @@ public class GuiControl extends GuiContainer {
   }
 
   protected boolean inField(int mouseX, int mouseY) {
-    return mouseX > (guiLeft + 7) && mouseX < (guiLeft + xSize - 7) && mouseY > (guiTop + 7) && mouseY < (guiTop + 90);
+    return mouseX > guiLeft && mouseX < guiLeft + xSize
+        && mouseY > guiTop && mouseY < guiTop + ySize;
   }
 
   @Override
