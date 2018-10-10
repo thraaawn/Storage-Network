@@ -13,6 +13,7 @@ import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import mrriegel.storagenetwork.network.RequestCableMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilInventory;
+import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -127,7 +128,7 @@ public class GuiControl extends GuiContainer {
 
     }
 
-    public void updatePagePosition(final int page, int hiddenOffset) {
+    public void updatePagePosition(final int page, final int hiddenOffset) {
       //if im at index 3, but page has scrolled up once, 
       // and one above me has been hidden, i am at position 1
       final int mockIndex = index - page - hiddenOffset;
@@ -139,12 +140,13 @@ public class GuiControl extends GuiContainer {
     }
   }
 
+  int hiddenOffset = 0;
+  final int rowHeight = 25;
   private void createAllRows() {
     if (rowsCreated) {
       return;
     }
     final int spacer = 22;
-    final int rowHeight = 25;
     int row = 0;
     int btnid = 1;
     Map<Integer, CableRow> rows = new HashMap<>();
@@ -272,7 +274,7 @@ public class GuiControl extends GuiContainer {
       this.searchBar.drawTextBox();
     }
     //todo: visible rows
-    int hiddenOffset = 0;
+    hiddenOffset = 0;
     for (CableRow row : this.allRows.values()) {
       //update row location based on page index
       if (row.compareSearch() == false) {
@@ -282,7 +284,7 @@ public class GuiControl extends GuiContainer {
       else {
         row.x = guiLeft + 8;
       }
-      row.updatePagePosition(this.page, hiddenOffset);
+        row.updatePagePosition(this.page, hiddenOffset);
       // is it visible or hidden 
       if (row.isOffscreen()) {
         row.hideComponents();
@@ -351,7 +353,7 @@ public class GuiControl extends GuiContainer {
       if (mouse > 0 && page > 0) {
         page--;
       }
-      if (mouse < 0 && page < maxPage) {
+      if (mouse < 0 && page < maxPage - hiddenOffset) {
         page++;
       }
     }
@@ -362,15 +364,27 @@ public class GuiControl extends GuiContainer {
         && mouseY > guiTop && mouseY < guiTop + ySize;
   }
 
+  protected boolean inSearchbar(int mouseX, int mouseY) {
+    return isPointInRegion(10, 160,
+        searchBar.width, searchBar.height,
+        mouseX, mouseY);
+  }
   @Override
-  protected void mouseClicked(int x, int y, int btn) throws IOException {
-    super.mouseClicked(x, y, btn);
+  protected void mouseClicked(int mouseX, int mouseY, int btn) throws IOException {
+    super.mouseClicked(mouseX, mouseY, btn);
     if (this.searchBar != null) {
-      this.searchBar.mouseClicked(x, y, btn);
+      this.searchBar.mouseClicked(mouseX, mouseY, btn);
+      if (inSearchbar(mouseX, mouseY)) {
+        searchBar.setFocused(true);
+        if (btn == UtilTileEntity.MOUSE_BTN_RIGHT) {
+          searchBar.setText("");
+        }
+      }
     }
+
     for (CableRow row : this.allRows.values()) {
-      if (row.isInside(x, y)) {
-        row.mouseClicked(x, y, btn);
+      if (row.isInside(mouseX, mouseY)) {
+        row.mouseClicked(mouseX, mouseY, btn);
       }
     }
     //    for (GuiTextField txtNew : this.textBoxes)
