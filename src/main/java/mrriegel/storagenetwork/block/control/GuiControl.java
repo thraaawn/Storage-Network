@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import mrriegel.storagenetwork.StorageNetwork;
@@ -95,6 +96,7 @@ public class GuiControl extends GuiContainer {
 
     public void mouseClicked(int mouseX, int mouseY, int btn) {
       StorageNetwork.log("row clicked at " + p.output.getDisplayName());
+
     }
 
     public boolean isHidden() {
@@ -354,5 +356,8 @@ public class GuiControl extends GuiContainer {
    */
   public void setTiles(List<ProcessWrapper> cables) {
     processors = cables;
+    processors = processors.stream().sorted((a, b) -> {
+      return a.name.compareTo(b.name);
+    }).collect(Collectors.toList());
   }
 }
