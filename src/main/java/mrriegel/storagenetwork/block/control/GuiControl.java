@@ -99,6 +99,15 @@ public class GuiControl extends GuiContainer {
 
     }
 
+    public boolean compareSearch() {
+      boolean searchDoesMatch = true;
+      if (searchBar.getText().isEmpty() == false) {
+        String slower = searchBar.getText().toLowerCase();
+        searchDoesMatch = slower.contains(this.p.name.toLowerCase())
+            || this.p.name.toLowerCase().contains(slower);
+      }
+      return searchDoesMatch;
+    }
     public boolean isHidden() {
       //above the top, or below the bottom
       return this.y < guiTop || this.y > guiTop + 150;
@@ -117,8 +126,10 @@ public class GuiControl extends GuiContainer {
       this.btnPlus.visible = false;
     }
 
-    public void updatePagePosition(final int page) {
-      final int mockIndex = index - page;
+    public void updatePagePosition(final int page, int hiddenOffset) {
+      //if im at index 3, but page has scrolled up once, 
+      // and one above me has been hidden, i am at position 1
+      final int mockIndex = index - page - hiddenOffset;
       final int rowHeight = 25;
       this.y = guiTop + 10 + mockIndex * rowHeight;
       btnMinus.y = this.y;
@@ -214,9 +225,7 @@ public class GuiControl extends GuiContainer {
     if (searchBar != null) {
       searchBar.updateCursorCounter();
     }
-    //    for (GuiTextField txt : this.textBoxes) {
-    //      txt.updateCursorCounter();
-    //    }
+
     for (GuiButton btn : this.buttonList) {
       if (btn instanceof GuiControlButton) {
         GuiControlButton b = (GuiControlButton) btn;
@@ -243,9 +252,13 @@ public class GuiControl extends GuiContainer {
       this.searchBar.drawTextBox();
     }
     //todo: visible rows
+    int hiddenOffset = 0;
     for (CableRow row : this.allRows.values()) {
       //update row location based on page index
-      row.updatePagePosition(this.page);
+      if (row.compareSearch() == false) {
+        hiddenOffset++;
+      }
+      row.updatePagePosition(this.page, hiddenOffset);
       // is it visible or hidden 
       if (row.isHidden()) {
         row.hideComponents();
