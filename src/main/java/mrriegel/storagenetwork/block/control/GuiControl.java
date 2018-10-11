@@ -9,12 +9,14 @@ import java.util.stream.Collectors;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.network.CableDataMessage;
 import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import mrriegel.storagenetwork.network.RequestCableMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -29,7 +31,7 @@ public class GuiControl extends GuiContainer {
   private static final int HEIGHT = 256;
   private static final int WIDTH = 176;
   private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request_full.png");
-  //
+
   private TileControl tile;
   protected GuiTextField searchBar;
   //list includes search bar 
@@ -118,14 +120,12 @@ public class GuiControl extends GuiContainer {
       //     row.txtBox.setVisible(!row.p.alwaysOn);
       btnMinus.visible = (!p.alwaysOn);
       btnPlus.visible = (!p.alwaysOn);
-
     }
 
     public void hideComponents() {
       this.btnOnOff.visible = false;
       this.btnMinus.visible = false;
       this.btnPlus.visible = false;
-
     }
 
     public void updatePagePosition(final int page, final int hiddenOffset) {
@@ -142,6 +142,7 @@ public class GuiControl extends GuiContainer {
 
   int hiddenOffset = 0;
   final int rowHeight = 25;
+
   private void createAllRows() {
     if (rowsCreated) {
       return;
@@ -165,7 +166,7 @@ public class GuiControl extends GuiContainer {
           rowModel.x, rowModel.y, 16, 16, "");
       btnOnOff.cable = p;
       btnOnOff.visible = false;
-      btnOnOff.addTooltip("onoff");
+      btnOnOff.addTooltip(StorageNetwork.lang("processing.buttons.onoff"));
       rowModel.btnOnOff = btnOnOff;
       this.addButton(rowModel.btnOnOff);
       //      GuiTextFieldProcCable txt = new GuiTextFieldProcCable(btnid++, fontRenderer,
@@ -179,18 +180,18 @@ public class GuiControl extends GuiContainer {
       //  textBoxes.add(txt);
       int offset = 66;
       GuiControlButton btnMinus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_LESS,
-          rowModel.x + offset + 2 * spacer, rowModel.y, 16, 16, "-");
+          rowModel.x + offset + 74, rowModel.y, 10, 16, "");
       btnMinus.cable = p;
-      btnMinus.addTooltip("a");
+      btnMinus.addTooltip(StorageNetwork.lang("processing.buttons.minus"));
       btnMinus.visible = false;
       this.addButton(btnMinus);
       rowModel.btnMinus = btnMinus;
       GuiControlButton btnPlus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_MORE,
-          rowModel.x + offset + 12 + 3 * spacer,
-          rowModel.y, 16, 16, "+");
+          rowModel.x + offset + 84,
+          rowModel.y, 10, 16, "");
       btnPlus.cable = p;
       btnPlus.visible = false;
-      btnPlus.addTooltip("plus");
+      btnPlus.addTooltip(StorageNetwork.lang("processing.buttons.plus"));
       this.addButton(btnPlus);
       rowModel.btnPlus = btnPlus;
       //  rowModel.txtBox = txt;
@@ -199,9 +200,29 @@ public class GuiControl extends GuiContainer {
       //      y += rowHeight;
     }
     this.maxPage = rows.size() - 1;
-    StorageNetwork.log("MP" + maxPage);
+    //  StorageNetwork.log("MP" + maxPage);
     this.allRows = rows;
     rowsCreated = true;
+  }
+
+  public void saveMessage(ProcessWrapper cable, CableMessageType messageType, int changePerClick) {
+    int value = 0;
+    if (messageType == CableMessageType.P_ONOFF) {
+      cable.alwaysOn = !cable.alwaysOn;
+      value = cable.alwaysOn ? 1 : 0;
+    }
+    else if (messageType == CableMessageType.P_CTRL_LESS) {
+      cable.count -= changePerClick;
+      if (cable.count < 0) cable.count = 0;
+      value = cable.count;
+    }
+    else if (messageType == CableMessageType.P_CTRL_MORE) {
+      cable.count += changePerClick;
+      value = cable.count;
+    }
+    StorageNetwork.log(messageType + "click " + value + " at +" + cable.pos + cable.output);
+ 
+    PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(messageType.ordinal(), cable.pos, value));
   }
 
   @Override
@@ -209,34 +230,14 @@ public class GuiControl extends GuiContainer {
     super.actionPerformed(button);
     if (button instanceof GuiControlButton) {
       GuiControlButton btn = (GuiControlButton) button;
-      btn.actionPerformed();
+
+      int change = GuiScreen.isShiftKeyDown() ? 64 : 1;
+      if (GuiScreen.isAltKeyDown()) {
+        change *= 16;
+      }
+      saveMessage(btn.cable, btn.messageType, change);
     }
-    //    for (CableRow row : this.allRows.values()) {
-    //      if (row.isOffscreen()) {
-    //        continue;
-    //      }
-    //      if (row.btnMinus.id == button.id) {
-    //        row.btnMinus.actionPerformed();
-    //        break;
-    //      }
-    //      if (row.btnPlus.id == button.id) {
-    //        row.btnPlus.actionPerformed();
-    //        break;
-    //      }
-    //      if (row.btnOnOff.id == button.id) {
-    //        row.btnOnOff.actionPerformed();
-    //        break;
-    //      }
-    //    }
-    //    for (GuiButton b : this.buttonList) {
-    //      if (button.id == b.id && b instanceof GuiControlButton) {
-    //        GuiControlButton btn = (GuiControlButton) b;
-    //        // do the thing 
-    //        if(btn.cable.hi)
-    //        btn.actionPerformed();
-    //        break;
-    //      }
-    //    }
+
   }
 
   @Override
@@ -252,15 +253,29 @@ public class GuiControl extends GuiContainer {
       if (btn instanceof GuiControlButton) {
         GuiControlButton b = (GuiControlButton) btn;
         //update texture 
-        if (b.cable.alwaysOn) {
-          //set green
-          b.textureX = 0;
-          b.textureY = 449;
-        }
-        else {
-          //set grey 
-          b.textureX = 95;
-          b.textureY = 449;
+        switch (b.messageType) {
+          case P_CTRL_LESS:
+            b.textureX = 211;
+            b.textureY = 448 + 16;
+          break;
+          case P_CTRL_MORE:
+            b.textureX = 211;
+            b.textureY = 448;
+          break;
+          case P_ONOFF:
+            if (b.cable.alwaysOn) {
+              //set green
+              b.textureX = 0;
+              b.textureY = 449;
+            }
+            else {
+              //set grey 
+              b.textureX = 95;
+              b.textureY = 449;
+            }
+          break;
+          default:
+          break;
         }
       }
     }
@@ -284,7 +299,7 @@ public class GuiControl extends GuiContainer {
       else {
         row.x = guiLeft + 8;
       }
-        row.updatePagePosition(this.page, hiddenOffset);
+      row.updatePagePosition(this.page, hiddenOffset);
       // is it visible or hidden 
       if (row.isOffscreen()) {
         row.hideComponents();
@@ -307,6 +322,29 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+
+    for (CableRow row : this.allRows.values()) {
+      //draw me  
+      if (row.isOffscreen() == false) {
+        GlStateManager.pushMatrix();
+        RenderHelper.enableGUIStandardItemLighting();
+        //    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        //        GlStateManager.scale(1f, 1f, .3f);
+        int x = row.x - guiLeft;
+        int y = row.y - guiTop;
+        mc.getRenderItem().renderItemAndEffectIntoGUI(row.p.output, x + 20, y);
+        /// TODO target blockname  text
+        //AND OR  recipe ing list as text 
+        //TODO maybe tooltip for this
+        this.drawString(this.fontRenderer, row.p.name, x + 40, y + 3, FONT);
+        if (row.p.alwaysOn == false) {
+          //          GlStateManager.scale(.8f, 1f, 1f);  
+          this.drawString(this.fontRenderer, row.p.count + "",
+              x + 112, y + 3, 14735632);
+        }
+        GlStateManager.popMatrix();
+      }
+    }
   }
 
   int FONT = 14737632;
@@ -314,22 +352,8 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
     renderTextures();
-    GlStateManager.pushMatrix();
-    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-    RenderHelper.enableGUIStandardItemLighting();
-    for (CableRow row : this.allRows.values()) {
-      //draw me  
-      if (row.isOffscreen() == false) {
-        mc.getRenderItem().renderItemAndEffectIntoGUI(row.p.output, row.x + 20, row.y);
-        /// TODO target blockname  text
-        //AND OR  recipe ing list as text 
-        //TODO maybe tooltip for this
-        this.drawString(this.fontRenderer, row.p.name, row.x + 40, row.y + 3, FONT);
-        if (row.p.alwaysOn == false)
-        this.drawString(this.fontRenderer, row.p.count + "", row.x + 128, row.y + 3, FONT);
-      }
-    }
-    GlStateManager.popMatrix();
+    //we could show how many exist. i guess .
+    // this.drawString(this.fontRenderer, (this.maxPage - this.hiddenOffset+1) + "/" + this.maxPage, guiLeft + 160, guiTop + 160, FONT);
   }
 
   private void renderTextures() {
@@ -369,6 +393,7 @@ public class GuiControl extends GuiContainer {
         searchBar.width, searchBar.height,
         mouseX, mouseY);
   }
+
   @Override
   protected void mouseClicked(int mouseX, int mouseY, int btn) throws IOException {
     super.mouseClicked(mouseX, mouseY, btn);
@@ -381,7 +406,6 @@ public class GuiControl extends GuiContainer {
         }
       }
     }
-
     for (CableRow row : this.allRows.values()) {
       if (row.isInside(mouseX, mouseY)) {
         row.mouseClicked(mouseX, mouseY, btn);

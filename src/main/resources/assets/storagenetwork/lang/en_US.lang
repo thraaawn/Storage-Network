@@ -85,5 +85,9 @@ storagenetwork.process.status0=Halted or Disabled
 storagenetwork.process.status1=Waiting to import (cached)
 storagenetwork.process.status2=Exporting recipe (cached)
 
+processing.buttons.onoff=It always processes ingredients while active; otherwise it will only process the number requested
+processing.buttons.minus=Reduce request (hold SHIFT and/or ALT for larger jumps)
+processing.buttons.plus=Increase request (hold SHIFT and/or ALT for larger jumps)
+
 gui.storagenetwork.processing.recipe=Ingredients for each cycle will be sent as if coming from this block-side
 gui.storagenetwork.processing.extract=When pulling processing results it will be taken as if from this block-side
