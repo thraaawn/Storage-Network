@@ -31,7 +31,6 @@ public class GuiControl extends GuiContainer {
   private static final int HEIGHT = 256;
   private static final int WIDTH = 176;
   private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request_full.png");
-
   private TileControl tile;
   protected GuiTextField searchBar;
   //list includes search bar 
@@ -94,7 +93,9 @@ public class GuiControl extends GuiContainer {
     public int index;
 
     public boolean isInside(int mouseX, int mouseY) {
-      return x < mouseX && mouseX < x + width &&
+      int loffset = 36;
+      int roffset = 36;
+      return loffset + x < mouseX && mouseX < x + width - roffset &&
           y < mouseY && mouseY < y + height;
     }
 
@@ -166,7 +167,6 @@ public class GuiControl extends GuiContainer {
           rowModel.x, rowModel.y, 16, 16, "");
       btnOnOff.cable = p;
       btnOnOff.visible = false;
-      btnOnOff.addTooltip(StorageNetwork.lang("processing.buttons.onoff"));
       rowModel.btnOnOff = btnOnOff;
       this.addButton(rowModel.btnOnOff);
       //      GuiTextFieldProcCable txt = new GuiTextFieldProcCable(btnid++, fontRenderer,
@@ -182,7 +182,7 @@ public class GuiControl extends GuiContainer {
       GuiControlButton btnMinus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_LESS,
           rowModel.x + offset + 74, rowModel.y, 10, 16, "");
       btnMinus.cable = p;
-      btnMinus.addTooltip(StorageNetwork.lang("processing.buttons.minus"));
+      btnMinus.setTooltip(StorageNetwork.lang("processing.buttons.minus"));
       btnMinus.visible = false;
       this.addButton(btnMinus);
       rowModel.btnMinus = btnMinus;
@@ -191,7 +191,7 @@ public class GuiControl extends GuiContainer {
           rowModel.y, 10, 16, "");
       btnPlus.cable = p;
       btnPlus.visible = false;
-      btnPlus.addTooltip(StorageNetwork.lang("processing.buttons.plus"));
+      btnPlus.setTooltip(StorageNetwork.lang("processing.buttons.plus"));
       this.addButton(btnPlus);
       rowModel.btnPlus = btnPlus;
       //  rowModel.txtBox = txt;
@@ -221,7 +221,6 @@ public class GuiControl extends GuiContainer {
       value = cable.count;
     }
     StorageNetwork.log(messageType + "click " + value + " at +" + cable.pos + cable.output);
- 
     PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(messageType.ordinal(), cable.pos, value));
   }
 
@@ -230,14 +229,12 @@ public class GuiControl extends GuiContainer {
     super.actionPerformed(button);
     if (button instanceof GuiControlButton) {
       GuiControlButton btn = (GuiControlButton) button;
-
       int change = GuiScreen.isShiftKeyDown() ? 64 : 1;
       if (GuiScreen.isAltKeyDown()) {
         change *= 16;
       }
       saveMessage(btn.cable, btn.messageType, change);
     }
-
   }
 
   @Override
@@ -251,27 +248,36 @@ public class GuiControl extends GuiContainer {
     }
     for (GuiButton btn : this.buttonList) {
       if (btn instanceof GuiControlButton) {
-        GuiControlButton b = (GuiControlButton) btn;
+        GuiControlButton button = (GuiControlButton) btn;
         //update texture 
-        switch (b.messageType) {
+        switch (button.messageType) {
           case P_CTRL_LESS:
-            b.textureX = 211;
-            b.textureY = 448 + 16;
+            //do we want a big arrow or small    
+            //more right for small   
+            button.textureY = 448 + 16;
+            if (GuiScreen.isShiftKeyDown())
+              button.textureX = 211;
+            else
+              button.textureX = 243;
           break;
           case P_CTRL_MORE:
-            b.textureX = 211;
-            b.textureY = 448;
+            if (GuiScreen.isShiftKeyDown())
+              button.textureX = 211;
+            else
+              button.textureX = 243;
+            button.textureY = 448;
           break;
           case P_ONOFF:
-            if (b.cable.alwaysOn) {
+            button.setTooltip(StorageNetwork.lang("processing.buttons.toggle." + button.cable.alwaysOn));
+            if (button.cable.alwaysOn) {
               //set green
-              b.textureX = 0;
-              b.textureY = 449;
+              button.textureX = 0;
+              button.textureY = 449;
             }
             else {
               //set grey 
-              b.textureX = 95;
-              b.textureY = 449;
+              button.textureX = 95;
+              button.textureY = 449;
             }
           break;
           default:
@@ -282,9 +288,9 @@ public class GuiControl extends GuiContainer {
   }
 
   @Override
-  public void drawScreen(int x, int y, float par3) {
+  public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     //  drawDefaultBackground();
-    super.drawScreen(x, y, par3);
+    super.drawScreen(mouseX, mouseY, partialTicks);
     if (this.searchBar != null) {
       this.searchBar.drawTextBox();
     }
@@ -308,12 +314,16 @@ public class GuiControl extends GuiContainer {
         //        StorageNetwork.log("hidden == false for " + row.p.output);
         row.drawScreen();
       }
+      if (row.isInside(mouseX, mouseY)) {
+        this.drawHoveringText("rowtooltip", mouseX, mouseY);
+      }
     }
+
     for (GuiButton btn : this.buttonList) {
       if (btn.isMouseOver() && btn instanceof GuiControlButton) {
         //TOOLTIP 
         GuiControlButton button = (GuiControlButton) btn;
-        this.drawHoveringText(button.getTooltips(), x, y);
+        this.drawHoveringText(button.getTooltips(), mouseX, mouseY);
         //      this.drawHoveringText(textLines, x, y)oh ;
       }
     }
@@ -322,7 +332,6 @@ public class GuiControl extends GuiContainer {
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-
     for (CableRow row : this.allRows.values()) {
       //draw me  
       if (row.isOffscreen() == false) {

@@ -21,7 +21,8 @@ public class GuiControlButton extends GuiButtonExt {
     messageType = type;
   }
 
-  public void addTooltip(String s) {
+  public void setTooltip(String s) {
+    tooltips.clear();
     tooltips.add(s);
   }
 
