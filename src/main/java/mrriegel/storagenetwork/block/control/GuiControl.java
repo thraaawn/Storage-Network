@@ -15,12 +15,14 @@ import mrriegel.storagenetwork.network.RequestCableMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.UtilTileEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -92,6 +94,12 @@ public class GuiControl extends GuiContainer {
     public int height;
     public int index;
 
+    public boolean isInsideItemstack(int mouseX, int mouseY) {
+      int loffset = 18;
+      int roffset = 50;
+      return loffset + x < mouseX && mouseX < x + width - roffset &&
+          y < mouseY && mouseY < y + height;
+    }
     public boolean isInside(int mouseX, int mouseY) {
       int loffset = 36;
       int roffset = 36;
@@ -315,7 +323,12 @@ public class GuiControl extends GuiContainer {
         row.drawScreen();
       }
       if (row.isInside(mouseX, mouseY)) {
-        this.drawHoveringText("rowtooltip", mouseX, mouseY);
+        this.drawHoveringText("?ingredients? " + row.p.pos, mouseX, mouseY);
+      }
+      else if (row.isInsideItemstack(mouseX, mouseY)) {
+        this.drawHoveringText(
+            row.p.output.getTooltip(Minecraft.getMinecraft().player, ITooltipFlag.TooltipFlags.ADVANCED),
+            mouseX, mouseY);
       }
     }
 
