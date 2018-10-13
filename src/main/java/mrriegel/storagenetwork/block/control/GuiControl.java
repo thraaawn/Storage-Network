@@ -23,6 +23,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -83,9 +84,22 @@ public class GuiControl extends GuiContainer {
 
   public class CableRow {
 
+    public List<String> tooltips;
+
     public CableRow(ProcessWrapper p) {
       super();
       this.p = p;
+      this.tooltips = new ArrayList<>();
+      this.tooltips.add(p.blockId + "");
+      if (p.ingredients == null || p.ingredients.size() == 0) {
+        this.tooltips.add("processing.empty.ingredients" + p.ingredients);
+      }
+      else {
+        for (ItemStack s : p.ingredients) {
+          tooltips.add(s.getCount() + " : " + s.getDisplayName());
+          // s.getTooltip(Minecraft.getMinecraft().player, ITooltipFlag.TooltipFlags.NORMAL);
+        }
+      }
     }
 
     ProcessWrapper p;
@@ -196,7 +210,7 @@ public class GuiControl extends GuiContainer {
       GuiControlButton btnMinus = new GuiControlButton(btnid++, CableMessageType.P_CTRL_LESS,
           rowModel.x + offset + 74, rowModel.y, 10, 16, "");
       btnMinus.cable = p;
-      btnMinus.setTooltip(StorageNetwork.lang("processing.buttons.minus"));
+      btnMinus.clearAndSetTooltip(StorageNetwork.lang("processing.buttons.minus"));
       btnMinus.visible = false;
       this.addButton(btnMinus);
       rowModel.btnMinus = btnMinus;
@@ -205,7 +219,7 @@ public class GuiControl extends GuiContainer {
           rowModel.y, 10, 16, "");
       btnPlus.cable = p;
       btnPlus.visible = false;
-      btnPlus.setTooltip(StorageNetwork.lang("processing.buttons.plus"));
+      btnPlus.clearAndSetTooltip(StorageNetwork.lang("processing.buttons.plus"));
       this.addButton(btnPlus);
       rowModel.btnPlus = btnPlus;
       //  rowModel.txtBox = txt;
@@ -283,7 +297,7 @@ public class GuiControl extends GuiContainer {
             button.textureY = 448;
           break;
           case P_ONOFF:
-            button.setTooltip(StorageNetwork.lang("processing.buttons.toggle." + button.cable.alwaysOn));
+            button.clearAndSetTooltip(StorageNetwork.lang("processing.buttons.toggle." + button.cable.alwaysOn));
             if (button.cable.alwaysOn) {
               //set green
               button.textureX = 0;
@@ -336,7 +350,7 @@ public class GuiControl extends GuiContainer {
         row.drawScreen();
       }
       if (row.isInside(mouseX, mouseY)) {
-        this.drawHoveringText("?ingredients? " + row.p.pos, mouseX, mouseY);
+        this.drawHoveringText(row.tooltips, mouseX, mouseY);
       }
       else if (row.isInsideItemstack(mouseX, mouseY)) {
         this.drawHoveringText(

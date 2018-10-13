@@ -46,13 +46,15 @@ public class RequestCableMessage implements IMessage, IMessageHandler<RequestCab
         //group together any with that match
         //meaning: same output, AND same machine blockid 
         for (TileCable c : processCables) {
-          //   TODO now gather stack int strg bool 
+          //   TODO now gather stack int strg bool  
           String name = player.world.getBlockState(c.getConnectedInventory()).getBlock().getLocalizedName();
-
           ProcessRequestModel proc = c.getProcessModel();
           //          StorageNetwork.log("request cable message get count of " + name + proc.getCount());
-          list.add(new ProcessWrapper(c.getPos(), c.getFirstRecipeOut(),
-              proc.getCount(), name, proc.isAlwaysActive()));
+          ProcessWrapper processor = new ProcessWrapper(c.getPos(), c.getFirstRecipeOut(),
+              proc.getCount(), name, proc.isAlwaysActive());
+          processor.ingredients = c.getProcessIngredients();
+          processor.blockId = player.world.getBlockState(c.getConnectedInventory()).getBlock().getRegistryName();
+          list.add(processor);
         }
         //now all cables have been wraped to send related info 
         //now send wrappers back to gui

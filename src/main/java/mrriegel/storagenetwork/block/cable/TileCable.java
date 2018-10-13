@@ -367,6 +367,18 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     return 0;
   }
 
+  public List<ItemStack> getProcessIngredients() {
+    List<StackWrapper> topRow = getFilterTop();
+    List<ItemStack> list = new ArrayList<>();
+    for (StackWrapper sw : topRow) {
+      if (sw.getStack().isEmpty() == false) {
+        ItemStack staCopy = sw.getStack().copy();
+        staCopy.setCount(sw.getSize());
+        list.add(staCopy);
+      }
+    }
+    return list;
+  }
   @Nonnull
   public ItemStack getFirstRecipeOut() {
     List<StackWrapper> topRow = getFilterBottom();

@@ -21,7 +21,7 @@ public class GuiControlButton extends GuiButtonExt {
     messageType = type;
   }
 
-  public void setTooltip(String s) {
+  public void clearAndSetTooltip(String s) {
     tooltips.clear();
     tooltips.add(s);
   }
@@ -38,6 +38,10 @@ public class GuiControlButton extends GuiButtonExt {
       this.drawTexturedModalRect(x, y, textureX, textureY, 16, 16);
     }
 
+  }
+
+  public void setTooltips(List<String> tooltips) {
+    this.tooltips = tooltips;
   }
 
 
