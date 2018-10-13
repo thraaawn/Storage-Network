@@ -110,7 +110,6 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         if (col > 2) {
           y -= 3 * SQ;
         }
-    
         this.drawTexturedModalRect(x, y, u, v, SQ, SQ);
       }
     }
@@ -146,8 +145,6 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
           //
           x = col * Const.SQ + 8;
           y = row * Const.SQ + 26;
- 
-
           itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, true));
         }
       }
@@ -168,26 +165,23 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         }
       }
     }
-    else
-    for (int row = 0; row < rows; row++) {
-      for (int col = 0; col < cols; col++) {
-        int index = col + (cols * row);
-        StackWrapper wrap = tile.getFilter().get(index);
-        ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
-        int num = wrap == null ? 0 : wrap.getSize();
-        boolean numShow = tile instanceof TileCable ? tile.getUpgradesOfType(ItemUpgrade.STOCK) > 0
-          //    || tile.getBlockType() == ModBlocks.processKabel
-            : false;
-        x = 8 + col * SQ;
-        y = 26 + row * SQ;
-      //        if (tile.getBlockType() == ModBlocks.processKabel) {
-      //          x = 8 + SQ * row + (col / 3) * 108;
-      //          y = 26 + SQ * col;//if col > 3, add jump
-      //          if (col > 2) {
-      //            y -= 3 * SQ;
-      //          }
-      //        }
-        itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, numShow));
+    else {
+      fontRenderer.drawString(String.valueOf(tile.getPriority()),
+          guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2,
+          5 + btnMinus.y, 4210752);
+      for (int row = 0; row < rows; row++) {
+        for (int col = 0; col < cols; col++) {
+          int index = col + (cols * row);
+          StackWrapper wrap = tile.getFilter().get(index);
+          ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
+          int num = wrap == null ? 0 : wrap.getSize();
+          boolean numShow = tile instanceof TileCable ? tile.getUpgradesOfType(ItemUpgrade.STOCK) > 0
+              //    || tile.getBlockType() == ModBlocks.processKabel
+              : false;
+          x = 8 + col * SQ;
+          y = 26 + row * SQ;
+          itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, numShow));
+        }
       }
     }
     for (ItemSlotNetwork s : itemSlotsGhost) {
@@ -196,9 +190,6 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
       operationItemSlot.drawSlot(mouseX, mouseY);
     }
-    fontRenderer.drawString(String.valueOf(tile.getPriority()),
-        guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2,
-        5 + btnMinus.y, 4210752);
   }
 
   private void drawTooltips(int mouseX, int mouseY) {
@@ -259,10 +250,9 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       EnumFacing f = tile.getFacingTopRow();
       pbtnTopface.displayString = f.name().substring(0, 2);
     }
-
     if (tile.getBlockType() == ModBlocks.processKabel) {
-    ProcessRequestModel p = tile.getProcessModel();
-    int FONT = 14737632;
+      ProcessRequestModel p = tile.getProcessModel();
+      int FONT = 14737632;
       int x = -90;
       int y = 4;
       this.drawString(this.fontRenderer, StorageNetwork.lang("tile.storagenetwork:controller.name"),
@@ -276,31 +266,21 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         txt += p.getCount();
       }
       this.drawString(this.fontRenderer, f + txt, x, y, FONT);
-  }
+    }
   }
 
   @Override
   public void initGui() {
     super.initGui();
-    //priority for everything 
     int x = 0, y = 0;
-    btnMinus = new GuiCableButton(CableMessageType.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
-    btnMinus.setCable(tile);
-    this.addButton(btnMinus);
-    btnPlus = new GuiCableButton(CableMessageType.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
-    btnPlus.setCable(tile);
-    this.addButton(btnPlus);
-    btnImport = new GuiCableButton(CableMessageType.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
-    btnImport.setCable(tile);
-    this.addButton(btnImport);
     if (tile.getBlockType() == ModBlocks.processKabel) {
       //move priority over 
       //add custom buttons 
       // if (this.tile.getRequest().getStatus() == ProcessStatus.IMPORTING) {
-        //a click will swap it to EXPORTING with CableDataMessage 
+      //a click will swap it to EXPORTING with CableDataMessage 
       pbtnReset = new GuiCableButton(CableMessageType.TOGGLE_P_RESTARTTRIGGER, guiLeft + 60, guiTop + 5, "R");
-        pbtnReset.setCable(tile);
-        this.addButton(pbtnReset);
+      pbtnReset.setCable(tile);
+      this.addButton(pbtnReset);
       //  }
       int column = 76, ctr = 28;
       pbtnBottomface = new GuiCableButton(CableMessageType.P_FACE_BOTTOM, guiLeft + column + 20, guiTop + ctr, "");
@@ -311,7 +291,15 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       this.addButton(pbtnTopface);
     }
     else {
-
+      btnMinus = new GuiCableButton(CableMessageType.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
+      btnMinus.setCable(tile);
+      this.addButton(btnMinus);
+      btnPlus = new GuiCableButton(CableMessageType.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
+      btnPlus.setCable(tile);
+      this.addButton(btnPlus);
+      btnImport = new GuiCableButton(CableMessageType.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
+      btnImport.setCable(tile);
+      this.addButton(btnImport);
       btnWhite = new GuiCableButton(CableMessageType.TOGGLE_WHITELIST, guiLeft + 58, guiTop + 5, "");
       btnWhite.setCable(tile);
       this.addButton(btnWhite);
@@ -419,18 +407,14 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     }
     else if (pbtnTopface != null && button.id == pbtnTopface.id) {
       int newFace = (tile.getFacingTopRow().ordinal() + 1) % EnumFacing.values().length;
-
       tile.processingTop = EnumFacing.values()[newFace];
-
       PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos(), newFace));
-
     }
     else if (pbtnBottomface != null && button.id == pbtnBottomface.id) {
       //
       int newFace = (tile.getFacingBottomRow().ordinal() + 1) % EnumFacing.values().length;
       tile.processingBottom = EnumFacing.values()[newFace];
       PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos(), newFace));
-
     }
     else if (btnOperationToggle != null && button.id == btnOperationToggle.id) {
       if (tile instanceof TileCable) tile.setMode(!tile.isMode());
