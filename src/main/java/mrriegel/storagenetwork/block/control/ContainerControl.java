@@ -6,19 +6,31 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.Slot;
 
 public class ContainerControl extends Container implements IStorageContainer {
 
   private TileControl tileRequest;
   protected InventoryPlayer playerInv;
 
-  public ContainerControl(final TileControl tile, final InventoryPlayer playerInv) {
+  public ContainerControl(final TileControl tile, final InventoryPlayer pi) {
 
     this.setTileRequest(tile);
-    this.playerInv = playerInv;
-
-    //    bindPlayerInvo(playerInv);
-    //    bindHotbar();
+    this.playerInv = pi;
+    int sq = 18;
+    //TODO: base class /shared
+    int yoffset = 85;
+    //player inventory 
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 9; ++j) {
+        this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9,
+            8 + j * sq, yoffset + 55 + 34 + i * sq));
+      }
+    }
+    //player hotbar 
+    for (int i = 0; i < 9; ++i) {
+      this.addSlotToContainer(new Slot(playerInv, i, 8 + i * sq, yoffset + 113 + 34));
+    }
   }
 
   @Override
