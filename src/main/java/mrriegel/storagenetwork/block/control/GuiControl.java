@@ -53,12 +53,17 @@ public class GuiControl extends GuiContainer {
     tile = inventorySlotsIn.getTileRequest();
     //  request the list of tiles 
     rowsCreated = false;
+    refreshData();
+  }
+
+  private void refreshData() {
     PacketRegistry.INSTANCE.sendToServer(new RequestCableMessage());
   }
 
   @Override
   public void initGui() {
     super.initGui();
+    //    return guislider;
     Keyboard.enableRepeatEvents(true);
     searchBar = new GuiTextField(0, fontRenderer,
         guiLeft + 10, guiTop + 160, 158, fontRenderer.FONT_HEIGHT);
@@ -100,6 +105,7 @@ public class GuiControl extends GuiContainer {
       return loffset + x < mouseX && mouseX < x + width - roffset &&
           y < mouseY && mouseY < y + height;
     }
+
     public boolean isInside(int mouseX, int mouseY) {
       int loffset = 36;
       int roffset = 36;
@@ -248,6 +254,7 @@ public class GuiControl extends GuiContainer {
   @Override
   public void updateScreen() {
     super.updateScreen();
+    this.tryRefresh(50);//20ticks == 1second 
     if (processors != null && processors.size() > 0) {
       createAllRows();
     }
@@ -295,6 +302,12 @@ public class GuiControl extends GuiContainer {
     }
   }
 
+  private void tryRefresh(int ticks) {
+    if (Minecraft.getMinecraft().player.world.getTotalWorldTime() % ticks == 0) {
+      this.refreshData();
+    }
+  }
+
   @Override
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     //  drawDefaultBackground();
@@ -331,7 +344,6 @@ public class GuiControl extends GuiContainer {
             mouseX, mouseY);
       }
     }
-
     for (GuiButton btn : this.buttonList) {
       if (btn.isMouseOver() && btn instanceof GuiControlButton) {
         //TOOLTIP 
@@ -457,9 +469,20 @@ public class GuiControl extends GuiContainer {
    * @param cables
    */
   public void setTiles(List<ProcessWrapper> cables) {
-    processors = cables;
-    processors = processors.stream().sorted((a, b) -> {
+    cables = cables.stream().sorted((a, b) -> {
       return a.name.compareTo(b.name);
     }).collect(Collectors.toList());
+    if (processors == null || processors.size() == 0) {
+      processors = cables;
+    }
+    else {
+      for (ProcessWrapper p : this.processors) {
+        for (ProcessWrapper pIncoming : cables) {
+          if (p.pos.equals(pIncoming.pos)) {
+            p.count = pIncoming.count;
+          }
+        }
+      }
+    }
   }
 }

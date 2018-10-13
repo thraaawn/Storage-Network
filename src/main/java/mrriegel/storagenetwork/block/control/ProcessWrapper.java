@@ -6,6 +6,12 @@ import net.minecraft.util.math.BlockPos;
 
 public class ProcessWrapper {
 
+  public boolean alwaysOn;
+  public String name;
+  public BlockPos pos;
+  public ItemStack output;
+  public int count;
+
   public ProcessWrapper(BlockPos p, ItemStack s, int c, String name, boolean on) {
     pos = p;
     output = s;
@@ -39,9 +45,4 @@ public class ProcessWrapper {
     return compound;
   }
 
-  public boolean alwaysOn;
-  public String name;
-  public BlockPos pos;
-  public ItemStack output;
-  public int count;
 }

@@ -43,6 +43,8 @@ public class RequestCableMessage implements IMessage, IMessageHandler<RequestCab
         List<TileEntity> links = tileMaster.getAttachedTileEntities();
         List<TileCable> processCables = tileMaster.getAttachedCables(links, ModBlocks.processKabel);
         List<ProcessWrapper> list = new ArrayList<>();
+        //group together any with that match
+        //meaning: same output, AND same machine blockid 
         for (TileCable c : processCables) {
           //   TODO now gather stack int strg bool 
           String name = player.world.getBlockState(c.getConnectedInventory()).getBlock().getLocalizedName();
