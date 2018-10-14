@@ -45,9 +45,11 @@ public class GuiControl extends GuiContainer {
   //how many rows to skip over
   private int page = 0;
   private int maxPage = 0;//TODO 
+  private GuiSliderInteger slider;
 
   public GuiControl(ContainerControl inventorySlotsIn) {
     super(inventorySlotsIn);
+
     processors = new ArrayList<>();
     this.xSize = WIDTH;
     this.ySize = HEIGHT;
@@ -64,7 +66,7 @@ public class GuiControl extends GuiContainer {
   @Override
   public void initGui() {
     super.initGui();
-    //    return guislider;
+
     Keyboard.enableRepeatEvents(true);
     searchBar = new GuiTextField(0, fontRenderer,
         guiLeft + 10, guiTop + 160, 158, fontRenderer.FONT_HEIGHT);
@@ -74,6 +76,10 @@ public class GuiControl extends GuiContainer {
     searchBar.setFocused(true);
     searchBar.setTextColor(16777215);
     //mock data only  
+    slider = new GuiSliderInteger(this, 777,
+        guiLeft + 180, guiTop + 16, 10, 130, 0, 0);
+    slider.setTooltip("dropper.delay");
+    this.addButton(slider);
   }
 
   @Override
@@ -227,7 +233,7 @@ public class GuiControl extends GuiContainer {
       row++;
       //      y += rowHeight;
     }
-    this.maxPage = rows.size() - 1;
+    this.setMaxPage(rows.size() - 1);
     //  StorageNetwork.log("MP" + maxPage);
     this.allRows = rows;
     rowsCreated = true;
@@ -340,7 +346,7 @@ public class GuiControl extends GuiContainer {
       else {
         row.x = guiLeft + 8;
       }
-      row.updatePagePosition(this.page, hiddenOffset);
+      row.updatePagePosition(this.getPage(), hiddenOffset);
       // is it visible or hidden 
       if (row.isOffscreen()) {
         row.hideComponents();
@@ -422,11 +428,11 @@ public class GuiControl extends GuiContainer {
     //      StorageNetwork.log(page + "/" + maxPage + "  scrol" + mouseX + "?" + mouseY);
     if (inField(mouseX, mouseY)) {
       int mouse = Mouse.getEventDWheel();
-      if (mouse > 0 && page > 0) {
-        page--;
+      if (mouse > 0 && getPage() > 0) {
+        setPage(getPage() - 1);
       }
-      if (mouse < 0 && page < maxPage - hiddenOffset) {
-        page++;
+      if (mouse < 0 && getPage() < getMaxPage() - hiddenOffset) {
+        setPage(getPage() + 1);
       }
     }
   }
@@ -498,5 +504,23 @@ public class GuiControl extends GuiContainer {
         }
       }
     }
+  }
+
+  public int getPage() {
+    return page;
+  }
+
+  public void setPage(int page) {
+    this.page = page;
+    this.slider.setSliderValue(page, false);
+  }
+
+  public int getMaxPage() {
+    return maxPage;
+  }
+
+  public void setMaxPage(int m) {
+    this.maxPage = m;
+    slider.setMax(m);
   }
 }
