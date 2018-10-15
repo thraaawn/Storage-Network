@@ -89,6 +89,7 @@ processing.buttons.toggle.true=Always Active
 processing.buttons.toggle.false=Only process the requested number
 processing.buttons.minus=Reduce requested
 processing.buttons.plus=Increase requested
+processing.empty.ingredients=Empty Ingredients
 
 gui.storagenetwork.processing.recipe=Ingredients for each cycle will be sent as if coming from this block-side
 gui.storagenetwork.processing.extract=When pulling processing results it will be taken as if from this block-side

@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -49,7 +50,6 @@ public class GuiControl extends GuiContainer {
 
   public GuiControl(ContainerControl inventorySlotsIn) {
     super(inventorySlotsIn);
-
     processors = new ArrayList<>();
     this.xSize = WIDTH;
     this.ySize = HEIGHT;
@@ -66,7 +66,6 @@ public class GuiControl extends GuiContainer {
   @Override
   public void initGui() {
     super.initGui();
-
     Keyboard.enableRepeatEvents(true);
     searchBar = new GuiTextField(0, fontRenderer,
         guiLeft + 10, guiTop + 160, 158, fontRenderer.FONT_HEIGHT);
@@ -78,7 +77,7 @@ public class GuiControl extends GuiContainer {
     //mock data only  
     slider = new GuiSliderInteger(this, 777,
         guiLeft + 180, guiTop + 16, 10, 130, 0, 0);
-    slider.setTooltip("dropper.delay");
+    //    slider.setTooltip("dropper.delay");
     this.addButton(slider);
   }
 
@@ -96,9 +95,9 @@ public class GuiControl extends GuiContainer {
       super();
       this.p = p;
       this.tooltips = new ArrayList<>();
-      this.tooltips.add(p.blockId + "");
+
       if (p.ingredients == null || p.ingredients.size() == 0) {
-        this.tooltips.add("processing.empty.ingredients" + p.ingredients);
+        this.tooltips.add(StorageNetwork.lang("processing.empty.ingredients"));
       }
       else {
         for (ItemStack s : p.ingredients) {
@@ -106,6 +105,8 @@ public class GuiControl extends GuiContainer {
           // s.getTooltip(Minecraft.getMinecraft().player, ITooltipFlag.TooltipFlags.NORMAL);
         }
       }
+      this.tooltips.add(TextFormatting.DARK_GRAY + (p.blockId + ""));
+      this.tooltips.add(TextFormatting.DARK_GRAY + "(" + p.pos.getX() + ", " + p.pos.getY() + ", " + p.pos.getZ() + ")");
     }
 
     ProcessWrapper p;
@@ -430,7 +431,6 @@ public class GuiControl extends GuiContainer {
       int mouse = Mouse.getEventDWheel();
       if (mouse > 0 && getPage() > 0) {
         setPage(getPage() - 1);
-
       }
       if (mouse < 0 && getPage() < getMaxPage() - hiddenOffset) {
         setPage(getPage() + 1);
@@ -512,7 +512,6 @@ public class GuiControl extends GuiContainer {
   }
 
   public void setPage(int page) {
-
     this.page = page;
     this.slider.setSliderValue(page, false);
   }
