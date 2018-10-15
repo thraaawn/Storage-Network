@@ -15,7 +15,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 
 /**
- * Base class for Master and Cable
+ * Base class for TileCable
  * 
  */
 public abstract class AbstractFilterTile extends TileConnectable {

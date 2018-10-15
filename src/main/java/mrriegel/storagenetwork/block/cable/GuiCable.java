@@ -187,7 +187,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     for (ItemSlotNetwork s : itemSlotsGhost) {
       s.drawSlot(mouseX, mouseY);
     }
-    if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
+    if (operationItemSlot != null && tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
       operationItemSlot.drawSlot(mouseX, mouseY);
     }
   }
@@ -327,12 +327,12 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         operationItemSlot = new ItemSlotNetwork(this, tile.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false);
       }
     }
-    if (tile.isStorage() == false) {
+    //    if (tile.isStorage() == false) {
       x = 88;
       y = 62;
       if (tile.getBlockType() == ModBlocks.processKabel) {
-        x = 64;
-        y = 62;
+      x = 64;
+      y = 62;
       }
       checkOreBtn = new GuiCheckBox(10, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.ore"), true);
       checkOreBtn.setIsChecked(tile.getOre());
@@ -341,7 +341,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       checkMetaBtn = new GuiCheckBox(11, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.meta"), true);
       checkMetaBtn.setIsChecked(tile.getMeta());
       this.addButton(checkMetaBtn);
-    }
+    //    }   
   }
 
   @Override

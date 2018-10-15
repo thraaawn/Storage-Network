@@ -49,8 +49,8 @@ public class TileMaster extends TileEntity implements ITickable {
     if (getConnectables() == null) {
       refreshNetwork();
     }
-    List<AbstractFilterTile> invs = getConnectedFilterTiles();
-    for (AbstractFilterTile tileConnected : invs) {
+    List<TileCable> invs = getSortedStorageCables();
+    for (TileCable tileConnected : invs) {
       IItemHandler inv = tileConnected.getInventory();
       ItemStack stack;
       for (int i = 0; i < inv.getSlots(); i++) {
@@ -64,10 +64,10 @@ public class TileMaster extends TileEntity implements ITickable {
     return stacks;
   }
 
-  private AbstractFilterTile getAbstractFilterTileOrNull(BlockPos pos) {
+  private TileCable getAbstractFilterTileOrNull(BlockPos pos) {
     TileEntity tileHere = world.getTileEntity(pos);
-    if (tileHere instanceof AbstractFilterTile) {
-      AbstractFilterTile tile = (AbstractFilterTile) tileHere;
+    if (tileHere instanceof TileCable) {
+      TileCable tile = (TileCable) tileHere;
       if (tile.isStorage() && tile.getInventory() != null) {
         return tile;
       }
@@ -75,18 +75,10 @@ public class TileMaster extends TileEntity implements ITickable {
     return null;
   }
 
-  private List<AbstractFilterTile> getConnectedFilterTiles() {
-    if (getConnectables() == null) {
-      refreshNetwork();
-    }
-    List<AbstractFilterTile> invs = Lists.newArrayList();
-    for (BlockPos p : getConnectables()) {
-      AbstractFilterTile tile = getAbstractFilterTileOrNull(p);
-      if (tile != null) {
-        invs.add(tile);
-      }
-    }
-    return invs;
+  private List<TileCable> getSortedStorageCables() {
+    List<TileEntity> links = getAttachedTileEntities();
+    List<TileCable> storageCables = getAttachedCables(links, ModBlocks.storageKabel);
+    return storageCables;
   }
 
   public List<TileCable> getAttachedCables(List<TileEntity> links, Block kind) {
@@ -105,8 +97,8 @@ public class TileMaster extends TileEntity implements ITickable {
 
   public int emptySlots() {
     int countEmpty = 0;
-    List<AbstractFilterTile> invs = getConnectedFilterTiles();
-    for (AbstractFilterTile tile : invs) {
+    List<TileCable> invs = getSortedStorageCables();
+    for (TileCable tile : invs) {
       IItemHandler inv = tile.getInventory();
       for (int i = 0; i < inv.getSlots(); i++) {
         if (inv.getStackInSlot(i).isEmpty()) {
@@ -305,9 +297,11 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stack.isEmpty()) {
       return 0;
     }
+    StorageNetwork.log("insertStack  " + stack.getDisplayName());
+   
     //    int originalSize = stack.getCount();
     //refactor this garbage why are there too loops LOL 
-    List<AbstractFilterTile> invs = getConnectedFilterTiles();
+    List<TileCable> invs = getSortedStorageCables();
     ItemStack stackInCopy = stack.copy();
     //only if it does NOT contains
     String key = getStackKey(stackInCopy);
@@ -680,13 +674,7 @@ public class TileMaster extends TileEntity implements ITickable {
       StorageNetwork.instance.logger.error("Refresh network error ", e);
     }
   }
-
-  public static class RequestProcess {
-
-    public int countRequired;
-    public int counted = 0;
-    public BlockPos cableAt;
-  }
+ 
 
   private void sortCablesByPriority(List<TileCable> attachedCables) {
     Collections.sort(attachedCables, new Comparator<TileCable>() {
