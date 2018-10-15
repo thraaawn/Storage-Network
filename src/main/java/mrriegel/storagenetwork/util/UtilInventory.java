@@ -20,6 +20,10 @@ public class UtilInventory {
     return getItemHandler(world.getTileEntity(pos), facing) != null;
   }
 
+  public static boolean doOverlap(final String text, final String name) {
+    return text.toLowerCase().contains(name.toLowerCase())
+        || name.toLowerCase().contains(text.toLowerCase());
+  }
   public static IItemHandler getItemHandler(TileEntity tile, EnumFacing side) {
     if (tile == null)
       return null;
@@ -63,6 +67,19 @@ public class UtilInventory {
     return false;
   }
 
+  public static int containsAtLeastHowManyNeeded(IItemHandler inv, ItemStack stack, int minimumCount) {
+    int found = 0;
+    for (int i = 0; i < inv.getSlots(); i++) {
+      if (ItemHandlerHelper.canItemStacksStack(inv.getStackInSlot(i), stack)) {
+        found += inv.getStackInSlot(i).getCount();
+      }
+    }
+    //do you have all 4? or do you need 2 still
+    if (found >= minimumCount)
+      return 0;
+    return minimumCount - found;
+  }
+
   public static int getAmount(IItemHandler inv, FilterItem fil) {
     if (inv == null || fil == null) {
       return 0;
@@ -78,14 +95,14 @@ public class UtilInventory {
 
   public static ItemStack extractItem(IItemHandler inv, FilterItem fil, int num, boolean simulate) {
     if (inv == null || fil == null) {
-      return null;
+      return ItemStack.EMPTY;
     }
     int extracted = 0;
     for (int i = 0; i < inv.getSlots(); i++) {
       ItemStack slot = inv.getStackInSlot(i);
       if (fil.match(slot)) {
         ItemStack ex = inv.extractItem(i, 1, simulate);
-        if (ex != null) {
+        if (!ex.isEmpty()) {
           extracted++;
           if (extracted == num)
             return ItemHandlerHelper.copyStackWithSize(slot, num);
@@ -94,6 +111,6 @@ public class UtilInventory {
         }
       }
     }
-    return null;
+    return ItemStack.EMPTY;
   }
 }

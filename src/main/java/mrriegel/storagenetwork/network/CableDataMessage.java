@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.StackWrapper;
@@ -11,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -21,13 +24,12 @@ import net.minecraftforge.items.IItemHandler;
 
 public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
 
-  public static final int TOGGLE_WAY = 6;
-  public static final int IMPORT_FILTER = 5;
-  public static final int TOGGLE_WHITELIST = 3;
-  public static final int PRIORITY_UP = 1;
-  public static final int PRIORITY_DOWN = 0;
-  public static final int TOGGLE_MODE = 4;
+  public enum CableMessageType {
+    PRIORITY_DOWN, PRIORITY_UP, P_ONOFF, TOGGLE_WHITELIST, TOGGLE_MODE, IMPORT_FILTER, TOGGLE_WAY, P_FACE_TOP, P_FACE_BOTTOM, TOGGLE_P_RESTARTTRIGGER, P_CTRL_MORE, P_CTRL_LESS;
+  }
+
   private int id;
+  private int value = 0;
   private BlockPos pos;
 
   public CableDataMessage() {}
@@ -35,6 +37,11 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
   public CableDataMessage(int id, BlockPos pos) {
     this.id = id;
     this.pos = pos;
+  }
+
+  public CableDataMessage(int id, BlockPos pos, int value) {
+    this(id, pos);
+    this.value = value;
   }
 
   @Override
@@ -48,7 +55,16 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
         TileEntity t = player.world.getTileEntity(message.pos);
         if (t instanceof AbstractFilterTile) {
           AbstractFilterTile tile = (AbstractFilterTile) t;
-          switch (message.id) {
+          TileCable tileCable = null;
+          if (t instanceof TileCable)
+            tileCable = (TileCable) tile;
+          CableMessageType type = CableMessageType.values()[message.id];
+          switch (type) {
+            case TOGGLE_P_RESTARTTRIGGER:
+              //stop listening for result, export recipe into block
+              if (tileCable != null)
+                tileCable.getRequest().setStatus(ProcessStatus.EXPORTING);
+            break;
             case PRIORITY_DOWN:
               tile.setPriority(tile.getPriority() - 1);
             break;
@@ -58,10 +74,9 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             case TOGGLE_WHITELIST:
               tile.setWhite(!tile.isWhitelist());
             break;
-            case TOGGLE_MODE://4
-              if (tile instanceof TileCable) {
-                ((TileCable) tile).setMode(!((TileCable) tile).isMode());
-              }
+            case TOGGLE_MODE://4 
+              if (tileCable != null)
+                tileCable.setMode(!tileCable.isMode());
             break;
             case IMPORT_FILTER:
               if (tile.getInventory() != null) {
@@ -88,10 +103,40 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             case TOGGLE_WAY:
               tile.setWay(tile.getWay().next());
             break;
-          }
+            case P_FACE_BOTTOM:
+              if (tileCable != null)
+                tileCable.processingBottom = EnumFacing.values()[message.value];
+            break;
+            case P_FACE_TOP:
+              if (tileCable != null) {
+                tileCable.processingTop = EnumFacing.values()[message.value];
+                //                StorageNetwork.log(tileCable.processingTop.name() + " server is ?" + message.value);
+              }
+            break;
+            case P_ONOFF:
+              //process cable toggle always on
+              if (tileCable != null) {
+                ProcessRequestModel m = tileCable.getProcessModel();
+                m.setAlwaysActive(message.value == 1);
+                tileCable.setProcessModel(m);
+              }
+            break;
+            case P_CTRL_LESS:
+              if (tileCable != null) {
+                tileCable.getProcessModel().setCount(message.value);
+              }
+            break;
+            case P_CTRL_MORE:
+              if (tileCable != null) {
+                ProcessRequestModel m = tileCable.getProcessModel();
+                m.setCount(message.value);
+                tileCable.setProcessModel(m);
+              }
+            break;
+          }//end of switch
           tile.markDirty();
-        }
-        UtilTileEntity.updateTile(t.getWorld(), t.getPos());
+          UtilTileEntity.updateTile(t.getWorld(), t.getPos());
+        } //not the right TE 
       }
     });
     return null;
@@ -101,11 +146,13 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
   public void fromBytes(ByteBuf buf) {
     this.pos = BlockPos.fromLong(buf.readLong());
     this.id = buf.readInt();
+    value = buf.readInt();
   }
 
   @Override
   public void toBytes(ByteBuf buf) {
     buf.writeLong(this.pos.toLong());
     buf.writeInt(this.id);
+    buf.writeInt(value);
   }
 }

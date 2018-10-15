@@ -9,15 +9,16 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
 
-public class CableRenderer extends TileEntitySpecialRenderer<TileCable> {
+public class TesrCable extends TileEntitySpecialRenderer<TileCable> {
 
   private ModelCable model;
   private final ResourceLocation link = new ResourceLocation(StorageNetwork.MODID, "textures/tile/link.png");
   private final ResourceLocation ex = new ResourceLocation(StorageNetwork.MODID, "textures/tile/ex.png");
   private final ResourceLocation im = new ResourceLocation(StorageNetwork.MODID, "textures/tile/im.png");
   private final ResourceLocation storage = new ResourceLocation(StorageNetwork.MODID, "textures/tile/storage.png");
+  private final ResourceLocation process = new ResourceLocation(StorageNetwork.MODID, "textures/tile/process.png");
 
-  public CableRenderer() {
+  public TesrCable() {
     model = new ModelCable();
   }
 
@@ -38,6 +39,8 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileCable> {
       Minecraft.getMinecraft().renderEngine.bindTexture(im);
     if (kind == ModBlocks.storageKabel)
       Minecraft.getMinecraft().renderEngine.bindTexture(storage);
+    if (kind == ModBlocks.processKabel)
+      Minecraft.getMinecraft().renderEngine.bindTexture(process);
     GlStateManager.pushMatrix();
     GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);

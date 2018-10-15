@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.block.cable;
 
 import org.lwjgl.opengl.GL11;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -13,8 +14,12 @@ public class GuiCableButton extends GuiButton {
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
   private TileCable cable;
 
-  public GuiCableButton(int id, int x, int y, String z) {
-    super(id, x, y, 16, 16, z);
+  public GuiCableButton(CableMessageType id, int x, int y, String z) {
+    super(id.ordinal(), x, y, 16, 16, z);
+  }
+
+  public GuiCableButton(CableMessageType id, int x, int y, int w, int h, String z) {
+    super(id.ordinal(), x, y, w, h, z);
   }
 
   @Override
