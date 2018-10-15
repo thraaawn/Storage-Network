@@ -430,9 +430,11 @@ public class GuiControl extends GuiContainer {
       int mouse = Mouse.getEventDWheel();
       if (mouse > 0 && getPage() > 0) {
         setPage(getPage() - 1);
+        StorageNetwork.log("setpage from scroll" + getPage());
       }
       if (mouse < 0 && getPage() < getMaxPage() - hiddenOffset) {
         setPage(getPage() + 1);
+        StorageNetwork.log("setpage from scroll" + getPage());
       }
     }
   }
@@ -511,6 +513,7 @@ public class GuiControl extends GuiContainer {
   }
 
   public void setPage(int page) {
+    StorageNetwork.log("setPage" + page);
     this.page = page;
     this.slider.setSliderValue(page, false);
   }

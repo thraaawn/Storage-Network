@@ -82,15 +82,9 @@ public class GuiSliderInteger extends GuiButtonExt {
   @Override
   public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
     if (super.mousePressed(mc, mouseX, mouseY)) {
-      this.sliderPosition = (float) (mouseX - (this.x + 4)) / (float) (this.width - 8);
-      if (this.sliderPosition < 0.0F) {
-        this.sliderPosition = 0.0F;
-      }
-      if (this.sliderPosition > 1.0F) {
-        this.sliderPosition = 1.0F;
-      }
-      this.updateDisplay();
+      setSliderPosFromMouse(mouseX, mouseY);
       this.notifyResponder();
+      // this.updateDisplay();
       this.isMouseDown = true;
       return true;
     }
@@ -103,14 +97,9 @@ public class GuiSliderInteger extends GuiButtonExt {
   protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
     super.mouseDragged(mc, mouseX, mouseY);
     if (this.visible) {
+
       if (this.isMouseDown) {
-        this.sliderPosition = (float) (mouseX - (this.x + 4)) / (float) (this.width - 8);
-        if (this.sliderPosition < 0.0F) {
-          this.sliderPosition = 0.0F;
-        }
-        if (this.sliderPosition > 1.0F) {
-          this.sliderPosition = 1.0F;
-        }
+        setSliderPosFromMouse(mouseX, mouseY);
         this.updateDisplay();
         this.notifyResponder();
       }
@@ -123,6 +112,17 @@ public class GuiSliderInteger extends GuiButtonExt {
           this.x,
           this.y + (int) (this.sliderPosition * (this.height - 8)) + 4,
           196, 66, width, 4);
+    }
+  }
+
+  private void setSliderPosFromMouse(int mouseX, int mouseY) {
+    float relativePos = (float) (mouseY - (this.y + 4)) / (float) (this.height - 8);
+    this.sliderPosition = relativePos;
+    if (this.sliderPosition < 0.0F) {
+      this.sliderPosition = 0.0F;
+    }
+    if (this.sliderPosition > 1.0F) {
+      this.sliderPosition = 1.0F;
     }
   }
 
