@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 
@@ -103,15 +102,11 @@ public class GuiSliderInteger extends GuiButtonExt {
         this.updateDisplay();
         this.notifyResponder();
       }
-      GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+      //  GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
       this.drawTexturedModalRect(
           this.x,
           this.y + (int) (this.sliderPosition * (this.height - 8)),
-          0, 66, width, 4);
-      this.drawTexturedModalRect(
-          this.x,
-          this.y + (int) (this.sliderPosition * (this.height - 8)) + 4,
-          196, 66, width, 4);
+          188, 69, width, 8);
     }
   }
 
