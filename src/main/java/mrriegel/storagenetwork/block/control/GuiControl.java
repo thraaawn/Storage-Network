@@ -90,9 +90,11 @@ public class GuiControl extends GuiContainer {
   public class CableRow {
 
     public List<String> tooltips;
+    private GuiControl gui;
 
-    public CableRow(ProcessWrapper p) {
+    public CableRow(GuiControl gui, ProcessWrapper p) {
       super();
+      this.gui = gui;
       this.p = p;
       this.tooltips = new ArrayList<>();
 
@@ -139,16 +141,16 @@ public class GuiControl extends GuiContainer {
     }
 
     public boolean compareSearch() {
-      if (searchBar.getText().isEmpty()) {
+      if (gui.searchBar.getText().isEmpty()) {
         return true;//hide none, sho wall
       }
-      return UtilInventory.doOverlap(searchBar.getText(), p.name)
-          || UtilInventory.doOverlap(searchBar.getText(), p.output.getDisplayName());
+      return UtilInventory.doOverlap(gui.searchBar.getText(), p.name)
+          || UtilInventory.doOverlap(gui.searchBar.getText(), p.output.getDisplayName());
     }
 
     public boolean isOffscreen() {
       //above the top, or below the bottom
-      return this.x < 0 || this.y < guiTop || this.y > guiTop + 150;
+      return this.x < 0 || this.y < gui.guiTop || this.y > gui.guiTop + 150;
     }
 
     public void drawScreen() {
@@ -191,7 +193,7 @@ public class GuiControl extends GuiContainer {
       if (p.output.isEmpty()) {
         continue;
       }
-      CableRow rowModel = new CableRow(p);
+      CableRow rowModel = new CableRow(this, p);
       rowModel.index = row;
       rowModel.x = guiLeft + 8;
       rowModel.y = guiTop + 10;
@@ -522,6 +524,7 @@ public class GuiControl extends GuiContainer {
 
   public void setMaxPage(int m) {
     this.maxPage = m;
+    this.slider.setSliderValue(0, false);
     slider.setMax(m);
   }
 }
