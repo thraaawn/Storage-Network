@@ -76,7 +76,7 @@ public class GuiControl extends GuiContainer {
     searchBar.setTextColor(16777215);
     //mock data only  
     slider = new GuiSliderInteger(this, 777,
-        guiLeft + 180, guiTop + 16, 10, 130, 0, 0);
+        guiLeft + 169, guiTop + 16, 6, 130, 0, 0);
     //    slider.setTooltip("dropper.delay");
     this.addButton(slider);
   }
