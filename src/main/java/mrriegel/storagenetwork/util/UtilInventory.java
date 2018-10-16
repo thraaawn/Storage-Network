@@ -24,6 +24,7 @@ public class UtilInventory {
     return text.toLowerCase().contains(name.toLowerCase())
         || name.toLowerCase().contains(text.toLowerCase());
   }
+
   public static IItemHandler getItemHandler(TileEntity tile, EnumFacing side) {
     if (tile == null)
       return null;

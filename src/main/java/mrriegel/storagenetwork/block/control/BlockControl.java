@@ -33,7 +33,6 @@ public class BlockControl extends AbstractBlockConnectable {
     this.setHardness(3.0F);
     this.setCreativeTab(CreativeTab.tab);
     this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-
   }
 
   @Override
@@ -83,7 +82,6 @@ public class BlockControl extends AbstractBlockConnectable {
     }
     return true;
   }
-
 
   @Override
   public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {

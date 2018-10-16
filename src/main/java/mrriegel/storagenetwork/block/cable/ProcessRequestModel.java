@@ -9,7 +9,6 @@ import net.minecraft.nbt.NBTTagCompound;
 //{D}Method to enable/disable process. Possibly with some sort of request system
 //{E}Gui Redesign !!!
 //{F}UPGRADES
-
 public class ProcessRequestModel {
 
   public enum ProcessStatus {
@@ -17,7 +16,6 @@ public class ProcessRequestModel {
   }
 
   private static final String PREFIX = "sn_process_";
-
   //you can request more than 64
   private int count;
   private boolean alwaysActive = true;
@@ -36,7 +34,6 @@ public class ProcessRequestModel {
   public void setCount(int countRequested) {
     this.count = countRequested;
   }
-
 
   public void readFromNBT(NBTTagCompound compound) {
     this.count = compound.getInteger(PREFIX + "count");

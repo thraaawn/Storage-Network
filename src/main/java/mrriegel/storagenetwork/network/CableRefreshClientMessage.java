@@ -27,7 +27,6 @@ public class CableRefreshClientMessage implements IMessage, IMessageHandler<Cabl
 
   public CableRefreshClientMessage() {}
 
-
   public CableRefreshClientMessage(List<ProcessWrapper> list) {
     cables = list;
   }

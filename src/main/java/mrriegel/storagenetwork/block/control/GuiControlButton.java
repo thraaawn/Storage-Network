@@ -29,6 +29,7 @@ public class GuiControlButton extends GuiButtonExt {
   public List<String> getTooltips() {
     return tooltips;
   }
+
   @Override
   public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {//drawButon
     super.drawButton(mc, mouseX, mouseY, partial);
@@ -37,12 +38,9 @@ public class GuiControlButton extends GuiButtonExt {
     if (this.visible && textureX >= 0) {
       this.drawTexturedModalRect(x, y, textureX, textureY, 16, 16);
     }
-
   }
 
   public void setTooltips(List<String> tooltips) {
     this.tooltips = tooltips;
   }
-
-
 }

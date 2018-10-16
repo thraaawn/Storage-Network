@@ -97,7 +97,6 @@ public class GuiControl extends GuiContainer {
       this.gui = gui;
       this.p = p;
       this.tooltips = new ArrayList<>();
-
       if (p.ingredients == null || p.ingredients.size() == 0) {
         this.tooltips.add(StorageNetwork.lang("processing.empty.ingredients"));
       }

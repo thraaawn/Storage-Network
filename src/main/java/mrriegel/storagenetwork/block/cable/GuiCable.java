@@ -328,19 +328,19 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       }
     }
     //    if (tile.isStorage() == false) {
-      x = 88;
-      y = 62;
-      if (tile.getBlockType() == ModBlocks.processKabel) {
+    x = 88;
+    y = 62;
+    if (tile.getBlockType() == ModBlocks.processKabel) {
       x = 64;
       y = 62;
-      }
-      checkOreBtn = new GuiCheckBox(10, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.ore"), true);
-      checkOreBtn.setIsChecked(tile.getOre());
-      this.addButton(checkOreBtn);
-      y += 12;
-      checkMetaBtn = new GuiCheckBox(11, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.meta"), true);
-      checkMetaBtn.setIsChecked(tile.getMeta());
-      this.addButton(checkMetaBtn);
+    }
+    checkOreBtn = new GuiCheckBox(10, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.ore"), true);
+    checkOreBtn.setIsChecked(tile.getOre());
+    this.addButton(checkOreBtn);
+    y += 12;
+    checkMetaBtn = new GuiCheckBox(11, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.meta"), true);
+    checkMetaBtn.setIsChecked(tile.getMeta());
+    this.addButton(checkMetaBtn);
     //    }   
   }
 

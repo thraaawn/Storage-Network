@@ -34,7 +34,6 @@ public class BlockRequest extends AbstractBlockConnectable {
     this.setHardness(3.0F);
     this.setCreativeTab(CreativeTab.tab);
     this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-
   }
 
   @Override

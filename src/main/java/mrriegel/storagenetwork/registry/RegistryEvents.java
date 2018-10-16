@@ -23,7 +23,6 @@ public class RegistryEvents {
   @SubscribeEvent
   public void onRegistryBlock(RegistryEvent.Register<Block> event) {
     IForgeRegistry<Block> registry = event.getRegistry();
-
     registry.register(ModBlocks.request.setUnlocalizedName(ModBlocks.request.getRegistryName().toString()));
     registry.register(ModBlocks.master.setUnlocalizedName(ModBlocks.master.getRegistryName().toString()));
     registry.register(ModBlocks.kabel.setUnlocalizedName(ModBlocks.kabel.getRegistryName().toString()));

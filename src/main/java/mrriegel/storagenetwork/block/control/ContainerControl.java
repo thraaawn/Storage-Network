@@ -14,7 +14,6 @@ public class ContainerControl extends Container implements IStorageContainer {
   protected InventoryPlayer playerInv;
 
   public ContainerControl(final TileControl tile, final InventoryPlayer pi) {
-
     this.setTileRequest(tile);
     this.playerInv = pi;
     int sq = 18;
@@ -37,7 +36,6 @@ public class ContainerControl extends Container implements IStorageContainer {
   public void slotChanged() {
     //parent is abstract
     //seems to not happen from -shiftclick- crafting 
-
     // UtilTileEntity.updateTile(getTileRequest().getWorld(), getTileRequest().getPos());
   }
 
@@ -47,10 +45,8 @@ public class ContainerControl extends Container implements IStorageContainer {
     if (tileMaster == null) {
       return false;
     }
-
     return playerIn.getDistanceSq(getTileRequest().getPos().getX() + 0.5D, getTileRequest().getPos().getY() + 0.5D, getTileRequest().getPos().getZ() + 0.5D) <= 64.0D;
   }
-
 
   @Override
   public TileMaster getTileMaster() {

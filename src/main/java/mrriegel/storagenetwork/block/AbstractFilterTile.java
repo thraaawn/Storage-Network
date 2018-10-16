@@ -34,7 +34,6 @@ public abstract class AbstractFilterTile extends TileConnectable {
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
-
     processingTop = EnumFacing.values()[compound.getInteger("processingTop")];
     processingBottom = EnumFacing.values()[compound.getInteger("processingBottom")];
     ProcessRequestModel pm = new ProcessRequestModel();

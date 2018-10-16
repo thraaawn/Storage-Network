@@ -20,7 +20,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class RequestCableMessage implements IMessage, IMessageHandler<RequestCableMessage, IMessage> {
 
-
   public RequestCableMessage() {}
 
   @Override

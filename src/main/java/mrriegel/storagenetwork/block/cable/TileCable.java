@@ -102,7 +102,6 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
-
     connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {}.getType());
     inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
     mode = compound.getBoolean("mode");
@@ -316,15 +315,11 @@ public class TileCable extends AbstractFilterTile implements IInventory {
 
   @Override
   public int getField(int id) {
-
     return 0;
   }
 
   @Override
-  public void setField(int id, int value) {
-
-
-  }
+  public void setField(int id, int value) {}
 
   @Override
   public void clear() {}
@@ -357,11 +352,9 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     return getProcessModel();
   }
 
-
   public void setRequest(ProcessRequestModel request) {
     this.setProcessModel(request);
   }
-
 
   @Override
   public int getFieldCount() {
@@ -380,6 +373,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     }
     return list;
   }
+
   @Nonnull
   public ItemStack getFirstRecipeOut() {
     List<StackWrapper> topRow = getFilterBottom();

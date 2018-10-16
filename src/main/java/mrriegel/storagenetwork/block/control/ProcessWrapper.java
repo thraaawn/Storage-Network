@@ -26,8 +26,7 @@ public class ProcessWrapper {
     alwaysOn = on;
   }
 
-  public ProcessWrapper() {
-  }
+  public ProcessWrapper() {}
 
   public void readFromNBT(NBTTagCompound compound) {
     name = compound.getString("sname");

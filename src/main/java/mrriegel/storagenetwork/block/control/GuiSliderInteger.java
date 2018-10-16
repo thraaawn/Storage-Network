@@ -1,4 +1,3 @@
-
 package mrriegel.storagenetwork.block.control;
 
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ public class GuiSliderInteger extends GuiButtonExt {
   private final int min;
   private int max;
   private final GuiControl responder;//was TE
-
   private boolean appendPlusSignLabel = true;
 
   /**
@@ -45,7 +43,6 @@ public class GuiSliderInteger extends GuiButtonExt {
 
   private void notifyResponder() {
     int val = (int) this.getSliderValue();
-
     this.responder.setPage(val);
     //    ModCyclic.network.sendToServer(new PacketTileSetField(this.responder.getPos(), this.responderField, val));
   }
@@ -96,7 +93,6 @@ public class GuiSliderInteger extends GuiButtonExt {
   protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
     super.mouseDragged(mc, mouseX, mouseY);
     if (this.visible) {
-
       if (this.isMouseDown) {
         setSliderPosFromMouse(mouseX, mouseY);
         this.updateDisplay();
@@ -139,5 +135,4 @@ public class GuiSliderInteger extends GuiButtonExt {
   public void setMax(int max) {
     this.max = max;
   }
-
 }

@@ -297,7 +297,6 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stack.isEmpty()) {
       return 0;
     }
-
     //    int originalSize = stack.getCount();
     //refactor this garbage why are there too loops LOL 
     List<TileCable> invs = getSortedStorageCables();
@@ -487,7 +486,6 @@ public class TileMaster extends TileEntity implements ITickable {
         }
       }
       else if (processRequest.getStatus() == ProcessStatus.IMPORTING && outputs.size() > 0) { //from inventory to network
-
         //try to find/get from the blocks outputs into network
         // look for "output" items that can be   from target
         for (StackWrapper out : outputs) {
@@ -526,7 +524,6 @@ public class TileMaster extends TileEntity implements ITickable {
       //        ModCyclic.logger.error("Status was halted or other " + request.getStatus());
       //        request.setStatus(ProcessStatus.IMPORTING);//?? i dont know
       //      }
-
       tileCable.setRequest(processRequest);
     }
   }
@@ -673,7 +670,6 @@ public class TileMaster extends TileEntity implements ITickable {
       StorageNetwork.instance.logger.error("Refresh network error ", e);
     }
   }
- 
 
   private void sortCablesByPriority(List<TileCable> attachedCables) {
     Collections.sort(attachedCables, new Comparator<TileCable>() {
