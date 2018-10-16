@@ -90,7 +90,7 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
                 int index = 0;
                 Map<Item, Boolean> used = new HashMap<>();
                 for (int i = 0; i < inv.getSlots() && index < size; i++) {
-                  ItemStack stackHereCopy = inv.getStackInSlot(i);
+                  ItemStack stackHereCopy = inv.getStackInSlot(i).copy();
                   if (!stackHereCopy.isEmpty() && !used.containsKey(stackHereCopy.getItem())) {
                     used.put(stackHereCopy.getItem(), true);
                     stackHereCopy.setCount(1);

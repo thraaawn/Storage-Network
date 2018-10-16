@@ -348,7 +348,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX, mouseY);
     }
     if (sortBtn != null && sortBtn.isMouseOver()) {
-      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX, mouseY);
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort())), mouseX, mouseY);
     }
     if (directionBtn != null && directionBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.sort")), mouseX, mouseY);
