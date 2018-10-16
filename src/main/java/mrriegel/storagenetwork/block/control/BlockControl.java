@@ -88,6 +88,6 @@ public class BlockControl extends AbstractBlockConnectable {
   @Override
   public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
     super.addInformation(stack, playerIn, tooltip, advanced);
-    tooltip.add(I18n.format("tooltip.storagenetwork.request"));
+    tooltip.add(I18n.format("tooltip.storagenetwork.controller"));
   }
 }
