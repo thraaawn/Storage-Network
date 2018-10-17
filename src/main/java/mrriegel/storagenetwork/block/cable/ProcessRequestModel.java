@@ -5,12 +5,11 @@ import net.minecraft.nbt.NBTTagCompound;
 //Not done but planned:
 //{A}Text box input for priority (all) 
 //{B}CLONE settings between multiple cables 
-//{C}[DONE]Import button that will attempt to read recipe from machine
-//{D}Method to enable/disable process. Possibly with some sort of request system
-//{E}Gui Redesign !!!
-//{F}UPGRADES
+
 public class ProcessRequestModel {
 
+  //EXPORTING:from network to inventory (to start crafting, add ingredients) . also default state
+  //IMPORTING: from inventory to network (after crafting is done)
   public enum ProcessStatus {
     HALTED, IMPORTING, EXPORTING;
   }
@@ -32,6 +31,10 @@ public class ProcessRequestModel {
   }
 
   public void setCount(int countRequested) {
+    if (count <= 0 && countRequested > 0) {
+      //if we are going from zero to non zero, kickstart the thing
+      this.status = ProcessStatus.EXPORTING;
+    }
     this.count = countRequested;
   }
 

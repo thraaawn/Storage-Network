@@ -437,7 +437,7 @@ public class TileMaster extends TileEntity implements ITickable {
       //it will insert dirt, skip gravel, stay on exporting
       //and keep sending dirt forever
       // StorageNetwork.log("exporting SIZE = " + ingredients.size() + "/" + tileCable.getPos());
-      if (processRequest.getStatus() == ProcessStatus.EXPORTING && ingredients.size() > 0) { //from network to inventory . also default state
+      if (processRequest.getStatus() == ProcessStatus.EXPORTING && ingredients.size() > 0) { //EXPORTING:from network to inventory . also default state
         //also TOP ROW  
         //NEW : this mode more stubborn. ex auto crafter.
         //if the target already has items, who cares, i was told to be in export mode so export a set if possible right away always.

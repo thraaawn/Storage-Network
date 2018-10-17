@@ -256,7 +256,7 @@ public class GuiControl extends GuiContainer {
       cable.count += changePerClick;
       value = cable.count;
     }
-    StorageNetwork.log(messageType + "click " + value + " at +" + cable.pos + cable.output);
+
     PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(messageType.ordinal(), cable.pos, value));
   }
 
