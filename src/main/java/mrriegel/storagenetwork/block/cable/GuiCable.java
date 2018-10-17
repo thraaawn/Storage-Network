@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
-import com.google.common.collect.Lists;
-import com.lothrazar.cyclicmagic.util.Const;
+import com.google.common.collect.Lists; 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
@@ -142,9 +141,9 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
           StackWrapper wrap = tile.getFilter().get(index);
           ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
           int num = wrap == null ? 0 : wrap.getSize();
-          //
-          x = col * Const.SQ + 8;
-          y = row * Const.SQ + 26;
+        
+          x = col * SQ + 8;
+          y = row * SQ + 26;
           itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, true));
         }
       }
@@ -156,8 +155,8 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
           ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
           int num = wrap == null ? 0 : wrap.getSize();
           //
-          x = col * Const.SQ + 116;
-          y = row * Const.SQ + 26;
+          x = col * SQ + 116;
+          y = row * SQ + 26;
           //
           //          x = -1 + col * Const.SQ;
           //          y = -1 + row * Const.SQ;
