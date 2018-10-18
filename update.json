@@ -7,8 +7,8 @@
     "1.12-recommended": "1.0.15",
     "1.12.1-latest": "1.0.15",
     "1.12.1-recommended": "1.1.1",
-    "1.12.2-latest": "1.5.1",
-    "1.12.2-recommended": "1.5.1"
+    "1.12.2-latest": "1.5.2",
+    "1.12.2-recommended": "1.5.2"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -56,5 +56,6 @@
 	,"1.4.0":"Insert and Import logic rewritten and optimized for less lag (caches recent inserts so new items can shortcut and know where to go).  FastWorkbench integration added by shadows_on_fire, which greatly removes the lag when shift-clicking recipes in large networks  (requires FastWorkbench to be installed).  Fences no longer connect to cables.  Fixed some large numbers not rounding evenly on display.  Tooltip to show that lower Priority items should go first.  Rotate existing connected Link Cables (using wrenches/abilities from various mods) will now refresh its connection properly in the new direction, or keep the old direction if invalid.  Catch an uncommon crash when remote is opened and cant find attached network.  Fixed uncommon render crash while rendering button tooltips.  Fixed a crash when playing on a server and using ItemRemote after a chunk reload.    "
 	,"1.5.0":"New blocks: Processing Cable and Controller.  Fixed Storage cables not using priority.  Added ore and meta checkboxes to Storage cables.  Fixed a bug that would delete items when you clicked the Import Filter button.  "
   	,"1.5.1":"Fix a startup crash introduced in 1.5.0.  When a processing cable gets sent a nonzero request when it was stuck at zero, it switches modes to avoid the bug where it needs a manual restart (R button).    "
+  	,"1.5.2":"Fix issue where priority was sometimes ignored due to an error in some optimization features.  "
   }
 }

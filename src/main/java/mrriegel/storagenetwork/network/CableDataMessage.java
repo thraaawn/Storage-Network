@@ -7,6 +7,7 @@ import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
+import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -56,8 +57,11 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
         if (t instanceof AbstractFilterTile) {
           AbstractFilterTile tile = (AbstractFilterTile) t;
           TileCable tileCable = null;
-          if (t instanceof TileCable)
+          if (t instanceof TileCable) {
             tileCable = (TileCable) tile;
+          }
+          TileMaster mstr = null;
+
           CableMessageType type = CableMessageType.values()[message.id];
           switch (type) {
             case TOGGLE_P_RESTARTTRIGGER:
@@ -67,9 +71,24 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             break;
             case PRIORITY_DOWN:
               tile.setPriority(tile.getPriority() - 1);
+              try {
+                mstr = (TileMaster) player.world.getTileEntity(tile.getMaster());
+                mstr.clearCache();
+              }
+              catch (Throwable e) {
+                // outside build height error? 
+              }
+
             break;
             case PRIORITY_UP:
               tile.setPriority(tile.getPriority() + 1);
+              try {
+                mstr = (TileMaster) player.world.getTileEntity(tile.getMaster());
+                mstr.clearCache();
+              }
+              catch (Throwable e) {
+                // outside build height error? 
+              }
             break;
             case TOGGLE_WHITELIST:
               tile.setWhite(!tile.isWhitelist());

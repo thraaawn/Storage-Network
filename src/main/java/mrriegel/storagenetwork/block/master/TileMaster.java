@@ -42,7 +42,7 @@ public class TileMaster extends TileEntity implements ITickable {
 
   private Set<BlockPos> connectables;
   private List<BlockPos> storageInventorys;
-  private Map<String, RecentSlotPointer> recentImports = new HashMap<>();
+  private Map<String, RecentSlotPointer> importCache = new HashMap<>();
 
   public List<StackWrapper> getStacks() {
     List<StackWrapper> stacks = Lists.newArrayList();
@@ -218,16 +218,16 @@ public class TileMaster extends TileEntity implements ITickable {
     ItemStack remain = response.stack;
     stackInCopy = ItemHandlerHelper.copyStackWithSize(stackInCopy, remain.getCount());
     if (stackInCopy.getCount() < originalSize) {
-      //String key = getStackKey(stackInCop y);
       RecentSlotPointer ptr = new RecentSlotPointer();
-      if (response.slot >= 0)
-        ptr.setSlot(response.slot);
       ptr.setPos(tileCable.getPos());
-      if (recentImports.containsKey(key) == false) {
-        StorageNetwork.log("INSERT KEY " + key + " => " + response.slot
-            + "  KEYSIZE = " + this.recentImports.keySet().size());
-      } //but i guess still overwrite?
-      recentImports.put(key, ptr);
+      if (response.slot >= 0) {
+        ptr.setSlot(response.slot);
+      }
+      if (importCache.containsKey(key) == false) {
+        StorageNetwork.log("INSERT KEY " + key + " => " + ptr.getPos() + "@" + ptr.getSlot()
+            + "  KEYSIZE = " + this.importCache.keySet().size());
+      } //still overwrite
+      importCache.put(key, ptr);
     }
     return remain;
   }
@@ -297,18 +297,19 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stack.isEmpty()) {
       return 0;
     }
+    StorageNetwork.log("  insertStack ");
     //    int originalSize = stack.getCount();
     //refactor this garbage why are there too loops LOL 
     List<TileCable> invs = getSortedStorageCables();
     ItemStack stackInCopy = stack.copy();
     //only if it does NOT contains
     String key = getStackKey(stackInCopy);
-    if (this.recentImports.containsKey(key)) {
-      RecentSlotPointer pointer = this.recentImports.get(key);
+    if (this.importCache.containsKey(key)) {
+      RecentSlotPointer pointer = this.importCache.get(key);
       AbstractFilterTile aTile = getAbstractFilterTileOrNull(pointer.getPos());
       if (aTile == null) {
-        StorageNetwork.log("DELETE key" + key + " KEYSIZE " + this.recentImports.keySet().size());
-        this.recentImports.remove(key);
+        StorageNetwork.log("DELETE key" + key + " KEYSIZE " + this.importCache.keySet().size());
+        this.importCache.remove(key);
       }
       else {
         stackInCopy = insertStackSingleTarget(aTile, stackInCopy, simulate, pointer.getSlot());
@@ -316,31 +317,20 @@ public class TileMaster extends TileEntity implements ITickable {
       //      rest = insertStack(ItemHandlerHelper.copyStackWithSize(stackCurrent, insert), tileCable.getConnectedInventory(), false);
     }
     if (stackInCopy.isEmpty() == false) {
-      //cache pointer failed, use normal way
-      for (AbstractFilterTile tileCable : invs) {
-        if (tileCable.getSource().equals(source))
-          continue;
-        stackInCopy = insertStackSingleTarget(tileCable, stackInCopy, simulate, -1);
-        //      //      if (remain.isEmpty()) {
-        //      //        return 0;
-        //      //      }
-        //success 
-        //      stackInCopy = ItemHandlerHelper.copyStackWithSize(stackInCopy, remain.getCount());
-        world.markChunkDirty(tileCable.getSource(), world.getTileEntity(tileCable.getSource()));
-      }
-      //no existing item match found, look for empty slot 
       for (AbstractFilterTile tileCabl : invs) {
-        IItemHandler inventoryLinked = tileCabl.getInventory();
-        if (UtilInventory.contains(inventoryLinked, stackInCopy))
-          continue;
-        if (!tileCabl.canTransfer(stackInCopy, EnumFilterDirection.IN))
-          continue;
         if (tileCabl.getSource().equals(source))
           continue;
-        ItemStack remain = ItemHandlerHelper.insertItem(inventoryLinked, stackInCopy, simulate);
-        //      if (remain.isEmpty()) {
-        //        return 0;
-        //      }
+        IItemHandler inventoryLinked = tileCabl.getInventory();
+
+        if (!tileCabl.canTransfer(stackInCopy, EnumFilterDirection.IN))
+          continue;
+
+        //try existing slot then try new
+        ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, stackInCopy, simulate);
+
+        //        if (stackInCopy.isEmpty() == false)// then we are done
+        //          stackInCopy = ItemHandlerHelper.insertItem(inventoryLinked, stackInCopy, simulate);
+        //         ItemStack remain = stackInCopy;
         stackInCopy = ItemHandlerHelper.copyStackWithSize(stackInCopy, remain.getCount());
         world.markChunkDirty(tileCabl.getSource(), world.getTileEntity(tileCabl.getSource()));
       }
@@ -722,5 +712,9 @@ public class TileMaster extends TileEntity implements ITickable {
 
   public void setStorageInventorys(List<BlockPos> storageInventorys) {
     this.storageInventorys = storageInventorys;
+  }
+
+  public void clearCache() {
+    importCache = new HashMap<>();
   }
 }
