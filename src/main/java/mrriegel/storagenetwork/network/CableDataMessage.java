@@ -61,7 +61,6 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             tileCable = (TileCable) tile;
           }
           TileMaster mstr = null;
-
           CableMessageType type = CableMessageType.values()[message.id];
           switch (type) {
             case TOGGLE_P_RESTARTTRIGGER:
@@ -78,7 +77,6 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
               catch (Throwable e) {
                 // outside build height error? 
               }
-
             break;
             case PRIORITY_UP:
               tile.setPriority(tile.getPriority() + 1);
@@ -108,12 +106,19 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
                 //track used so if a chest is full of cobble we dont double up
                 int index = 0;
                 Map<Item, Boolean> used = new HashMap<>();
+                //TODO: FIX FOR PROC
+                //2 diff item stacks of size1 arent merging 
                 for (int i = 0; i < inv.getSlots() && index < size; i++) {
                   ItemStack stackHereCopy = inv.getStackInSlot(i).copy();
-                  if (!stackHereCopy.isEmpty() && !used.containsKey(stackHereCopy.getItem())) {
+                  if (stackHereCopy.isEmpty()) {
+                    continue;
+                  }
+                  if (used.containsKey(stackHereCopy.getItem())) {
+                    continue;
+                  } // ?? && tileCable.getBlockType() != ModBlocks.processKabel
+                  else {
                     used.put(stackHereCopy.getItem(), true);
-                    stackHereCopy.setCount(1);
-                    tile.getFilter().put(index, new StackWrapper(stackHereCopy, 1));
+                    tile.getFilter().put(index, new StackWrapper(stackHereCopy, stackHereCopy.getCount()));
                     index++;
                   }
                 }

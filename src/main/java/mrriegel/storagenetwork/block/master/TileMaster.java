@@ -297,9 +297,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stack.isEmpty()) {
       return 0;
     }
-    StorageNetwork.log("  insertStack ");
-    //    int originalSize = stack.getCount();
-    //refactor this garbage why are there too loops LOL 
+
     List<TileCable> invs = getSortedStorageCables();
     ItemStack stackInCopy = stack.copy();
     //only if it does NOT contains

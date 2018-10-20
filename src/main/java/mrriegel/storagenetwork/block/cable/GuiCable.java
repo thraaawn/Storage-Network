@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
-import com.google.common.collect.Lists; 
+import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
@@ -31,7 +31,6 @@ import net.minecraftforge.fml.client.config.GuiCheckBox;
 
 public class GuiCable extends GuiContainer implements IPublicGuiContainer {
 
-  private static final int PROCESS_SPACING = 42;
   private static final int SQ = 18;
   private static final int TEXTBOX_WIDTH = 26;
   private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/cable.png");
@@ -272,7 +271,11 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   public void initGui() {
     super.initGui();
     int x = 0, y = 0;
+    btnImport = new GuiCableButton(CableMessageType.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
+    btnImport.setCable(tile);
+    this.addButton(btnImport);
     if (tile.getBlockType() == ModBlocks.processKabel) {
+      btnImport.x += 56;
       //move priority over 
       //add custom buttons 
       // if (this.tile.getRequest().getStatus() == ProcessStatus.IMPORTING) {
@@ -296,9 +299,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       btnPlus = new GuiCableButton(CableMessageType.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
       btnPlus.setCable(tile);
       this.addButton(btnPlus);
-      btnImport = new GuiCableButton(CableMessageType.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
-      btnImport.setCable(tile);
-      this.addButton(btnImport);
+
       btnWhite = new GuiCableButton(CableMessageType.TOGGLE_WHITELIST, guiLeft + 58, guiTop + 5, "");
       btnWhite.setCable(tile);
       this.addButton(btnWhite);
