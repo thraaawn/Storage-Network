@@ -11,7 +11,9 @@ public class JeiHooks {
 
   public static String getFilterText() {
     try {
-      return getJeiTextInternal();
+      if (JeiSettings.isJeiLoaded()) {
+        return getJeiTextInternal();
+      }
     }
     catch (Exception e) {
       StorageNetwork.instance.logger.error(" mezz.jei.Internal not found ", e);
@@ -26,7 +28,9 @@ public class JeiHooks {
    */
   public static void setFilterText(String s) {
     try {
-      setJeiTextInternal(s);
+      if (JeiSettings.isJeiLoaded()) {
+        setJeiTextInternal(s);
+      }
     }
     catch (Exception e) {
       StorageNetwork.instance.logger.error(" mezz.jei.Internal not found ", e);
