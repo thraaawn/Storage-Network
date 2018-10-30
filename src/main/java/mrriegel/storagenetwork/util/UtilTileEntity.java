@@ -63,6 +63,9 @@ public class UtilTileEntity {
   }
 
   public static boolean equalOreDict(ItemStack a, ItemStack b) {
+    if (a.isEmpty() || b.isEmpty()) {
+      return false;
+    }
     int[] ar = OreDictionary.getOreIDs(a);
     int[] br = OreDictionary.getOreIDs(b);
     for (int i = 0; i < ar.length; i++)
