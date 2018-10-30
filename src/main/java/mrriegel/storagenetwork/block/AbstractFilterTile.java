@@ -2,18 +2,20 @@ package mrriegel.storagenetwork.block;
 
 import java.util.HashMap;
 import java.util.Map;
+import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.EnumFilterDirection;
 import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 
 /**
- * Base class for Master and Cable
+ * Base class for TileCable
  * 
  */
 public abstract class AbstractFilterTile extends TileConnectable {
@@ -22,17 +24,22 @@ public abstract class AbstractFilterTile extends TileConnectable {
   private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
   private boolean ores = false;
   private boolean metas = false;
+  private boolean nbt = false;
   private boolean isWhitelist;
   private int priority;
-  private EnumFilterDirection way = EnumFilterDirection.BOTH;
+  private ProcessRequestModel processModel = new ProcessRequestModel();
+  public EnumFacing processingTop = EnumFacing.UP;
+  public EnumFacing processingBottom = EnumFacing.DOWN;
+  protected EnumFilterDirection way = EnumFilterDirection.BOTH;
 
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
-    readSettings(compound);
-  }
-
-  public void readSettings(NBTTagCompound compound) {
+    processingTop = EnumFacing.values()[compound.getInteger("processingTop")];
+    processingBottom = EnumFacing.values()[compound.getInteger("processingBottom")];
+    ProcessRequestModel pm = new ProcessRequestModel();
+    pm.readFromNBT(compound);
+    this.setProcessModel(pm);
     isWhitelist = compound.getBoolean("white");
     priority = compound.getInteger("prio");
     NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
@@ -44,6 +51,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
     }
     ores = compound.getBoolean("ores");
     metas = compound.getBoolean("metas");
+    nbt = compound.getBoolean("nbtFilter");
     try {
       way = EnumFilterDirection.valueOf(compound.getString("way"));
     }
@@ -55,11 +63,9 @@ public abstract class AbstractFilterTile extends TileConnectable {
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
-    writeSettings(compound);
-    return compound;
-  }
-
-  public void writeSettings(NBTTagCompound compound) {
+    this.processModel.writeToNBT(compound);
+    compound.setInteger("processingBottom", processingBottom.ordinal());
+    compound.setInteger("processingTop", processingTop.ordinal());
     compound.setBoolean("white", isWhitelist);
     compound.setInteger("prio", priority);
     NBTTagList invList = new NBTTagList();
@@ -74,7 +80,9 @@ public abstract class AbstractFilterTile extends TileConnectable {
     compound.setTag("crunchTE", invList);
     compound.setBoolean("ores", ores);
     compound.setBoolean("metas", metas);
+    compound.setBoolean("nbtFilter", nbt);
     compound.setString("way", way.toString());
+    return compound;
   }
 
   private boolean doesWrapperMatchStack(StackWrapper stackWrapper, ItemStack stack) {
@@ -161,6 +169,14 @@ public abstract class AbstractFilterTile extends TileConnectable {
     this.ores = ores;
   }
 
+  public boolean getNbt() {
+    return nbt;
+  }
+
+  public void setNbt(boolean ores) {
+    this.nbt = ores;
+  }
+
   public boolean getMeta() {
     return metas;
   }
@@ -191,5 +207,21 @@ public abstract class AbstractFilterTile extends TileConnectable {
 
   public void setWay(EnumFilterDirection way) {
     this.way = way;
+  }
+
+  public EnumFacing getFacingBottomRow() {
+    return this.processingBottom;
+  }
+
+  public EnumFacing getFacingTopRow() {
+    return this.processingTop;
+  }
+
+  public ProcessRequestModel getProcessModel() {
+    return processModel;
+  }
+
+  public void setProcessModel(ProcessRequestModel processModel) {
+    this.processModel = processModel;
   }
 }

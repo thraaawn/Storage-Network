@@ -72,7 +72,7 @@ public class StorageNetwork {
     instance.error(s);
   }
 
-  public static void benchmark(String s) {
+  private static void benchmark(String s) {
     long now = System.currentTimeMillis();
     long DIFF = now - lastTime;
     lastTime = now;

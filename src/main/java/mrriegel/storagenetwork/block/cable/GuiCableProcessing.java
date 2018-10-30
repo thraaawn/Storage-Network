@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.item.ItemUpgrade;
@@ -13,7 +14,6 @@ import mrriegel.storagenetwork.network.CableDataMessage;
 import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import mrriegel.storagenetwork.network.CableFilterMessage;
 import mrriegel.storagenetwork.network.CableLimitMessage;
-import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import mrriegel.storagenetwork.util.data.StackWrapper;
@@ -26,9 +26,10 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
-public class GuiCable extends GuiContainer implements IPublicGuiContainer {
+public class GuiCableProcessing extends GuiContainer implements IPublicGuiContainer {
 
   private static final int SQ = 18;
   private static final int TEXTBOX_WIDTH = 26;
@@ -45,7 +46,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
   private GuiCableButton pbtnTopface;
   private GuiCheckBox checkboxNBT;
 
-  public GuiCable(ContainerCable inventorySlotsIn) {
+  public GuiCableProcessing(ContainerCable inventorySlotsIn) {
     super(inventorySlotsIn);
     this.xSize = 176;
     this.ySize = 171;
@@ -77,10 +78,27 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     this.drawTexturedModalRect(xMiddle, yMiddle, 0, 0, this.xSize, this.ySize);
     int x = 0, y = 0;
     int u = 176, v = 112;
+    //    if (tile.getBlockType() == ModBlocks.processKabel) {
+    //      // one texture per row
+    //      //RED IS output, GREEN is input
+    //      //RED output Means that you can pull out of chest into network, but not put in
+    //      //GREEN input means yes you can also put into chest from network
+    //      //this first TOP texture is green
+    //      int col = -3;
+    //      this.drawTexturedModalRect(xMiddle + col, yMiddle + 23, u, v, SQ - 8, SQ);
+    //      //move over on spritesheet and down on gui
+    //      u = 188;
+    //      //this bottom one is RED
+    //      //      this.mc.getTextureManager().bindTexture(texture);
+    //      //PROCESS_SPAPROCESS_SPACINGCING
+    //      this.drawTexturedModalRect(xMiddle + col, yMiddle + 26 + PROCESS_SPACING, u, v, SQ - 8, SQ);
+    //    }
     //reset sprite u/v
     u = 176;
     v = 34;
     int rows = 9, cols = 2;
+    rows = 3;
+    cols = 6;//3 on each side
     for (int row = 0; row < rows; row++) {
       for (int col = 0; col < cols; col++) {
         x = xMiddle + 7 + SQ * row + (col / 3) * 108;
@@ -112,22 +130,54 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     itemSlotsGhost = Lists.newArrayList();
     rows = 2;
     cols = 9;
-    fontRenderer.drawString(String.valueOf(tile.getPriority()),
-        guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2,
-        5 + btnMinus.y, 4210752);
-    for (int row = 0; row < rows; row++) {
-      for (int col = 0; col < cols; col++) {
-        int index = col + (cols * row);
+    // left side 
+    for (int row = 0; row < 3; row++) {
+      for (int col = 0; col < 3; col++) {
+        int index = col + (3 * row);
         StackWrapper wrap = tile.getFilter().get(index);
         ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
         int num = wrap == null ? 0 : wrap.getSize();
-        boolean numShow = tile instanceof TileCable ? tile.getUpgradesOfType(ItemUpgrade.STOCK) > 0
-            : false;
-        x = 8 + col * SQ;
-        y = 26 + row * SQ;
-        itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, numShow));
+        x = col * SQ + 8;
+        y = row * SQ + 26;
+        itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, true));
       }
     }
+    //right side
+    for (int row = 0; row < 3; row++) {
+      for (int col = 0; col < 3; col++) {
+        int index = 9 + col + (3 * row);
+        StackWrapper wrap = tile.getFilter().get(index);
+        ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
+        int num = wrap == null ? 0 : wrap.getSize();
+        //
+        x = col * SQ + 116;
+        y = row * SQ + 26;
+        //
+        //          x = -1 + col * Const.SQ;
+        //          y = -1 + row * Const.SQ;
+        itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, true));
+      }
+    }
+    //    }
+    //    else {
+    //      fontRenderer.drawString(String.valueOf(tile.getPriority()),
+    //          guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2,
+    //          5 + btnMinus.y, 4210752);
+    //      for (int row = 0; row < rows; row++) {
+    //        for (int col = 0; col < cols; col++) {
+    //          int index = col + (cols * row);
+    //          StackWrapper wrap = tile.getFilter().get(index);
+    //          ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
+    //          int num = wrap == null ? 0 : wrap.getSize();
+    //          boolean numShow = tile instanceof TileCable ? tile.getUpgradesOfType(ItemUpgrade.STOCK) > 0
+    //              //    || tile.getBlockType() == ModBlocks.processKabel
+    //              : false;
+    //          x = 8 + col * SQ;
+    //          y = 26 + row * SQ;
+    //          itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, numShow));
+    //        }
+    //      }
+    //    }
     for (ItemSlotNetwork s : itemSlotsGhost) {
       s.drawSlot(mouseX, mouseY);
     }
@@ -194,6 +244,21 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       EnumFacing f = tile.getFacingTopRow();
       pbtnTopface.displayString = f.name().substring(0, 2);
     }
+    ProcessRequestModel p = tile.getProcessModel();
+    int FONT = 14737632;
+    int x = -90;
+    int y = 4;
+    this.drawString(this.fontRenderer, StorageNetwork.lang("tile.storagenetwork:controller.name"),
+        x, y, FONT);
+    x += 12;
+    y += 18;
+    TextFormatting f = (p.isAlwaysActive()) ? TextFormatting.GREEN
+        : TextFormatting.BLUE;
+    String txt = StorageNetwork.lang("processing.alwayson." + p.isAlwaysActive());
+    if (!p.isAlwaysActive()) {
+      txt += p.getCount();
+    }
+    this.drawString(this.fontRenderer, f + txt, x, y, FONT);
   }
 
   @Override
@@ -203,39 +268,23 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     btnImport = new GuiCableButton(CableMessageType.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
     btnImport.setCable(tile);
     this.addButton(btnImport);
-    btnMinus = new GuiCableButton(CableMessageType.PRIORITY_DOWN, guiLeft + 6, guiTop + 5, "-");
-    btnMinus.setCable(tile);
-    this.addButton(btnMinus);
-    btnPlus = new GuiCableButton(CableMessageType.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
-    btnPlus.setCable(tile);
-    this.addButton(btnPlus);
-    btnWhite = new GuiCableButton(CableMessageType.TOGGLE_WHITELIST, guiLeft + 58, guiTop + 5, "");
-    btnWhite.setCable(tile);
-    this.addButton(btnWhite);
-    btnWhite.visible = tile.getBlockType() != ModBlocks.exKabel;
-    if (tile.isStorage()) {
-      btnInputOutputStorage = new GuiCableButton(CableMessageType.TOGGLE_WAY, guiLeft + 115, guiTop + 5, "");
-      btnInputOutputStorage.setCable(tile);
-      this.addButton(btnInputOutputStorage);
-    }
-    else {
-      Keyboard.enableRepeatEvents(true);
-      searchBar = new GuiTextField(99, fontRenderer, guiLeft + 54, guiTop + 69, TEXTBOX_WIDTH, fontRenderer.FONT_HEIGHT);
-      searchBar.setMaxStringLength(3);
-      searchBar.setEnableBackgroundDrawing(false);
-      searchBar.setVisible(true);
-      searchBar.setTextColor(16777215);
-      searchBar.setCanLoseFocus(false);
-      searchBar.setFocused(true);
-      searchBar.setText(tile.getLimit() + "");
-      searchBar.width = 20;
-      btnOperationToggle = new GuiCableButton(CableMessageType.TOGGLE_MODE, guiLeft + 28, guiTop + 66, "");
-      //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
-      btnOperationToggle.setCable(tile);
-      this.addButton(btnOperationToggle);
-      operationItemSlot = new ItemSlotNetwork(this, tile.getOperationStack(), guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false);
-    }
-    x = 88;
+    btnImport.x += 56;
+    //move priority over 
+    //add custom buttons 
+
+    //a click will swap it to EXPORTING with CableDataMessage 
+    pbtnReset = new GuiCableButton(CableMessageType.TOGGLE_P_RESTARTTRIGGER, guiLeft + 154, guiTop + 5, "R");
+    pbtnReset.setCable(tile);
+    this.addButton(pbtnReset);
+    int column = 76, ctr = 24;
+    pbtnBottomface = new GuiCableButton(CableMessageType.P_FACE_BOTTOM, guiLeft + column + 20, guiTop + ctr, "");
+    pbtnBottomface.setCable(tile);
+    this.addButton(pbtnBottomface);
+    pbtnTopface = new GuiCableButton(CableMessageType.P_FACE_TOP, guiLeft + column - 12, guiTop + ctr, "");
+    pbtnTopface.setCable(tile);
+    this.addButton(pbtnTopface);
+
+    x = 64;
     y = 62;
     checkOreBtn = new GuiCheckBox(10, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.ore"), true);
     checkOreBtn.setIsChecked(tile.getOre());
@@ -244,8 +293,8 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     checkMetaBtn = new GuiCheckBox(11, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.meta"), true);
     checkMetaBtn.setIsChecked(tile.getMeta());
     this.addButton(checkMetaBtn);
-    // 
-    x += 50;
+    //
+    y -= 24;
     checkboxNBT = new GuiCheckBox(12, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.nbt"), true);
     checkboxNBT.setIsChecked(tile.getNbt());
     this.addButton(checkboxNBT);
@@ -271,6 +320,13 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         ContainerCable container = (ContainerCable) inventorySlots;
         StackWrapper stackWrapper = container.getTile().getFilter().get(i);
         boolean doesExistAlready = container.isInFilter(new StackWrapper(stackCarriedByMouse, 1));
+        //diff rules : if i put it in the left, only check the left, and so on
+        if (i < AbstractFilterTile.FILTER_SIZE / 2) {
+          doesExistAlready = container.isInFilter(new StackWrapper(stackCarriedByMouse, 1), 0, AbstractFilterTile.FILTER_SIZE / 2);
+        }
+        else {
+          doesExistAlready = container.isInFilter(new StackWrapper(stackCarriedByMouse, 1), AbstractFilterTile.FILTER_SIZE / 2, AbstractFilterTile.FILTER_SIZE);
+        }
         if (!stackCarriedByMouse.isEmpty() && !doesExistAlready) {
           int quantity = (isRightClick) ? 1 : stackCarriedByMouse.getCount();
           container.getTile().getFilter().put(i, new StackWrapper(stackCarriedByMouse, quantity));
@@ -290,7 +346,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
           }
         }
         //        container.slotChanged();
-        PacketRegistry.INSTANCE.sendToServer(new CableFilterMessage(i, tile.getFilter().get(i), tile.getOre(), tile.getMeta(), false));
+        PacketRegistry.INSTANCE.sendToServer(new CableFilterMessage(i, tile.getFilter().get(i), tile.getOre(), tile.getMeta(), checkboxNBT.isChecked()));
         break;
       }
     }
@@ -327,7 +383,7 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));
     }
     else if (checkMetaBtn != null && checkOreBtn != null && (button.id == checkMetaBtn.id || button.id == checkOreBtn.id)) {
-      PacketRegistry.INSTANCE.sendToServer(new CableFilterMessage(-1, null, checkOreBtn.isChecked(), checkMetaBtn.isChecked(), false));
+      PacketRegistry.INSTANCE.sendToServer(new CableFilterMessage(-1, null, checkOreBtn.isChecked(), checkMetaBtn.isChecked(), this.checkboxNBT.isChecked()));
     }
     else {
       PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));

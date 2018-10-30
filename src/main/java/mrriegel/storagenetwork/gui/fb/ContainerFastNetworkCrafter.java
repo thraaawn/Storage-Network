@@ -192,7 +192,7 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
     for (int i = 0; i < 9; i++) {
       if (matrix.getStackInSlot(i).isEmpty()) {
         ItemStack cached = requests[i];
-        if (!cached.isEmpty()) requested[i] = slot.getTileMaster().request(new FilterItem(cached, true, false, false), cached.getMaxStackSize(), false);
+        if (!cached.isEmpty()) requested[i] = slot.getTileMaster().request(new FilterItem(cached, true, false, cached.hasTagCompound()), cached.getMaxStackSize(), false);
         matrixFull = false;
       }
     }

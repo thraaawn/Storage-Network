@@ -29,6 +29,7 @@ public class UtilTileEntity {
   private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
   public static final int MOUSE_BTN_LEFT = 0;
   public static final int MOUSE_BTN_RIGHT = 1;
+  public static final int MOUSE_BTN_MIDDLE_CLICK = 2;
 
   public static void init() {
     Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
@@ -62,6 +63,9 @@ public class UtilTileEntity {
   }
 
   public static boolean equalOreDict(ItemStack a, ItemStack b) {
+    if (a.isEmpty() || b.isEmpty()) {
+      return false;
+    }
     int[] ar = OreDictionary.getOreIDs(a);
     int[] br = OreDictionary.getOreIDs(b);
     for (int i = 0; i < ar.length; i++)

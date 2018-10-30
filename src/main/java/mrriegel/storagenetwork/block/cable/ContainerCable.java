@@ -20,9 +20,10 @@ public class ContainerCable extends Container {
   public ContainerCable(TileCable tile, InventoryPlayer playerInv) {
     this.setTile(tile);
     upgrades = tile;
+    int sq = 18;
     if (tile.isUpgradeable()) {
       for (int ii = 0; ii < UPGRADE_COUNT; ii++) {
-        this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
+        this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * sq, 6) {
 
           @Override
           public boolean isItemValid(ItemStack stack) {
@@ -31,13 +32,15 @@ public class ContainerCable extends Container {
         });
       }
     }
+    //player inventory 
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 9; ++j) {
-        this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 55 + 34 + i * 18));
+        this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * sq, 55 + 34 + i * sq));
       }
     }
+    //player hotbar 
     for (int i = 0; i < 9; ++i) {
-      this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 113 + 34));
+      this.addSlotToContainer(new Slot(playerInv, i, 8 + i * sq, 113 + 34));
     }
   }
 
@@ -72,13 +75,18 @@ public class ContainerCable extends Container {
   }
 
   public boolean isInFilter(StackWrapper stack) {
-    for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
+    return isInFilter(stack, 0, AbstractFilterTile.FILTER_SIZE);
+  }
+
+  public boolean isInFilter(StackWrapper stack, int start, int end) {
+    for (int i = start; i < end; i++) {
       if (getTile().getFilter().get(i) != null && getTile().getFilter().get(i).getStack().isItemEqual(stack.getStack())) {
         return true;
       }
     }
     return false;
   }
+
 
   public TileCable getTile() {
     return tile;

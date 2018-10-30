@@ -198,6 +198,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
     if (this.isScreenValid() == false) {
       return;
     }
+    this.drawDefaultBackground();//dim the background as normal
     renderTextures();
     List<StackWrapper> stacksToDisplay = applySearchTextToSlots();
     sortStackWrappers(stacksToDisplay);
@@ -208,7 +209,6 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
   }
 
   private void renderTextures() {
-    this.drawDefaultBackground();//dim the background as normal
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     this.mc.getTextureManager().bindTexture(texture);
     int xCenter = (this.width - this.xSize) / 2;
@@ -348,7 +348,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.tooltip_clear")), mouseX, mouseY);
     }
     if (sortBtn != null && sortBtn.isMouseOver()) {
-      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX, mouseY);
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort())), mouseX, mouseY);
     }
     if (directionBtn != null && directionBtn.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.sort")), mouseX, mouseY);

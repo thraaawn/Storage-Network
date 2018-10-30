@@ -1,6 +1,9 @@
 package mrriegel.storagenetwork.block.cable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -10,8 +13,8 @@ import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.ModItems;
 import mrriegel.storagenetwork.util.UtilInventory;
-import mrriegel.storagenetwork.util.data.EnumConnectType;
 import mrriegel.storagenetwork.util.data.FilterItem;
+import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -30,8 +33,12 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   private NonNullList<ItemStack> upgrades = NonNullList.withSize(ContainerCable.UPGRADE_COUNT, ItemStack.EMPTY);
   private boolean mode = true;
   private int limit = 0;
-  public EnumConnectType north, south, east, west, up, down;
+  public EnumCableType north, south, east, west, up, down;
   private ItemStack stack = ItemStack.EMPTY;
+
+  public static enum Fields {
+    STATUS, FACINGTOPROW, FACINGBOTTOMROW;
+  }
 
   public TileCable() {
     this.setOres(false);
@@ -49,11 +56,12 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   }
 
   public boolean isUpgradeable() {
-    return this.blockType == ModBlocks.imKabel || this.blockType == ModBlocks.exKabel;
+    return this.blockType == ModBlocks.imKabel ||
+        this.blockType == ModBlocks.exKabel;
   }
 
-  public Map<EnumFacing, EnumConnectType> getConnects() {
-    Map<EnumFacing, EnumConnectType> map = Maps.newHashMap();
+  public Map<EnumFacing, EnumCableType> getConnects() {
+    Map<EnumFacing, EnumCableType> map = Maps.newHashMap();
     map.put(EnumFacing.NORTH, north);
     map.put(EnumFacing.SOUTH, south);
     map.put(EnumFacing.EAST, east);
@@ -63,7 +71,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     return map;
   }
 
-  public void setConnects(Map<EnumFacing, EnumConnectType> map) {
+  public void setConnects(Map<EnumFacing, EnumCableType> map) {
     north = map.get(EnumFacing.NORTH);
     south = map.get(EnumFacing.SOUTH);
     east = map.get(EnumFacing.EAST);
@@ -103,23 +111,23 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     else
       stack = ItemStack.EMPTY;
     if (compound.hasKey("north"))
-      north = EnumConnectType.valueOf(compound.getString("north"));
+      north = EnumCableType.valueOf(compound.getString("north"));
     if (compound.hasKey("south"))
-      south = EnumConnectType.valueOf(compound.getString("south"));
+      south = EnumCableType.valueOf(compound.getString("south"));
     if (compound.hasKey("east"))
-      east = EnumConnectType.valueOf(compound.getString("east"));
+      east = EnumCableType.valueOf(compound.getString("east"));
     if (compound.hasKey("west"))
-      west = EnumConnectType.valueOf(compound.getString("west"));
+      west = EnumCableType.valueOf(compound.getString("west"));
     if (compound.hasKey("up"))
-      up = EnumConnectType.valueOf(compound.getString("up"));
+      up = EnumCableType.valueOf(compound.getString("up"));
     if (compound.hasKey("down"))
-      down = EnumConnectType.valueOf(compound.getString("down"));
+      down = EnumCableType.valueOf(compound.getString("down"));
     NBTTagList nbttaglist = compound.getTagList("Items", 10);
     upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
     for (int i = 0; i < nbttaglist.tagCount(); ++i) {
       NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
       int j = nbttagcompound.getByte("Slot") & 255;
-      if (j >= 0 && j < 4) {
+      if (j >= 0 && j < 4) {// TODO: 4 const reference
         upgrades.set(j, new ItemStack(nbttagcompound));
       }
     }
@@ -314,10 +322,64 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   public void setField(int id, int value) {}
 
   @Override
+  public void clear() {}
+
+  public List<StackWrapper> getFilterTop() {
+    Map<Integer, StackWrapper> flt = super.getFilter();
+    List<StackWrapper> half = new ArrayList<>();
+    for (Integer i : flt.keySet()) {
+      if (i <= 8 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false) {
+        half.add(flt.get(i));
+      }
+    }
+    return half;
+  }
+
+  public List<StackWrapper> getFilterBottom() {
+    Map<Integer, StackWrapper> flt = super.getFilter();
+    List<StackWrapper> half = new ArrayList<>();
+    for (Integer i : flt.keySet()) {
+      if (i >= 9 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false) {
+        half.add(flt.get(i));
+      }
+    }
+    return half;
+  }
+
+  //TODO: also list of requests ordered . and nbt saved
+  // where a process terminal lists some nodes and I "turn node on for 6 cycles" and it keeps track, maybe stuck after 2.
+  public ProcessRequestModel getRequest() {
+    return getProcessModel();
+  }
+
+  public void setRequest(ProcessRequestModel request) {
+    this.setProcessModel(request);
+  }
+
+  @Override
   public int getFieldCount() {
     return 0;
   }
 
-  @Override
-  public void clear() {}
+  public List<ItemStack> getProcessIngredients() {
+    List<StackWrapper> topRow = getFilterTop();
+    List<ItemStack> list = new ArrayList<>();
+    for (StackWrapper sw : topRow) {
+      if (sw.getStack().isEmpty() == false) {
+        ItemStack staCopy = sw.getStack().copy();
+        staCopy.setCount(sw.getSize());
+        list.add(staCopy);
+      }
+    }
+    return list;
+  }
+
+  @Nonnull
+  public ItemStack getFirstRecipeOut() {
+    List<StackWrapper> topRow = getFilterBottom();
+    if (topRow.size() == 0) {
+      return ItemStack.EMPTY;
+    }
+    return topRow.get(0).getStack();
+  }
 }
