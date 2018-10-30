@@ -46,10 +46,20 @@ public class GuiHandler implements IGuiHandler {
       return new ContainerControl((TileControl) world.getTileEntity(pos), player.inventory);
     }
     if (ID == REQUEST) {
-      return FB_LOADED ? new ContainerFastRequest((TileRequest) world.getTileEntity(pos), player, world, pos) : new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory);
+      if (FB_LOADED) {
+        return new ContainerFastRequest((TileRequest) world.getTileEntity(pos), player, world, pos);
+      }
+      else {
+        return new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory);
+      }
     }
     if (ID == REMOTE) {
-      return FB_LOADED ? new ContainerFastRemote(player, world, EnumHand.values()[x]) : new ContainerRemote(player.inventory);
+      if (FB_LOADED) {
+        new ContainerFastRemote(player, world, EnumHand.values()[x]);
+      }
+      else {
+        return new ContainerRemote(player.inventory);
+      }
     }
     return null;
   }
@@ -68,10 +78,20 @@ public class GuiHandler implements IGuiHandler {
       return new GuiControl(new ContainerControl((TileControl) world.getTileEntity(pos), player.inventory));
     }
     if (ID == REQUEST) {
-      return FB_LOADED ? new GuiFastRequest(player, world, pos) : new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory));
+      if (FB_LOADED) {
+        return new GuiFastRequest(player, world, pos);
+      }
+      else {
+        return new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory));
+      }
     }
     if (ID == REMOTE) {
-      return FB_LOADED ? new GuiFastRemote(player, world, EnumHand.values()[x]) : new GuiRemote(new ContainerRemote(player.inventory));
+      if (FB_LOADED) {
+        return new GuiFastRemote(player, world, EnumHand.values()[x]);
+      }
+      else {
+        new GuiRemote(new ContainerRemote(player.inventory));
+      }
     }
     return null;
   }
