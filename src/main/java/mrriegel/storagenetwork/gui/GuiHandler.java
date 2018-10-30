@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.gui;
 
 import mrriegel.storagenetwork.block.cable.ContainerCable;
 import mrriegel.storagenetwork.block.cable.GuiCable;
+import mrriegel.storagenetwork.block.cable.GuiCableProcessing;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.control.ContainerControl;
 import mrriegel.storagenetwork.block.control.GuiControl;
@@ -15,6 +16,7 @@ import mrriegel.storagenetwork.gui.fb.GuiFastRemote;
 import mrriegel.storagenetwork.gui.fb.GuiFastRequest;
 import mrriegel.storagenetwork.item.remote.ContainerRemote;
 import mrriegel.storagenetwork.item.remote.GuiRemote;
+import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
@@ -58,6 +60,8 @@ public class GuiHandler implements IGuiHandler {
     BlockPos pos = new BlockPos(x, y, z);
     if (ID == CABLE) {
       TileCable tile = (TileCable) world.getTileEntity(pos);
+      if (tile.getBlockType() == ModBlocks.processKabel)
+        return new GuiCableProcessing(new ContainerCable(tile, player.inventory));
       return new GuiCable(new ContainerCable(tile, player.inventory));
     }
     if (ID == CONTROLLER) {

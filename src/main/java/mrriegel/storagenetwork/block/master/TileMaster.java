@@ -440,7 +440,8 @@ public class TileMaster extends TileEntity implements ITickable {
           //  how many are needed. request them
           //true is using nbt 
           inventoryLinked = UtilInventory.getItemHandler(world.getTileEntity(tileCable.getConnectedInventory()), tileCable.getFacingTopRow());
-          ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy(), tileCable.getMeta(), tileCable.getOre(), true), ingred.getSize(), simulate);//false means 4real, no simulate
+          ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy(),
+              tileCable.getMeta(), tileCable.getOre(), tileCable.getNbt()), ingred.getSize(), simulate);//false means 4real, no simulate
           int found = requestedFromNetwork.getCount();
           //   StorageNetwork.log("ingr size " + ingred.getSize() + " found +" + found + " of " + ingred.getStack().getDisplayName());
           ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
@@ -541,14 +542,14 @@ public class TileMaster extends TileEntity implements ITickable {
         if (stackToFilter == null || stackToFilter.isEmpty()) {
           continue;
         }
-        ItemStack stackCurrent = this.request(new FilterItem(stackToFilter, meta, ore, false), 1, true);
+        ItemStack stackCurrent = this.request(new FilterItem(stackToFilter, meta, ore, tileCable.getNbt()), 1, true);
         //^ 1
         if (stackCurrent == null || stackCurrent.isEmpty()) {
           continue;
         }
         int maxStackSize = stackCurrent.getMaxStackSize();
         if ((tileCable.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
-          maxStackSize = Math.min(maxStackSize, currentFilter.getSize() - UtilInventory.getAmount(inv, new FilterItem(stackCurrent, meta, ore, false)));
+          maxStackSize = Math.min(maxStackSize, currentFilter.getSize() - UtilInventory.getAmount(inv, new FilterItem(stackCurrent, meta, ore, tileCable.getNbt())));
         }
         if (maxStackSize <= 0) {
           continue;
@@ -561,7 +562,7 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!tileCable.doesPassOperationFilterLimit()) {
           continue;
         }
-        ItemStack rec = this.request(new FilterItem(stackCurrent, meta, ore, false), insert, false);
+        ItemStack rec = this.request(new FilterItem(stackCurrent, meta, ore, tileCable.getNbt()), insert, false);
         if (rec == null || rec.isEmpty()) {
           continue;
         }

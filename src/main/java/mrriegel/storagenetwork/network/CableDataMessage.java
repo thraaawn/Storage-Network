@@ -26,7 +26,7 @@ import net.minecraftforge.items.IItemHandler;
 public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
 
   public enum CableMessageType {
-    PRIORITY_DOWN, PRIORITY_UP, P_ONOFF, TOGGLE_WHITELIST, TOGGLE_MODE, IMPORT_FILTER, TOGGLE_WAY, P_FACE_TOP, P_FACE_BOTTOM, TOGGLE_P_RESTARTTRIGGER, P_CTRL_MORE, P_CTRL_LESS;
+    PRIORITY_DOWN, PRIORITY_UP, P_ONOFF, TOGGLE_WHITELIST, TOGGLE_MODE, IMPORT_FILTER, TOGGLE_WAY, P_FACE_TOP, P_FACE_BOTTOM, TOGGLE_P_RESTARTTRIGGER, P_CTRL_MORE, P_CTRL_LESS, TOGGLE_NBT;
   }
 
   private int id;
@@ -90,6 +90,9 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             break;
             case TOGGLE_WHITELIST:
               tile.setWhite(!tile.isWhitelist());
+            break;
+            case TOGGLE_NBT:
+              tile.setNbt(!tile.getNbt());
             break;
             case TOGGLE_MODE://4 
               if (tileCable != null)

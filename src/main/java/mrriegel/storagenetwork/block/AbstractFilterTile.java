@@ -24,6 +24,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
   private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
   private boolean ores = false;
   private boolean metas = false;
+  private boolean nbt = false;
   private boolean isWhitelist;
   private int priority;
   private ProcessRequestModel processModel = new ProcessRequestModel();
@@ -50,6 +51,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
     }
     ores = compound.getBoolean("ores");
     metas = compound.getBoolean("metas");
+    nbt = compound.getBoolean("nbtFilter");
     try {
       way = EnumFilterDirection.valueOf(compound.getString("way"));
     }
@@ -78,6 +80,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
     compound.setTag("crunchTE", invList);
     compound.setBoolean("ores", ores);
     compound.setBoolean("metas", metas);
+    compound.setBoolean("nbtFilter", nbt);
     compound.setString("way", way.toString());
     return compound;
   }
@@ -164,6 +167,14 @@ public abstract class AbstractFilterTile extends TileConnectable {
 
   public void setOres(boolean ores) {
     this.ores = ores;
+  }
+
+  public boolean getNbt() {
+    return nbt;
+  }
+
+  public void setNbt(boolean ores) {
+    this.nbt = ores;
   }
 
   public boolean getMeta() {

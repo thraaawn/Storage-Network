@@ -17,15 +17,16 @@ public class CableFilterMessage implements IMessage, IMessageHandler<CableFilter
 
   private int index;
   private StackWrapper wrap;
-  private boolean ore, meta;
+  private boolean ore, meta, nbt;
 
   public CableFilterMessage() {}
 
-  public CableFilterMessage(int index, StackWrapper wrap, boolean ore, boolean meta) {
+  public CableFilterMessage(int index, StackWrapper wrap, boolean ore, boolean meta, boolean nbt) {
     this.index = index;
     this.wrap = wrap;
     this.ore = ore;
     this.meta = meta;
+    this.nbt = nbt;
   }
 
   @Override
@@ -44,6 +45,7 @@ public class CableFilterMessage implements IMessage, IMessageHandler<CableFilter
           }
           tile.setOres(message.ore);
           tile.setMeta(message.meta);
+          tile.setNbt(message.nbt);
           tile.markDirty();
         }
       }
@@ -56,6 +58,7 @@ public class CableFilterMessage implements IMessage, IMessageHandler<CableFilter
     this.index = buf.readInt();
     this.ore = buf.readBoolean();
     this.meta = buf.readBoolean();
+    this.nbt = buf.readBoolean();
     this.wrap = StackWrapper.loadStackWrapperFromNBT(ByteBufUtils.readTag(buf));
   }
 
@@ -64,6 +67,7 @@ public class CableFilterMessage implements IMessage, IMessageHandler<CableFilter
     buf.writeInt(this.index);
     buf.writeBoolean(this.ore);
     buf.writeBoolean(this.meta);
+    buf.writeBoolean(this.nbt);
     NBTTagCompound nbt = new NBTTagCompound();
     if (this.wrap != null)
       this.wrap.writeToNBT(nbt);
