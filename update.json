@@ -7,8 +7,8 @@
     "1.12-recommended": "1.0.15",
     "1.12.1-latest": "1.0.15",
     "1.12.1-recommended": "1.1.1",
-    "1.12.2-latest": "1.5.2",
-    "1.12.2-recommended": "1.5.2"
+    "1.12.2-latest": "1.5.3",
+    "1.12.2-recommended": "1.5.3"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -57,5 +57,6 @@
 	,"1.5.0":"New blocks: Processing Cable and Controller.  Fixed Storage cables not using priority.  Added ore and meta checkboxes to Storage cables.  Fixed a bug that would delete items when you clicked the Import Filter button.  "
   	,"1.5.1":"Fix a startup crash introduced in 1.5.0.  When a processing cable gets sent a nonzero request when it was stuck at zero, it switches modes to avoid the bug where it needs a manual restart (R button).    "
   	,"1.5.2":"Fix issue where priority was sometimes ignored due to an error in some optimization features.  "
+  	,"1.5.3":"Processing cable now allows you to put the same item on both the left and right side.  "
   }
 }

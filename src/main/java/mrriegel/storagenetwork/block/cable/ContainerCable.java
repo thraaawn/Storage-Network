@@ -75,7 +75,11 @@ public class ContainerCable extends Container {
   }
 
   public boolean isInFilter(StackWrapper stack) {
-    for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
+    return isInFilter(stack, 0, AbstractFilterTile.FILTER_SIZE);
+  }
+
+  public boolean isInFilter(StackWrapper stack, int start, int end) {
+    for (int i = start; i < end; i++) {
       if (getTile().getFilter().get(i) != null && getTile().getFilter().get(i).getStack().isItemEqual(stack.getStack())) {
         return true;
       }
@@ -83,17 +87,7 @@ public class ContainerCable extends Container {
     return false;
   }
 
-  //  @Override
-  //  @SideOnly(Side.CLIENT)
-  //  public void updateProgressBar(int id, int data) {
-  //    this.tile.setField(id, data);
-  //  }
-  //
-  //  @Override
-  //  public void addListener(IContainerListener listener) {
-  //    super.addListener(listener);
-  //    listener.sendAllWindowProperties(this, this.tile);
-  //  }
+
   public TileCable getTile() {
     return tile;
   }

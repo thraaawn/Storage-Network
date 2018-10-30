@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.item.ItemUpgrade;
@@ -140,7 +141,6 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
           StackWrapper wrap = tile.getFilter().get(index);
           ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
           int num = wrap == null ? 0 : wrap.getSize();
-        
           x = col * SQ + 8;
           y = row * SQ + 26;
           itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, true));
@@ -299,7 +299,6 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
       btnPlus = new GuiCableButton(CableMessageType.PRIORITY_UP, guiLeft + 37, guiTop + 5, "+");
       btnPlus.setCable(tile);
       this.addButton(btnPlus);
-
       btnWhite = new GuiCableButton(CableMessageType.TOGGLE_WHITELIST, guiLeft + 58, guiTop + 5, "");
       btnWhite.setCable(tile);
       this.addButton(btnWhite);
@@ -364,7 +363,15 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
         ContainerCable container = (ContainerCable) inventorySlots;
         StackWrapper stackWrapper = container.getTile().getFilter().get(i);
         boolean doesExistAlready = container.isInFilter(new StackWrapper(stackCarriedByMouse, 1));
-        //        if (tile.getBlockType() == ModBlocks.processKabel) {
+        if (tile.getBlockType() == ModBlocks.processKabel) {
+          //diff rules : if i put it in the left, only check the left, and so on
+          if (i < AbstractFilterTile.FILTER_SIZE / 2) {
+            doesExistAlready = container.isInFilter(new StackWrapper(stackCarriedByMouse, 1), 0, AbstractFilterTile.FILTER_SIZE / 2);
+          }
+          else {
+            doesExistAlready = container.isInFilter(new StackWrapper(stackCarriedByMouse, 1), AbstractFilterTile.FILTER_SIZE / 2, AbstractFilterTile.FILTER_SIZE);
+          }
+        }
         if (!stackCarriedByMouse.isEmpty() && !doesExistAlready) {
           int quantity = (isRightClick) ? 1 : stackCarriedByMouse.getCount();
           container.getTile().getFilter().put(i, new StackWrapper(stackCarriedByMouse, quantity));
