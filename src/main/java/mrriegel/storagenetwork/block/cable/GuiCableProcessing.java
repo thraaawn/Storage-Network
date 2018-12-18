@@ -2,8 +2,6 @@ package mrriegel.storagenetwork.block.cable;
 
 import java.io.IOException;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.input.Keyboard;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractFilterTile;
@@ -44,6 +42,7 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
   private GuiCableButton pbtnReset;
   private GuiCableButton pbtnBottomface;
   private GuiCableButton pbtnTopface;
+  private GuiCableButton buttonRecipe;
   private GuiCheckBox checkboxNBT;
 
   public GuiCableProcessing(ContainerCable inventorySlotsIn) {
@@ -78,21 +77,7 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
     this.drawTexturedModalRect(xMiddle, yMiddle, 0, 0, this.xSize, this.ySize);
     int x = 0, y = 0;
     int u = 176, v = 112;
-    //    if (tile.getBlockType() == ModBlocks.processKabel) {
-    //      // one texture per row
-    //      //RED IS output, GREEN is input
-    //      //RED output Means that you can pull out of chest into network, but not put in
-    //      //GREEN input means yes you can also put into chest from network
-    //      //this first TOP texture is green
-    //      int col = -3;
-    //      this.drawTexturedModalRect(xMiddle + col, yMiddle + 23, u, v, SQ - 8, SQ);
-    //      //move over on spritesheet and down on gui
-    //      u = 188;
-    //      //this bottom one is RED
-    //      //      this.mc.getTextureManager().bindTexture(texture);
-    //      //PROCESS_SPAPROCESS_SPACINGCING
-    //      this.drawTexturedModalRect(xMiddle + col, yMiddle + 26 + PROCESS_SPACING, u, v, SQ - 8, SQ);
-    //    }
+
     //reset sprite u/v
     u = 176;
     v = 34;
@@ -152,32 +137,11 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
         //
         x = col * SQ + 116;
         y = row * SQ + 26;
-        //
-        //          x = -1 + col * Const.SQ;
-        //          y = -1 + row * Const.SQ;
+
         itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, true));
       }
     }
-    //    }
-    //    else {
-    //      fontRenderer.drawString(String.valueOf(tile.getPriority()),
-    //          guiLeft + 30 - fontRenderer.getStringWidth(String.valueOf(tile.getPriority())) / 2,
-    //          5 + btnMinus.y, 4210752);
-    //      for (int row = 0; row < rows; row++) {
-    //        for (int col = 0; col < cols; col++) {
-    //          int index = col + (cols * row);
-    //          StackWrapper wrap = tile.getFilter().get(index);
-    //          ItemStack stack = wrap == null ? ItemStack.EMPTY : wrap.getStack();
-    //          int num = wrap == null ? 0 : wrap.getSize();
-    //          boolean numShow = tile instanceof TileCable ? tile.getUpgradesOfType(ItemUpgrade.STOCK) > 0
-    //              //    || tile.getBlockType() == ModBlocks.processKabel
-    //              : false;
-    //          x = 8 + col * SQ;
-    //          y = 26 + row * SQ;
-    //          itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, numShow));
-    //        }
-    //      }
-    //    }
+
     for (ItemSlotNetwork s : itemSlotsGhost) {
       s.drawSlot(mouseX, mouseY);
     }
@@ -198,15 +162,18 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
     if (pbtnReset != null && pbtnReset.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.refresh")), mouseX, mouseY);
     }
+    if (this.buttonRecipe != null && buttonRecipe.isMouseOver()) {
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.recipe.tooltip")), mouseX, mouseY);
+    }
     if (btnImport != null && btnImport.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.gui.import")), mouseX, mouseY);
     }
     if (btnInputOutputStorage != null && btnInputOutputStorage.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX, mouseY);
     }
-    if (mouseX > guiLeft + 20 && mouseX < guiLeft + 50 && mouseY > guiTop + 2 && mouseY < guiTop + 30) {
-      this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.priority")), mouseX, mouseY, fontRenderer);
-    }
+    //    if (mouseX > guiLeft + 20 && mouseX < guiLeft + 50 && mouseY > guiTop + 2 && mouseY < guiTop + 30) {
+    //      this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.priority")), mouseX, mouseY, fontRenderer);
+    //    }
     if (btnWhite != null && btnWhite.isMouseOver()) {
       String s = tile.isWhitelist() ? I18n.format("gui.storagenetwork.gui.whitelist") : I18n.format("gui.storagenetwork.gui.blacklist");
       this.drawHoveringText(Lists.newArrayList(s), mouseX, mouseY, fontRenderer);
@@ -232,24 +199,37 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
     }
   }
 
+  int FONT = 14737632;
+
+  void drawString(String s, int x, int y) {
+    this.drawString(this.fontRenderer, StorageNetwork.lang(s),
+        x, y, FONT);
+  }
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+
     if (pbtnBottomface != null) {
       EnumFacing f = tile.getFacingBottomRow();
       pbtnBottomface.displayString = f.name().substring(0, 2);
     }
+    //also add ITEMSTACK tooltips: middle click increaes. ex
     if (pbtnTopface != null) {
       //      this.tile.getRequest().notifyAll();
       EnumFacing f = tile.getFacingTopRow();
       pbtnTopface.displayString = f.name().substring(0, 2);
+    } //if recipe is empty or invalid, tell that
+    int x = 8;
+    int y = 8;
+    if (tile.isBottomEmpty() || tile.isTopEmpty()) {
+      this.drawString("tile.storagenetwork:recipe.invalid",
+          x, y);
     }
     ProcessRequestModel p = tile.getProcessModel();
-    int FONT = 14737632;
-    int x = -90;
-    int y = 4;
-    this.drawString(this.fontRenderer, StorageNetwork.lang("tile.storagenetwork:controller.name"),
-        x, y, FONT);
+    x = -90;
+    y = 4;
+    this.drawString("tile.storagenetwork:controller.name",
+        x, y);
     x += 12;
     y += 18;
     TextFormatting f = (p.isAlwaysActive()) ? TextFormatting.GREEN
@@ -258,13 +238,18 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
     if (!p.isAlwaysActive()) {
       txt += p.getCount();
     }
-    this.drawString(this.fontRenderer, f + txt, x, y, FONT);
+    this.drawString(f + txt, x, y);
   }
 
   @Override
   public void initGui() {
     super.initGui();
     int x = 0, y = 0;
+    //we need some way to let players know if recipe is invalid
+    buttonRecipe = new GuiCableButton(CableMessageType.TOGGLE_P_RESTARTTRIGGER, guiLeft + 5, guiTop + 5, "S");
+
+    buttonRecipe.setCable(tile);
+    this.addButton(buttonRecipe);
     btnImport = new GuiCableButton(CableMessageType.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
     btnImport.setCable(tile);
     this.addButton(btnImport);
@@ -391,35 +376,8 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
   }
 
   @Override
-  protected void keyTyped(char typedChar, int keyCode) throws IOException {
-    if (!this.checkHotbarKeys(keyCode)) {
-      Keyboard.enableRepeatEvents(true);
-      String s = "";
-      if (tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) {
-        s = searchBar.getText();
-      }
-      if ((tile.getUpgradesOfType(ItemUpgrade.OPERATION) >= 1) && this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
-        if (!StringUtils.isNumeric(searchBar.getText()) && !searchBar.getText().isEmpty()) searchBar.setText(s);
-        int num = 0;
-        try {
-          num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-        }
-        catch (Exception e) {
-          searchBar.setText("0");
-        }
-        tile.setLimit(num);
-        PacketRegistry.INSTANCE.sendToServer(new CableLimitMessage(num, tile.getPos(), operationItemSlot.getStack()));
-      }
-      else {
-        super.keyTyped(typedChar, keyCode);
-      }
-    }
-  }
-
-  @Override
   public void onGuiClosed() {
     super.onGuiClosed();
-    Keyboard.enableRepeatEvents(false);
   }
 
   @Override

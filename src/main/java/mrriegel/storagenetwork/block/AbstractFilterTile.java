@@ -87,7 +87,16 @@ public abstract class AbstractFilterTile extends TileConnectable {
 
   private boolean doesWrapperMatchStack(StackWrapper stackWrapper, ItemStack stack) {
     ItemStack s = stackWrapper.getStack();
-    return ores ? UtilTileEntity.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem();
+    if (ores) {
+      return UtilTileEntity.equalOreDict(stack, s);
+    }
+    else if (metas) {
+      return stack.isItemEqual(s);
+    }
+    else {
+      return stack.getItem() == s.getItem();
+    }
+    //    return ores ? UtilTileEntity.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem();
   }
 
   /* key function used by TileMaster for all item trafic
