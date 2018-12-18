@@ -213,16 +213,25 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
       EnumFacing f = tile.getFacingBottomRow();
       pbtnBottomface.displayString = f.name().substring(0, 2);
     }
-    //also add ITEMSTACK tooltips: middle click increaes. ex
+
     if (pbtnTopface != null) {
-      //      this.tile.getRequest().notifyAll();
+
       EnumFacing f = tile.getFacingTopRow();
       pbtnTopface.displayString = f.name().substring(0, 2);
     } //if recipe is empty or invalid, tell that
-    int x = 8;
-    int y = 8;
+    int x = -90;
+    int y = 48;
     if (tile.isBottomEmpty() || tile.isTopEmpty()) {
-      this.drawString("tile.storagenetwork:recipe.invalid",
+      ///also tooltip here?  
+      x = -102;
+      this.drawString("tile.storagenetwork:recipe.invalid", x, y);
+      if (tile.isBottomEmpty())
+        this.drawString("tile.storagenetwork:recipe.invalidright", x, y += 12);
+      if (tile.isTopEmpty())
+        this.drawString("tile.storagenetwork:recipe.invalidleft", x, y += 12);
+    }
+    else {
+      this.drawString("tile.storagenetwork:recipe.valid",
           x, y);
     }
     ProcessRequestModel p = tile.getProcessModel();

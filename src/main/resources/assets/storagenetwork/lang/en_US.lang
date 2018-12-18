@@ -16,6 +16,11 @@ item.storagenetwork:remote_0.name=Storage Remote
 item.storagenetwork:remote_2.name=Upgraded Storage Remote
 item.storagenetwork:remote_1.name=Advanced Storage Remote
 
+tile.storagenetwork:recipe.invalid=Recipe invalid: 
+tile.storagenetwork:recipe.invalidleft=Set Input on left
+tile.storagenetwork:recipe.invalidright=Set Output on right
+tile.storagenetwork:recipe.valid=Recipe valid
+
 item.remote.outofrange=Out of range
 item.remote.notloaded=Chunk not loaded
 
