@@ -87,7 +87,6 @@ public class ContainerCable extends Container {
     return false;
   }
 
-
   public TileCable getTile() {
     return tile;
   }

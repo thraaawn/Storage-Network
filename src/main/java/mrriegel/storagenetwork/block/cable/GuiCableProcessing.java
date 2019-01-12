@@ -77,7 +77,6 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
     this.drawTexturedModalRect(xMiddle, yMiddle, 0, 0, this.xSize, this.ySize);
     int x = 0, y = 0;
     int u = 176, v = 112;
-
     //reset sprite u/v
     u = 176;
     v = 34;
@@ -137,11 +136,9 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
         //
         x = col * SQ + 116;
         y = row * SQ + 26;
-
         itemSlotsGhost.add(new ItemSlotNetwork(this, stack, guiLeft + x, guiTop + y, num, guiLeft, guiTop, true));
       }
     }
-
     for (ItemSlotNetwork s : itemSlotsGhost) {
       s.drawSlot(mouseX, mouseY);
     }
@@ -205,17 +202,15 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
     this.drawString(this.fontRenderer, StorageNetwork.lang(s),
         x, y, FONT);
   }
+
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-
     if (pbtnBottomface != null) {
       EnumFacing f = tile.getFacingBottomRow();
       pbtnBottomface.displayString = f.name().substring(0, 2);
     }
-
     if (pbtnTopface != null) {
-
       EnumFacing f = tile.getFacingTopRow();
       pbtnTopface.displayString = f.name().substring(0, 2);
     } //if recipe is empty or invalid, tell that
@@ -256,7 +251,6 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
     int x = 0, y = 0;
     //we need some way to let players know if recipe is invalid
     buttonRecipe = new GuiCableButton(CableMessageType.TOGGLE_P_RESTARTTRIGGER, guiLeft + 5, guiTop + 5, "S");
-
     buttonRecipe.setCable(tile);
     this.addButton(buttonRecipe);
     btnImport = new GuiCableButton(CableMessageType.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
@@ -265,7 +259,6 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
     btnImport.x += 56;
     //move priority over 
     //add custom buttons 
-
     //a click will swap it to EXPORTING with CableDataMessage 
     pbtnReset = new GuiCableButton(CableMessageType.TOGGLE_P_RESTARTTRIGGER, guiLeft + 154, guiTop + 5, "R");
     pbtnReset.setCable(tile);
@@ -277,7 +270,6 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
     pbtnTopface = new GuiCableButton(CableMessageType.P_FACE_TOP, guiLeft + column - 12, guiTop + ctr, "");
     pbtnTopface.setCable(tile);
     this.addButton(pbtnTopface);
-
     x = 64;
     y = 62;
     checkOreBtn = new GuiCheckBox(10, guiLeft + x, guiTop + y, I18n.format("gui.storagenetwork.checkbox.ore"), true);

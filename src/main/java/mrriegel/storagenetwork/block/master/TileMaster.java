@@ -297,7 +297,6 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stack.isEmpty()) {
       return 0;
     }
-
     List<TileCable> invs = getSortedStorageCables();
     ItemStack stackInCopy = stack.copy();
     //only if it does NOT contains
@@ -319,13 +318,10 @@ public class TileMaster extends TileEntity implements ITickable {
         if (tileCabl.getSource().equals(source))
           continue;
         IItemHandler inventoryLinked = tileCabl.getInventory();
-
         if (!tileCabl.canTransfer(stackInCopy, EnumFilterDirection.IN))
           continue;
-
         //try existing slot then try new
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, stackInCopy, simulate);
-
         //        if (stackInCopy.isEmpty() == false)// then we are done
         //          stackInCopy = ItemHandlerHelper.insertItem(inventoryLinked, stackInCopy, simulate);
         //         ItemStack remain = stackInCopy;
@@ -397,7 +393,6 @@ public class TileMaster extends TileEntity implements ITickable {
       if (tileCable == null || tileCable.getInventory() == null || tileCable.getBlockType() != ModBlocks.processKabel) {
         continue;
       }
-
       ProcessRequestModel processRequest = tileCable.getRequest();
       if (processRequest == null) {
         continue;

@@ -59,6 +59,6 @@
   	,"1.5.2":"Fix issue where priority was sometimes ignored due to an error in some optimization features.  "
   	,"1.5.3":"Processing cable now allows you to put the same item on both the left and right side.  Added NBT checkbox for filtering items in cables.  Fixed a game crash where network tried to get ore-dictionary data on empty item stacks.  Fix the game sometimes crashing if JEI is not installed.  Fixed a bug where shift-crafting multiple stacks in the remote could consume too many items.  "
 	,"1.5.4":"Fixed Storage Remote sometimes not opening and getting locked up.  "
-	,"1.5.5":"Processing cable now indicates if its recipe is invalid to the player.  Fixed delay in processing cables (it no longer looks for impossible speed upgrades).   "
+	,"1.5.5":"Processing cable now indicates if its recipe is invalid to the player.  Updated priority tooltip.  Fixed delay in processing cables (it no longer looks for impossible speed upgrades).  Update to recipe handler transfer from JEI to avoid getting mismatched NBT items (such as tools or copper cables). "
   }
 }
