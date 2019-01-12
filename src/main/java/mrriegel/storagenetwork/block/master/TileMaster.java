@@ -397,9 +397,7 @@ public class TileMaster extends TileEntity implements ITickable {
       if (tileCable == null || tileCable.getInventory() == null || tileCable.getBlockType() != ModBlocks.processKabel) {
         continue;
       }
-      if ((world.getTotalWorldTime() + 20) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
-        continue;
-      }
+
       ProcessRequestModel processRequest = tileCable.getRequest();
       if (processRequest == null) {
         continue;
@@ -653,7 +651,7 @@ public class TileMaster extends TileEntity implements ITickable {
       List<TileCable> exportCables = getAttachedCables(links, ModBlocks.exKabel);
       updateExports(exportCables);
       List<TileCable> processCables = getAttachedCables(links, ModBlocks.processKabel);
-      this.updateProcess(processCables);
+      updateProcess(processCables);
     }
     catch (Throwable e) {
       StorageNetwork.instance.logger.error("Refresh network error ", e);
