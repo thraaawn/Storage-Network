@@ -50,9 +50,10 @@ public class RequestRecipeTransferHandler<C extends Container & IStorageContaine
           if (i >= 5) {
             break; // Max 5 possible items to avoid reaching max network packet size
           }
-          if (!possibleItems.get(i).isEmpty()) {
+          ItemStack itemStack = possibleItems.get(i);
+          if (!itemStack.isEmpty()) {
             NBTTagCompound stackTag = new NBTTagCompound();
-            possibleItems.get(i).writeToNBT(stackTag);
+            itemStack.writeToNBT(stackTag);
             invList.appendTag(stackTag);
           }
         }
