@@ -154,9 +154,9 @@ public class GuiCable extends GuiContainer implements IPublicGuiContainer {
     if (btnInputOutputStorage != null && btnInputOutputStorage.isMouseOver()) {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX, mouseY);
     }
-    if (mouseX > guiLeft + 20 && mouseX < guiLeft + 50 && mouseY > guiTop + 2 && mouseY < guiTop + 30) {
-      this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.priority")), mouseX, mouseY, fontRenderer);
-    }
+    //    if (mouseX > guiLeft + 20 && mouseX < guiLeft + 50 && mouseY > guiTop + 2 && mouseY < guiTop + 30) {
+    //      this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.priority")), mouseX, mouseY, fontRenderer);
+    //    }
     if (btnWhite != null && btnWhite.isMouseOver()) {
       String s = tile.isWhitelist() ? I18n.format("gui.storagenetwork.gui.whitelist") : I18n.format("gui.storagenetwork.gui.blacklist");
       this.drawHoveringText(Lists.newArrayList(s), mouseX, mouseY, fontRenderer);
