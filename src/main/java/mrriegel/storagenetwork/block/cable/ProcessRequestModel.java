@@ -5,7 +5,6 @@ import net.minecraft.nbt.NBTTagCompound;
 //Not done but planned:
 //{A}Text box input for priority (all) 
 //{B}CLONE settings between multiple cables 
-
 public class ProcessRequestModel {
 
   //EXPORTING:from network to inventory (to start crafting, add ingredients) . also default state

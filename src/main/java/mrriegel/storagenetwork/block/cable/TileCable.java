@@ -335,6 +335,24 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     return half;
   }
 
+  public boolean isTopEmpty() {
+    for (StackWrapper w : this.getFilterTop()) {
+      if (w.getStack().isEmpty() == false) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public boolean isBottomEmpty() {
+    for (StackWrapper w : this.getFilterBottom()) {
+      if (w.getStack().isEmpty() == false) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public List<StackWrapper> getFilterBottom() {
     Map<Integer, StackWrapper> flt = super.getFilter();
     List<StackWrapper> half = new ArrayList<>();

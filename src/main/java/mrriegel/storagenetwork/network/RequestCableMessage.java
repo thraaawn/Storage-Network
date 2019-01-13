@@ -44,15 +44,17 @@ public class RequestCableMessage implements IMessage, IMessageHandler<RequestCab
         List<ProcessWrapper> list = new ArrayList<>();
         //group together any with that match
         //meaning: same output, AND same machine blockid 
-        for (TileCable c : processCables) {
+        for (TileCable tileCable : processCables) {
           //   TODO now gather stack int strg bool  
-          String name = player.world.getBlockState(c.getConnectedInventory()).getBlock().getLocalizedName();
-          ProcessRequestModel proc = c.getProcessModel();
+          String name = player.world.getBlockState(tileCable.getConnectedInventory()).getBlock().getLocalizedName();
+          // if cable had a LIST of models, we could do multi recipe 
+          ProcessRequestModel proc = tileCable.getProcessModel();
           //          StorageNetwork.log("request cable message get count of " + name + proc.getCount());
-          ProcessWrapper processor = new ProcessWrapper(c.getPos(), c.getFirstRecipeOut(),
+          //if list of models then wrapper would not need to change at all
+          ProcessWrapper processor = new ProcessWrapper(tileCable.getPos(), tileCable.getFirstRecipeOut(),
               proc.getCount(), name, proc.isAlwaysActive());
-          processor.ingredients = c.getProcessIngredients();
-          processor.blockId = player.world.getBlockState(c.getConnectedInventory()).getBlock().getRegistryName();
+          processor.ingredients = tileCable.getProcessIngredients();
+          processor.blockId = player.world.getBlockState(tileCable.getConnectedInventory()).getBlock().getRegistryName();
           list.add(processor);
         }
         //now all cables have been wraped to send related info 

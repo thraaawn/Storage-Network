@@ -55,7 +55,7 @@ public class GuiHandler implements IGuiHandler {
     }
     if (ID == REMOTE) {
       if (FB_LOADED) {
-        new ContainerFastRemote(player, world, EnumHand.values()[x]);
+        return new ContainerFastRemote(player, world, EnumHand.values()[x]);
       }
       else {
         return new ContainerRemote(player.inventory);
@@ -90,7 +90,7 @@ public class GuiHandler implements IGuiHandler {
         return new GuiFastRemote(player, world, EnumHand.values()[x]);
       }
       else {
-        new GuiRemote(new ContainerRemote(player.inventory));
+        return new GuiRemote(new ContainerRemote(player.inventory));
       }
     }
     return null;

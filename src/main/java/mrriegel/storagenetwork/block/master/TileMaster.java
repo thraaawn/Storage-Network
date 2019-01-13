@@ -297,7 +297,6 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stack.isEmpty()) {
       return 0;
     }
-
     List<TileCable> invs = getSortedStorageCables();
     ItemStack stackInCopy = stack.copy();
     //only if it does NOT contains
@@ -319,13 +318,10 @@ public class TileMaster extends TileEntity implements ITickable {
         if (tileCabl.getSource().equals(source))
           continue;
         IItemHandler inventoryLinked = tileCabl.getInventory();
-
         if (!tileCabl.canTransfer(stackInCopy, EnumFilterDirection.IN))
           continue;
-
         //try existing slot then try new
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, stackInCopy, simulate);
-
         //        if (stackInCopy.isEmpty() == false)// then we are done
         //          stackInCopy = ItemHandlerHelper.insertItem(inventoryLinked, stackInCopy, simulate);
         //         ItemStack remain = stackInCopy;
@@ -395,9 +391,6 @@ public class TileMaster extends TileEntity implements ITickable {
     //user will create a request, store in memory list
     for (TileCable tileCable : processCables) {
       if (tileCable == null || tileCable.getInventory() == null || tileCable.getBlockType() != ModBlocks.processKabel) {
-        continue;
-      }
-      if ((world.getTotalWorldTime() + 20) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
         continue;
       }
       ProcessRequestModel processRequest = tileCable.getRequest();
@@ -653,7 +646,7 @@ public class TileMaster extends TileEntity implements ITickable {
       List<TileCable> exportCables = getAttachedCables(links, ModBlocks.exKabel);
       updateExports(exportCables);
       List<TileCable> processCables = getAttachedCables(links, ModBlocks.processKabel);
-      this.updateProcess(processCables);
+      updateProcess(processCables);
     }
     catch (Throwable e) {
       StorageNetwork.instance.logger.error("Refresh network error ", e);

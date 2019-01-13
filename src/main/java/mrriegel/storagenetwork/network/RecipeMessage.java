@@ -126,6 +126,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
               continue;
             }
             FilterItem filterItem = new FilterItem(stackCurrent);
+            filterItem.setNbt(true);
             filterItem.setOre(isOreDict);//important: set this for correct matching
             //   StorageNetwork.log("CALL exctractItem   " + stackCurrent + " isOreDict " + isOreDict);
             ItemStack ex = UtilInventory.extractItem(new PlayerMainInvWrapper(player.inventory), filterItem, 1, true);
@@ -150,7 +151,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
         ctr.slotChanged();
         List<StackWrapper> list = master.getStacks();
         PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), player);
-      }
+      }//end run 
     });
     return null;
   }
