@@ -250,9 +250,9 @@ public class GuiCableProcessing extends GuiContainer implements IPublicGuiContai
     super.initGui();
     int x = 0, y = 0;
     //we need some way to let players know if recipe is invalid
-    buttonRecipe = new GuiCableButton(CableMessageType.TOGGLE_P_RESTARTTRIGGER, guiLeft + 5, guiTop + 5, "S");
-    buttonRecipe.setCable(tile);
-    this.addButton(buttonRecipe);
+    //    buttonRecipe = new GuiCableButton(CableMessageType.TOGGLE_P_RESTARTTRIGGER, guiLeft + 5, guiTop + 5, "S");
+    //    buttonRecipe.setCable(tile);
+    //    this.addButton(buttonRecipe);
     btnImport = new GuiCableButton(CableMessageType.IMPORT_FILTER, guiLeft + 78, guiTop + 5, "I");
     btnImport.setCable(tile);
     this.addButton(btnImport);
