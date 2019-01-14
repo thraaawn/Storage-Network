@@ -41,7 +41,6 @@ repositories {
 dependencies {
    deobfCompile "mezz.jei:jei_${mc_version}:${jei_version}"
    deobfCompile "fastworkbench:FastWorkbench:${mc_version}:${fb_version}"
-   deobfCompile "mcp.mobius.waila:Hwyla:+"
 }
 
 processResources {
