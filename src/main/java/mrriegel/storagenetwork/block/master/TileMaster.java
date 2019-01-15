@@ -44,7 +44,6 @@ public class TileMaster extends TileEntity implements ITickable {
   private Set<BlockPos> connectables;
   private List<BlockPos> storageInventorys;
   private Map<String, RecentSlotPointer> importCache = new HashMap<>();
-
   public static String[] blacklist;
 
   public List<StackWrapper> getStacks() {
@@ -178,7 +177,6 @@ public class TileMaster extends TileEntity implements ITickable {
 
   public static boolean isTargetAllowed(IBlockAccess world, BlockPos bl) {
     String blockId = world.getBlockState(bl).getBlock().getRegistryName().toString();
-
     for (String s : blacklist) {
       if (s != null && s.equals(blockId)) {
         return false;

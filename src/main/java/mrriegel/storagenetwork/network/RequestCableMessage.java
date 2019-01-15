@@ -61,7 +61,6 @@ public class RequestCableMessage implements IMessage, IMessageHandler<RequestCab
             StorageNetwork.instance.logger.error("Error with display name ", e);
           }
           ProcessRequestModel proc = tileCable.getProcessModel();
-
           //if list of models then wrapper would not need to change at all
           ProcessWrapper processor = new ProcessWrapper(tileCable.getPos(), tileCable.getFirstRecipeOut(),
               proc.getCount(), name, proc.isAlwaysActive());
