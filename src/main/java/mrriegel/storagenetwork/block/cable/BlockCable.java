@@ -84,7 +84,8 @@ public class BlockCable extends AbstractBlockConnectable {
   }
 
   boolean validInventory(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-    return UtilInventory.hasItemHandler(worldIn, pos, side);
+    return UtilInventory.hasItemHandler(worldIn, pos, side)
+        && TileMaster.isTargetAllowed(worldIn, pos);
   }
 
   @Override

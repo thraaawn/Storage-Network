@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.network;
 import java.util.ArrayList;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.control.ProcessWrapper;
@@ -10,7 +11,9 @@ import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.PacketRegistry;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -45,16 +48,24 @@ public class RequestCableMessage implements IMessage, IMessageHandler<RequestCab
         //group together any with that match
         //meaning: same output, AND same machine blockid 
         for (TileCable tileCable : processCables) {
-          //   TODO now gather stack int strg bool  
-          String name = player.world.getBlockState(tileCable.getConnectedInventory()).getBlock().getLocalizedName();
-          // if cable had a LIST of models, we could do multi recipe 
+          IBlockState blockState = player.world.getBlockState(tileCable.getConnectedInventory());
+          String name = blockState.getBlock().getLocalizedName();
+          try {
+            ItemStack pickBlock = blockState.getBlock().getPickBlock(blockState, player.rayTrace(1.0, 0), player.world,
+                tileCable.getConnectedInventory(), player);
+            if (pickBlock.isEmpty() == false) {
+              name = pickBlock.getDisplayName();
+            }
+          }
+          catch (Exception e) {
+            StorageNetwork.instance.logger.error("Error with display name ", e);
+          }
           ProcessRequestModel proc = tileCable.getProcessModel();
-          //          StorageNetwork.log("request cable message get count of " + name + proc.getCount());
           //if list of models then wrapper would not need to change at all
           ProcessWrapper processor = new ProcessWrapper(tileCable.getPos(), tileCable.getFirstRecipeOut(),
               proc.getCount(), name, proc.isAlwaysActive());
           processor.ingredients = tileCable.getProcessIngredients();
-          processor.blockId = player.world.getBlockState(tileCable.getConnectedInventory()).getBlock().getRegistryName();
+          processor.blockId = blockState.getBlock().getRegistryName();
           list.add(processor);
         }
         //now all cables have been wraped to send related info 

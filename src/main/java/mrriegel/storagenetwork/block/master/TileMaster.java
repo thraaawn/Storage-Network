@@ -33,6 +33,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.items.IItemHandler;
@@ -43,6 +44,7 @@ public class TileMaster extends TileEntity implements ITickable {
   private Set<BlockPos> connectables;
   private List<BlockPos> storageInventorys;
   private Map<String, RecentSlotPointer> importCache = new HashMap<>();
+  public static String[] blacklist;
 
   public List<StackWrapper> getStacks() {
     List<StackWrapper> stacks = Lists.newArrayList();
@@ -57,8 +59,6 @@ public class TileMaster extends TileEntity implements ITickable {
         stack = inv.getStackInSlot(i);
         if (!stack.isEmpty() && tileConnected.canTransfer(stack, EnumFilterDirection.BOTH))
           addToList(stacks, stack.copy(), stack.getCount());
-        //        else
-        //                  StorageNetwork.log(" reject   " + inv.getStackInSlot(i).getDisplayName());
       }
     }
     return stacks;
@@ -148,28 +148,41 @@ public class TileMaster extends TileEntity implements ITickable {
     if (pos == null || world == null || this.getWorld().isBlockLoaded(pos) == false) {
       return;
     }
-    for (BlockPos bl : UtilTileEntity.getSides(pos)) {
-      if (this.getWorld().isBlockLoaded(bl) == false) {
+    for (BlockPos blockPos : UtilTileEntity.getSides(pos)) {
+      if (this.getWorld().isBlockLoaded(blockPos) == false) {
         continue;
       }
-      Chunk chunk = world.getChunkFromBlockCoords(bl);
+      Chunk chunk = world.getChunkFromBlockCoords(blockPos);
       if (chunk == null || !chunk.isLoaded()) {
         continue;
       }
-      TileEntity tileHere = world.getTileEntity(bl);
-      if (tileHere instanceof TileMaster && !bl.equals(this.pos)) {
-        world.getBlockState(bl).getBlock().dropBlockAsItem(world, bl, world.getBlockState(bl), 0);
-        world.setBlockToAir(bl);
-        world.removeTileEntity(bl);
+      if (!isTargetAllowed(world, blockPos)) {
         continue;
       }
-      if (tileHere instanceof IConnectable && !getConnectables().contains(bl)) {
-        getConnectables().add(bl);
+      TileEntity tileHere = world.getTileEntity(blockPos);
+      if (tileHere instanceof TileMaster && !blockPos.equals(this.pos)) {
+        world.getBlockState(blockPos).getBlock().dropBlockAsItem(world, blockPos, world.getBlockState(blockPos), 0);
+        world.setBlockToAir(blockPos);
+        world.removeTileEntity(blockPos);
+        continue;
+      }
+      if (tileHere instanceof IConnectable && !getConnectables().contains(blockPos)) {
+        getConnectables().add(blockPos);
         ((IConnectable) tileHere).setMaster(this.pos);
         chunk.setModified(true);
-        addConnectables(bl);
+        addConnectables(blockPos);
       }
     }
+  }
+
+  public static boolean isTargetAllowed(IBlockAccess world, BlockPos bl) {
+    String blockId = world.getBlockState(bl).getBlock().getRegistryName().toString();
+    for (String s : blacklist) {
+      if (s != null && s.equals(blockId)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private void addInventorys() {
@@ -667,6 +680,9 @@ public class TileMaster extends TileEntity implements ITickable {
     List<TileEntity> attachedCables = Lists.newArrayList();
     TileEntity tile = null;
     for (BlockPos p : getConnectables()) {
+      if (!isTargetAllowed(world, p)) {
+        continue;
+      }
       tile = world.getTileEntity(p);
       attachedCables.add(tile);
     }
