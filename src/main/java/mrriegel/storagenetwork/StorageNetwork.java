@@ -11,11 +11,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.VERSION, updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
+@Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, certificateFingerprint = "@FINGERPRINT@", version = StorageNetwork.VERSION, updateJSON = "https://raw.githubusercontent.com/PrinceOfAmber/Storage-Network/master/update.json")
 public class StorageNetwork {
 
   public Logger logger;
@@ -43,6 +44,19 @@ public class StorageNetwork {
   @EventHandler
   public void postInit(FMLPostInitializationEvent event) {
     proxy.postInit(event);
+  }
+
+  @EventHandler
+  public void onFingerprintViolation(FMLFingerprintViolationEvent event) {
+    // https://tutorials.darkhax.net/tutorials/jar_signing/
+    String source = (event.getSource() == null) ? "" : event.getSource().getName() + " ";
+    String msg = "Storage Network: Invalid fingerprint detected! The file " + source + "may have been tampered with. This version will NOT be supported by the author!";
+    if (logger == null) {
+      System.out.println(msg);
+    }
+    else {
+      logger.error(msg);
+    }
   }
 
   public static void chatMessage(EntityPlayer player, String message) {
