@@ -1,4 +1,4 @@
-package IStorageCable;
+package mrriegel.storagenetwork.api;
 
 import mrriegel.storagenetwork.data.EnumFilterDirection;
 import net.minecraft.item.ItemStack;

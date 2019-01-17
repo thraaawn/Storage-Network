@@ -1,4 +1,4 @@
-package IStorageCable;
+package mrriegel.storagenetwork.api;
 
 
 public interface IHasNetworkPriority {
