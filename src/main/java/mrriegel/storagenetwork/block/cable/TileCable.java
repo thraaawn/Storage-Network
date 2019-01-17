@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import IStorageCable.ICableStorage;
 import mrriegel.storagenetwork.block.TileConnectable;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.data.EnumCableType;
@@ -35,7 +36,7 @@ import net.minecraftforge.items.IItemHandler;
  * Base class for TileCable
  * 
  */
-public class TileCable extends TileConnectable implements IInventory {
+public class TileCable extends TileConnectable implements IInventory, ICableStorage {
 
   public static enum Fields {
     STATUS, FACINGTOPROW, FACINGBOTTOMROW;

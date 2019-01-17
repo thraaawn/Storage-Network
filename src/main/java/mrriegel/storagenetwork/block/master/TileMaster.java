@@ -9,6 +9,8 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import IStorageCable.ICableStorage;
+import IStorageCable.IHasNetworkPriority;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
@@ -50,8 +52,8 @@ public class TileMaster extends TileEntity implements ITickable {
     if (getConnectables() == null) {
       refreshNetwork();
     }
-    List<TileCable> invs = getSortedStorageCables();
-    for (TileCable tileConnected : invs) {
+    List<ICableStorage> invs = getSortedStorageCables();
+    for (ICableStorage tileConnected : invs) {
       IItemHandler inv = tileConnected.getInventory();
       ItemStack stack;
       for (int i = 0; i < inv.getSlots(); i++) {
@@ -74,10 +76,19 @@ public class TileMaster extends TileEntity implements ITickable {
     return null;
   }
 
-  private List<TileCable> getSortedStorageCables() {
+  private List<ICableStorage> getSortedStorageCables() {
     List<TileEntity> links = getAttachedTileEntities();
-    List<TileCable> storageCables = getAttachedCables(links, ModBlocks.storageKabel);
-    return storageCables;
+    List<ICableStorage> attachedCables = Lists.newArrayList();
+    for (TileEntity tileIn : links) {
+      if (tileIn instanceof ICableStorage) {
+        ICableStorage tile = (ICableStorage) tileIn;
+        if (tile.getInventory() != null) {
+          attachedCables.add(tile);
+        }
+      }
+    }
+    sortCablesByPriority(attachedCables);
+    return attachedCables;
   }
 
   public List<TileCable> getAttachedCables(List<TileEntity> links, Block kind) {
@@ -96,8 +107,8 @@ public class TileMaster extends TileEntity implements ITickable {
 
   public int emptySlots() {
     int countEmpty = 0;
-    List<TileCable> invs = getSortedStorageCables();
-    for (TileCable tile : invs) {
+    List<ICableStorage> invs = getSortedStorageCables();
+    for (ICableStorage tile : invs) {
       IItemHandler inv = tile.getInventory();
       for (int i = 0; i < inv.getSlots(); i++) {
         if (inv.getStackInSlot(i).isEmpty()) {
@@ -309,7 +320,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stack.isEmpty()) {
       return 0;
     }
-    List<TileCable> invs = getSortedStorageCables();
+    List<ICableStorage> invs = getSortedStorageCables();
     ItemStack stackInCopy = stack.copy();
     //only if it does NOT contains
     String key = getStackKey(stackInCopy);
@@ -326,9 +337,10 @@ public class TileMaster extends TileEntity implements ITickable {
       //      rest = insertStack(ItemHandlerHelper.copyStackWithSize(stackCurrent, insert), tileCable.getConnectedInventory(), false);
     }
     if (stackInCopy.isEmpty() == false) {
-      for (TileCable tileCabl : invs) {
-        if (tileCabl.getConnectedInventory().equals(source))
+      for (ICableStorage tileCabl : invs) {
+        if (tileCabl.getConnectedInventory().equals(source)) {
           continue;
+        }
         IItemHandler inventoryLinked = tileCabl.getInventory();
         if (!tileCabl.canTransfer(stackInCopy, EnumFilterDirection.IN))
           continue;
@@ -668,11 +680,11 @@ public class TileMaster extends TileEntity implements ITickable {
     }
   }
 
-  private void sortCablesByPriority(List<TileCable> attachedCables) {
-    Collections.sort(attachedCables, new Comparator<TileCable>() {
+  private void sortCablesByPriority(List<? extends IHasNetworkPriority> attachedCables) {
+    Collections.sort(attachedCables, new Comparator<IHasNetworkPriority>() {
 
       @Override
-      public int compare(TileCable o1, TileCable o2) {
+      public int compare(IHasNetworkPriority o1, IHasNetworkPriority o2) {
         return Integer.compare(o1.getPriority(), o2.getPriority());
       }
     });
