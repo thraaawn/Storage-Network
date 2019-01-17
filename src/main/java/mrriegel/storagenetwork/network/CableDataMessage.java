@@ -96,7 +96,7 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             break;
             case TOGGLE_MODE://4 
               if (tileCable != null)
-                tileCable.setMode(!tileCable.isMode());
+                tileCable.setOperationMode(!tileCable.isOperationMode());
             break;
             case IMPORT_FILTER:
               if (tile.getInventory() != null) {
@@ -128,7 +128,7 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
               }
             break;
             case TOGGLE_WAY:
-              tile.setWay(tile.getWay().next());
+              tile.setTransferDirection(tile.getTransferDirection().next());
             break;
             case P_FACE_BOTTOM:
               if (tileCable != null)

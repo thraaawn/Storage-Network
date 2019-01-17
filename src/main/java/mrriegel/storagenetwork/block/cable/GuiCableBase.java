@@ -82,7 +82,7 @@ public abstract class GuiCableBase extends GuiContainer {
       PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos(), newFace));
     }
     else if (btnOperationToggle != null && button.id == btnOperationToggle.id) {
-      if (tile instanceof TileCable) tile.setMode(!tile.isMode());
+      if (tile instanceof TileCable) tile.setOperationMode(!tile.isOperationMode());
       PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id, tile.getPos()));
     }
     else if (checkMetaBtn != null && checkOreBtn != null && (button.id == checkMetaBtn.id || button.id == checkOreBtn.id)) {
@@ -198,7 +198,7 @@ public abstract class GuiCableBase extends GuiContainer {
       drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.gui.import")), mouseX, mouseY);
     }
     if (btnInputOutputStorage != null && btnInputOutputStorage.isMouseOver()) {
-      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX, mouseY);
+      drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getTransferDirection().toString())), mouseX, mouseY);
     }
     if (btnWhite != null && btnWhite.isMouseOver()) {
       String s = tile.isWhitelist() ? I18n.format("gui.storagenetwork.gui.whitelist") : I18n.format("gui.storagenetwork.gui.blacklist");
@@ -217,7 +217,7 @@ public abstract class GuiCableBase extends GuiContainer {
       this.drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.processing.extract")), mouseX, mouseY, fontRenderer);
     }
     if (btnOperationToggle != null && btnOperationToggle.isMouseOver()) {
-      String s = I18n.format("gui.storagenetwork.operate.tooltip", I18n.format("gui.storagenetwork.operate.tooltip." + (tile.isMode() ? "more" : "less")), tile.getLimit(), tile.getOperationStack() != null ? tile.getOperationStack().getDisplayName() : "Items");
+      String s = I18n.format("gui.storagenetwork.operate.tooltip", I18n.format("gui.storagenetwork.operate.tooltip." + (tile.isOperationMode() ? "more" : "less")), tile.getOperationLimit(), tile.getOperationStack() != null ? tile.getOperationStack().getDisplayName() : "Items");
       this.drawHoveringText(Lists.newArrayList(s), mouseX, mouseY, fontRenderer);
     }
   }

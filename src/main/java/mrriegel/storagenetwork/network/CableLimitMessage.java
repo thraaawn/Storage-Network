@@ -36,7 +36,7 @@ public class CableLimitMessage implements IMessage, IMessageHandler<CableLimitMe
       @Override
       public void run() {
         TileCable tile = (TileCable) player.world.getTileEntity(message.pos);
-        tile.setLimit(message.limit);
+        tile.setOperationLimit(message.limit);
         tile.setOperationStack(message.stack);
         tile.markDirty();
       }

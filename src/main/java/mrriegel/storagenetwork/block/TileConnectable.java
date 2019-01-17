@@ -13,6 +13,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+/**
+ * Base class for Cable, Control, Request
+ *
+ */
 public class TileConnectable extends TileEntity implements IConnectable {
 
   protected BlockPos posMaster;

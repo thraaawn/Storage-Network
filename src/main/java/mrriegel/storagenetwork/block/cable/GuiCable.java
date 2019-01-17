@@ -139,7 +139,7 @@ public class GuiCable extends GuiCableBase implements IPublicGuiContainer {
       searchBar.setTextColor(16777215);
       searchBar.setCanLoseFocus(false);
       searchBar.setFocused(true);
-      searchBar.setText(tile.getLimit() + "");
+      searchBar.setText(tile.getOperationLimit() + "");
       searchBar.width = 20;
       btnOperationToggle = new GuiCableButton(CableMessageType.TOGGLE_MODE, guiLeft + 28, guiTop + 66, "");
       //      btnOperationToggle = new Button(4, guiLeft + 60, guiTop + 64, "");
@@ -180,7 +180,7 @@ public class GuiCable extends GuiCableBase implements IPublicGuiContainer {
         catch (Exception e) {
           searchBar.setText("0");
         }
-        tile.setLimit(num);
+        tile.setOperationLimit(num);
         PacketRegistry.INSTANCE.sendToServer(new CableLimitMessage(num, tile.getPos(), operationItemSlot.getStack()));
       }
       else {

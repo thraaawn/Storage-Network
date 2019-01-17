@@ -41,13 +41,13 @@ public class GuiCableButton extends GuiButton {
           this.drawTexturedModalRect(this.x + 1, this.y + 3, 190, 83, 13, 10);
       }
       if (id == 4) {
-        if (cable.isMode())
+        if (cable.isOperationMode())
           this.displayString = ">";//   this.drawTexturedModalRect(this.x + 0, this.y + 0, 176, 94, 16, 15);
         else
           this.displayString = "<";//    this.drawTexturedModalRect(this.x + 0, this.y + 0, 176 + 16, 94, 16, 15);
       }
       if (id == 6) {
-        this.drawTexturedModalRect(this.x + 2, this.y + 2, 176 + cable.getWay().ordinal() * 12, 114, 12, 12);
+        this.drawTexturedModalRect(this.x + 2, this.y + 2, 176 + cable.getTransferDirection().ordinal() * 12, 114, 12, 12);
       }
       this.mouseDragged(mcc, x, y);
       int l = 14737632;

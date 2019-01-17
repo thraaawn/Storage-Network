@@ -59,7 +59,7 @@ public class TileCable extends TileConnectable implements IInventory {
   private ProcessRequestModel processModel = new ProcessRequestModel();
   public EnumFacing processingTop = EnumFacing.UP;
   public EnumFacing processingBottom = EnumFacing.DOWN;
-  protected EnumFilterDirection way = EnumFilterDirection.BOTH;
+  private EnumFilterDirection transferDirection = EnumFilterDirection.BOTH;
 
   public TileCable() {
     this.setOres(false);
@@ -87,10 +87,10 @@ public class TileCable extends TileConnectable implements IInventory {
     metas = compound.getBoolean("metas");
     nbt = compound.getBoolean("nbtFilter");
     try {
-      way = EnumFilterDirection.valueOf(compound.getString("way"));
+      transferDirection = EnumFilterDirection.valueOf(compound.getString("way"));
     }
     catch (Exception e) {
-      way = EnumFilterDirection.BOTH;
+      transferDirection = EnumFilterDirection.BOTH;
     }
     connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {}.getType());
     inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
@@ -144,7 +144,7 @@ public class TileCable extends TileConnectable implements IInventory {
     compound.setBoolean("ores", ores);
     compound.setBoolean("metas", metas);
     compound.setBoolean("nbtFilter", nbt);
-    compound.setString("way", way.toString());
+    compound.setString("way", transferDirection.toString());
     compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
     if (inventoryFace != null)
       compound.setString("inventoryFace", inventoryFace.toString());
@@ -207,7 +207,7 @@ public class TileCable extends TileConnectable implements IInventory {
    * 
    * import - meta ; blacklist */
   public boolean canTransfer(ItemStack stack, EnumFilterDirection way) {
-    if (isStorage() && !this.way.match(way)) {
+    if (isStorage() && !this.getTransferDirection().match(way)) {
       return false;
     }
     if (this.isWhitelist()) {
@@ -240,10 +240,6 @@ public class TileCable extends TileConnectable implements IInventory {
 
   public BlockPos getConnectedInventory() {
     return connectedInventory;
-  }
-
-  public BlockPos getSource() {
-    return getConnectedInventory();
   }
 
   public void setConnectedInventory(BlockPos connectedInventory) {
@@ -319,11 +315,11 @@ public class TileCable extends TileConnectable implements IInventory {
       return true;
     }
     int amount = m.getAmount(new FilterItem(getOperationStack()));
-    if (isMode()) {
-      return amount > getLimit();
+    if (isOperationMode()) {
+      return amount > getOperationLimit();
     }
     else {
-      return amount <= getLimit();
+      return amount <= getOperationLimit();
     }
   }
 
@@ -381,12 +377,12 @@ public class TileCable extends TileConnectable implements IInventory {
     this.priority = priority;
   }
 
-  public EnumFilterDirection getWay() {
-    return way;
+  public EnumFilterDirection getTransferDirection() {
+    return transferDirection;
   }
 
-  public void setWay(EnumFilterDirection way) {
-    this.way = way;
+  public void setTransferDirection(EnumFilterDirection way) {
+    this.transferDirection = way;
   }
 
   public EnumFacing getFacingBottomRow() {
@@ -417,19 +413,19 @@ public class TileCable extends TileConnectable implements IInventory {
     return upgrades;
   }
 
-  public boolean isMode() {
+  public boolean isOperationMode() {
     return mode;
   }
 
-  public void setMode(boolean mode) {
+  public void setOperationMode(boolean mode) {
     this.mode = mode;
   }
 
-  public int getLimit() {
+  public int getOperationLimit() {
     return limit;
   }
 
-  public void setLimit(int limit) {
+  public void setOperationLimit(int limit) {
     this.limit = limit;
   }
 

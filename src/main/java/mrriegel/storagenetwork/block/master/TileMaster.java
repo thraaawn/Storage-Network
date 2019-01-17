@@ -11,7 +11,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.IConnectable;
-import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
@@ -191,7 +190,7 @@ public class TileMaster extends TileEntity implements ITickable {
       if (world.getTileEntity(cable) instanceof TileCable) {
         TileCable s = (TileCable) world.getTileEntity(cable);
         if (s.getInventory() != null && s.isStorage()) {
-          BlockPos pos = s.getSource();
+          BlockPos pos = s.getConnectedInventory();
           if (world.getChunkFromBlockCoords(pos).isLoaded())
             getStorageInventorys().add(pos);
         }
@@ -328,7 +327,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     if (stackInCopy.isEmpty() == false) {
       for (TileCable tileCabl : invs) {
-        if (tileCabl.getSource().equals(source))
+        if (tileCabl.getConnectedInventory().equals(source))
           continue;
         IItemHandler inventoryLinked = tileCabl.getInventory();
         if (!tileCabl.canTransfer(stackInCopy, EnumFilterDirection.IN))
@@ -339,7 +338,7 @@ public class TileMaster extends TileEntity implements ITickable {
         //          stackInCopy = ItemHandlerHelper.insertItem(inventoryLinked, stackInCopy, simulate);
         //         ItemStack remain = stackInCopy;
         stackInCopy = ItemHandlerHelper.copyStackWithSize(stackInCopy, remain.getCount());
-        world.markChunkDirty(tileCabl.getSource(), world.getTileEntity(tileCabl.getSource()));
+        world.markChunkDirty(tileCabl.getConnectedInventory(), world.getTileEntity(tileCabl.getConnectedInventory()));
       }
     }
     return stackInCopy.getCount();
@@ -446,8 +445,11 @@ public class TileMaster extends TileEntity implements ITickable {
           //  how many are needed. request them
           //true is using nbt 
           inventoryLinked = UtilInventory.getItemHandler(world.getTileEntity(tileCable.getConnectedInventory()), tileCable.getFacingTopRow());
-          ItemStack requestedFromNetwork = this.request(new FilterItem(ingred.getStack().copy(),
-              tileCable.getMeta(), tileCable.getOre(), tileCable.getNbt()), ingred.getSize(), simulate);//false means 4real, no simulate
+          ItemStack requestedFromNetwork = this.request(
+              new FilterItem(ingred.getStack().copy(),
+                  tileCable.getMeta(), tileCable.getOre(),
+                  tileCable.getNbt()),
+              ingred.getSize(), simulate);//false means 4real, no simulate
           int found = requestedFromNetwork.getCount();
           //   StorageNetwork.log("ingr size " + ingred.getSize() + " found +" + found + " of " + ingred.getStack().getDisplayName());
           ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, requestedFromNetwork, simulate);
