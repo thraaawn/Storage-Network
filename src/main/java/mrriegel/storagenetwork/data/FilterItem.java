@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.util.data;
+package mrriegel.storagenetwork.data;
 
 import javax.annotation.Nonnull;
 import mrriegel.storagenetwork.util.UtilTileEntity;

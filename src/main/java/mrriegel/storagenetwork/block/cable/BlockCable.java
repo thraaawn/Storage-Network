@@ -13,6 +13,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractBlockConnectable;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.data.EnumCableType;
 import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.UtilInventory;

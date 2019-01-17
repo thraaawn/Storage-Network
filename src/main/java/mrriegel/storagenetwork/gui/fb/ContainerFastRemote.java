@@ -2,11 +2,11 @@ package mrriegel.storagenetwork.gui.fb;
 
 import java.util.ArrayList;
 import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.item.remote.ItemRemote;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.NBTHelper;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;

@@ -3,7 +3,7 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.cable.ContainerCable;
 import mrriegel.storagenetwork.block.cable.TileCable;
-import mrriegel.storagenetwork.util.data.StackWrapper;
+import mrriegel.storagenetwork.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;

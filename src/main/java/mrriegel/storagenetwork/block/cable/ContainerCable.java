@@ -1,9 +1,8 @@
 package mrriegel.storagenetwork.block.cable;
 
-import mrriegel.storagenetwork.block.AbstractFilterTile;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModItems;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -75,7 +74,7 @@ public class ContainerCable extends Container {
   }
 
   public boolean isInFilter(StackWrapper stack) {
-    return isInFilter(stack, 0, AbstractFilterTile.FILTER_SIZE);
+    return isInFilter(stack, 0, TileCable.FILTER_SIZE);
   }
 
   public boolean isInFilter(StackWrapper stack, int start, int end) {

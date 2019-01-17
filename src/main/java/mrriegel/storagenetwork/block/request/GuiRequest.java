@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.block.request;
 
+import mrriegel.storagenetwork.data.EnumSortType;
 import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
-import mrriegel.storagenetwork.util.data.EnumSortType;
 import net.minecraft.util.math.BlockPos;
 
 public class GuiRequest extends GuiContainerStorageInventory {

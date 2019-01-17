@@ -3,13 +3,13 @@ package mrriegel.storagenetwork.network;
 import java.util.HashMap;
 import java.util.Map;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.block.AbstractFilterTile;
+import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.util.UtilTileEntity;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -54,8 +54,8 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
       @Override
       public void run() {
         TileEntity t = player.world.getTileEntity(message.pos);
-        if (t instanceof AbstractFilterTile) {
-          AbstractFilterTile tile = (AbstractFilterTile) t;
+        if (t instanceof TileCable) {
+          TileCable tile = (TileCable) t;
           TileCable tileCable = null;
           if (t instanceof TileCable) {
             tileCable = (TileCable) tile;

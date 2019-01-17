@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.block.cable;
 
+import mrriegel.storagenetwork.data.EnumCableType;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;

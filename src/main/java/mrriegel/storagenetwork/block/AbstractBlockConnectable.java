@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
- * Base class for Cable and Request Table
+ * Base class for Control, Cable and Request Table
  * 
  */
 public abstract class AbstractBlockConnectable extends BlockContainer {

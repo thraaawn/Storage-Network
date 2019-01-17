@@ -10,20 +10,20 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.block.AbstractFilterTile;
 import mrriegel.storagenetwork.block.IConnectable;
+import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.master.RecentSlotPointer.StackSlot;
 import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.data.EnumFilterDirection;
+import mrriegel.storagenetwork.data.FilterItem;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.UtilTileEntity;
-import mrriegel.storagenetwork.util.data.EnumFilterDirection;
-import mrriegel.storagenetwork.util.data.FilterItem;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -188,8 +188,8 @@ public class TileMaster extends TileEntity implements ITickable {
   private void addInventorys() {
     setStorageInventorys(Lists.newArrayList());
     for (BlockPos cable : getConnectables()) {
-      if (world.getTileEntity(cable) instanceof AbstractFilterTile) {
-        AbstractFilterTile s = (AbstractFilterTile) world.getTileEntity(cable);
+      if (world.getTileEntity(cable) instanceof TileCable) {
+        TileCable s = (TileCable) world.getTileEntity(cable);
         if (s.getInventory() != null && s.isStorage()) {
           BlockPos pos = s.getSource();
           if (world.getChunkFromBlockCoords(pos).isLoaded())
@@ -214,7 +214,7 @@ public class TileMaster extends TileEntity implements ITickable {
     world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
   }
 
-  private ItemStack insertStackSingleTarget(AbstractFilterTile tileCable, ItemStack stackInCopy, boolean simulate, int slot) {
+  private ItemStack insertStackSingleTarget(TileCable tileCable, ItemStack stackInCopy, boolean simulate, int slot) {
     IItemHandler inventoryLinked = tileCable.getInventory();
     if (!UtilInventory.contains(inventoryLinked, stackInCopy))
       return stackInCopy;
@@ -316,7 +316,7 @@ public class TileMaster extends TileEntity implements ITickable {
     String key = getStackKey(stackInCopy);
     if (this.importCache.containsKey(key)) {
       RecentSlotPointer pointer = this.importCache.get(key);
-      AbstractFilterTile aTile = getAbstractFilterTileOrNull(pointer.getPos());
+      TileCable aTile = getAbstractFilterTileOrNull(pointer.getPos());
       if (aTile == null) {
         StorageNetwork.log("DELETE key" + key + " KEYSIZE " + this.importCache.keySet().size());
         this.importCache.remove(key);
@@ -327,7 +327,7 @@ public class TileMaster extends TileEntity implements ITickable {
       //      rest = insertStack(ItemHandlerHelper.copyStackWithSize(stackCurrent, insert), tileCable.getConnectedInventory(), false);
     }
     if (stackInCopy.isEmpty() == false) {
-      for (AbstractFilterTile tileCabl : invs) {
+      for (TileCable tileCabl : invs) {
         if (tileCabl.getSource().equals(source))
           continue;
         IItemHandler inventoryLinked = tileCabl.getInventory();
@@ -536,7 +536,7 @@ public class TileMaster extends TileEntity implements ITickable {
       boolean meta = tileCable.getMeta();
       //now check the filter inside this dudlio
       Map<Integer, StackWrapper> tilesFilter = tileCable.getFilter();
-      for (int i = 0; i < AbstractFilterTile.FILTER_SIZE; i++) {
+      for (int i = 0; i < TileCable.FILTER_SIZE; i++) {
         if (getStorageInventorys().contains(tileCable.getPos())) {//constantly check if it gets removed
           continue;
         }
@@ -585,10 +585,10 @@ public class TileMaster extends TileEntity implements ITickable {
       return ItemStack.EMPTY;
     }
     //   StorageNetwork.benchmark( "first rebuild connectables");
-    List<AbstractFilterTile> invs = Lists.newArrayList();
+    List<TileCable> invs = Lists.newArrayList();
     for (BlockPos p : getConnectables()) {
-      if (world.getTileEntity(p) instanceof AbstractFilterTile) {
-        AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(p);
+      if (world.getTileEntity(p) instanceof TileCable) {
+        TileCable tile = (TileCable) world.getTileEntity(p);
         if (tile.isStorage() && tile.getInventory() != null) {
           invs.add(tile);
         }
@@ -597,7 +597,7 @@ public class TileMaster extends TileEntity implements ITickable {
     //  StorageNetwork.benchmark( "after r connectables");
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
-    for (AbstractFilterTile t : invs) {
+    for (TileCable t : invs) {
       IItemHandler inv = t.getInventory();
       for (int i = 0; i < inv.getSlots(); i++) {
         ItemStack stackCurrent = inv.getStackInSlot(i);

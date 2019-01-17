@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.util.data;
+package mrriegel.storagenetwork.data;
 public enum EnumFilterDirection {
   IN, OUT, BOTH;
 

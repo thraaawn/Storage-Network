@@ -1,20 +1,24 @@
 package mrriegel.storagenetwork.block.cable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import mrriegel.storagenetwork.block.AbstractFilterTile;
+import mrriegel.storagenetwork.block.TileConnectable;
 import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.data.EnumCableType;
+import mrriegel.storagenetwork.data.EnumFilterDirection;
+import mrriegel.storagenetwork.data.FilterItem;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.ModItems;
 import mrriegel.storagenetwork.util.UtilInventory;
-import mrriegel.storagenetwork.util.data.FilterItem;
-import mrriegel.storagenetwork.util.data.StackWrapper;
+import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -24,25 +28,250 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 
-public class TileCable extends AbstractFilterTile implements IInventory {
-
-  private BlockPos connectedInventory;
-  private EnumFacing inventoryFace;
-  private NonNullList<ItemStack> upgrades = NonNullList.withSize(ContainerCable.UPGRADE_COUNT, ItemStack.EMPTY);
-  private boolean mode = true;
-  private int limit = 0;
-  public EnumCableType north, south, east, west, up, down;
-  private ItemStack stack = ItemStack.EMPTY;
+/**
+ * Base class for TileCable
+ * 
+ */
+public class TileCable extends TileConnectable implements IInventory {
 
   public static enum Fields {
     STATUS, FACINGTOPROW, FACINGBOTTOMROW;
   }
 
+  public static final int FILTER_SIZE = 18;
+  public EnumCableType north, south, east, west, up, down;
+  protected boolean mode = true;
+  protected int limit = 0;
+  protected ItemStack stack = ItemStack.EMPTY;
+
+  protected NonNullList<ItemStack> upgrades = NonNullList.withSize(ContainerCable.UPGRADE_COUNT, ItemStack.EMPTY);
+  protected EnumFacing inventoryFace;
+  protected BlockPos connectedInventory;
+  private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
+  private boolean ores = false;
+  private boolean metas = false;
+  private boolean nbt = false;
+  private boolean isWhitelist;
+  private int priority;
+  private ProcessRequestModel processModel = new ProcessRequestModel();
+  public EnumFacing processingTop = EnumFacing.UP;
+  public EnumFacing processingBottom = EnumFacing.DOWN;
+  protected EnumFilterDirection way = EnumFilterDirection.BOTH;
+
   public TileCable() {
     this.setOres(false);
     this.setMeta(true);
+  }
+
+  @Override
+  public void readFromNBT(NBTTagCompound compound) {
+    super.readFromNBT(compound);
+    processingTop = EnumFacing.values()[compound.getInteger("processingTop")];
+    processingBottom = EnumFacing.values()[compound.getInteger("processingBottom")];
+    ProcessRequestModel pm = new ProcessRequestModel();
+    pm.readFromNBT(compound);
+    this.setProcessModel(pm);
+    isWhitelist = compound.getBoolean("white");
+    priority = compound.getInteger("prio");
+    NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
+    filter = new HashMap<Integer, StackWrapper>();
+    for (int i = 0; i < invList.tagCount(); i++) {
+      NBTTagCompound stackTag = invList.getCompoundTagAt(i);
+      int slot = stackTag.getByte("Slot");
+      filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
+    }
+    ores = compound.getBoolean("ores");
+    metas = compound.getBoolean("metas");
+    nbt = compound.getBoolean("nbtFilter");
+    try {
+      way = EnumFilterDirection.valueOf(compound.getString("way"));
+    }
+    catch (Exception e) {
+      way = EnumFilterDirection.BOTH;
+    }
+    connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {}.getType());
+    inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
+    mode = compound.getBoolean("mode");
+    limit = compound.getInteger("limit");
+    if (compound.hasKey("stack", 10))
+      stack = new ItemStack(compound.getCompoundTag("stack"));
+    else
+      stack = ItemStack.EMPTY;
+    if (compound.hasKey("north"))
+      north = EnumCableType.valueOf(compound.getString("north"));
+    if (compound.hasKey("south"))
+      south = EnumCableType.valueOf(compound.getString("south"));
+    if (compound.hasKey("east"))
+      east = EnumCableType.valueOf(compound.getString("east"));
+    if (compound.hasKey("west"))
+      west = EnumCableType.valueOf(compound.getString("west"));
+    if (compound.hasKey("up"))
+      up = EnumCableType.valueOf(compound.getString("up"));
+    if (compound.hasKey("down"))
+      down = EnumCableType.valueOf(compound.getString("down"));
+    NBTTagList nbttaglist = compound.getTagList("Items", 10);
+    upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
+    for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+      NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+      int j = nbttagcompound.getByte("Slot") & 255;
+      if (j >= 0 && j < 4) {// TODO: 4 const reference
+        upgrades.set(j, new ItemStack(nbttagcompound));
+      }
+    }
+  }
+
+  @Override
+  public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    super.writeToNBT(compound);
+    this.processModel.writeToNBT(compound);
+    compound.setInteger("processingBottom", processingBottom.ordinal());
+    compound.setInteger("processingTop", processingTop.ordinal());
+    compound.setBoolean("white", isWhitelist);
+    compound.setInteger("prio", priority);
+    NBTTagList invList = new NBTTagList();
+    for (int i = 0; i < FILTER_SIZE; i++) {
+      if (filter.get(i) != null) {
+        NBTTagCompound stackTag = new NBTTagCompound();
+        stackTag.setByte("Slot", (byte) i);
+        filter.get(i).writeToNBT(stackTag);
+        invList.appendTag(stackTag);
+      }
+    }
+    compound.setTag("crunchTE", invList);
+    compound.setBoolean("ores", ores);
+    compound.setBoolean("metas", metas);
+    compound.setBoolean("nbtFilter", nbt);
+    compound.setString("way", way.toString());
+    compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
+    if (inventoryFace != null)
+      compound.setString("inventoryFace", inventoryFace.toString());
+    compound.setBoolean("mode", mode);
+    compound.setInteger("limit", limit);
+    if (!stack.isEmpty())
+      compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
+    if (north != null)
+      compound.setString("north", north.toString());
+    if (south != null)
+      compound.setString("south", south.toString());
+    if (east != null)
+      compound.setString("east", east.toString());
+    if (west != null)
+      compound.setString("west", west.toString());
+    if (up != null)
+      compound.setString("up", up.toString());
+    if (down != null)
+      compound.setString("down", down.toString());
+    NBTTagList nbttaglist = new NBTTagList();
+    for (int i = 0; i < upgrades.size(); ++i) {
+      if (upgrades.get(i) != null) {
+        NBTTagCompound nbttagcompound = new NBTTagCompound();
+        nbttagcompound.setByte("Slot", (byte) i);
+        upgrades.get(i).writeToNBT(nbttagcompound);
+        nbttaglist.appendTag(nbttagcompound);
+      }
+    }
+    compound.setTag("Items", nbttaglist);
+    return compound;
+  }
+
+  private boolean doesWrapperMatchStack(StackWrapper stackWrapper, ItemStack stack) {
+    ItemStack s = stackWrapper.getStack();
+    if (ores) {
+      return UtilTileEntity.equalOreDict(stack, s);
+    }
+    else if (metas) {
+      return stack.isItemEqual(s);
+    }
+    else {
+      return stack.getItem() == s.getItem();
+    }
+    //    return ores ? UtilTileEntity.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem();
+  }
+
+  /* key function used by TileMaster for all item trafic
+   * 
+   * TODO: TEST CASES
+   * 
+   * export + meta
+   * 
+   * export - meta
+   * 
+   * import + meta ; whitelist
+   * 
+   * import - meta ; whitelist
+   * 
+   * import + meta ; blacklist
+   * 
+   * import - meta ; blacklist */
+  public boolean canTransfer(ItemStack stack, EnumFilterDirection way) {
+    if (isStorage() && !this.way.match(way)) {
+      return false;
+    }
+    if (this.isWhitelist()) {
+      boolean tmp = false;
+      for (StackWrapper stackWrapper : this.filter.values()) {
+        if (stackWrapper == null || stackWrapper.getStack() == null) {
+          continue;
+        }
+        if (doesWrapperMatchStack(stackWrapper, stack)) {
+          tmp = true;
+          break;
+        }
+      }
+      return tmp;
+    }
+    else {
+      boolean tmp = true;
+      for (StackWrapper stackWrapper : this.filter.values()) {
+        if (stackWrapper == null || stackWrapper.getStack() == null) {
+          continue;
+        }
+        if (doesWrapperMatchStack(stackWrapper, stack)) {
+          tmp = false;
+          break;
+        }
+      }
+      return tmp;
+    }
+  }
+
+  public BlockPos getConnectedInventory() {
+    return connectedInventory;
+  }
+
+  public BlockPos getSource() {
+    return getConnectedInventory();
+  }
+
+  public void setConnectedInventory(BlockPos connectedInventory) {
+    this.connectedInventory = connectedInventory;
+  }
+
+  public IItemHandler getInventory() {
+    if (getConnectedInventory() != null)
+      return UtilInventory.getItemHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
+    return null;
+  }
+
+  /**
+   * identical to checking === CableKind.storage
+   * 
+   * @return
+   */
+  public boolean isStorage() {
+    return this.getBlockType() == ModBlocks.storageKabel;
+  }
+
+  /**
+   * the whitelist / blacklist (ghost stacks in gui)
+   * 
+   * @return
+   */
+  public Map<Integer, StackWrapper> getFilter() {
+    return filter;
   }
 
   public int getUpgradesOfType(int num) {
@@ -98,89 +327,82 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     }
   }
 
-  @SuppressWarnings("serial")
-  @Override
-  public void readFromNBT(NBTTagCompound compound) {
-    super.readFromNBT(compound);
-    connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {}.getType());
-    inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
-    mode = compound.getBoolean("mode");
-    limit = compound.getInteger("limit");
-    if (compound.hasKey("stack", 10))
-      stack = new ItemStack(compound.getCompoundTag("stack"));
-    else
-      stack = ItemStack.EMPTY;
-    if (compound.hasKey("north"))
-      north = EnumCableType.valueOf(compound.getString("north"));
-    if (compound.hasKey("south"))
-      south = EnumCableType.valueOf(compound.getString("south"));
-    if (compound.hasKey("east"))
-      east = EnumCableType.valueOf(compound.getString("east"));
-    if (compound.hasKey("west"))
-      west = EnumCableType.valueOf(compound.getString("west"));
-    if (compound.hasKey("up"))
-      up = EnumCableType.valueOf(compound.getString("up"));
-    if (compound.hasKey("down"))
-      down = EnumCableType.valueOf(compound.getString("down"));
-    NBTTagList nbttaglist = compound.getTagList("Items", 10);
-    upgrades = NonNullList.withSize(4, ItemStack.EMPTY);
-    for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-      NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
-      int j = nbttagcompound.getByte("Slot") & 255;
-      if (j >= 0 && j < 4) {// TODO: 4 const reference
-        upgrades.set(j, new ItemStack(nbttagcompound));
+  public List<StackWrapper> getFilterTop() {
+    Map<Integer, StackWrapper> flt = this.getFilter();
+    List<StackWrapper> half = new ArrayList<>();
+    for (Integer i : flt.keySet()) {
+      if (i <= 8 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false) {
+        half.add(flt.get(i));
       }
     }
+    return half;
+  }
+  public void setFilter(Map<Integer, StackWrapper> filter) {
+    this.filter = filter;
   }
 
-  @Override
-  public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-    super.writeToNBT(compound);
-    compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
-    if (inventoryFace != null)
-      compound.setString("inventoryFace", inventoryFace.toString());
-    compound.setBoolean("mode", mode);
-    compound.setInteger("limit", limit);
-    if (!stack.isEmpty())
-      compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
-    if (north != null)
-      compound.setString("north", north.toString());
-    if (south != null)
-      compound.setString("south", south.toString());
-    if (east != null)
-      compound.setString("east", east.toString());
-    if (west != null)
-      compound.setString("west", west.toString());
-    if (up != null)
-      compound.setString("up", up.toString());
-    if (down != null)
-      compound.setString("down", down.toString());
-    NBTTagList nbttaglist = new NBTTagList();
-    for (int i = 0; i < upgrades.size(); ++i) {
-      if (upgrades.get(i) != null) {
-        NBTTagCompound nbttagcompound = new NBTTagCompound();
-        nbttagcompound.setByte("Slot", (byte) i);
-        upgrades.get(i).writeToNBT(nbttagcompound);
-        nbttaglist.appendTag(nbttagcompound);
-      }
-    }
-    compound.setTag("Items", nbttaglist);
-    return compound;
+  public boolean getOre() {
+    return ores;
   }
 
-  @Override
-  public AxisAlignedBB getRenderBoundingBox() {
-    double renderExtention = 1.0d;
-    AxisAlignedBB bb = new AxisAlignedBB(pos.getX() - renderExtention, pos.getY() - renderExtention, pos.getZ() - renderExtention, pos.getX() + 1 + renderExtention, pos.getY() + 1 + renderExtention, pos.getZ() + 1 + renderExtention);
-    return bb;
+  public void setOres(boolean ores) {
+    this.ores = ores;
   }
 
-  public BlockPos getConnectedInventory() {
-    return connectedInventory;
+  public boolean getNbt() {
+    return nbt;
   }
 
-  public void setConnectedInventory(BlockPos connectedInventory) {
-    this.connectedInventory = connectedInventory;
+  public void setNbt(boolean ores) {
+    this.nbt = ores;
+  }
+
+  public boolean getMeta() {
+    return metas;
+  }
+
+  public void setMeta(boolean ores) {
+    this.metas = ores;
+  }
+
+  public boolean isWhitelist() {
+    return isWhitelist;
+  }
+
+  public void setWhite(boolean white) {
+    this.isWhitelist = white;
+  }
+
+  public int getPriority() {
+    return priority;
+  }
+
+  public void setPriority(int priority) {
+    this.priority = priority;
+  }
+
+  public EnumFilterDirection getWay() {
+    return way;
+  }
+
+  public void setWay(EnumFilterDirection way) {
+    this.way = way;
+  }
+
+  public EnumFacing getFacingBottomRow() {
+    return this.processingBottom;
+  }
+
+  public EnumFacing getFacingTopRow() {
+    return this.processingTop;
+  }
+
+  public ProcessRequestModel getProcessModel() {
+    return processModel;
+  }
+
+  public void setProcessModel(ProcessRequestModel processModel) {
+    this.processModel = processModel;
   }
 
   public EnumFacing getInventoryFace() {
@@ -220,20 +442,10 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   }
 
   @Override
-  public IItemHandler getInventory() {
-    if (getConnectedInventory() != null)
-      return UtilInventory.getItemHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
-    return null;
-  }
-
-  @Override
-  public BlockPos getSource() {
-    return getConnectedInventory();
-  }
-
-  @Override
-  public boolean isStorage() {
-    return this.getBlockType() == ModBlocks.storageKabel;
+  public AxisAlignedBB getRenderBoundingBox() {
+    double renderExtention = 1.0d;
+    AxisAlignedBB bb = new AxisAlignedBB(pos.getX() - renderExtention, pos.getY() - renderExtention, pos.getZ() - renderExtention, pos.getX() + 1 + renderExtention, pos.getY() + 1 + renderExtention, pos.getZ() + 1 + renderExtention);
+    return bb;
   }
 
   @Override
@@ -313,26 +525,17 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     // stack.getItem() == ModItems.upgrade ;
   }
 
-  @Override
-  public int getField(int id) {
-    return 0;
-  }
-
-  @Override
-  public void setField(int id, int value) {}
-
-  @Override
-  public void clear() {}
-
-  public List<StackWrapper> getFilterTop() {
-    Map<Integer, StackWrapper> flt = super.getFilter();
-    List<StackWrapper> half = new ArrayList<>();
-    for (Integer i : flt.keySet()) {
-      if (i <= 8 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false) {
-        half.add(flt.get(i));
+  public List<ItemStack> getProcessIngredients() {
+    List<StackWrapper> topRow = getFilterTop();
+    List<ItemStack> list = new ArrayList<>();
+    for (StackWrapper sw : topRow) {
+      if (sw.getStack().isEmpty() == false) {
+        ItemStack staCopy = sw.getStack().copy();
+        staCopy.setCount(sw.getSize());
+        list.add(staCopy);
       }
     }
-    return half;
+    return list;
   }
 
   public boolean isTopEmpty() {
@@ -354,7 +557,7 @@ public class TileCable extends AbstractFilterTile implements IInventory {
   }
 
   public List<StackWrapper> getFilterBottom() {
-    Map<Integer, StackWrapper> flt = super.getFilter();
+    Map<Integer, StackWrapper> flt = this.getFilter();
     List<StackWrapper> half = new ArrayList<>();
     for (Integer i : flt.keySet()) {
       if (i >= 9 && flt.get(i) != null && flt.get(i).getStack().isEmpty() == false) {
@@ -379,19 +582,6 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     return 0;
   }
 
-  public List<ItemStack> getProcessIngredients() {
-    List<StackWrapper> topRow = getFilterTop();
-    List<ItemStack> list = new ArrayList<>();
-    for (StackWrapper sw : topRow) {
-      if (sw.getStack().isEmpty() == false) {
-        ItemStack staCopy = sw.getStack().copy();
-        staCopy.setCount(sw.getSize());
-        list.add(staCopy);
-      }
-    }
-    return list;
-  }
-
   @Nonnull
   public ItemStack getFirstRecipeOut() {
     List<StackWrapper> topRow = getFilterBottom();
@@ -400,4 +590,14 @@ public class TileCable extends AbstractFilterTile implements IInventory {
     }
     return topRow.get(0).getStack();
   }
+  @Override
+  public int getField(int id) {
+    return 0;
+  }
+
+  @Override
+  public void setField(int id, int value) {}
+
+  @Override
+  public void clear() {}
 }

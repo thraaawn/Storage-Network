@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.gui;
 
 import java.util.List;
-import mrriegel.storagenetwork.util.data.StackWrapper;
+import mrriegel.storagenetwork.data.StackWrapper;
 
 public interface IStorageInventory {
 

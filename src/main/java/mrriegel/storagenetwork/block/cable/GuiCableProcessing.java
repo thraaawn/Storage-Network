@@ -2,11 +2,11 @@ package mrriegel.storagenetwork.block.cable;
 
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;

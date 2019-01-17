@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.util;
 
-import mrriegel.storagenetwork.util.data.FilterItem;
+import mrriegel.storagenetwork.data.FilterItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
