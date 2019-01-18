@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.api.ICableImport;
 import mrriegel.storagenetwork.api.ICableStorage;
 import mrriegel.storagenetwork.api.IHasNetworkPriority;
 import mrriegel.storagenetwork.block.IConnectable;
@@ -52,7 +53,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (getConnectables() == null) {
       refreshNetwork();
     }
-    List<ICableStorage> invs = getSortedStorageCables();
+    List<ICableStorage> invs = getSortedStorageCables(getAttachedTileEntities());
     for (ICableStorage tileConnected : invs) {
       IItemHandler inv = tileConnected.getInventory();
       ItemStack stack;
@@ -76,12 +77,25 @@ public class TileMaster extends TileEntity implements ITickable {
     return null;
   }
 
-  private List<ICableStorage> getSortedStorageCables() {
-    List<TileEntity> links = getAttachedTileEntities();
+  private List<ICableStorage> getSortedStorageCables(List<TileEntity> links) {
     List<ICableStorage> attachedCables = Lists.newArrayList();
     for (TileEntity tileIn : links) {
       if (tileIn instanceof ICableStorage) {
         ICableStorage tile = (ICableStorage) tileIn;
+        if (tile.getInventory() != null) {
+          attachedCables.add(tile);
+        }
+      }
+    }
+    sortCablesByPriority(attachedCables);
+    return attachedCables;
+  }
+
+  private List<ICableImport> getSortedICables(List<TileEntity> links) {
+    List<ICableImport> attachedCables = Lists.newArrayList();
+    for (TileEntity tileIn : links) {
+      if (tileIn instanceof ICableStorage) {
+        ICableImport tile = (ICableImport) tileIn;
         if (tile.getInventory() != null) {
           attachedCables.add(tile);
         }
@@ -107,7 +121,7 @@ public class TileMaster extends TileEntity implements ITickable {
 
   public int emptySlots() {
     int countEmpty = 0;
-    List<ICableStorage> invs = getSortedStorageCables();
+    List<ICableStorage> invs = getSortedStorageCables(getAttachedTileEntities());
     for (ICableStorage tile : invs) {
       IItemHandler inv = tile.getInventory();
       for (int i = 0; i < inv.getSlots(); i++) {
@@ -320,7 +334,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (stack.isEmpty()) {
       return 0;
     }
-    List<ICableStorage> invs = getSortedStorageCables();
+    List<ICableStorage> invs = getSortedStorageCables(getAttachedTileEntities());
     ItemStack stackInCopy = stack.copy();
     //only if it does NOT contains
     String key = getStackKey(stackInCopy);
@@ -361,23 +375,45 @@ public class TileMaster extends TileEntity implements ITickable {
   }
 
   /**
+   * used by import and export
+   * 
+   * based on OPERATION upgrade
+   * 
+   * @return
+   */
+  public boolean doesPassOperationFilterLimit(TileCable cable) {
+    if (cable.getUpgradesOfType(ItemUpgrade.OPERATION) < 1) {
+      return true;
+    }
+    //ok operation upgrade does NOT exist
+    //    TileMaster m = (TileMaster) world.getTileEntity(cable.getMaster());
+    if (cable.getOperationStack() == null || cable.getOperationStack().isEmpty()) {
+      return true;
+    }
+    int amount = this.getAmount(new FilterItem(cable.getOperationStack()));
+    if (cable.isOperationMode()) {
+      return amount > cable.getOperationLimit();
+    }
+    else {
+      return amount <= cable.getOperationLimit();
+    }
+  }
+
+  /**
    * Pull into the network from the relevant linked cables
    * 
    * @param attachedCables
    */
-  private void updateImports(List<TileCable> attachedCables) {
-    //    for (RecentPointer pointer : this.recentImports) {
-    //      // TODO: use this first
-    //    }
-    for (TileCable tileCable : attachedCables) {
+  private void updateImports(List<ICableImport> attachedCables) {
+
+    for (ICableImport tileCable : attachedCables) {
       IItemHandler inventoryLinked = tileCable.getInventory();
-      int speedRatio = tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1;
+      // int speedRatio = tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1;
       //      StorageNetwork.log("speedratio " + speedRatio+" and the divisor is "+(30 / speedRatio)
       //          + " ===GO=== " + (world.getTotalWorldTime()  % (30 / speedRatio) == 0) );
-      if (world.getTotalWorldTime() % (30 / speedRatio) != 0) {
+      if (!tileCable.runNow()) {
         continue;
       }
-      boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
       for (int slot = 0; slot < inventoryLinked.getSlots(); slot++) {
         //import FROM linked in this slot INTO the system
         ItemStack stackCurrent = inventoryLinked.getStackInSlot(slot);
@@ -387,11 +423,13 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!tileCable.canTransfer(stackCurrent, EnumFilterDirection.OUT)) {
           continue;
         }
-        if (!tileCable.doesPassOperationFilterLimit()) {
+        if (!this.doesPassOperationFilterLimit((TileCable) tileCable)) {
           continue; // nope, cant pass by. operation filter in place and all set
         }
-        int maxInsert = (hasStackUpgrade) ? 64 : 4;
-        int needToInsert = Math.min(stackCurrent.getCount(), maxInsert);
+        //getTransferRate
+        //  boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
+        int transferRate = tileCable.getTransferRate();
+        int needToInsert = Math.min(stackCurrent.getCount(), transferRate);
         ItemStack extracted = inventoryLinked.extractItem(slot, needToInsert, true);
         if (extracted.isEmpty() || extracted.getCount() < needToInsert) {
           continue;
@@ -579,7 +617,7 @@ public class TileMaster extends TileEntity implements ITickable {
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
         boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
         insert = Math.min(insert, hasStackUpgrade ? 64 : 4);
-        if (!tileCable.doesPassOperationFilterLimit()) {
+        if (!this.doesPassOperationFilterLimit(tileCable)) {
           continue;
         }
         ItemStack rec = this.request(new FilterItem(stackCurrent, meta, ore, tileCable.getNbt()), insert, false);
@@ -668,7 +706,7 @@ public class TileMaster extends TileEntity implements ITickable {
         refreshNetwork();
       }
       List<TileEntity> links = getAttachedTileEntities();
-      List<TileCable> importCables = getAttachedCables(links, ModBlocks.imKabel);
+      List<ICableImport> importCables = getSortedICables(links);
       updateImports(importCables);
       List<TileCable> exportCables = getAttachedCables(links, ModBlocks.exKabel);
       updateExports(exportCables);

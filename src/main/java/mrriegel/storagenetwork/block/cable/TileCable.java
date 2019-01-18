@@ -8,12 +8,11 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import mrriegel.storagenetwork.api.ICableImport;
 import mrriegel.storagenetwork.api.ICableStorage;
 import mrriegel.storagenetwork.block.TileConnectable;
-import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.data.EnumCableType;
 import mrriegel.storagenetwork.data.EnumFilterDirection;
-import mrriegel.storagenetwork.data.FilterItem;
 import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
@@ -36,7 +35,7 @@ import net.minecraftforge.items.IItemHandler;
  * Base class for TileCable
  * 
  */
-public class TileCable extends TileConnectable implements IInventory, ICableStorage {
+public class TileCable extends TileConnectable implements IInventory, ICableStorage, ICableImport {
 
   public static enum Fields {
     STATUS, FACINGTOPROW, FACINGBOTTOMROW;
@@ -207,6 +206,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
    * import + meta ; blacklist
    * 
    * import - meta ; blacklist */
+  @Override
   public boolean canTransfer(ItemStack stack, EnumFilterDirection way) {
     if (isStorage() && !this.getTransferDirection().match(way)) {
       return false;
@@ -239,6 +239,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     }
   }
 
+  @Override
   public BlockPos getConnectedInventory() {
     return connectedInventory;
   }
@@ -247,6 +248,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     this.connectedInventory = connectedInventory;
   }
 
+  @Override
   public IItemHandler getInventory() {
     if (getConnectedInventory() != null)
       return UtilInventory.getItemHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
@@ -306,24 +308,6 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     down = map.get(EnumFacing.DOWN);
   }
 
-  public boolean doesPassOperationFilterLimit() {
-    if (getUpgradesOfType(ItemUpgrade.OPERATION) < 1) {
-      return true;
-    }
-    //ok operation upgrade does NOT exist
-    TileMaster m = (TileMaster) world.getTileEntity(getMaster());
-    if (getOperationStack() == null || getOperationStack().isEmpty()) {
-      return true;
-    }
-    int amount = m.getAmount(new FilterItem(getOperationStack()));
-    if (isOperationMode()) {
-      return amount > getOperationLimit();
-    }
-    else {
-      return amount <= getOperationLimit();
-    }
-  }
-
   public List<StackWrapper> getFilterTop() {
     Map<Integer, StackWrapper> flt = this.getFilter();
     List<StackWrapper> half = new ArrayList<>();
@@ -370,6 +354,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     this.isWhitelist = white;
   }
 
+  @Override
   public int getPriority() {
     return priority;
   }
@@ -378,6 +363,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     this.priority = priority;
   }
 
+  @Override
   public EnumFilterDirection getTransferDirection() {
     return transferDirection;
   }
@@ -402,6 +388,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     this.processModel = processModel;
   }
 
+  @Override
   public EnumFacing getInventoryFace() {
     return inventoryFace;
   }
@@ -597,4 +584,16 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
 
   @Override
   public void clear() {}
+
+  @Override
+  public boolean runNow() {
+    int speedRatio = this.getUpgradesOfType(ItemUpgrade.SPEED) + 1;
+    return (world.getTotalWorldTime() % (30 / speedRatio) == 0);
+  }
+
+  @Override
+  public int getTransferRate() {
+    boolean hasStackUpgrade = this.getUpgradesOfType(ItemUpgrade.STACK) > 0;
+    return (hasStackUpgrade) ? 64 : 4;
+  }
 }
