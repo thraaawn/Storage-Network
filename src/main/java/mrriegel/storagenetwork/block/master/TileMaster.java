@@ -65,11 +65,11 @@ public class TileMaster extends TileEntity implements ITickable {
     return stacks;
   }
 
-  private TileCable getAbstractFilterTileOrNull(BlockPos pos) {
+  private ICableStorage getAbstractFilterTileOrNull(BlockPos pos) {
     TileEntity tileHere = world.getTileEntity(pos);
-    if (tileHere instanceof TileCable) {
-      TileCable tile = (TileCable) tileHere;
-      if (tile.isStorage() && tile.getInventory() != null) {
+    if (tileHere instanceof ICableStorage) {
+      ICableStorage tile = (ICableStorage) tileHere;
+      if (tile.isStorageCable() && tile.getInventory() != null) {
         return tile;
       }
     }
@@ -196,7 +196,7 @@ public class TileMaster extends TileEntity implements ITickable {
     world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
   }
 
-  private ItemStack insertStackSingleTarget(TileCable tileCable, ItemStack stackInCopy, boolean simulate, int slot) {
+  private ItemStack insertStackSingleTarget(ICableStorage tileCable, ItemStack stackInCopy, boolean simulate, int slot) {
     IItemHandler inventoryLinked = tileCable.getInventory();
     if (!UtilInventory.contains(inventoryLinked, stackInCopy)) {
       return stackInCopy;
@@ -204,10 +204,7 @@ public class TileMaster extends TileEntity implements ITickable {
     if (!tileCable.canTransfer(stackInCopy, EnumFilterDirection.IN)) {
       return stackInCopy;
     }
-    //    if (tileCable.getSource().equals(source))
-    //      continue;
-    //    if(slot < 0)
-    //    else
+
     String key = getStackKey(stackInCopy);
     int originalSize = stackInCopy.getCount();
     //      
@@ -301,7 +298,7 @@ public class TileMaster extends TileEntity implements ITickable {
     String key = getStackKey(stackInCopy);
     if (this.importCache.containsKey(key)) {
       RecentSlotPointer pointer = this.importCache.get(key);
-      TileCable aTile = getAbstractFilterTileOrNull(pointer.getPos());
+      ICableStorage aTile = getAbstractFilterTileOrNull(pointer.getPos());
       if (aTile == null) {
         StorageNetwork.log("DELETE key" + key + " KEYSIZE " + this.importCache.keySet().size());
         this.importCache.remove(key);
@@ -528,27 +525,10 @@ public class TileMaster extends TileEntity implements ITickable {
       if (!tileCable.runNow()) {
         continue;
       }
-      //      if ((world.getTotalWorldTime() + 20) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
-      //        continue;
-      //      }
-      // T//ileCable tileCable = (TileCable) cable;//TODO: get filter 
+
       IItemHandler inv = tileCable.getInventory();
 
-      //now check the filter inside this dudlio
-      //      Map<Integer, StackWrapper> tilesFilter = tileCable.getFilter();
       for (FilterItem filterItem : tileCable.getExportFilter()) {
-        //        if (getStorageInventorys().contains(cable.getPos())) {//constantly check if it gets removed
-        //          continue;
-        //        }
-        //        StackWrapper currentFilter = tilesFilter.get(i);
-        //        if (currentFilter == null) {
-        //          continue;
-        //        }
-        //        ItemStack stackToFilter = currentFilter.getStack().copy();
-        //        if (stackToFilter == null || stackToFilter.isEmpty()) {
-        //          continue;
-        //        }
-        //FilterItem filterItem = new FilterItem(stackToFilter, tileCable.getMeta(), tileCable.getOre(), tileCable.getNbt());
         // first run as a simulation
         ItemStack stackCurrent = this.request(filterItem, 1, true);
         //^ 1
@@ -559,19 +539,11 @@ public class TileMaster extends TileEntity implements ITickable {
           continue;
         }
         filterItem.setStack(stackCurrent);
-        //        int maxStackSize = stackCurrent.getMaxStackSize();
-        //        if ((tileCable.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
-        //          int amount = UtilInventory.getAmount(inv, filterItem);
-        //          maxStackSize = Math.min(maxStackSize, currentFilter.getSize() - amount);
-        //        }
-        //        if (maxStackSize <= 0) {
-        //          continue; 
-        //        }
+
         ItemStack max = ItemHandlerHelper.copyStackWithSize(stackCurrent, tileCable.getTransferRate());
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, max, true);
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
-        //        boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
-        //  insert = tileCable.getTransferRate(); 
+
         ItemStack recFromNetwork = this.request(filterItem, insert, false);
         if (recFromNetwork == null || recFromNetwork.isEmpty()) {
           continue;
@@ -588,7 +560,6 @@ public class TileMaster extends TileEntity implements ITickable {
     if (size == 0 || fil == null) {
       return ItemStack.EMPTY;
     }
-    //   StorageNetwork.benchmark( "first rebuild connectables");
     List<TileCable> invs = Lists.newArrayList();
     for (BlockPos p : getConnectables()) {
       if (world.getTileEntity(p) instanceof TileCable) {
