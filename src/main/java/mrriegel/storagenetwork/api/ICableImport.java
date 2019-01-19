@@ -7,6 +7,10 @@ import net.minecraftforge.items.IItemHandler;
 
 public interface ICableImport extends IHasNetworkPriority {
 
+  //getOperationLimit 
+  //isOperationEnabled?
+  //isOperationMode
+
   BlockPos getConnectedInventory();
   IItemHandler getInventory();
 

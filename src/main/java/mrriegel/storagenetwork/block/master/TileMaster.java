@@ -240,10 +240,12 @@ public class TileMaster extends TileEntity implements ITickable {
 
   private ItemStack insertStackSingleTarget(TileCable tileCable, ItemStack stackInCopy, boolean simulate, int slot) {
     IItemHandler inventoryLinked = tileCable.getInventory();
-    if (!UtilInventory.contains(inventoryLinked, stackInCopy))
+    if (!UtilInventory.contains(inventoryLinked, stackInCopy)) {
       return stackInCopy;
-    if (!tileCable.canTransfer(stackInCopy, EnumFilterDirection.IN))
+    }
+    if (!tileCable.canTransfer(stackInCopy, EnumFilterDirection.IN)) {
       return stackInCopy;
+    }
     //    if (tileCable.getSource().equals(source))
     //      continue;
     //    if(slot < 0)
@@ -348,7 +350,6 @@ public class TileMaster extends TileEntity implements ITickable {
       else {
         stackInCopy = insertStackSingleTarget(aTile, stackInCopy, simulate, pointer.getSlot());
       }
-      //      rest = insertStack(ItemHandlerHelper.copyStackWithSize(stackCurrent, insert), tileCable.getConnectedInventory(), false);
     }
     if (stackInCopy.isEmpty() == false) {
       for (ICableStorage tileCabl : invs) {
@@ -359,10 +360,19 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!tileCabl.canTransfer(stackInCopy, EnumFilterDirection.IN))
           continue;
         //try existing slot then try new
-        ItemStack remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, stackInCopy, simulate);
-        //        if (stackInCopy.isEmpty() == false)// then we are done
-        //          stackInCopy = ItemHandlerHelper.insertItem(inventoryLinked, stackInCopy, simulate);
-        //         ItemStack remain = stackInCopy;
+        ItemStack remain = ItemStack.EMPTY;
+        try {
+          remain = ItemHandlerHelper.insertItemStacked(inventoryLinked, stackInCopy, simulate);
+        }
+        catch (Exception e) {
+          StorageNetwork.instance.logger.error("External connected block has thrown error", e);
+          continue;
+          //third party blocks can throw exceptions , for example:
+          //          java.lang.IndexOutOfBoundsException: Index: 4, Size: 4
+          //          at java.util.ArrayList.rangeCheck(Unknown Source) ~[?:1.8.0_151]
+          //          at java.util.ArrayList.get(Unknown Source) ~[?:1.8.0_151]
+          //          at com.tattyseal.compactstorage.tileentity.TileEntityChestBuilder.isItemValidForSlot(TileEntityChestBuilder.java:253) ~[TileEntityChestBuilder.class:?]
+        }
         stackInCopy = ItemHandlerHelper.copyStackWithSize(stackInCopy, remain.getCount());
         world.markChunkDirty(tileCabl.getConnectedInventory(), world.getTileEntity(tileCabl.getConnectedInventory()));
       }
@@ -374,30 +384,7 @@ public class TileMaster extends TileEntity implements ITickable {
     return stackInCopy.getItem().getRegistryName().toString() + "/" + stackInCopy.getItemDamage();
   }
 
-  /**
-   * used by import and export
-   * 
-   * based on OPERATION upgrade
-   * 
-   * @return
-   */
-  public boolean doesPassOperationFilterLimit(TileCable cable) {
-    if (cable.getUpgradesOfType(ItemUpgrade.OPERATION) < 1) {
-      return true;
-    }
-    //ok operation upgrade does NOT exist
-    //    TileMaster m = (TileMaster) world.getTileEntity(cable.getMaster());
-    if (cable.getOperationStack() == null || cable.getOperationStack().isEmpty()) {
-      return true;
-    }
-    int amount = this.getAmount(new FilterItem(cable.getOperationStack()));
-    if (cable.isOperationMode()) {
-      return amount > cable.getOperationLimit();
-    }
-    else {
-      return amount <= cable.getOperationLimit();
-    }
-  }
+
 
   /**
    * Pull into the network from the relevant linked cables
@@ -408,9 +395,6 @@ public class TileMaster extends TileEntity implements ITickable {
 
     for (ICableImport tileCable : attachedCables) {
       IItemHandler inventoryLinked = tileCable.getInventory();
-      // int speedRatio = tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1;
-      //      StorageNetwork.log("speedratio " + speedRatio+" and the divisor is "+(30 / speedRatio)
-      //          + " ===GO=== " + (world.getTotalWorldTime()  % (30 / speedRatio) == 0) );
       if (!tileCable.runNow()) {
         continue;
       }
@@ -423,11 +407,7 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!tileCable.canTransfer(stackCurrent, EnumFilterDirection.OUT)) {
           continue;
         }
-        if (!this.doesPassOperationFilterLimit((TileCable) tileCable)) {
-          continue; // nope, cant pass by. operation filter in place and all set
-        }
-        //getTransferRate
-        //  boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
+
         int transferRate = tileCable.getTransferRate();
         int needToInsert = Math.min(stackCurrent.getCount(), transferRate);
         ItemStack extracted = inventoryLinked.extractItem(slot, needToInsert, true);
@@ -605,6 +585,9 @@ public class TileMaster extends TileEntity implements ITickable {
         if (stackCurrent == null || stackCurrent.isEmpty()) {
           continue;
         }
+        if (!tileCable.canTransfer(stackCurrent, EnumFilterDirection.IN)) {
+          continue;
+        }
         int maxStackSize = stackCurrent.getMaxStackSize();
         if ((tileCable.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
           maxStackSize = Math.min(maxStackSize, currentFilter.getSize() - UtilInventory.getAmount(inv, new FilterItem(stackCurrent, meta, ore, tileCable.getNbt())));
@@ -617,9 +600,7 @@ public class TileMaster extends TileEntity implements ITickable {
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
         boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
         insert = Math.min(insert, hasStackUpgrade ? 64 : 4);
-        if (!this.doesPassOperationFilterLimit(tileCable)) {
-          continue;
-        }
+
         ItemStack rec = this.request(new FilterItem(stackCurrent, meta, ore, tileCable.getNbt()), insert, false);
         if (rec == null || rec.isEmpty()) {
           continue;

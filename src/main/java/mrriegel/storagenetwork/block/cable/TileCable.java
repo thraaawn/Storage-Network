@@ -11,8 +11,10 @@ import com.google.gson.Gson;
 import mrriegel.storagenetwork.api.ICableImport;
 import mrriegel.storagenetwork.api.ICableStorage;
 import mrriegel.storagenetwork.block.TileConnectable;
+import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.data.EnumCableType;
 import mrriegel.storagenetwork.data.EnumFilterDirection;
+import mrriegel.storagenetwork.data.FilterItem;
 import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
@@ -206,11 +208,52 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
    * import + meta ; blacklist
    * 
    * import - meta ; blacklist */
+
+  //    TileMaster master;
+  private boolean doesPassOperationFilterLimit() {
+    TileMaster master = (TileMaster) this.world.getTileEntity(this.getMaster());
+    if (this.getUpgradesOfType(ItemUpgrade.OPERATION) < 1) {
+      return true;
+    }
+    //ok operation upgrade does NOT exist
+    //    TileMaster m = (TileMaster) world.getTileEntity(cable.getMaster());
+    if (getOperationStack() == null || getOperationStack().isEmpty()) {
+      return true;
+    }
+    int amount = master.getAmount(new FilterItem(getOperationStack()));
+    if (isOperationMode()) {
+      return amount > getOperationLimit();
+    }
+    else {
+      return amount <= getOperationLimit();
+    }
+  }
+
   @Override
   public boolean canTransfer(ItemStack stack, EnumFilterDirection way) {
+    if (!canGoThisDirection(way)) {
+      return false;
+    }
+
+    boolean filtered = checkWBFilterList(stack);
+    if (!filtered) {
+      return false;
+    }
+    //if thats ok, then also check 
+    if (!doesPassOperationFilterLimit()) {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean canGoThisDirection(EnumFilterDirection way) {
     if (isStorage() && !this.getTransferDirection().match(way)) {
       return false;
     }
+    return true;
+  }
+
+  private boolean checkWBFilterList(ItemStack stack) {
     if (this.isWhitelist()) {
       boolean tmp = false;
       for (StackWrapper stackWrapper : this.filter.values()) {
