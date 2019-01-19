@@ -364,7 +364,7 @@ public class TileMaster extends TileEntity implements ITickable {
           continue;
         }
         if (!tileCable.canTransfer(stackCurrent, EnumFilterDirection.OUT)) {
-          StorageNetwork.log("import loopcanTransfer false  " + stackCurrent);
+          //          StorageNetwork.log("import loopcanTransfer false  " + stackCurrent);
           continue;
         }
 

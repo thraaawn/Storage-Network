@@ -66,6 +66,9 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
   public TileCable() {
     this.setOres(false);
     this.setMeta(true);
+    if (this.getBlockType() == ModBlocks.exKabel) {
+      isWhitelist = true;
+    }
   }
 
   @Override
@@ -185,7 +188,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
       return UtilTileEntity.equalOreDict(stack, s);
     }
     else if (metas) {
-      return stack.isItemEqual(s);
+      return s.getItem() == stack.getItem() && s.getItemDamage() == stack.getItemDamage();
     }
     else {
       return stack.getItem() == s.getItem();
@@ -390,6 +393,9 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
   }
 
   public boolean isWhitelist() {
+    if (this.getBlockType() == ModBlocks.exKabel) {
+      return true;
+    }
     return isWhitelist;
   }
 
