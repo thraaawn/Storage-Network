@@ -247,7 +247,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
   }
 
   private boolean canGoThisDirection(EnumFilterDirection way) {
-    if (isStorage() && !this.getTransferDirection().match(way)) {
+    if (isStorageCable() && !this.getTransferDirection().match(way)) {
       return false;
     }
     return true;
@@ -296,15 +296,6 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     if (getConnectedInventory() != null)
       return UtilInventory.getItemHandler(world.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
     return null;
-  }
-
-  /**
-   * identical to checking === CableKind.storage
-   * 
-   * @return
-   */
-  public boolean isStorage() {
-    return this.getBlockType() == ModBlocks.storageKabel;
   }
 
   /**

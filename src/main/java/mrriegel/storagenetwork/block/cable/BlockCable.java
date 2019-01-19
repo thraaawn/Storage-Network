@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.api.ICable;
 import mrriegel.storagenetwork.block.AbstractBlockConnectable;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.master.TileMaster;
@@ -84,11 +85,6 @@ public class BlockCable extends AbstractBlockConnectable {
     return 0;
   }
 
-  boolean validInventory(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-    return UtilInventory.hasItemHandler(worldIn, pos, side)
-        && TileMaster.isTargetAllowed(worldIn, pos);
-  }
-
   @Override
   public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
     return layer == BlockRenderLayer.SOLID;
@@ -149,19 +145,7 @@ public class BlockCable extends AbstractBlockConnectable {
   //    return newMap;
   //  }
 
-  //TODO: connect to the one getting hit not anything else
-  //problem: tile is null
-  //  @Override
-  //  public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-  //    //    setConnections(worldIn, pos, state, false);
-  //    TileCable here = this.getTileCableOrNull(world, pos);
-  //    StorageNetwork.log("getStateForPlacement :" + facing.toString() + " is tileCable null? " + here);
-  //    //YES tile is null
-  //    //first use facing and try to set storage connection on that
-  //    //if we cant then set old wayyeah
-  //    setConnections(world, pos, world.getBlockState(pos), false);
-  //    return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
-  //  }
+
   @Override
   public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
     TileCable tile = getTileCableOrNull(world, pos);
@@ -377,7 +361,7 @@ public class BlockCable extends AbstractBlockConnectable {
   protected EnumCableType getConnectionTypeBetween(IBlockAccess world, BlockPos posTarget, BlockPos posHere) {
     TileEntity tileHere = world.getTileEntity(posHere);
     Block targetBlock = world.getBlockState(posTarget).getBlock();
-    if (tileHere instanceof IConnectable || tileHere instanceof TileMaster) {
+    if (tileHere instanceof IConnectable || tileHere instanceof ICable || tileHere instanceof TileMaster) {
       return EnumCableType.CONNECT;
     }
     if (targetBlock == ModBlocks.kabel) {
@@ -388,6 +372,11 @@ public class BlockCable extends AbstractBlockConnectable {
       return EnumCableType.NULL;
     }
     return EnumCableType.STORAGE;
+  }
+
+  boolean validInventory(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
+    return UtilInventory.hasItemHandler(worldIn, pos, side)
+        && TileMaster.isTargetAllowed(worldIn, pos);
   }
 
   @Override

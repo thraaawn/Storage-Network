@@ -166,19 +166,6 @@ public class TileMaster extends TileEntity implements ITickable {
     return true;
   }
 
-  //  private void addInventorys() {
-  //    setStorageInventorys(Lists.newArrayList());
-  //    for (BlockPos cable : getConnectables()) {
-  //      if (world.getTileEntity(cable) instanceof TileCable) {
-  //        TileCable s = (TileCable) world.getTileEntity(cable);
-  //        if (s.getInventory() != null && s.isStorage()) {
-  //          BlockPos pos = s.getConnectedInventory();
-  //          if (world.getChunkFromBlockCoords(pos).isLoaded())
-  //            getStorageInventorys().add(pos);
-  //        }
-  //      }
-  //    }
-  //  }
   public void refreshNetwork() {
     if (world.isRemote) {
       return;
@@ -549,11 +536,11 @@ public class TileMaster extends TileEntity implements ITickable {
     if (size == 0 || fil == null) {
       return ItemStack.EMPTY;
     }
-    List<TileCable> invs = Lists.newArrayList();
+    List<ICableStorage> invs = Lists.newArrayList();
     for (BlockPos p : getConnectables()) {
-      if (world.getTileEntity(p) instanceof TileCable) {
-        TileCable tile = (TileCable) world.getTileEntity(p);
-        if (tile.isStorage() && tile.getInventory() != null) {
+      if (world.getTileEntity(p) instanceof ICableStorage) {
+        ICableStorage tile = (ICableStorage) world.getTileEntity(p);
+        if (tile.isStorageCable() && tile.getInventory() != null) {
           invs.add(tile);
         }
       }
@@ -561,8 +548,8 @@ public class TileMaster extends TileEntity implements ITickable {
     //  StorageNetwork.benchmark( "after r connectables");
     ItemStack res = ItemStack.EMPTY;
     int result = 0;
-    for (TileCable t : invs) {
-      IItemHandler inv = t.getInventory();
+    for (ICableStorage cable : invs) {
+      IItemHandler inv = cable.getInventory();
       for (int i = 0; i < inv.getSlots(); i++) {
         ItemStack stackCurrent = inv.getStackInSlot(i);
         if (stackCurrent == null || stackCurrent.isEmpty()) {
@@ -574,7 +561,7 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!fil.match(stackCurrent)) {
           continue;
         }
-        if (!t.canTransfer(stackCurrent, EnumFilterDirection.OUT)) {
+        if (!cable.canTransfer(stackCurrent, EnumFilterDirection.OUT)) {
           continue;
         }
         int miss = size - result;

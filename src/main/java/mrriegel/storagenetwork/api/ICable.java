@@ -29,6 +29,8 @@ public interface ICable {
   /**
    * Connected Inventory
    * 
+   * TODO: replace with SIDE and use Capability to build this
+   * 
    * @return
    */
   IItemHandler getInventory();
