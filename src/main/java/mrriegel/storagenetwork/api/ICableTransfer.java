@@ -7,10 +7,6 @@ import net.minecraftforge.items.IItemHandler;
 
 public interface ICableTransfer extends IHasNetworkPriority {
 
-  boolean isImportCable();
-
-  boolean isExportCable();
-
   /**
    * Location of connected tile entity
    * 

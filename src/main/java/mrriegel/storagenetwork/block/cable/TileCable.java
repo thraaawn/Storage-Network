@@ -8,8 +8,8 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import mrriegel.storagenetwork.api.ICableTransfer;
 import mrriegel.storagenetwork.api.ICableStorage;
+import mrriegel.storagenetwork.api.ICableTransfer;
 import mrriegel.storagenetwork.block.TileConnectable;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.data.EnumCableType;
@@ -648,5 +648,10 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
   @Override
   public boolean isExportCable() {
     return this.getBlockType() == ModBlocks.exKabel;
+  }
+
+  @Override
+  public boolean isStorageCable() {
+    return this.getBlockType() == ModBlocks.storageKabel;
   }
 }

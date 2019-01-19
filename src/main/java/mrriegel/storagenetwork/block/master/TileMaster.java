@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.block.master;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.UtilTileEntity;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -77,47 +77,6 @@ public class TileMaster extends TileEntity implements ITickable {
     return null;
   }
 
-  private List<ICableStorage> getSortedStorageCables(List<TileEntity> links) {
-    List<ICableStorage> attachedCables = Lists.newArrayList();
-    for (TileEntity tileIn : links) {
-      if (tileIn instanceof ICableStorage) {
-        ICableStorage tile = (ICableStorage) tileIn;
-        if (tile.getInventory() != null) {
-          attachedCables.add(tile);
-        }
-      }
-    }
-    sortCablesByPriority(attachedCables);
-    return attachedCables;
-  }
-
-  private List<ICableTransfer> getSortedImportCables(List<TileEntity> links) {
-    List<ICableTransfer> attachedCables = Lists.newArrayList();
-    for (TileEntity tileIn : links) {
-      if (tileIn instanceof ICableTransfer) {
-        ICableTransfer tile = (ICableTransfer) tileIn;
-        if (tile.getInventory() != null && tile.isImportCable()) {
-          attachedCables.add(tile);
-        }
-      }
-    }
-    sortCablesByPriority(attachedCables);
-    return attachedCables;
-  }
-
-  public List<TileCable> getAttachedCables(List<TileEntity> links, Block kind) {
-    List<TileCable> attachedCables = Lists.newArrayList();
-    for (TileEntity tileIn : links) {
-      if (tileIn instanceof TileCable) {
-        TileCable tile = (TileCable) tileIn;
-        if (tile.getBlockType() == kind && tile.getInventory() != null) {
-          attachedCables.add(tile);
-        }
-      }
-    }
-    sortCablesByPriority(attachedCables);
-    return attachedCables;
-  }
 
   public int emptySlots() {
     int countEmpty = 0;
@@ -337,6 +296,7 @@ public class TileMaster extends TileEntity implements ITickable {
       return 0;
     }
     List<ICableStorage> invs = getSortedStorageCables(getAttachedTileEntities());
+    StorageNetwork.log("invos  KEY " + invs.size());
     ItemStack stackInCopy = stack.copy();
     //only if it does NOT contains
     String key = getStackKey(stackInCopy);
@@ -675,6 +635,31 @@ public class TileMaster extends TileEntity implements ITickable {
     return ItemHandlerHelper.copyStackWithSize(res, result);
   }
 
+  private List<ICableStorage> getSortedStorageCables(List<TileEntity> links) {
+    List<ICableStorage> attachedCables = Lists.newArrayList();
+    for (TileEntity tileIn : links) {
+      if (tileIn instanceof ICableStorage) {
+        ICableStorage tile = (ICableStorage) tileIn;
+        if (tile.getInventory() != null && tile.isStorageCable()) {
+          attachedCables.add(tile);
+        }
+      }
+    }
+    sortCablesByPriority(attachedCables);
+    return attachedCables;
+  }
+
+  // temp0 
+  public List<TileCable> getProcessCables(List<TileEntity> links) {
+    List<TileCable> processCables = new ArrayList<>();//= getAttachedCables(links, ModBlocks.processKabel);
+    for (TileEntity tileIn : getAttachedTileEntities()) {
+      if (tileIn.getBlockType() == ModBlocks.processKabel) {
+        processCables.add((TileCable) tileIn);
+      }
+    }
+    sortCablesByPriority(processCables);
+    return processCables;
+  }
   @Override
   public void update() {
     if (world == null || world.isRemote) {
@@ -686,12 +671,39 @@ public class TileMaster extends TileEntity implements ITickable {
           || (world.getTotalWorldTime() % (ConfigHandler.refreshTicks) == 0)) {
         refreshNetwork();
       }
-      List<TileEntity> links = getAttachedTileEntities();
-      List<ICableTransfer> importCables = getSortedImportCables(links);
+      List<ICableTransfer> importCables = new ArrayList<>();
+      List<TileCable> exportCables = new ArrayList<>();// = getAttachedCables(links, ModBlocks.exKabel);
+      List<TileCable> processCables = new ArrayList<>();//= getAttachedCables(links, ModBlocks.processKabel);  
+      for (TileEntity tileIn : getAttachedTileEntities()) {
+        //old way
+        if (tileIn.getBlockType() == ModBlocks.exKabel) {
+          exportCables.add((TileCable) tileIn);
+        }
+        if (tileIn.getBlockType() == ModBlocks.processKabel) {
+          processCables.add((TileCable) tileIn);
+        }
+        //new way
+        if (tileIn instanceof ICableTransfer) {
+          ICableTransfer tile = (ICableTransfer) tileIn;
+          if(tile.getInventory() == null){
+            continue;
+          }
+          if (  tile.isImportCable()) {
+            importCables.add(tile);
+          }
+          if (tile.isExportCable()) {
+//            exportCables.add(tile);
+          }
+        }
+      }
+      //      StorageNetwork.log("IMP " + importCables.size());
+      //      StorageNetwork.log("exportCables " + exportCables.size());
+      sortCablesByPriority(importCables);
+      sortCablesByPriority(exportCables);
+      sortCablesByPriority(processCables);
+
       updateImports(importCables);
-      List<TileCable> exportCables = getAttachedCables(links, ModBlocks.exKabel);
       updateExports(exportCables);
-      List<TileCable> processCables = getAttachedCables(links, ModBlocks.processKabel);
       updateProcess(processCables);
     }
     catch (Throwable e) {
@@ -758,4 +770,5 @@ public class TileMaster extends TileEntity implements ITickable {
   public void clearCache() {
     importCache = new HashMap<>();
   }
+
 }

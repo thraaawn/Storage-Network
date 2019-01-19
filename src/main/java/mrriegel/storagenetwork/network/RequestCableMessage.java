@@ -9,7 +9,6 @@ import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.control.ProcessWrapper;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.IStorageContainer;
-import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -43,7 +42,7 @@ public class RequestCableMessage implements IMessage, IMessageHandler<RequestCab
           return;
         }
         List<TileEntity> links = tileMaster.getAttachedTileEntities();
-        List<TileCable> processCables = tileMaster.getAttachedCables(links, ModBlocks.processKabel);
+        List<TileCable> processCables = tileMaster.getProcessCables(links);
         List<ProcessWrapper> list = new ArrayList<>();
         //group together any with that match
         //meaning: same output, AND same machine blockid 
