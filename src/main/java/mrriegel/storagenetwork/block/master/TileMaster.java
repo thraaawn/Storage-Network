@@ -70,7 +70,7 @@ public class TileMaster extends TileEntity implements ITickable {
     TileEntity tileHere = world.getTileEntity(pos);
     if (tileHere instanceof ICableStorage) {
       ICableStorage tile = (ICableStorage) tileHere;
-      if (tile.isStorageCable() && tile.getInventory() != null) {
+      if (tile.isStorageEnabled() && tile.getInventory() != null) {
         return tile;
       }
     }
@@ -276,7 +276,7 @@ public class TileMaster extends TileEntity implements ITickable {
    * 
    * @return count of remaining leftover, not count moved
    */
-  public int insertStack(ItemStack stack, BlockPos source, boolean simulate) {
+  public int insertStack(ItemStack stack, boolean simulate) {
     if (stack.isEmpty()) {
       return 0;
     }
@@ -297,9 +297,9 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     if (stackInCopy.isEmpty() == false) {
       for (ICableStorage tileCabl : invs) {
-        if (tileCabl.getConnectedInventory().equals(source)) {
-          continue;
-        }
+        //        if (tileCabl.getConnectedInventory().equals(source)) {
+        //          continue;
+        //        }
         IItemHandler inventoryLinked = tileCabl.getInventory();
         if (!tileCabl.canTransfer(stackInCopy, EnumFilterDirection.IN))
           continue;
@@ -318,7 +318,7 @@ public class TileMaster extends TileEntity implements ITickable {
           //          at com.tattyseal.compactstorage.tileentity.TileEntityChestBuilder.isItemValidForSlot(TileEntityChestBuilder.java:253) ~[TileEntityChestBuilder.class:?]
         }
         stackInCopy = ItemHandlerHelper.copyStackWithSize(stackInCopy, remain.getCount());
-        world.markChunkDirty(tileCabl.getConnectedInventory(), world.getTileEntity(tileCabl.getConnectedInventory()));
+        //world.markChunkDirty(tileCabl.getConnectedInventory(), world.getTileEntity(tileCabl.getConnectedInventory()));
       }
     }
     return stackInCopy.getCount();
@@ -356,7 +356,7 @@ public class TileMaster extends TileEntity implements ITickable {
         if (extracted.isEmpty() || extracted.getCount() < needToInsert) {
           continue;
         }
-        int countUnmoved = insertStack(ItemHandlerHelper.copyStackWithSize(stackCurrent, needToInsert), tileCable.getConnectedInventory(), false);
+        int countUnmoved = insertStack(ItemHandlerHelper.copyStackWithSize(stackCurrent, needToInsert), false);
         int countMoved = needToInsert - countUnmoved;
         if (countMoved > 0) {
           inventoryLinked.extractItem(slot, countMoved, false);
@@ -465,7 +465,7 @@ public class TileMaster extends TileEntity implements ITickable {
           ItemStack stackToMove = out.getStack().copy();
           //  StorageNetwork.log("IMPORTING: " + stackToMove.toString());
           stackToMove.setCount(out.getSize());
-          int countNotInserted = this.insertStack(stackToMove, tileCable.getPos(), simulate);
+          int countNotInserted = this.insertStack(stackToMove, simulate);
           if (countNotInserted == 0 && targetStillNeeds == 0) { //extracted.getCount() == out.getSize() && countNotInserted == extracted.getCount()) {
             //success
             simulate = false;
@@ -475,7 +475,7 @@ public class TileMaster extends TileEntity implements ITickable {
             //            StorageNetwork.log("-> IMPORTING: out =  " + out.toString());
             //            StorageNetwork.log("IMPORTING: stackToMove= " + stackToMove.toString());
             ItemStack extracted = UtilInventory.extractItem(inventoryLinked, new FilterItem(out.getStack()), out.getSize(), simulate);
-            countNotInserted = this.insertStack(stackToMove, tileCable.getPos(), simulate);
+            countNotInserted = this.insertStack(stackToMove, simulate);
             // IF all found 
             //then complete extraction (and insert into network)
             //then toggle that waitingResult flag on request (and save)
@@ -545,7 +545,7 @@ public class TileMaster extends TileEntity implements ITickable {
     for (BlockPos p : getConnectables()) {
       if (world.getTileEntity(p) instanceof ICableStorage) {
         ICableStorage tile = (ICableStorage) world.getTileEntity(p);
-        if (tile.isStorageCable() && tile.getInventory() != null) {
+        if (tile.isStorageEnabled() && tile.getInventory() != null) {
           invs.add(tile);
         }
       }
@@ -603,7 +603,7 @@ public class TileMaster extends TileEntity implements ITickable {
     for (TileEntity tileIn : links) {
       if (tileIn instanceof ICableStorage) {
         ICableStorage tile = (ICableStorage) tileIn;
-        if (tile.getInventory() != null && tile.isStorageCable()) {
+        if (tile.getInventory() != null && tile.isStorageEnabled()) {
           attachedCables.add(tile);
         }
       }

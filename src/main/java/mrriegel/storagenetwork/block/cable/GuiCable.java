@@ -125,7 +125,7 @@ public class GuiCable extends GuiCableBase implements IPublicGuiContainer {
     btnWhite.setCable(tile);
     this.addButton(btnWhite);
     btnWhite.visible = tile.getBlockType() != ModBlocks.exKabel;
-    if (tile.isStorageCable()) {
+    if (tile.isStorageEnabled()) {
       btnInputOutputStorage = new GuiCableButton(CableMessageType.TOGGLE_WAY, guiLeft + 115, guiTop + 5, "");
       btnInputOutputStorage.setCable(tile);
       this.addButton(btnInputOutputStorage);

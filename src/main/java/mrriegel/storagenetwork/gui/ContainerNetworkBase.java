@@ -234,7 +234,7 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
         return ItemStack.EMPTY;
       }
       else if (tileMaster != null) {
-        int rest = tileMaster.insertStack(itemstack1, null, false);
+        int rest = tileMaster.insertStack(itemstack1, false);
         ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
         slot.putStack(stack);
         detectAndSendChanges();

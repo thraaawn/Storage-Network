@@ -41,7 +41,7 @@ public class ClearRecipeMessage implements IMessage, IMessageHandler<ClearRecipe
               continue;
             }
             int numBeforeInsert = stackInSlot.getCount();
-            int remainingAfter = tileMaster.insertStack(stackInSlot.copy(), null, false);
+            int remainingAfter = tileMaster.insertStack(stackInSlot.copy(), false);
             if (numBeforeInsert == remainingAfter) {
               continue;
             }

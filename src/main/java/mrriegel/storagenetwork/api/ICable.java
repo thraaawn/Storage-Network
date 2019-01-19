@@ -17,7 +17,7 @@ public interface ICable {
    * 
    * @return
    */
-  BlockPos getConnectedInventory();
+  //BlockPos getConnectedInventory();
   
   /**
    * position of this tile entity
@@ -29,7 +29,6 @@ public interface ICable {
   /**
    * Connected Inventory
    * 
-   * TODO: replace with SIDE and use Capability to build this
    * 
    * @return
    */

@@ -83,7 +83,7 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
         return new ItemStack(Items.STICK);
       }
       else if (tileMaster != null) {
-        int rest = tileMaster.insertStack(slotStack, null, false);
+        int rest = tileMaster.insertStack(slotStack, false);
         ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(slotStack, rest);
         slot.putStack(stack);
         detectAndSendChanges();
@@ -252,11 +252,11 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
           ItemStack n = s.copy();
           n.setCount(s.getMaxStackSize());
           num -= n.getCount();
-          master.insertStack(n, BlockPos.ORIGIN, false);
+          master.insertStack(n, false);
         }
         s.setCount(num);
         num -= s.getCount();
-        master.insertStack(s, BlockPos.ORIGIN, false);
+        master.insertStack(s, false);
       }
     }
   }

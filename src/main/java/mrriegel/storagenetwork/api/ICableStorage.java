@@ -16,7 +16,7 @@ public interface ICableStorage extends ICable {
    * 
    * @return
    */
-  boolean isStorageCable();
+  boolean isStorageEnabled();
 
 
 }
