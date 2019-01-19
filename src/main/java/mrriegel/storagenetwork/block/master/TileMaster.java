@@ -11,9 +11,9 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.api.ICable;
 import mrriegel.storagenetwork.api.ICableStorage;
 import mrriegel.storagenetwork.api.ICableTransfer;
-import mrriegel.storagenetwork.api.ICable;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
@@ -296,7 +296,7 @@ public class TileMaster extends TileEntity implements ITickable {
       return 0;
     }
     List<ICableStorage> invs = getSortedStorageCables(getAttachedTileEntities());
-    StorageNetwork.log("invos  KEY " + invs.size());
+
     ItemStack stackInCopy = stack.copy();
     //only if it does NOT contains
     String key = getStackKey(stackInCopy);
@@ -352,7 +352,6 @@ public class TileMaster extends TileEntity implements ITickable {
    * @param attachedCables
    */
   private void updateImports(List<ICableTransfer> attachedCables) {
-
     for (ICableTransfer tileCable : attachedCables) {
       IItemHandler inventoryLinked = tileCable.getInventory();
       if (!tileCable.runNow()) {
@@ -365,9 +364,11 @@ public class TileMaster extends TileEntity implements ITickable {
           continue;
         }
         if (!tileCable.canTransfer(stackCurrent, EnumFilterDirection.OUT)) {
+          StorageNetwork.log("import loopcanTransfer false  " + stackCurrent);
           continue;
         }
 
+        StorageNetwork.log("import loop " + stackCurrent);
         int transferRate = tileCable.getTransferRate();
         int needToInsert = Math.min(stackCurrent.getCount(), transferRate);
         ItemStack extracted = inventoryLinked.extractItem(slot, needToInsert, true);
@@ -515,21 +516,29 @@ public class TileMaster extends TileEntity implements ITickable {
     }
   }
 
-  private void updateExports(List<TileCable> attachedCables) {
-    for (TileCable tileCable : attachedCables) {
-      if (tileCable == null || tileCable.getInventory() == null) {
+  /**
+   * push OUT of the network to attached export cables
+   * 
+   * @param attachedCables
+   */
+  private void updateExports(List<ICableTransfer> attachedCables) {
+    for (ICableTransfer cable : attachedCables) {
+      if (cable == null || cable.getInventory() == null) {
         continue;
       }
-      if ((world.getTotalWorldTime() + 20) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
+      if (!cable.runNow()) {
         continue;
       }
+      //      if ((world.getTotalWorldTime() + 20) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
+      //        continue;
+      //      }
+      TileCable tileCable = (TileCable) cable;//TODO: get filter 
       IItemHandler inv = tileCable.getInventory();
-      boolean ore = tileCable.getOre();
-      boolean meta = tileCable.getMeta();
+
       //now check the filter inside this dudlio
       Map<Integer, StackWrapper> tilesFilter = tileCable.getFilter();
       for (int i = 0; i < TileCable.FILTER_SIZE; i++) {
-        if (getStorageInventorys().contains(tileCable.getPos())) {//constantly check if it gets removed
+        if (getStorageInventorys().contains(cable.getPos())) {//constantly check if it gets removed
           continue;
         }
         StackWrapper currentFilter = tilesFilter.get(i);
@@ -540,7 +549,7 @@ public class TileMaster extends TileEntity implements ITickable {
         if (stackToFilter == null || stackToFilter.isEmpty()) {
           continue;
         }
-        ItemStack stackCurrent = this.request(new FilterItem(stackToFilter, meta, ore, tileCable.getNbt()), 1, true);
+        ItemStack stackCurrent = this.request(new FilterItem(stackToFilter, tileCable.getMeta(), tileCable.getOre(), tileCable.getNbt()), 1, true);
         //^ 1
         if (stackCurrent == null || stackCurrent.isEmpty()) {
           continue;
@@ -550,7 +559,7 @@ public class TileMaster extends TileEntity implements ITickable {
         }
         int maxStackSize = stackCurrent.getMaxStackSize();
         if ((tileCable.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
-          maxStackSize = Math.min(maxStackSize, currentFilter.getSize() - UtilInventory.getAmount(inv, new FilterItem(stackCurrent, meta, ore, tileCable.getNbt())));
+          maxStackSize = Math.min(maxStackSize, currentFilter.getSize() - UtilInventory.getAmount(inv, new FilterItem(stackCurrent, tileCable.getMeta(), tileCable.getOre(), tileCable.getNbt())));
         }
         if (maxStackSize <= 0) {
           continue;
@@ -561,7 +570,7 @@ public class TileMaster extends TileEntity implements ITickable {
         boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
         insert = Math.min(insert, hasStackUpgrade ? 64 : 4);
 
-        ItemStack rec = this.request(new FilterItem(stackCurrent, meta, ore, tileCable.getNbt()), insert, false);
+        ItemStack rec = this.request(new FilterItem(stackCurrent, tileCable.getMeta(), tileCable.getOre(), tileCable.getNbt()), insert, false);
         if (rec == null || rec.isEmpty()) {
           continue;
         }
@@ -672,13 +681,13 @@ public class TileMaster extends TileEntity implements ITickable {
         refreshNetwork();
       }
       List<ICableTransfer> importCables = new ArrayList<>();
-      List<TileCable> exportCables = new ArrayList<>();// = getAttachedCables(links, ModBlocks.exKabel);
+      List<ICableTransfer> exportCables = new ArrayList<>();// = getAttachedCables(links, ModBlocks.exKabel);
       List<TileCable> processCables = new ArrayList<>();//= getAttachedCables(links, ModBlocks.processKabel);  
       for (TileEntity tileIn : getAttachedTileEntities()) {
         //old way
-        if (tileIn.getBlockType() == ModBlocks.exKabel) {
-          exportCables.add((TileCable) tileIn);
-        }
+        //        if (tileIn.getBlockType() == ModBlocks.exKabel) {
+        //          exportCables.add((TileCable) tileIn);
+        //        }
         if (tileIn.getBlockType() == ModBlocks.processKabel) {
           processCables.add((TileCable) tileIn);
         }
@@ -692,7 +701,7 @@ public class TileMaster extends TileEntity implements ITickable {
             importCables.add(tile);
           }
           if (tile.isExportCable()) {
-//            exportCables.add(tile);
+            exportCables.add(tile);
           }
         }
       }

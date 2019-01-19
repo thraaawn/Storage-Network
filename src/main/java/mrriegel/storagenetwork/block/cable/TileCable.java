@@ -654,4 +654,9 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
   public boolean isStorageCable() {
     return this.getBlockType() == ModBlocks.storageKabel;
   }
+
+  //    @Override
+  //  public FilterItem getExportFilter(ItemStack stackCurrent) {
+  //    return new FilterItem(stackCurrent, getMeta(), getOre(), getNbt());
+  //  }
 }

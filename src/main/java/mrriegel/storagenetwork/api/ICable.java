@@ -17,6 +17,13 @@ public interface ICable {
    * @return
    */
   BlockPos getConnectedInventory();
+  
+  /**
+   * position of this tile entity
+   * 
+   * @return
+   */
+  BlockPos getPos();
 
   /**
    * Connected Inventory

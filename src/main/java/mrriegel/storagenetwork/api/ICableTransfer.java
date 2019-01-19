@@ -5,6 +5,8 @@ import net.minecraft.item.ItemStack;
 
 public interface ICableTransfer extends ICable {
 
+  //used by only export
+  //  FilterItem getExportFilter(ItemStack stackCurrent);
   /**
    * Called every tick to see if an operation should be processed now
    * 
