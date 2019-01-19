@@ -43,7 +43,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class TileMaster extends TileEntity implements ITickable {
 
   private Set<BlockPos> connectables;
-  private List<BlockPos> storageInventorys;
+  // private List<BlockPos> storageInventorys;
   private Map<String, RecentSlotPointer> importCache = new HashMap<>();
   public static String[] blacklist;
 
@@ -75,7 +75,6 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     return null;
   }
-
 
   public int emptySlots() {
     int countEmpty = 0;
@@ -167,20 +166,19 @@ public class TileMaster extends TileEntity implements ITickable {
     return true;
   }
 
-  private void addInventorys() {
-    setStorageInventorys(Lists.newArrayList());
-    for (BlockPos cable : getConnectables()) {
-      if (world.getTileEntity(cable) instanceof TileCable) {
-        TileCable s = (TileCable) world.getTileEntity(cable);
-        if (s.getInventory() != null && s.isStorage()) {
-          BlockPos pos = s.getConnectedInventory();
-          if (world.getChunkFromBlockCoords(pos).isLoaded())
-            getStorageInventorys().add(pos);
-        }
-      }
-    }
-  }
-
+  //  private void addInventorys() {
+  //    setStorageInventorys(Lists.newArrayList());
+  //    for (BlockPos cable : getConnectables()) {
+  //      if (world.getTileEntity(cable) instanceof TileCable) {
+  //        TileCable s = (TileCable) world.getTileEntity(cable);
+  //        if (s.getInventory() != null && s.isStorage()) {
+  //          BlockPos pos = s.getConnectedInventory();
+  //          if (world.getChunkFromBlockCoords(pos).isLoaded())
+  //            getStorageInventorys().add(pos);
+  //        }
+  //      }
+  //    }
+  //  }
   public void refreshNetwork() {
     if (world.isRemote) {
       return;
@@ -192,7 +190,7 @@ public class TileMaster extends TileEntity implements ITickable {
     catch (Throwable e) {
       StorageNetwork.instance.logger.error("Refresh network error ", e);
     }
-    addInventorys();
+    // addInventorys();
     world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
   }
 
@@ -204,7 +202,6 @@ public class TileMaster extends TileEntity implements ITickable {
     if (!tileCable.canTransfer(stackInCopy, EnumFilterDirection.IN)) {
       return stackInCopy;
     }
-
     String key = getStackKey(stackInCopy);
     int originalSize = stackInCopy.getCount();
     //      
@@ -292,7 +289,6 @@ public class TileMaster extends TileEntity implements ITickable {
       return 0;
     }
     List<ICableStorage> invs = getSortedStorageCables(getAttachedTileEntities());
-
     ItemStack stackInCopy = stack.copy();
     //only if it does NOT contains
     String key = getStackKey(stackInCopy);
@@ -340,8 +336,6 @@ public class TileMaster extends TileEntity implements ITickable {
     return stackInCopy.getItem().getRegistryName().toString() + "/" + stackInCopy.getItemDamage();
   }
 
-
-
   /**
    * Pull into the network from the relevant linked cables
    * 
@@ -363,7 +357,6 @@ public class TileMaster extends TileEntity implements ITickable {
           //          StorageNetwork.log("import loopcanTransfer false  " + stackCurrent);
           continue;
         }
-
         StorageNetwork.log("import loop " + stackCurrent);
         int transferRate = tileCable.getTransferRate();
         int needToInsert = Math.min(stackCurrent.getCount(), transferRate);
@@ -525,9 +518,7 @@ public class TileMaster extends TileEntity implements ITickable {
       if (!tileCable.runNow()) {
         continue;
       }
-
       IItemHandler inv = tileCable.getInventory();
-
       for (FilterItem filterItem : tileCable.getExportFilter()) {
         // first run as a simulation
         ItemStack stackCurrent = this.request(filterItem, 1, true);
@@ -539,11 +530,9 @@ public class TileMaster extends TileEntity implements ITickable {
           continue;
         }
         filterItem.setStack(stackCurrent);
-
         ItemStack max = ItemHandlerHelper.copyStackWithSize(stackCurrent, tileCable.getTransferRate());
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, max, true);
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
-
         ItemStack recFromNetwork = this.request(filterItem, insert, false);
         if (recFromNetwork == null || recFromNetwork.isEmpty()) {
           continue;
@@ -642,6 +631,7 @@ public class TileMaster extends TileEntity implements ITickable {
     sortCablesByPriority(processCables);
     return processCables;
   }
+
   @Override
   public void update() {
     if (world == null || world.isRemote) {
@@ -649,7 +639,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     //refresh time in config, default 200 ticks aka 10 seconds
     try {
-      if (getStorageInventorys() == null || getConnectables() == null
+      if (getConnectables() == null
           || (world.getTotalWorldTime() % (ConfigHandler.refreshTicks) == 0)) {
         refreshNetwork();
       }
@@ -657,20 +647,17 @@ public class TileMaster extends TileEntity implements ITickable {
       List<ICableTransfer> exportCables = new ArrayList<>();// = getAttachedCables(links, ModBlocks.exKabel);
       List<TileCable> processCables = new ArrayList<>();//= getAttachedCables(links, ModBlocks.processKabel);  
       for (TileEntity tileIn : getAttachedTileEntities()) {
-        //old way
-        //        if (tileIn.getBlockType() == ModBlocks.exKabel) {
-        //          exportCables.add((TileCable) tileIn);
-        //        }
+        //old way 
         if (tileIn.getBlockType() == ModBlocks.processKabel) {
           processCables.add((TileCable) tileIn);
         }
         //new way
         if (tileIn instanceof ICableTransfer) {
           ICableTransfer tile = (ICableTransfer) tileIn;
-          if(tile.getInventory() == null){
+          if (tile.getInventory() == null) {
             continue;
           }
-          if (  tile.isImportCable()) {
+          if (tile.isImportCable()) {
             importCables.add(tile);
           }
           if (tile.isExportCable()) {
@@ -683,7 +670,6 @@ public class TileMaster extends TileEntity implements ITickable {
       sortCablesByPriority(importCables);
       sortCablesByPriority(exportCables);
       sortCablesByPriority(processCables);
-
       updateImports(importCables);
       updateExports(exportCables);
       updateProcess(processCables);
@@ -741,16 +727,7 @@ public class TileMaster extends TileEntity implements ITickable {
     this.connectables = connectables;
   }
 
-  public List<BlockPos> getStorageInventorys() {
-    return storageInventorys;
-  }
-
-  public void setStorageInventorys(List<BlockPos> storageInventorys) {
-    this.storageInventorys = storageInventorys;
-  }
-
   public void clearCache() {
     importCache = new HashMap<>();
   }
-
 }
