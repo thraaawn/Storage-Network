@@ -2,24 +2,8 @@ package mrriegel.storagenetwork.api;
 
 import mrriegel.storagenetwork.data.EnumFilterDirection;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.IItemHandler;
 
-public interface ICableTransfer extends IHasNetworkPriority {
-
-  /**
-   * Location of connected tile entity
-   * 
-   * @return
-   */
-  BlockPos getConnectedInventory();
-
-  /**
-   * Connected Inventory
-   * 
-   * @return
-   */
-  IItemHandler getInventory();
+public interface ICableTransfer extends ICable {
 
   /**
    * Called every tick to see if an operation should be processed now

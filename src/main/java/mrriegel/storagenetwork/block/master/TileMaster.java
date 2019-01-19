@@ -13,7 +13,7 @@ import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.ICableStorage;
 import mrriegel.storagenetwork.api.ICableTransfer;
-import mrriegel.storagenetwork.api.IHasNetworkPriority;
+import mrriegel.storagenetwork.api.ICable;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
@@ -711,11 +711,11 @@ public class TileMaster extends TileEntity implements ITickable {
     }
   }
 
-  private void sortCablesByPriority(List<? extends IHasNetworkPriority> attachedCables) {
-    Collections.sort(attachedCables, new Comparator<IHasNetworkPriority>() {
+  private void sortCablesByPriority(List<? extends ICable> attachedCables) {
+    Collections.sort(attachedCables, new Comparator<ICable>() {
 
       @Override
-      public int compare(IHasNetworkPriority o1, IHasNetworkPriority o2) {
+      public int compare(ICable o1, ICable o2) {
         return Integer.compare(o1.getPriority(), o2.getPriority());
       }
     });
