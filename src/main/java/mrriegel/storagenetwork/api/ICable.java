@@ -11,8 +11,9 @@ public interface ICable {
    * @return
    */
   int getPriority();
+  
   /**
-   * Location of connected tile entity
+   * Location of connected tile entity (What I am connected to)
    * 
    * @return
    */
@@ -32,27 +33,5 @@ public interface ICable {
    */
   IItemHandler getInventory();
 
-  /**
-   * Is this used for importing
-   * 
-   * TODO: ENUM These
-   * 
-   * @return
-   */
-  boolean isImportCable();
-
-  /**
-   * Is this used for exmporting.
-   * 
-   * @return
-   */
-  boolean isExportCable();
-
-  /**
-   * Is this inventory used for storage
-   * 
-   * @return
-   */
-  boolean isStorageCable();
 
 }

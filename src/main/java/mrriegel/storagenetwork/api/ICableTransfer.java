@@ -8,7 +8,9 @@ import net.minecraft.item.ItemStack;
 public interface ICableTransfer extends ICable {
 
   /**
-   * A filter item is used in teh request packet sent to the network when asking to pull an item out.
+   * Only used if isExportCable() == true
+   * 
+   * A filter item is used in the request packet sent to the network when asking to pull an item out.
    * 
    * This is a list of requests that this cable is trying to export
    * 
@@ -18,8 +20,10 @@ public interface ICableTransfer extends ICable {
    * @return
    */
   List<FilterItem> getExportFilter();
+  
   /**
    * Called every tick to see if an operation should be processed now
+   * 
    * 
    * @return
    */
@@ -40,4 +44,20 @@ public interface ICableTransfer extends ICable {
    * @return
    */
   boolean canTransfer(ItemStack stack, EnumFilterDirection way);
+
+  /**
+   * Is this used for importing
+   * 
+   * TODO: ENUM These
+   * 
+   * @return
+   */
+  boolean isImportCable();
+
+  /**
+   * Is this used for exmporting.
+   * 
+   * @return
+   */
+  boolean isExportCable();
 }
