@@ -54,6 +54,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     List<ICableStorage> invs = getSortedStorageCables(getAttachedTileEntities());
     for (ICableStorage tileConnected : invs) {
+      //      StorageNetwork.log("TM getStacks " + tileConnected.getPos());  
       IItemHandler inv = tileConnected.getInventory();
       ItemStack stack;
       for (int i = 0; i < inv.getSlots(); i++) {
@@ -147,9 +148,13 @@ public class TileMaster extends TileEntity implements ITickable {
         world.removeTileEntity(blockPos);
         continue;
       }
-      if (tileHere instanceof IConnectable && !getConnectables().contains(blockPos)) {
+      if ((tileHere instanceof IConnectable
+          || tileHere instanceof ICable)
+          && !getConnectables().contains(blockPos)) {
         getConnectables().add(blockPos);
-        ((IConnectable) tileHere).setMaster(this.pos);
+        if (tileHere instanceof IConnectable) {
+          ((IConnectable) tileHere).setMaster(this.pos);
+        }
         chunk.setModified(true);
         addConnectables(blockPos);
       }
