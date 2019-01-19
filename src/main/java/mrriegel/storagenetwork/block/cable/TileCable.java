@@ -48,7 +48,6 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
   protected boolean mode = true;
   protected int limit = 0;
   protected ItemStack stack = ItemStack.EMPTY;
-
   protected NonNullList<ItemStack> upgrades = NonNullList.withSize(ContainerCable.UPGRADE_COUNT, ItemStack.EMPTY);
   protected EnumFacing inventoryFace;
   protected BlockPos connectedInventory;
@@ -195,7 +194,6 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     }
     //    return ores ? UtilTileEntity.equalOreDict(stack, s) : metas ? stack.isItemEqual(s) : stack.getItem() == s.getItem();
   }
-
   /* key function used by TileMaster for all item trafic
    * 
    * TODO: TEST CASES
@@ -237,7 +235,6 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     if (!canGoThisDirection(way)) {
       return false;
     }
-
     boolean filtered = checkWBFilterList(stack);
     if (!filtered) {
       return false;
@@ -364,6 +361,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     }
     return half;
   }
+
   public void setFilter(Map<Integer, StackWrapper> filter) {
     this.filter = filter;
   }
@@ -412,7 +410,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     this.priority = priority;
   }
 
-  @Override
+  //  @Override 
   public EnumFilterDirection getTransferDirection() {
     return transferDirection;
   }
@@ -437,7 +435,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     this.processModel = processModel;
   }
 
-  @Override
+  // @Override
   public EnumFacing getInventoryFace() {
     return inventoryFace;
   }
@@ -623,6 +621,7 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     }
     return topRow.get(0).getStack();
   }
+
   @Override
   public int getField(int id) {
     return 0;
@@ -661,8 +660,15 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
     return this.getBlockType() == ModBlocks.storageKabel;
   }
 
-  //    @Override
-  //  public FilterItem getExportFilter(ItemStack stackCurrent) {
-  //    return new FilterItem(stackCurrent, getMeta(), getOre(), getNbt());
-  //  }
+  @Override
+  public List<FilterItem> getExportFilter() {
+    List<FilterItem> filter = new ArrayList<>();
+    for (StackWrapper currentFilter : getFilter().values()) {
+      if (currentFilter != null && !currentFilter.getStack().isEmpty()) {
+        filter.add(new FilterItem(currentFilter.getStack().copy(),
+            getMeta(), getOre(), getNbt()));
+      }
+    }
+    return filter;
+  }
 }

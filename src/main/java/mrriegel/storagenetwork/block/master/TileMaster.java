@@ -23,7 +23,6 @@ import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.data.EnumFilterDirection;
 import mrriegel.storagenetwork.data.FilterItem;
 import mrriegel.storagenetwork.data.StackWrapper;
-import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.UtilTileEntity;
@@ -522,34 +521,36 @@ public class TileMaster extends TileEntity implements ITickable {
    * @param attachedCables
    */
   private void updateExports(List<ICableTransfer> attachedCables) {
-    for (ICableTransfer cable : attachedCables) {
-      if (cable == null || cable.getInventory() == null) {
+    for (ICableTransfer tileCable : attachedCables) {
+      if (tileCable == null || tileCable.getInventory() == null) {
         continue;
       }
-      if (!cable.runNow()) {
+      if (!tileCable.runNow()) {
         continue;
       }
       //      if ((world.getTotalWorldTime() + 20) % (30 / (tileCable.getUpgradesOfType(ItemUpgrade.SPEED) + 1)) != 0) {
       //        continue;
       //      }
-      TileCable tileCable = (TileCable) cable;//TODO: get filter 
+      // T//ileCable tileCable = (TileCable) cable;//TODO: get filter 
       IItemHandler inv = tileCable.getInventory();
 
       //now check the filter inside this dudlio
-      Map<Integer, StackWrapper> tilesFilter = tileCable.getFilter();
-      for (int i = 0; i < TileCable.FILTER_SIZE; i++) {
-        if (getStorageInventorys().contains(cable.getPos())) {//constantly check if it gets removed
-          continue;
-        }
-        StackWrapper currentFilter = tilesFilter.get(i);
-        if (currentFilter == null) {
-          continue;
-        }
-        ItemStack stackToFilter = currentFilter.getStack().copy();
-        if (stackToFilter == null || stackToFilter.isEmpty()) {
-          continue;
-        }
-        ItemStack stackCurrent = this.request(new FilterItem(stackToFilter, tileCable.getMeta(), tileCable.getOre(), tileCable.getNbt()), 1, true);
+      //      Map<Integer, StackWrapper> tilesFilter = tileCable.getFilter();
+      for (FilterItem filterItem : tileCable.getExportFilter()) {
+        //        if (getStorageInventorys().contains(cable.getPos())) {//constantly check if it gets removed
+        //          continue;
+        //        }
+        //        StackWrapper currentFilter = tilesFilter.get(i);
+        //        if (currentFilter == null) {
+        //          continue;
+        //        }
+        //        ItemStack stackToFilter = currentFilter.getStack().copy();
+        //        if (stackToFilter == null || stackToFilter.isEmpty()) {
+        //          continue;
+        //        }
+        //FilterItem filterItem = new FilterItem(stackToFilter, tileCable.getMeta(), tileCable.getOre(), tileCable.getNbt());
+        // first run as a simulation
+        ItemStack stackCurrent = this.request(filterItem, 1, true);
         //^ 1
         if (stackCurrent == null || stackCurrent.isEmpty()) {
           continue;
@@ -557,25 +558,26 @@ public class TileMaster extends TileEntity implements ITickable {
         if (!tileCable.canTransfer(stackCurrent, EnumFilterDirection.IN)) {
           continue;
         }
-        int maxStackSize = stackCurrent.getMaxStackSize();
-        if ((tileCable.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
-          maxStackSize = Math.min(maxStackSize, currentFilter.getSize() - UtilInventory.getAmount(inv, new FilterItem(stackCurrent, tileCable.getMeta(), tileCable.getOre(), tileCable.getNbt())));
-        }
-        if (maxStackSize <= 0) {
-          continue;
-        }
-        ItemStack max = ItemHandlerHelper.copyStackWithSize(stackCurrent, maxStackSize);
+        filterItem.setStack(stackCurrent);
+        //        int maxStackSize = stackCurrent.getMaxStackSize();
+        //        if ((tileCable.getUpgradesOfType(ItemUpgrade.STOCK) > 0)) {
+        //          int amount = UtilInventory.getAmount(inv, filterItem);
+        //          maxStackSize = Math.min(maxStackSize, currentFilter.getSize() - amount);
+        //        }
+        //        if (maxStackSize <= 0) {
+        //          continue; 
+        //        }
+        ItemStack max = ItemHandlerHelper.copyStackWithSize(stackCurrent, tileCable.getTransferRate());
         ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, max, true);
         int insert = remain == null ? max.getCount() : max.getCount() - remain.getCount();
-        boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
-        insert = Math.min(insert, hasStackUpgrade ? 64 : 4);
-
-        ItemStack rec = this.request(new FilterItem(stackCurrent, tileCable.getMeta(), tileCable.getOre(), tileCable.getNbt()), insert, false);
-        if (rec == null || rec.isEmpty()) {
+        //        boolean hasStackUpgrade = tileCable.getUpgradesOfType(ItemUpgrade.STACK) > 0;
+        //  insert = tileCable.getTransferRate(); 
+        ItemStack recFromNetwork = this.request(filterItem, insert, false);
+        if (recFromNetwork == null || recFromNetwork.isEmpty()) {
           continue;
         }
         //now insert the stack we just pulled out 
-        ItemHandlerHelper.insertItemStacked(inv, rec, false);
+        ItemHandlerHelper.insertItemStacked(inv, recFromNetwork, false);
         world.markChunkDirty(pos, this);// is this needed?
         break;
       }
