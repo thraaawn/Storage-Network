@@ -10,8 +10,8 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.api.ICableImport;
 import mrriegel.storagenetwork.api.ICableStorage;
+import mrriegel.storagenetwork.api.ICableTransfer;
 import mrriegel.storagenetwork.api.IHasNetworkPriority;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
@@ -91,12 +91,12 @@ public class TileMaster extends TileEntity implements ITickable {
     return attachedCables;
   }
 
-  private List<ICableImport> getSortedICables(List<TileEntity> links) {
-    List<ICableImport> attachedCables = Lists.newArrayList();
+  private List<ICableTransfer> getSortedImportCables(List<TileEntity> links) {
+    List<ICableTransfer> attachedCables = Lists.newArrayList();
     for (TileEntity tileIn : links) {
-      if (tileIn instanceof ICableStorage) {
-        ICableImport tile = (ICableImport) tileIn;
-        if (tile.getInventory() != null) {
+      if (tileIn instanceof ICableTransfer) {
+        ICableTransfer tile = (ICableTransfer) tileIn;
+        if (tile.getInventory() != null && tile.isImportCable()) {
           attachedCables.add(tile);
         }
       }
@@ -391,9 +391,9 @@ public class TileMaster extends TileEntity implements ITickable {
    * 
    * @param attachedCables
    */
-  private void updateImports(List<ICableImport> attachedCables) {
+  private void updateImports(List<ICableTransfer> attachedCables) {
 
-    for (ICableImport tileCable : attachedCables) {
+    for (ICableTransfer tileCable : attachedCables) {
       IItemHandler inventoryLinked = tileCable.getInventory();
       if (!tileCable.runNow()) {
         continue;
@@ -687,7 +687,7 @@ public class TileMaster extends TileEntity implements ITickable {
         refreshNetwork();
       }
       List<TileEntity> links = getAttachedTileEntities();
-      List<ICableImport> importCables = getSortedICables(links);
+      List<ICableTransfer> importCables = getSortedImportCables(links);
       updateImports(importCables);
       List<TileCable> exportCables = getAttachedCables(links, ModBlocks.exKabel);
       updateExports(exportCables);

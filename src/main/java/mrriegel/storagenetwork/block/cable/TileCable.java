@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import mrriegel.storagenetwork.api.ICableImport;
+import mrriegel.storagenetwork.api.ICableTransfer;
 import mrriegel.storagenetwork.api.ICableStorage;
 import mrriegel.storagenetwork.block.TileConnectable;
 import mrriegel.storagenetwork.block.master.TileMaster;
@@ -37,7 +37,7 @@ import net.minecraftforge.items.IItemHandler;
  * Base class for TileCable
  * 
  */
-public class TileCable extends TileConnectable implements IInventory, ICableStorage, ICableImport {
+public class TileCable extends TileConnectable implements IInventory, ICableStorage, ICableTransfer {
 
   public static enum Fields {
     STATUS, FACINGTOPROW, FACINGBOTTOMROW;
@@ -638,5 +638,15 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
   public int getTransferRate() {
     boolean hasStackUpgrade = this.getUpgradesOfType(ItemUpgrade.STACK) > 0;
     return (hasStackUpgrade) ? 64 : 4;
+  }
+
+  @Override
+  public boolean isImportCable() {
+    return this.getBlockType() == ModBlocks.imKabel;
+  }
+
+  @Override
+  public boolean isExportCable() {
+    return this.getBlockType() == ModBlocks.exKabel;
   }
 }
