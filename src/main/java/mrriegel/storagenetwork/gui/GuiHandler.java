@@ -1,9 +1,13 @@
 package mrriegel.storagenetwork.gui;
 
-import mrriegel.storagenetwork.block.cable.ContainerCable;
-import mrriegel.storagenetwork.block.cable.GuiCable;
-import mrriegel.storagenetwork.block.cable.GuiCableProcessing;
-import mrriegel.storagenetwork.block.cable.TileCable;
+import mrriegel.storagenetwork.block.cable.*;
+import mrriegel.storagenetwork.block.cable.io.ContainerCableIO;
+import mrriegel.storagenetwork.block.cable.io.GuiCableIO;
+import mrriegel.storagenetwork.block.cable.link.ContainerCableLink;
+import mrriegel.storagenetwork.block.cable.link.GuiCableLink;
+import mrriegel.storagenetwork.block.cable.processing.ContainerCableProcessing;
+import mrriegel.storagenetwork.block.cable.processing.GuiCableProcessing;
+import mrriegel.storagenetwork.block.cable.processing.TileCableProcess;
 import mrriegel.storagenetwork.block.control.ContainerControl;
 import mrriegel.storagenetwork.block.control.GuiControl;
 import mrriegel.storagenetwork.block.control.TileControl;
@@ -16,7 +20,6 @@ import mrriegel.storagenetwork.gui.fb.GuiFastRemote;
 import mrriegel.storagenetwork.gui.fb.GuiFastRequest;
 import mrriegel.storagenetwork.item.remote.ContainerRemote;
 import mrriegel.storagenetwork.item.remote.GuiRemote;
-import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
@@ -28,24 +31,44 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class GuiHandler implements IGuiHandler {
+  public enum GuiIDs {
+    LINK,
+    IMPORT,
+    EXPORT,
+    PROCESSING,
+    REQUEST,
+    REMOTE,
+    CONTROLLER
+  }
 
-  public static final int CABLE = 0;// EnumCableType.CONNECT.ordinal();
-  public static final int REQUEST = 3;
-  public static final int REMOTE = 4;
-  public static final int CONTROLLER = 5;
   public static final boolean FB_LOADED = Loader.isModLoaded("fastbench");
 
   @Override
   public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
     BlockPos pos = new BlockPos(x, y, z);
     UtilTileEntity.updateTile(world, pos);
-    if (ID == CABLE) {
-      return new ContainerCable((TileCable) world.getTileEntity(pos), player.inventory);
+
+    if (ID == GuiIDs.LINK.ordinal()) {
+      return new ContainerCableLink((TileCable) world.getTileEntity(pos), player.inventory);
     }
-    if (ID == CONTROLLER) {
+
+    if (ID == GuiIDs.IMPORT.ordinal()) {
+      return new ContainerCableIO((TileCable) world.getTileEntity(pos), player.inventory);
+    }
+
+    if (ID == GuiIDs.EXPORT.ordinal()) {
+      return new ContainerCableIO((TileCable) world.getTileEntity(pos), player.inventory);
+    }
+
+    if (ID == GuiIDs.PROCESSING.ordinal()) {
+      return new ContainerCableProcessing((TileCable) world.getTileEntity(pos), player.inventory);
+    }
+
+    if (ID == GuiIDs.CONTROLLER.ordinal()) {
       return new ContainerControl((TileControl) world.getTileEntity(pos), player.inventory);
     }
-    if (ID == REQUEST) {
+
+    if (ID == GuiIDs.REQUEST.ordinal()) {
       if (FB_LOADED) {
         return new ContainerFastRequest((TileRequest) world.getTileEntity(pos), player, world, pos);
       }
@@ -53,7 +76,8 @@ public class GuiHandler implements IGuiHandler {
         return new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory);
       }
     }
-    if (ID == REMOTE) {
+
+    if (ID == GuiIDs.REMOTE.ordinal()) {
       if (FB_LOADED) {
         return new ContainerFastRemote(player, world, EnumHand.values()[x]);
       }
@@ -61,6 +85,7 @@ public class GuiHandler implements IGuiHandler {
         return new ContainerRemote(player.inventory);
       }
     }
+
     return null;
   }
 
@@ -68,16 +93,31 @@ public class GuiHandler implements IGuiHandler {
   @Override
   public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
     BlockPos pos = new BlockPos(x, y, z);
-    if (ID == CABLE) {
+
+    if (ID == GuiIDs.LINK.ordinal()) {
       TileCable tile = (TileCable) world.getTileEntity(pos);
-      if (tile.getBlockType() == ModBlocks.processKabel)
-        return new GuiCableProcessing(new ContainerCable(tile, player.inventory));
-      return new GuiCable(new ContainerCable(tile, player.inventory));
+      return new GuiCableLink(new ContainerCableLink(tile, player.inventory));
     }
-    if (ID == CONTROLLER) {
+
+    if (ID == GuiIDs.IMPORT.ordinal()) {
+      TileCable tile = (TileCable) world.getTileEntity(pos);
+      return new GuiCableIO(new ContainerCableIO(tile, player.inventory));
+    }
+
+    if (ID == GuiIDs.EXPORT.ordinal()) {
+      TileCable tile = (TileCable) world.getTileEntity(pos);
+      return new GuiCableIO(new ContainerCableIO(tile, player.inventory));
+    }
+
+    if (ID == GuiIDs.PROCESSING.ordinal()) {
+      return new GuiCableProcessing((TileCableProcess) world.getTileEntity(pos), new ContainerCableProcessing((TileCable) world.getTileEntity(pos), player.inventory));
+    }
+
+    if (ID == GuiIDs.CONTROLLER.ordinal()) {
       return new GuiControl(new ContainerControl((TileControl) world.getTileEntity(pos), player.inventory));
     }
-    if (ID == REQUEST) {
+
+    if (ID == GuiIDs.REQUEST.ordinal()) {
       if (FB_LOADED) {
         return new GuiFastRequest(player, world, pos);
       }
@@ -85,7 +125,8 @@ public class GuiHandler implements IGuiHandler {
         return new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(pos), player.inventory));
       }
     }
-    if (ID == REMOTE) {
+
+    if (ID == GuiIDs.REMOTE.ordinal()) {
       if (FB_LOADED) {
         return new GuiFastRemote(player, world, EnumHand.values()[x]);
       }
@@ -93,6 +134,7 @@ public class GuiHandler implements IGuiHandler {
         return new GuiRemote(new ContainerRemote(player.inventory));
       }
     }
+
     return null;
   }
 }

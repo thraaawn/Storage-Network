@@ -2,23 +2,24 @@ package mrriegel.storagenetwork.block.control;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import mrriegel.storagenetwork.api.data.DimPos;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 
 public class ProcessWrapper {
 
   public boolean alwaysOn;
   public String name;
-  public BlockPos pos;
+  public DimPos pos;
   public ItemStack output;
   public int count;
   public List<ItemStack> ingredients;
   public ResourceLocation blockId;
 
-  public ProcessWrapper(BlockPos p, ItemStack s, int c, String name, boolean on) {
+  public ProcessWrapper(DimPos p, ItemStack s, int c, String name, boolean on) {
     pos = p;
     output = s;
     count = c;
@@ -35,7 +36,7 @@ public class ProcessWrapper {
     int x = compound.getInteger("xx");
     int y = compound.getInteger("yy");
     int z = compound.getInteger("zz");
-    pos = new BlockPos(x, y, z);
+    pos = new DimPos(compound.getCompoundTag("pos"));
     output = new ItemStack(compound);
     this.count = compound.getInteger("cou");
     NBTTagList nbttaglist = compound.getTagList("Items", 10);
@@ -51,9 +52,7 @@ public class ProcessWrapper {
     compound.setString("blockId", blockId.toString());
     compound.setString("sname", name);
     compound.setBoolean("aon", alwaysOn);
-    compound.setInteger("xx", pos.getX());
-    compound.setInteger("yy", pos.getY());
-    compound.setInteger("zz", pos.getZ());
+    compound.setTag("pos", pos.serializeNBT());
     compound.setInteger("cou", count);
     NBTTagList nbttaglist = new NBTTagList();
     for (int i = 0; i < ingredients.size(); ++i) {

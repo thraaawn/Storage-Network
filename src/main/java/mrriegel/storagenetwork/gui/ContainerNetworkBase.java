@@ -1,29 +1,24 @@
 package mrriegel.storagenetwork.gui;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
-import mrriegel.storagenetwork.data.FilterItem;
-import mrriegel.storagenetwork.data.StackWrapper;
+import mrriegel.storagenetwork.data.ItemStackMatcher;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ContainerNetworkBase extends Container implements IStorageContainer {
 
@@ -88,7 +83,7 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
       recipe = CraftingManager.findMatchingRecipe(matrix, this.playerInv.player.world);
     }
     catch (java.util.NoSuchElementException err) {
-      // this seems basically out of my control, its DEEP in vanilla and some library, no idea whats up with that 
+      // this seems basically out of my control, its DEEP in vanilla and some library, no idea whats up with that
       // https://pastebin.com/2S9LSe23
       StorageNetwork.instance.logger.error("Error finding recipe [0] Possible conflict with forge, vanilla, or Storage Network", err);
     }
@@ -97,7 +92,7 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
     }
     if (recipe != null) {
       ItemStack itemstack = recipe.getCraftingResult(this.matrix);
-      //real way to not lose nbt tags BETTER THAN COPY 
+      //real way to not lose nbt tags BETTER THAN COPY
       this.result.setInventorySlotContents(0, itemstack);
     }
     else {
@@ -108,7 +103,7 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
   /**
    * A note on the shift-craft delay bug root cause was ANY interaction with matrix (setting contents etc) was causing triggers/events to do a recipe lookup. Meaning during this shift-click action you
    * can get up to 9x64 FULL recipe scans Solution is just to disable all those triggers but only for duration of this action
-   * 
+   *
    * @param player
    * @param tile
    */
@@ -180,7 +175,7 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
             this.matrix.setInventorySlotContents(i, remainderCurrent);
           }
           else if (ItemStack.areItemsEqualIgnoreDurability(slot, remainderCurrent)) {
-            //crafting that consumes durability 
+            //crafting that consumes durability
             this.matrix.setInventorySlotContents(i, remainderCurrent);
           }
           else {
@@ -193,20 +188,20 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
           this.matrix.decrStackSize(i, 1);
           slot = this.matrix.getStackInSlot(i);
         }
-      } //end loop on remiainder 
-      //END onTake redo 
+      } //end loop on remiainder
+      //END onTake redo
       crafted += sizePerCraft;
       ItemStack stackInSlot;
       ItemStack recipeStack;
-      FilterItem filterItemCurrent;
+      ItemStackMatcher itemStackMatcherCurrent;
       for (int i = 0; i < matrix.getSizeInventory(); i++) {
         stackInSlot = matrix.getStackInSlot(i);
         if (stackInSlot.isEmpty()) {
           recipeStack = recipeCopy.get(i);
           //////////////// booleans are meta, ore(?ignored?), nbt
-          filterItemCurrent = !recipeStack.isEmpty() ? new FilterItem(recipeStack, true, false, false) : null;
+          itemStackMatcherCurrent = !recipeStack.isEmpty() ? new ItemStackMatcher(recipeStack, true, false, false) : null;
           //false here means dont simulate
-          ItemStack req = tile.request(filterItemCurrent, 1, false);
+          ItemStack req = tile.request(itemStackMatcherCurrent, 1, false);
           matrix.setInventorySlotContents(i, req);
         }
       }
@@ -238,8 +233,10 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
         ItemStack stack = rest == 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
         slot.putStack(stack);
         detectAndSendChanges();
-        List<StackWrapper> list = tileMaster.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
+
+        List<ItemStack> list = tileMaster.getStacks();
+        PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<>()), (EntityPlayerMP) playerIn);
+
         if (stack.isEmpty()) {
           return ItemStack.EMPTY;
         }
@@ -284,7 +281,7 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
       for (int i = 0; i < matrix.getSizeInventory(); i++) {
         if (matrix.getStackInSlot(i).isEmpty() && getTileMaster() != null) {
           ItemStack req = getTileMaster().request(
-              !lis.get(i).isEmpty() ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
+              !lis.get(i).isEmpty() ? new ItemStackMatcher(lis.get(i), true, false, false) : null, 1, false);
           if (!req.isEmpty()) {
             matrix.setInventorySlotContents(i, req);
           }

@@ -62,6 +62,7 @@ repositories {
 dependencies {
    deobfCompile "mezz.jei:jei_${mc_version}:${jei_version}"
    deobfCompile "fastworkbench:FastWorkbench:${mc_version}:${fb_version}"
+   deobfCompile "compact-machines:compactmachines3-${mc_version}:${cm_version}:${cm_build}"
 }
 
 processResources {

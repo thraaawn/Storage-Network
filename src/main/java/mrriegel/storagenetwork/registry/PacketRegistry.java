@@ -1,18 +1,7 @@
 package mrriegel.storagenetwork.registry;
 
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.network.CableDataMessage;
-import mrriegel.storagenetwork.network.CableFilterMessage;
-import mrriegel.storagenetwork.network.CableLimitMessage;
-import mrriegel.storagenetwork.network.CableRefreshClientMessage;
-import mrriegel.storagenetwork.network.ClearRecipeMessage;
-import mrriegel.storagenetwork.network.InsertMessage;
-import mrriegel.storagenetwork.network.RecipeMessage;
-import mrriegel.storagenetwork.network.RequestCableMessage;
-import mrriegel.storagenetwork.network.RequestMessage;
-import mrriegel.storagenetwork.network.SortMessage;
-import mrriegel.storagenetwork.network.StackRefreshClientMessage;
-import mrriegel.storagenetwork.network.StackResponseClientMessage;
+import mrriegel.storagenetwork.network.*;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -34,5 +23,6 @@ public class PacketRegistry {
     INSTANCE.registerMessage(CableFilterMessage.class, CableFilterMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(CableRefreshClientMessage.class, CableRefreshClientMessage.class, id++, Side.CLIENT);
     INSTANCE.registerMessage(RequestCableMessage.class, RequestCableMessage.class, id++, Side.SERVER);
+    INSTANCE.registerMessage(CableControlMessage.class, CableControlMessage.class, id++, Side.SERVER);
   }
 }
