@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.block;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.data.CapabilityConnectable;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -25,15 +26,15 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
   public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
     try {
       TileEntity tile = worldIn.getTileEntity(pos);
-      if (tile != null && tile instanceof IConnectable) {
-        IConnectable conUnitNeedsMaster = (IConnectable) tile;
+      if (tile != null && tile.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
+        IConnectable conUnitNeedsMaster = tile.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null);
         //the new thing needs to find the master of the network. so either my neighbor knows who the master is, 
         //or my neighbor IS the master
         TileEntity tileLoop = null;
         for (BlockPos p : UtilTileEntity.getSides(pos)) {
           tileLoop = worldIn.getTileEntity(p);
-          if (tileLoop instanceof IConnectable) {
-            IConnectable conUnit = (IConnectable) tileLoop;
+          if (tileLoop != null && tileLoop.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
+            IConnectable conUnit = tileLoop.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null);
             if (conUnit.getMaster() != null) {
               conUnitNeedsMaster.setMaster((conUnit).getMaster());
             }
@@ -52,10 +53,10 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
 
   public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
     TileEntity myselfTile = worldIn.getTileEntity(pos);
-    if (myselfTile == null || myselfTile instanceof IConnectable == false) {
+    if (myselfTile == null || !myselfTile.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
       return;
     }
-    IConnectable myselfConnect = (IConnectable) myselfTile;
+    IConnectable myselfConnect = myselfTile.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null);
     if (myselfConnect.getMaster() == null) {
       for (BlockPos p : UtilTileEntity.getSides(pos)) {
         if (worldIn.getTileEntity(p) instanceof TileMaster) {
@@ -77,8 +78,8 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
           ///seems like i can delete this superhack but im not sure, it never executes
           for (BlockPos p : ((TileMaster) tileMaster).getConnectables()) {
             TileEntity tileCurrent = worldIn.getTileEntity(p);
-            if (worldIn.getChunkFromBlockCoords(p).isLoaded() && tileCurrent instanceof IConnectable) {
-              ((IConnectable) tileCurrent).setMaster(null);
+            if (worldIn.getChunkFromBlockCoords(p).isLoaded() && tileCurrent.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
+              tileCurrent.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null).setMaster(null);
               worldIn.markChunkDirty(p, tileCurrent);
             }
           }
@@ -99,8 +100,8 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
         continue;
       }
       TileEntity nhbr = world.getTileEntity(posBeside);
-      if (nhbr instanceof IConnectable) {//
-        IConnectable nbrConn = (IConnectable) nhbr;
+      if (nhbr != null && nhbr.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {//
+        IConnectable nbrConn = nhbr.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null);
         if (nbrConn.getMaster() != null) {
           nbrConn.setMaster(null);
           world.markChunkDirty(posBeside, world.getTileEntity(posBeside));

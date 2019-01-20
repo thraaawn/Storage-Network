@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.proxy;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.data.CapabilityConnectable;
 import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.jei.JeiSettings;
 import mrriegel.storagenetwork.registry.PacketRegistry;
@@ -15,6 +16,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 public class CommonProxy {
 
   public void preInit(FMLPreInitializationEvent event) {
+    CapabilityConnectable.initCapability();
     ConfigHandler.refreshConfig(event.getSuggestedConfigurationFile());
     JeiSettings.setJeiLoaded(Loader.isModLoaded("jei"));
     PacketRegistry.init();

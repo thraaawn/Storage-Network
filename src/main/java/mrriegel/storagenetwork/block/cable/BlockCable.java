@@ -14,6 +14,7 @@ import mrriegel.storagenetwork.api.ICable;
 import mrriegel.storagenetwork.block.AbstractBlockConnectable;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.data.CapabilityConnectable;
 import mrriegel.storagenetwork.data.EnumCableType;
 import mrriegel.storagenetwork.gui.GuiHandler;
 import mrriegel.storagenetwork.registry.ModBlocks;
@@ -361,7 +362,7 @@ public class BlockCable extends AbstractBlockConnectable {
   protected EnumCableType getConnectionTypeBetween(IBlockAccess world, BlockPos posTarget, BlockPos posHere) {
     TileEntity tileHere = world.getTileEntity(posHere);
     Block targetBlock = world.getBlockState(posTarget).getBlock();
-    if (tileHere instanceof IConnectable || tileHere instanceof ICable || tileHere instanceof TileMaster) {
+    if (tileHere  != null && tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null) || tileHere instanceof ICable || tileHere instanceof TileMaster) {
       return EnumCableType.CONNECT;
     }
     if (targetBlock == ModBlocks.kabel) {

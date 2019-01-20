@@ -20,6 +20,7 @@ import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.master.RecentSlotPointer.StackSlot;
 import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.data.CapabilityConnectable;
 import mrriegel.storagenetwork.data.EnumFilterDirection;
 import mrriegel.storagenetwork.data.FilterItem;
 import mrriegel.storagenetwork.data.StackWrapper;
@@ -148,13 +149,13 @@ public class TileMaster extends TileEntity implements ITickable {
         world.removeTileEntity(blockPos);
         continue;
       }
-      if ((tileHere instanceof IConnectable
-          || tileHere instanceof ICable)
-          && !getConnectables().contains(blockPos)) {
+
+      if (tileHere != null && (tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null) || tileHere instanceof ICable) && !getConnectables().contains(blockPos)) {
         getConnectables().add(blockPos);
-        if (tileHere instanceof IConnectable) {
-          ((IConnectable) tileHere).setMaster(this.pos);
+        if(tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
+          tileHere.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null).setMaster(this.pos);
         }
+
         chunk.setModified(true);
         addConnectables(blockPos);
       }

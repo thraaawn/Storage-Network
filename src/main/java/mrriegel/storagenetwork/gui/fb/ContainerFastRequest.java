@@ -29,7 +29,10 @@ public class ContainerFastRequest extends ContainerFastNetworkCrafter {
       else this.craftMatrix.setInventorySlotContents(i, tile.matrix.getOrDefault(i, ItemStack.EMPTY));
     }
     SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(player, craftMatrix, craftResult, 0, 101, 128);
-    slotCraftOutput.setTileMaster((TileMaster) tile.getWorld().getTileEntity(tile.getMaster()));
+    BlockPos masterPos = tile.getMaster();
+    TileMaster masterTile = (TileMaster) tile.getWorld().getTileEntity(masterPos);
+
+    slotCraftOutput.setTileMaster(masterTile);
     this.addSlotToContainer(slotCraftOutput);
     bindGrid();
     bindPlayerInvo(player.inventory);

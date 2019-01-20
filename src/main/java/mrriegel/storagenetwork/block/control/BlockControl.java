@@ -6,6 +6,7 @@ import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractBlockConnectable;
 import mrriegel.storagenetwork.block.IConnectable;
+import mrriegel.storagenetwork.data.CapabilityConnectable;
 import mrriegel.storagenetwork.gui.GuiHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -72,10 +73,10 @@ public class BlockControl extends AbstractBlockConnectable {
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
     TileEntity tileHere = worldIn.getTileEntity(pos);
-    if (!(tileHere instanceof IConnectable)) {
+    if (tileHere == null || !tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
       return false;
     }
-    IConnectable tile = (IConnectable) tileHere;
+    IConnectable tile = tileHere.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null);
     if (!worldIn.isRemote && tile.getMaster() != null) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CONTROLLER, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;

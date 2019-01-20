@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.IConnectable;
+import mrriegel.storagenetwork.data.CapabilityConnectable;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -60,8 +61,8 @@ public class BlockMaster extends BlockContainer {
     IConnectable connect = null;
     for (BlockPos p : UtilTileEntity.getSides(pos)) {
       tileHere = worldIn.getTileEntity(p);
-      if (tileHere instanceof IConnectable) {
-        connect = (IConnectable) tileHere;
+      if (tileHere != null && tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
+        connect = tileHere.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null);
         if (connect.getMaster() != null && !connect.getMaster().equals(pos)) {
           masterPos = connect.getMaster();
           break;
