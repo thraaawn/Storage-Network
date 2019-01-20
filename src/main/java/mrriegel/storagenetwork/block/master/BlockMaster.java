@@ -12,6 +12,7 @@ import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.IConnectable;
 import mrriegel.storagenetwork.data.CapabilityConnectable;
+import mrriegel.storagenetwork.util.DimPos;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -63,8 +64,8 @@ public class BlockMaster extends BlockContainer {
       tileHere = worldIn.getTileEntity(p);
       if (tileHere != null && tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
         connect = tileHere.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null);
-        if (connect.getMaster() != null && !connect.getMaster().equals(pos) && connect.getMasterDimension() != worldIn.provider.getDimension()) {
-          masterPos = connect.getMaster();
+        if (connect.getMasterPos() != null && !connect.getMasterPos().equals(pos) && connect.getMasterDimension() != worldIn.provider.getDimension()) {
+          masterPos = connect.getMasterPos();
           break;
         }
       }
@@ -102,8 +103,8 @@ public class BlockMaster extends BlockContainer {
     playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + StorageNetwork.lang("chat.master.emptyslots") + tileMaster.emptySlots()));
     playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + StorageNetwork.lang("chat.master.connectables") + tileMaster.getConnectables().size()));
     Map<String, Integer> mapNamesToCount = new HashMap<String, Integer>();
-    for (BlockPos p : tileMaster.getConnectables()) {
-      String block = worldIn.getBlockState(p).getBlock().getLocalizedName();
+    for (DimPos p : tileMaster.getConnectables()) {
+      String block = p.getBlockState().getBlock().getLocalizedName();
       mapNamesToCount.put(block, mapNamesToCount.get(block) != null ? (mapNamesToCount.get(block) + 1) : 1);
     }
     List<Entry<String, Integer>> listDisplayStrings = Lists.newArrayList();

@@ -19,6 +19,7 @@ import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import mrriegel.storagenetwork.registry.ModBlocks;
 import mrriegel.storagenetwork.registry.ModItems;
+import mrriegel.storagenetwork.util.DimPos;
 import mrriegel.storagenetwork.util.UtilInventory;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -212,12 +213,21 @@ public class TileCable extends TileConnectable implements IInventory, ICableStor
 
   //    TileMaster master;
   private boolean doesPassOperationFilterLimit() {
-    TileMaster master = (TileMaster) this.world.getTileEntity(this.getMaster());
+    if(connectable.getMasterPos() == null) {
+      return false;
+    }
+
+    DimPos masterDimPos = new DimPos(connectable.getMasterDimension(), connectable.getMasterPos());
+    TileMaster master = masterDimPos.getTileEntity(TileMaster.class);
+    if(master == null) {
+      return false;
+    }
+
     if (this.getUpgradesOfType(ItemUpgrade.OPERATION) < 1) {
       return true;
     }
     //ok operation upgrade does NOT exist
-    //    TileMaster m = (TileMaster) world.getTileEntity(cable.getMaster());
+    //    TileMaster m = (TileMaster) world.getTileEntity(cable.getMasterPos());
     if (getOperationStack() == null || getOperationStack().isEmpty()) {
       return true;
     }

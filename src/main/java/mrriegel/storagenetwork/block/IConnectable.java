@@ -14,7 +14,11 @@ public interface IConnectable {
 
   public void setMasterDimension(int dimMaster);
 
-  public BlockPos getMaster();
+  public BlockPos getMasterPos();
 
-  public void setMaster(BlockPos master);
+  public void setMasterPos(BlockPos master);
+
+  public int getDim();
+
+  public BlockPos getPos();
 }

@@ -22,6 +22,8 @@ import java.util.concurrent.Callable;
 public class CapabilityConnectable implements IConnectable, INBTSerializable<NBTTagCompound> {
     protected int dimMaster;
     protected BlockPos posMaster;
+    protected int dim;
+    protected BlockPos pos;
 
     @CapabilityInject(IConnectable.class)
     public static Capability<IConnectable> CONNECTABLE_CAPABILITY = null;
@@ -40,7 +42,7 @@ public class CapabilityConnectable implements IConnectable, INBTSerializable<NBT
     @Nullable
     public static TileMaster getTileMasterForConnectable(@Nonnull IConnectable connectable) {
         WorldServer world = DimensionManager.getWorld(connectable.getMasterDimension());
-        TileEntity tileEntity = world.getTileEntity(connectable.getMaster());
+        TileEntity tileEntity = world.getTileEntity(connectable.getMasterPos());
         if(tileEntity instanceof TileMaster) {
             return (TileMaster) tileEntity;
         }
@@ -59,13 +61,32 @@ public class CapabilityConnectable implements IConnectable, INBTSerializable<NBT
     }
 
     @Override
-    public BlockPos getMaster() {
+    public BlockPos getMasterPos() {
         return posMaster;
     }
 
     @Override
-    public void setMaster(BlockPos master) {
+    public void setMasterPos(BlockPos master) {
         this.posMaster = master;
+    }
+
+
+    @Override
+    public int getDim() {
+        return dim;
+    }
+
+    public void setDimension(int dim) {
+        this.dim = dim;
+    }
+
+    @Override
+    public BlockPos getPos() {
+        return pos;
+    }
+
+    public void setPos(BlockPos pos) {
+        this.pos = pos;
     }
 
     @Override
@@ -78,8 +99,11 @@ public class CapabilityConnectable implements IConnectable, INBTSerializable<NBT
         NBTTagCompound masterData = NBTUtil.createPosTag(posMaster);
         masterData.setInteger("Dim", dimMaster);
 
+        NBTTagCompound selfData = NBTUtil.createPosTag(pos);
+        selfData.setInteger("Dim", dim);
 
         result.setTag("master", masterData);
+        result.setTag("self", selfData);
 
         return result;
 
@@ -88,10 +112,12 @@ public class CapabilityConnectable implements IConnectable, INBTSerializable<NBT
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         NBTTagCompound masterData = nbt.getCompoundTag("master");
-
-        BlockPos masterPos = NBTUtil.getPosFromTag(masterData);
-        this.setMaster(masterPos);
+        this.setMasterPos(NBTUtil.getPosFromTag(masterData));
         this.setMasterDimension(masterData.getInteger("Dim"));
+
+        NBTTagCompound selfData = nbt.getCompoundTag("self");
+        this.setPos(NBTUtil.getPosFromTag(selfData));
+        this.setDimension(selfData.getInteger("Dim"));
     }
 
 

@@ -29,6 +29,13 @@ public class TileConnectable extends TileEntity {
   }
 
   @Override
+  public void setPos(BlockPos posIn) {
+    super.setPos(posIn);
+    connectable.setPos(posIn);
+    connectable.setDimension(world.provider.getDimension());
+  }
+
+  @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
     if(compound.hasKey("connectable")) {
@@ -66,7 +73,7 @@ public class TileConnectable extends TileEntity {
 
   @Override
   public void onChunkUnload() {
-    if (ConfigHandler.reloadNetworkWhenUnloadChunk && connectable != null && connectable.getMaster() != null) {
+    if (ConfigHandler.reloadNetworkWhenUnloadChunk && connectable != null && connectable.getMasterPos() != null) {
       try {
         TileMaster maybeMaster = CapabilityConnectable.getTileMasterForConnectable(connectable);
         if (maybeMaster != null) {
@@ -100,6 +107,6 @@ public class TileConnectable extends TileEntity {
   }
 
   public BlockPos getMaster() {
-    return connectable.getMaster();
+    return connectable.getMasterPos();
   }
 }

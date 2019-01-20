@@ -1,13 +1,5 @@
 package mrriegel.storagenetwork.block.master;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import mrriegel.storagenetwork.StorageNetwork;
@@ -25,8 +17,8 @@ import mrriegel.storagenetwork.data.EnumFilterDirection;
 import mrriegel.storagenetwork.data.FilterItem;
 import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.registry.ModBlocks;
+import mrriegel.storagenetwork.util.DimPos;
 import mrriegel.storagenetwork.util.UtilInventory;
-import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,9 +34,12 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import javax.annotation.Nonnull;
+import java.util.*;
+
 public class TileMaster extends TileEntity implements ITickable {
 
-  private Set<BlockPos> connectables;
+  private Set<DimPos> connectables;
   // private List<BlockPos> storageInventorys;
   private Map<String, RecentSlotPointer> importCache = new HashMap<>();
   public static String[] blacklist;
@@ -128,42 +123,64 @@ public class TileMaster extends TileEntity implements ITickable {
     return writeToNBT(new NBTTagCompound());
   }
 
-  private void addConnectables(final BlockPos pos) {
-    if (pos == null || world == null || this.getWorld().isBlockLoaded(pos) == false) {
+  private void addConnectables(final DimPos dimPos) {
+    this.addConnectables(dimPos.getWorld(), dimPos.getBlockPos());
+  }
+
+  private void addConnectables(final World worldIn, final BlockPos pos) {
+    if (pos == null || worldIn == null || worldIn.isBlockLoaded(pos) == false) {
       return;
     }
+
     for (EnumFacing direction : EnumFacing.values()) {
       BlockPos blockPos = pos.offset(direction);
+      DimPos dimPos = new DimPos(worldIn, blockPos);
 
-      if (this.getWorld().isBlockLoaded(blockPos) == false) {
+      if (!dimPos.isLoaded()) {
         continue;
       }
-      Chunk chunk = world.getChunkFromBlockCoords(blockPos);
+
+      Chunk chunk = worldIn.getChunkFromBlockCoords(blockPos);
       if (chunk == null || !chunk.isLoaded()) {
         continue;
       }
-      if (!isTargetAllowed(world, blockPos)) {
-        continue;
-      }
-      TileEntity tileHere = world.getTileEntity(blockPos);
-      if (tileHere instanceof TileMaster && !blockPos.equals(this.pos)) {
-        world.getBlockState(blockPos).getBlock().dropBlockAsItem(world, blockPos, world.getBlockState(blockPos), 0);
-        world.setBlockToAir(blockPos);
-        world.removeTileEntity(blockPos);
+
+      if (!isTargetAllowed(worldIn, blockPos)) {
         continue;
       }
 
-      if (tileHere != null && (tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, direction.getOpposite()) || tileHere instanceof ICable) && !getConnectables().contains(blockPos)) {
-        getConnectables().add(blockPos);
-        if(tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, direction.getOpposite())) {
+      // Prevent having multiple masters on a network and break all others.
+      TileEntity tileHere = worldIn.getTileEntity(blockPos);
+      if (tileHere == null) {
+        continue;
+      }
+
+      if (tileHere instanceof TileMaster && !blockPos.equals(this.pos)) {
+        worldIn.getBlockState(blockPos).getBlock().dropBlockAsItem(worldIn, blockPos, worldIn.getBlockState(blockPos), 0);
+        worldIn.setBlockToAir(blockPos);
+        worldIn.removeTileEntity(blockPos);
+        continue;
+      }
+
+      boolean isConnectable = tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, direction.getOpposite());
+      boolean isCable = tileHere instanceof ICable;
+
+      if (isConnectable || isCable) {
           IConnectable capabilityConnectable = tileHere.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, direction.getOpposite());
-          capabilityConnectable.setMaster(this.pos);
+        capabilityConnectable.setMasterPos(this.pos);
           capabilityConnectable.setMasterDimension(this.world.provider.getDimension());
-          tileHere.markDirty();
+
+        DimPos realConnectablePos = new DimPos(capabilityConnectable.getDim(), capabilityConnectable.getPos());
+        boolean beenHereBefore = getConnectables().contains(realConnectablePos);
+        if(beenHereBefore) {
+          continue;
         }
 
+        getConnectables().add(realConnectablePos);
+        addConnectables(realConnectablePos);
+
+        tileHere.markDirty();
         chunk.setModified(true);
-        addConnectables(blockPos);
       }
     }
   }
@@ -184,7 +201,7 @@ public class TileMaster extends TileEntity implements ITickable {
     }
     setConnectables(Sets.newHashSet());
     try {
-      addConnectables(pos);
+      addConnectables(world, pos);
     }
     catch (Throwable e) {
       StorageNetwork.instance.logger.error("Refresh network error ", e);
@@ -549,9 +566,9 @@ public class TileMaster extends TileEntity implements ITickable {
       return ItemStack.EMPTY;
     }
     List<ICableStorage> invs = Lists.newArrayList();
-    for (BlockPos p : getConnectables()) {
-      if (world.getTileEntity(p) instanceof ICableStorage) {
-        ICableStorage tile = (ICableStorage) world.getTileEntity(p);
+    for (DimPos p : getConnectables()) {
+      ICableStorage tile = p.getTileEntity(ICableStorage.class);
+      if (tile != null) {
         if (tile.isStorageEnabled() && tile.getInventory() != null) {
           invs.add(tile);
         }
@@ -690,12 +707,11 @@ public class TileMaster extends TileEntity implements ITickable {
 
   public List<TileEntity> getAttachedTileEntities() {
     List<TileEntity> attachedCables = Lists.newArrayList();
-    TileEntity tile = null;
-    for (BlockPos p : getConnectables()) {
-      if (!isTargetAllowed(world, p)) {
+    for (DimPos p : getConnectables()) {
+      if (!isTargetAllowed(p.getWorld(), p.getBlockPos())) {
         continue;
       }
-      tile = world.getTileEntity(p);
+      TileEntity tile = p.getTileEntity(TileEntity.class);
       attachedCables.add(tile);
     }
     return attachedCables;
@@ -718,11 +734,11 @@ public class TileMaster extends TileEntity implements ITickable {
     return oldState.getBlock() != newSate.getBlock();
   }
 
-  public Set<BlockPos> getConnectables() {
+  public Set<DimPos> getConnectables() {
     return connectables;
   }
 
-  public void setConnectables(Set<BlockPos> connectables) {
+  public void setConnectables(Set<DimPos> connectables) {
     this.connectables = connectables;
   }
 

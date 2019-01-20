@@ -77,7 +77,7 @@ public class BlockControl extends AbstractBlockConnectable {
       return false;
     }
     IConnectable tile = tileHere.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null);
-    if (!worldIn.isRemote && tile.getMaster() != null) {
+    if (!worldIn.isRemote && tile.getMasterPos() != null) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.CONTROLLER, worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }
