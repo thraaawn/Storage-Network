@@ -187,7 +187,7 @@ public class BlockCable extends AbstractBlockConnectable {
     boolean storage = false;
     boolean first = false;
     //fill in newMap based on current storage connection
-    if (facingStorage != null && getConnectionTypeBetween(world, pos, pos.offset(facingStorage)) == EnumCableType.STORAGE) {
+    if (facingStorage != null && getConnectionTypeBetween(world, pos, facingStorage) == EnumCableType.STORAGE) {
       newMap.put(facingStorage, EnumCableType.STORAGE);
       storage = true;
       first = true;
@@ -199,7 +199,7 @@ public class BlockCable extends AbstractBlockConnectable {
         continue;
       }
       //what connection type is possible here before i save it (conn, null, str)
-      EnumCableType connectType = getConnectionTypeBetween(world, pos, pos.offset(facing));
+      EnumCableType connectType = getConnectionTypeBetween(world, pos, facing);
       if (connectType == EnumCableType.STORAGE) {
         //make sure it only picks ONE storage connection to main
         if (!storage) {
@@ -359,10 +359,15 @@ public class BlockCable extends AbstractBlockConnectable {
     return new AxisAlignedBB(x1, z1, y1, x2, z2, y2);
   }
 
-  protected EnumCableType getConnectionTypeBetween(IBlockAccess world, BlockPos posTarget, BlockPos posHere) {
+  protected EnumCableType getConnectionTypeBetween(IBlockAccess world, BlockPos posTarget, EnumFacing facing) {
+    BlockPos posHere = posTarget.offset(facing);
     TileEntity tileHere = world.getTileEntity(posHere);
     Block targetBlock = world.getBlockState(posTarget).getBlock();
-    if (tileHere  != null && tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null) || tileHere instanceof ICable || tileHere instanceof TileMaster) {
+
+    boolean isConnectable = tileHere  != null && tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, facing.getOpposite());
+    boolean isCableOrMaster = tileHere instanceof ICable || tileHere instanceof TileMaster;
+
+    if (isConnectable || isCableOrMaster) {
       return EnumCableType.CONNECT;
     }
     if (targetBlock == ModBlocks.kabel) {
