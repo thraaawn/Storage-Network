@@ -36,11 +36,13 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
           if (tileLoop != null && tileLoop.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
             IConnectable conUnit = tileLoop.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null);
             if (conUnit.getMaster() != null) {
-              conUnitNeedsMaster.setMaster((conUnit).getMaster());
+              conUnitNeedsMaster.setMaster(conUnit.getMaster());
+              conUnitNeedsMaster.setMasterDimension(conUnit.getMasterDimension());
             }
           }
           else if (tileLoop instanceof TileMaster) {
             conUnitNeedsMaster.setMaster(p);
+            conUnitNeedsMaster.setMasterDimension(worldIn.provider.getDimension());
           }
         }
       }
@@ -61,12 +63,18 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
       for (BlockPos p : UtilTileEntity.getSides(pos)) {
         if (worldIn.getTileEntity(p) instanceof TileMaster) {
           myselfConnect.setMaster(p);
+          myselfConnect.setMasterDimension(worldIn.provider.getDimension());
           break;
         }
       }
     }
+
+    if(worldIn.isRemote) {
+      return;
+    }
+
     if (myselfConnect.getMaster() != null) {
-      TileEntity tileMaster = worldIn.getTileEntity(myselfConnect.getMaster());
+      TileMaster tileMaster = CapabilityConnectable.getTileMasterForConnectable(myselfConnect);
       myselfConnect.setMaster(null);
       worldIn.markChunkDirty(myselfTile.getPos(), myselfTile);
       try {
@@ -74,9 +82,9 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
       }
       catch (Error e) {
         e.printStackTrace();
-        if (tileMaster instanceof TileMaster) {
+        if (tileMaster != null) {
           ///seems like i can delete this superhack but im not sure, it never executes
-          for (BlockPos p : ((TileMaster) tileMaster).getConnectables()) {
+          for (BlockPos p : tileMaster.getConnectables()) {
             TileEntity tileCurrent = worldIn.getTileEntity(p);
             if (worldIn.getChunkFromBlockCoords(p).isLoaded() && tileCurrent.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
               tileCurrent.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null).setMaster(null);
@@ -85,8 +93,8 @@ public abstract class AbstractBlockConnectable extends BlockContainer {
           }
         }
       }
-      if (refresh && tileMaster instanceof TileMaster) {
-        ((TileMaster) tileMaster).refreshNetwork();
+      if (refresh && tileMaster != null) {
+        tileMaster.refreshNetwork();
       }
     }
     worldIn.markChunkDirty(myselfTile.getPos(), myselfTile);

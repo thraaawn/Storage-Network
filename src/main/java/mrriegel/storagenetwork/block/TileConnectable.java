@@ -68,9 +68,9 @@ public class TileConnectable extends TileEntity {
   public void onChunkUnload() {
     if (ConfigHandler.reloadNetworkWhenUnloadChunk && connectable != null && connectable.getMaster() != null) {
       try {
-        TileEntity maybeMaster = world.getTileEntity(connectable.getMaster());
-        if (maybeMaster instanceof TileMaster) {
-          ((TileMaster) maybeMaster).refreshNetwork();
+        TileMaster maybeMaster = CapabilityConnectable.getTileMasterForConnectable(connectable);
+        if (maybeMaster != null) {
+          maybeMaster.refreshNetwork();
         }
       }
       catch (Exception e) {
@@ -88,6 +88,7 @@ public class TileConnectable extends TileEntity {
     return super.hasCapability(capability, facing);
   }
 
+  @SuppressWarnings("unchecked")
   @Nullable
   @Override
   public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {

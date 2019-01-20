@@ -63,7 +63,7 @@ public class BlockMaster extends BlockContainer {
       tileHere = worldIn.getTileEntity(p);
       if (tileHere != null && tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
         connect = tileHere.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null);
-        if (connect.getMaster() != null && !connect.getMaster().equals(pos)) {
+        if (connect.getMaster() != null && !connect.getMaster().equals(pos) && connect.getMasterDimension() != worldIn.provider.getDimension()) {
           masterPos = connect.getMaster();
           break;
         }

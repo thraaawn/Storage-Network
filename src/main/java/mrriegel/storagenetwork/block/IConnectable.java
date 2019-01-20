@@ -10,6 +10,9 @@ import net.minecraft.util.math.BlockPos;
  *
  */
 public interface IConnectable {
+  public int getMasterDimension();
+
+  public void setMasterDimension(int dimMaster);
 
   public BlockPos getMaster();
 

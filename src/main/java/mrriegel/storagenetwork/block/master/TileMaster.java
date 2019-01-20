@@ -33,6 +33,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -131,7 +132,9 @@ public class TileMaster extends TileEntity implements ITickable {
     if (pos == null || world == null || this.getWorld().isBlockLoaded(pos) == false) {
       return;
     }
-    for (BlockPos blockPos : UtilTileEntity.getSides(pos)) {
+    for (EnumFacing direction : EnumFacing.values()) {
+      BlockPos blockPos = pos.offset(direction);
+
       if (this.getWorld().isBlockLoaded(blockPos) == false) {
         continue;
       }
@@ -150,10 +153,13 @@ public class TileMaster extends TileEntity implements ITickable {
         continue;
       }
 
-      if (tileHere != null && (tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null) || tileHere instanceof ICable) && !getConnectables().contains(blockPos)) {
+      if (tileHere != null && (tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, direction.getOpposite()) || tileHere instanceof ICable) && !getConnectables().contains(blockPos)) {
         getConnectables().add(blockPos);
-        if(tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null)) {
-          tileHere.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, null).setMaster(this.pos);
+        if(tileHere.hasCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, direction.getOpposite())) {
+          IConnectable capabilityConnectable = tileHere.getCapability(CapabilityConnectable.CONNECTABLE_CAPABILITY, direction.getOpposite());
+          capabilityConnectable.setMaster(this.pos);
+          capabilityConnectable.setMasterDimension(this.world.provider.getDimension());
+          tileHere.markDirty();
         }
 
         chunk.setModified(true);
