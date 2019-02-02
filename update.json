@@ -7,8 +7,8 @@
     "1.12-recommended": "1.0.15",
     "1.12.1-latest": "1.0.15",
     "1.12.1-recommended": "1.1.1",
-    "1.12.2-latest": "1.6.0",
-    "1.12.2-recommended": "1.6.0"
+    "1.12.2-latest": "1.5.7",
+    "1.12.2-recommended": "1.5.7"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -61,6 +61,6 @@
 	,"1.5.4":"Fixed Storage Remote sometimes not opening and getting locked up.  "
 	,"1.5.5":"Processing cable now indicates if its recipe is invalid to the player.  Updated priority tooltip.  Fixed delay in processing cables (it no longer looks for impossible speed upgrades).  Update to recipe handler transfer from JEI to avoid getting mismatched NBT items (such as tools or copper cables). "
   	,"1.5.6":"Fixed Controller not listing correct block name for some machines (Mekanism, exu2).  New config S:BlacklistBlocks added to disable connections to any block, default value contains extrautils2:playerchest.  Removed a debug button that did nothing.  Added scroll-wheel support to certain filter and recipe slots in network cable inventories.  "
-  	,"1.6.0":""
+  	,"1.5.7":"Network allowable extract fix? https://github.com/Darkosto/SkyFactory4Issues/issues/111"
   }
 }
