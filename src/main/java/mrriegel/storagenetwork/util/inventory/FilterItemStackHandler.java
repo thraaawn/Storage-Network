@@ -52,6 +52,12 @@ public class FilterItemStackHandler extends ItemStackHandlerEx {
     }
   }
 
+  public boolean exactStackAlreadyInList(ItemStack stack) {
+    // Should we want not to use the configured rules for nbt, oredict and meta, we can use this line instead, which really matches for the exact stack:
+    //return getStacks().stream().map(filteredStack -> new ItemStackMatcher(filteredStack, true, false, true)).anyMatch(matcher -> matcher.match(stack));
+    return getStackMatchers().stream().anyMatch(matcher -> matcher.match(stack));
+  }
+
   public boolean isStackFiltered(ItemStack stack) {
     if(isWhitelist) {
       return getStackMatchers().stream().noneMatch(matcher -> matcher.match(stack));

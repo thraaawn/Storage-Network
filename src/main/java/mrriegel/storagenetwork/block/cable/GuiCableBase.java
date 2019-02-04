@@ -6,8 +6,8 @@ import mrriegel.storagenetwork.gui.ItemSlotNetwork;
 import mrriegel.storagenetwork.network.CableDataMessage;
 import mrriegel.storagenetwork.network.CableFilterMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
-import mrriegel.storagenetwork.util.inventory.FilterItemStackHandler;
 import mrriegel.storagenetwork.util.UtilTileEntity;
+import mrriegel.storagenetwork.util.inventory.FilterItemStackHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -107,7 +107,7 @@ public abstract class GuiCableBase extends GuiContainer {
         continue;
       }
 
-      boolean doesExistAlready = stackHandler.isStackFiltered(stackCarriedByMouse);
+      boolean doesExistAlready = stackHandler.exactStackAlreadyInList(stackCarriedByMouse);
 
       if (!stackCarriedByMouse.isEmpty() && !doesExistAlready) {
         int quantity = (isRightClick) ? 1 : stackCarriedByMouse.getCount();
