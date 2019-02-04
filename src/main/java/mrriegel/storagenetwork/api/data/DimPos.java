@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.api.data;
 
+import javax.annotation.Nullable;
 import com.google.common.base.Objects;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
@@ -13,13 +14,10 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
-import org.dave.compactmachines3.utility.Logz;
-
-import javax.annotation.Nullable;
 
 public class DimPos implements INBTSerializable<NBTTagCompound> {
   public int dimension;
-  private BlockPos pos;
+  private BlockPos pos = new BlockPos(0, 0, 0);
   private World world;
 
   public DimPos() {
@@ -137,6 +135,10 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
 
   @Override
   public NBTTagCompound serializeNBT() {
+    if (pos == null) {
+      pos = new BlockPos(0, 0, 0);
+    }
+
     NBTTagCompound result = NBTUtil.createPosTag(this.pos);
     result.setInteger("Dim", this.dimension);
     return result;

@@ -1,16 +1,13 @@
 package mrriegel.storagenetwork.compat;
 
 import mrriegel.storagenetwork.api.capability.IConnectable;
-import mrriegel.storagenetwork.capabilities.StorageNetworkCapabilities;
 import mrriegel.storagenetwork.api.data.DimPos;
+import mrriegel.storagenetwork.capabilities.StorageNetworkCapabilities;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
-import org.dave.compactmachines3.integration.AbstractNullHandler;
-import org.dave.compactmachines3.integration.CapabilityNullHandler;
 
-@CapabilityNullHandler
-public class ConnectableNullHandler extends AbstractNullHandler implements IConnectable {
-    @Override
+public class ConnectableNullHandler implements IConnectable {
+
     public Capability getCapability() {
         return StorageNetworkCapabilities.CONNECTABLE_CAPABILITY;
     }
