@@ -290,7 +290,7 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
       }
 
       // Do a simulation first and abort if we got an empty stack,
-      ItemStack stack = storage.extractNextStack(true);
+      ItemStack stack = storage.extractNextStack(storage.getTransferRate(), true);
       if (stack.isEmpty()) {
         continue;
       }
@@ -304,12 +304,9 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
         continue;
       }
 
-      ItemStack toImportStack = stack.copy();
-      toImportStack.setCount(countMoved);
-
       // Alright, simulation says we're good, let's do it!
       // First extract from the storage
-      ItemStack actuallyExtracted = storage.extractNextStack(false);
+      ItemStack actuallyExtracted = storage.extractNextStack(countMoved, false);
       connectable.getPos().getChunk().markDirty();
 
       // Then insert into our network

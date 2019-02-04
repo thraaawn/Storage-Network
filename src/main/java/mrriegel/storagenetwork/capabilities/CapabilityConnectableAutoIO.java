@@ -187,7 +187,7 @@ public class CapabilityConnectableAutoIO implements INBTSerializable<NBTTagCompo
   }
 
   @Override
-  public ItemStack extractNextStack(boolean simulate) {
+  public ItemStack extractNextStack(int size, boolean simulate) {
     // If this storage is configured to only export from the network, do not
     // extract from the storage, but abort immediately.
     if(direction == EnumStorageDirection.OUT) {
@@ -217,7 +217,8 @@ public class CapabilityConnectableAutoIO implements INBTSerializable<NBTTagCompo
         continue;
       }
 
-      return itemHandler.extractItem(slot, stack.getCount(), simulate);
+      int extractSize = Math.min(size, stack.getCount());
+      return itemHandler.extractItem(slot, extractSize, simulate);
     }
 
     return ItemStack.EMPTY;

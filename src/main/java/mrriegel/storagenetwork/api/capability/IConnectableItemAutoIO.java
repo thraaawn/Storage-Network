@@ -55,10 +55,11 @@ public interface IConnectableItemAutoIO {
    * If your ioDirection is set to IN, this should never get called, unless
    * another malicious mod is doing it.
    *
+   * @param size The size of the stack that should be extracted
    * @param simulate Whether or not this is just a simulation
    * @return The stack that has been requested, if you have it
    */
-  ItemStack extractNextStack(boolean simulate);
+  ItemStack extractNextStack(int size, boolean simulate);
 
   /**
    * Storages with a higher priority (== lower number) are processed first.
