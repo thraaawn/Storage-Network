@@ -618,14 +618,11 @@ public class TileMaster extends TileEntity implements ITickable {
         }
         int miss = size - result;
         int extractedCount = Math.min(inv.getStackInSlot(i).getCount(), miss);
-        //    StorageNetwork.log("inv.extractItem  slot=" + i + ", size=" + extractedCount + ", simulated=" + simulate);
         ItemStack extracted = inv.extractItem(i, extractedCount, simulate);
         if (extracted.isEmpty()) {
-          return extracted;
+          continue;// dont return, look for it somewhere else 
         }
-        //     StorageNetwork.log("[TileMaster] inv.extractItem RESULT I WAS GIVEN IS   " + extracted);
-        //   StorageNetwork.log("DISABLE markChunkDirty at  extracted " + extracted + "?" + extracted.isEmpty() + extracted.getDisplayName());//for non SDRAWERS this is still the real thing
-        //world.markChunkDirty(pos, this);
+
         //the other KEY fix for https://github.com/PrinceOfAmber/Storage-Network/issues/19, where it 
         //voided stuff when you took all from storage drawer: extracted can have a >0 stacksize, but still be air,
         //so the getCount overrides the 16, and gives zero instead, so i di my own override of, if empty then it got all so use source
@@ -635,8 +632,6 @@ public class TileMaster extends TileEntity implements ITickable {
           res = extracted.copy();
           res.setCount(result);
         }
-        //        StorageNetwork.log(t.getPos() + "?" + size + "!TileMaster:request: yes actually remove items from source now " + res + "__" + result);
-        //  int rest = s.getCount();
         if (result == size) {
           return ItemHandlerHelper.copyStackWithSize(res, size);
         }
