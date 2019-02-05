@@ -112,6 +112,11 @@ public class CapabilityConnectableLink implements IConnectableLink, INBTSerializ
 
   @Override
   public ItemStack extractStack(IItemStackMatcher matcher, int size, boolean simulate) {
+    // If nothing is actually being requested, abort immediately
+    if(size <= 0) {
+      return ItemStack.EMPTY;
+    }
+
     // If this storage is configured to only export from the network, do not
     // extract from the storage, but abort immediately.
     if (filterDirection == EnumStorageDirection.OUT) {
@@ -130,6 +135,8 @@ public class CapabilityConnectableLink implements IConnectableLink, INBTSerializ
       return ItemStack.EMPTY;
     }
 
+    ItemStack firstMatchedStack = ItemStack.EMPTY;
+    int remaining = size;
     for (int slot = 0; slot < itemHandler.getSlots(); slot++) {
       ItemStack stack = itemHandler.getStackInSlot(slot);
       if (stack == null || stack.isEmpty()) {
@@ -142,16 +149,33 @@ public class CapabilityConnectableLink implements IConnectableLink, INBTSerializ
       }
 
       // If its not even the item type we're looking for -> continue
-      if (!matcher.match(stack)) {
-        continue;
+      if (firstMatchedStack.isEmpty()) {
+        if(!matcher.match(stack)) {
+          continue;
+        }
+
+        firstMatchedStack = stack.copy();
+      } else {
+        if(!ItemHandlerHelper.canItemStacksStack(firstMatchedStack, stack)) {
+          continue;
+        }
       }
 
-      // TODO: This needs to support extracting from multiple stacks at once
-      int toExtract = Math.min(stack.getCount(), size);
-      return itemHandler.extractItem(slot, toExtract, simulate);
+      int toExtract = Math.min(stack.getCount(), remaining);
+      ItemStack extractedStack = itemHandler.extractItem(slot, toExtract, simulate);
+      remaining -= extractedStack.getCount();
+
+      if(remaining <= 0) {
+        break;
+      }
     }
 
-    return ItemStack.EMPTY;
+    int extractCount = size - remaining;
+    if(!firstMatchedStack.isEmpty() && extractCount > 0) {
+      firstMatchedStack.setCount(extractCount);
+    }
+
+    return firstMatchedStack;
   }
 
   @Override
