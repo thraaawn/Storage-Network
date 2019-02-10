@@ -41,10 +41,12 @@ public class CapabilityConnectableLink implements IConnectableLink, INBTSerializ
 
   public CapabilityConnectableLink() {
     this.connectable = new CapabilityConnectable();
+    this.filters.setIsWhitelist(false);
   }
 
   public CapabilityConnectableLink(TileEntity tile) {
     this.connectable = tile.getCapability(StorageNetworkCapabilities.CONNECTABLE_CAPABILITY, null);
+    this.filters.setIsWhitelist(false);
   }
 
   @Override
