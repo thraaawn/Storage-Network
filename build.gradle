@@ -35,9 +35,9 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
         project.hasProperty('keyStore')
     }
 
-     // findProperty allows us to reference the property without it existing. 
-    // Using project.propName would cause the script to fail validation if 
-    // the property did not exist. 
+     // findProperty allows us to reference the property without it existing.
+    // Using project.propName would cause the script to fail validation if
+    // the property did not exist.
     keyStore = project.findProperty('keyStore')
     alias = project.findProperty('keyStoreAlias')
     storePass = project.findProperty('keyStorePass')
@@ -45,17 +45,34 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
     inputFile = jar.archivePath
     outputFile = jar.archivePath
 }
-// Runs this task automatically when build is ran. 
+// Runs this task automatically when build is ran.
 build.dependsOn signJar
+
+jar {
+    from sourceSets.main.output
+    from sourceSets.api.output
+}
+
+sourceJar {
+    from sourceSets.api.allJava
+}
+
+task apiJar(dependsOn: 'classes', type: Jar) {
+    from sourceSets.api.output
+    from sourceSets.api.allJava
+    classifier = 'api'
+}
+
+build.dependsOn(apiJar, sourceJar)
 
 repositories {
     maven { // JEI
         url "http://dvs1.progwml6.com/files/maven"
     }
     maven { //Guide API
-		url "http://tehnut.info/maven/"
-	}
-	maven {
+        url "http://tehnut.info/maven/"
+    }
+    maven {
         url = "http://minecraft.curseforge.com/api/maven/"
     }
 }
