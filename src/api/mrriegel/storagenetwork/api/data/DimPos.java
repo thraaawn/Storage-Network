@@ -16,12 +16,12 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class DimPos implements INBTSerializable<NBTTagCompound> {
+
   public int dimension;
   private BlockPos pos = new BlockPos(0, 0, 0);
   private World world;
 
-  public DimPos() {
-  }
+  public DimPos() {}
 
   public DimPos(NBTTagCompound tag) {
     this.deserializeNBT(tag);
@@ -48,7 +48,6 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
     if (world != null) {
       return world;
     }
-
     return DimensionManager.getWorld(this.dimension);
   }
 
@@ -62,19 +61,16 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
 
   @Nullable
   public <V> V getTileEntity(Class<V> tileEntityClassOrInterface) {
-    if(getWorld() == null) {
+    if (getWorld() == null) {
       return null;
     }
-
     TileEntity tileEntity = getWorld().getTileEntity(getBlockPos());
     if (tileEntity == null) {
       return null;
     }
-
     if (!tileEntityClassOrInterface.isAssignableFrom(tileEntity.getClass())) {
       return null;
     }
-
     return (V) tileEntity;
   }
 
@@ -84,11 +80,9 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
     if (tileEntity == null) {
       return null;
     }
-
     if (!tileEntity.hasCapability(capability, side)) {
       return null;
     }
-
     return tileEntity.getCapability(capability, side);
   }
 
@@ -96,7 +90,6 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
     if (getWorld() == null) {
       return false;
     }
-
     return getWorld().isBlockLoaded(pos);
   }
 
@@ -110,7 +103,7 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
     if (o == null || getClass() != o.getClass()) return false;
     DimPos dimPos = (DimPos) o;
     return dimension == dimPos.dimension &&
-            Objects.equal(pos, dimPos.pos);
+        Objects.equal(pos, dimPos.pos);
   }
 
   @Override
@@ -121,9 +114,9 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
   @Override
   public String toString() {
     return "[" +
-            "dimension=" + dimension +
-            ", pos=" + pos +
-            ']';
+        "dimension=" + dimension +
+        ", pos=" + pos +
+        ']';
   }
 
   public void writeToByteBuf(ByteBuf buf) {
@@ -138,7 +131,6 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
     if (pos == null) {
       pos = new BlockPos(0, 0, 0);
     }
-
     NBTTagCompound result = NBTUtil.createPosTag(this.pos);
     result.setInteger("Dim", this.dimension);
     return result;
@@ -157,5 +149,4 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
   public Chunk getChunk() {
     return getWorld().getChunkFromBlockCoords(this.pos);
   }
-
 }
