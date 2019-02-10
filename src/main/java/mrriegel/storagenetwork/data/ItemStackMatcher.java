@@ -1,28 +1,30 @@
 package mrriegel.storagenetwork.data;
 
 import javax.annotation.Nonnull;
+
+import mrriegel.storagenetwork.api.data.IItemStackMatcher;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class FilterItem {
+public class ItemStackMatcher implements IItemStackMatcher {
 
   ItemStack stack;
   boolean meta, ore, nbt;
 
-  public FilterItem(ItemStack stack) {
+  public ItemStackMatcher(ItemStack stack) {
     this(stack, stack != null ? stack.getItemDamage() != OreDictionary.WILDCARD_VALUE : true, false, false);
   }
 
-  public FilterItem(ItemStack stack, boolean meta, boolean ore, boolean nbt) {
+  public ItemStackMatcher(ItemStack stack, boolean meta, boolean ore, boolean nbt) {
     this.stack = stack;
     this.meta = meta;
     this.ore = ore;
     this.nbt = nbt;
   }
 
-  private FilterItem() {}
+  private ItemStackMatcher() {}
 
   public void readFromNBT(NBTTagCompound compound) {
     NBTTagCompound c = compound.getCompoundTag("stack");
@@ -44,7 +46,7 @@ public class FilterItem {
 
   @Override
   public String toString() {
-    return "FilterItem [stack=" + stack + ", meta=" + meta + ", ore=" + ore + ", nbt=" + nbt + "]";
+    return "ItemStackMatcher [stack=" + stack + ", meta=" + meta + ", ore=" + ore + ", nbt=" + nbt + "]";
   }
 
   public ItemStack getStack() {
@@ -79,12 +81,13 @@ public class FilterItem {
     this.nbt = nbt;
   }
 
-  public static FilterItem loadFilterItemFromNBT(NBTTagCompound nbt) {
-    FilterItem fil = new FilterItem();
+  public static ItemStackMatcher loadFilterItemFromNBT(NBTTagCompound nbt) {
+    ItemStackMatcher fil = new ItemStackMatcher();
     fil.readFromNBT(nbt);
     return fil.getStack() != null && fil.getStack().getItem() != null ? fil : null;
   }
 
+  @Override
   public boolean match(@Nonnull ItemStack stackIn) {
     if (stackIn.isEmpty())
       return false;

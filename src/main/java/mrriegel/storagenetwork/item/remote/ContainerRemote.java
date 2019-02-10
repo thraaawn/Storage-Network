@@ -1,9 +1,6 @@
 package mrriegel.storagenetwork.item.remote;
 
-import java.util.ArrayList;
-import java.util.List;
 import mrriegel.storagenetwork.block.master.TileMaster;
-import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
@@ -19,6 +16,9 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContainerRemote extends ContainerNetworkBase {
 
@@ -60,8 +60,8 @@ public class ContainerRemote extends ContainerNetworkBase {
       return false;
     }
     if (!playerIn.world.isRemote && playerIn.world.getTotalWorldTime() % 40 == 0) {
-      List<StackWrapper> list = tileMaster.getStacks();
-      PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
+      List<ItemStack> list = tileMaster.getStacks();
+      PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<>()), (EntityPlayerMP) playerIn);
     }
     return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.remote;
   }

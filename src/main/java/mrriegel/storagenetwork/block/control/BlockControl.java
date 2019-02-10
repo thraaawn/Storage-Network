@@ -5,7 +5,8 @@ import javax.annotation.Nullable;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.AbstractBlockConnectable;
-import mrriegel.storagenetwork.block.IConnectable;
+import mrriegel.storagenetwork.api.capability.IConnectable;
+import mrriegel.storagenetwork.capabilities.StorageNetworkCapabilities;
 import mrriegel.storagenetwork.gui.GuiHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -28,8 +29,8 @@ public class BlockControl extends AbstractBlockConnectable {
 
   public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
-  public BlockControl() {
-    super(Material.IRON);
+  public BlockControl(String registryName) {
+    super(Material.IRON, registryName);
     this.setHardness(3.0F);
     this.setCreativeTab(CreativeTab.tab);
     this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
@@ -72,12 +73,12 @@ public class BlockControl extends AbstractBlockConnectable {
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
     TileEntity tileHere = worldIn.getTileEntity(pos);
-    if (!(tileHere instanceof IConnectable)) {
+    if (tileHere == null || !tileHere.hasCapability(StorageNetworkCapabilities.CONNECTABLE_CAPABILITY, null)) {
       return false;
     }
-    IConnectable tile = (IConnectable) tileHere;
-    if (!worldIn.isRemote && tile.getMaster() != null) {
-      playerIn.openGui(StorageNetwork.instance, GuiHandler.CONTROLLER, worldIn, pos.getX(), pos.getY(), pos.getZ());
+    IConnectable tile = tileHere.getCapability(StorageNetworkCapabilities.CONNECTABLE_CAPABILITY, null);
+    if (!worldIn.isRemote && tile.getMasterPos() != null) {
+      playerIn.openGui(StorageNetwork.instance, GuiHandler.GuiIDs.CONTROLLER.ordinal(), worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }
     return true;

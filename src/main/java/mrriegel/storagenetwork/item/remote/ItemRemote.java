@@ -33,6 +33,8 @@ public class ItemRemote extends Item {
   public ItemRemote() {
     super();
     this.setCreativeTab(CreativeTab.tab);
+    this.setRegistryName("remote");
+    this.setUnlocalizedName(getRegistryName().toString());
     this.setHasSubtypes(true);
     this.setMaxStackSize(1);
   }
@@ -56,7 +58,7 @@ public class ItemRemote extends Item {
   public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
     tooltip.add(I18n.format("tooltip.storagenetwork.remote_" + stack.getItemDamage()));
     if (stack.hasTagCompound() && NBTHelper.getBoolean(stack, "bound")) {
-      // "Dimension: " + 
+      // "Dimension: " +
       tooltip.add(NBTHelper.getInteger(stack, "dim") + ", x: " + NBTHelper.getInteger(stack, "x") + ", y: " + NBTHelper.getInteger(stack, "y") + ", z: " + NBTHelper.getInteger(stack, "z"));
     }
   }
@@ -65,7 +67,7 @@ public class ItemRemote extends Item {
   public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
     ItemStack itemStackIn = player.getHeldItem(hand);
     int itemDamage = itemStackIn.getItemDamage();
-    //skip on client?? 
+    //skip on client??
     if (world.isRemote || itemDamage < 0 || itemDamage >= RemoteType.values().length || !NBTHelper.getBoolean(itemStackIn, "bound")) {
       //unbound or invalid data
       return super.onItemRightClick(world, player, hand);
@@ -78,7 +80,7 @@ public class ItemRemote extends Item {
       y = NBTHelper.getInteger(itemStackIn, "y");
       z = NBTHelper.getInteger(itemStackIn, "z");
       itemStackDim = NBTHelper.getInteger(itemStackIn, "dim");
-      // validate possible missing data 
+      // validate possible missing data
       if (NBTHelper.getString(itemStackIn, "sort") == null) {
         NBTHelper.setString(itemStackIn, "sort", EnumSortType.NAME.toString());
       }
@@ -86,7 +88,7 @@ public class ItemRemote extends Item {
       serverTargetWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(itemStackDim);
     }
     catch (Throwable e) {
-      //cant tell if this is NBT error or statistics usage recording issue 
+      //cant tell if this is NBT error or statistics usage recording issue
       //https://github.com/PrinceOfAmber/Storage-Network/issues/93
       StorageNetwork.instance.logger.error("Invalid remote data " + itemStackIn.getTagCompound(), e);
       return super.onItemRightClick(world, player, hand);
@@ -144,7 +146,7 @@ public class ItemRemote extends Item {
   }
 
   protected int getGui() {
-    return GuiHandler.REMOTE;
+    return GuiHandler.GuiIDs.REMOTE.ordinal();
   }
 
   public static TileMaster getTile(ItemStack stack) {

@@ -1,10 +1,7 @@
 package mrriegel.storagenetwork.network;
 
-import java.util.ArrayList;
-import java.util.List;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.master.TileMaster;
-import mrriegel.storagenetwork.data.StackWrapper;
 import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,6 +14,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.ItemHandlerHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClearRecipeMessage implements IMessage, IMessageHandler<ClearRecipeMessage, IMessage> {
 
@@ -50,8 +50,10 @@ public class ClearRecipeMessage implements IMessage, IMessageHandler<ClearRecipe
             else
               craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(stackInSlot, remainingAfter));
           }
-          List<StackWrapper> list = tileMaster.getStacks();
-          PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), player);
+
+
+          List<ItemStack> list = tileMaster.getStacks();
+          PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<>()), player);
           ((Container) container).detectAndSendChanges();
         }
       }

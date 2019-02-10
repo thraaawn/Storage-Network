@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import mrriegel.storagenetwork.network.CableControlMessage;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import mrriegel.storagenetwork.StorageNetwork;
@@ -37,7 +39,7 @@ public class GuiControl extends GuiContainer {
   private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request_full.png");
   private TileControl tile;
   protected GuiTextField searchBar;
-  //list includes search bar 
+  //list includes search bar
   //private List<GuiTextField> textBoxes = new ArrayList<>();
   private List<ProcessWrapper> processors = null;
   Map<Integer, CableRow> allRows = new HashMap<>();
@@ -45,7 +47,7 @@ public class GuiControl extends GuiContainer {
   private boolean rowsCreated;
   //how many rows to skip over
   private int page = 0;
-  private int maxPage = 0;//TODO 
+  private int maxPage = 0;//TODO
   private GuiSliderInteger slider;
 
   public GuiControl(ContainerControl inventorySlotsIn) {
@@ -53,8 +55,8 @@ public class GuiControl extends GuiContainer {
     processors = new ArrayList<>();
     this.xSize = WIDTH;
     this.ySize = HEIGHT;
-    tile = inventorySlotsIn.getTileRequest();
-    //  request the list of tiles 
+    tile = inventorySlotsIn.getTileControl();
+    //  request the list of tiles
     rowsCreated = false;
     refreshData();
   }
@@ -74,7 +76,7 @@ public class GuiControl extends GuiContainer {
     searchBar.setVisible(true);
     searchBar.setFocused(true);
     searchBar.setTextColor(16777215);
-    //mock data only  
+    //mock data only
     slider = new GuiSliderInteger(this, 777,
         guiLeft + 169, guiTop + 16, 6, 130, 0, 0);
     //    slider.setTooltip("dropper.delay");
@@ -107,7 +109,7 @@ public class GuiControl extends GuiContainer {
         }
       }
       this.tooltips.add(TextFormatting.DARK_GRAY + (p.blockId + ""));
-      this.tooltips.add(TextFormatting.DARK_GRAY + "(" + p.pos.getX() + ", " + p.pos.getY() + ", " + p.pos.getZ() + ")");
+      this.tooltips.add(TextFormatting.DARK_GRAY + "(" + p.pos.getBlockPos().getX() + ", " + p.pos.getBlockPos().getY() + ", " + p.pos.getBlockPos().getZ() + ")");
     }
 
     ProcessWrapper p;
@@ -166,7 +168,7 @@ public class GuiControl extends GuiContainer {
     }
 
     public void updatePagePosition(final int page, final int hiddenOffset) {
-      //if im at index 3, but page has scrolled up once, 
+      //if im at index 3, but page has scrolled up once,
       // and one above me has been hidden, i am at position 1
       final int mockIndex = index - page - hiddenOffset;
       final int rowHeight = 25;
@@ -256,7 +258,7 @@ public class GuiControl extends GuiContainer {
       cable.count += changePerClick;
       value = cable.count;
     }
-    PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(messageType.ordinal(), cable.pos, value));
+    PacketRegistry.INSTANCE.sendToServer(new CableControlMessage(messageType.ordinal(), value, cable.pos));
   }
 
   @Override
@@ -275,7 +277,7 @@ public class GuiControl extends GuiContainer {
   @Override
   public void updateScreen() {
     super.updateScreen();
-    this.tryRefresh(50);//20ticks == 1second 
+    this.tryRefresh(50);//20ticks == 1second
     if (processors != null && processors.size() > 0) {
       createAllRows();
     }
@@ -285,11 +287,11 @@ public class GuiControl extends GuiContainer {
     for (GuiButton btn : this.buttonList) {
       if (btn instanceof GuiControlButton) {
         GuiControlButton button = (GuiControlButton) btn;
-        //update texture 
+        //update texture
         switch (button.messageType) {
           case P_CTRL_LESS:
-            //do we want a big arrow or small    
-            //more right for small   
+            //do we want a big arrow or small
+            //more right for small
             button.textureY = 448 + 16;
             if (GuiScreen.isShiftKeyDown())
               button.textureX = 211;
@@ -311,7 +313,7 @@ public class GuiControl extends GuiContainer {
               button.textureY = 449;
             }
             else {
-              //set grey 
+              //set grey
               button.textureX = 95;
               button.textureY = 449;
             }
@@ -348,7 +350,7 @@ public class GuiControl extends GuiContainer {
         row.x = guiLeft + 8;
       }
       row.updatePagePosition(this.getPage(), hiddenOffset);
-      // is it visible or hidden 
+      // is it visible or hidden
       if (row.isOffscreen()) {
         row.hideComponents();
       }
@@ -367,7 +369,7 @@ public class GuiControl extends GuiContainer {
     }
     for (GuiButton btn : this.buttonList) {
       if (btn.isMouseOver() && btn instanceof GuiControlButton) {
-        //TOOLTIP 
+        //TOOLTIP
         GuiControlButton button = (GuiControlButton) btn;
         this.drawHoveringText(button.getTooltips(), mouseX, mouseY);
         //      this.drawHoveringText(textLines, x, y)oh ;
@@ -379,7 +381,7 @@ public class GuiControl extends GuiContainer {
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     for (CableRow row : this.allRows.values()) {
-      //draw me  
+      //draw me
       if (row.isOffscreen() == false) {
         GlStateManager.pushMatrix();
         RenderHelper.enableGUIStandardItemLighting();
@@ -389,11 +391,11 @@ public class GuiControl extends GuiContainer {
         int y = row.y - guiTop;
         mc.getRenderItem().renderItemAndEffectIntoGUI(row.p.output, x + 20, y);
         /// TODO target blockname  text
-        //AND OR  recipe ing list as text 
+        //AND OR  recipe ing list as text
         //TODO maybe tooltip for this
         this.drawString(this.fontRenderer, row.p.name, x + 40, y + 3, FONT);
         if (row.p.alwaysOn == false) {
-          //          GlStateManager.scale(.8f, 1f, 1f);  
+          //          GlStateManager.scale(.8f, 1f, 1f);
           this.drawString(this.fontRenderer, row.p.count + "",
               x + 112, y + 3, 14735632);
         }
@@ -486,7 +488,7 @@ public class GuiControl extends GuiContainer {
 
   /**
    * Set from network response packet
-   * 
+   *
    * @param cables
    */
   public void setTiles(List<ProcessWrapper> cables) {
