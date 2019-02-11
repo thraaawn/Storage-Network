@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.block.cable;
 
-import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.registry.ModBlocks;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -14,13 +14,12 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 public class TesrCable extends TileEntitySpecialRenderer<TileCable> {
 
   private ModelCable model;
-  private final ResourceLocation link = new ResourceLocation(StorageNetwork.MODID, "textures/tile/link.png");
-  private final ResourceLocation ex = new ResourceLocation(StorageNetwork.MODID, "textures/tile/ex.png");
-  private final ResourceLocation im = new ResourceLocation(StorageNetwork.MODID, "textures/tile/im.png");
-  private final ResourceLocation storage = new ResourceLocation(StorageNetwork.MODID, "textures/tile/storage.png");
-  private final ResourceLocation process = new ResourceLocation(StorageNetwork.MODID, "textures/tile/process.png");
-  private final ResourceLocation plain = new ResourceLocation(StorageNetwork.MODID, "textures/tile/plain.png");
 
+  private static Map<Block, ResourceLocation> renderMaps = new HashMap<>();
+
+  public static void addCableRender(Block block, ResourceLocation image) {
+    renderMaps.put(block, image);
+  }
   // TODO: Use baked models instead of tesrs
   public TesrCable() {
     model = new ModelCable();
@@ -31,7 +30,6 @@ public class TesrCable extends TileEntitySpecialRenderer<TileCable> {
     if (te == null) {
       return;
     }
-
     IBlockState blockstate = te.getWorld().getBlockState(te.getPos());
     if (!(blockstate.getBlock() instanceof BlockCable)) {
       return;
@@ -49,18 +47,10 @@ public class TesrCable extends TileEntitySpecialRenderer<TileCable> {
     GlStateManager.enableRescaleNormal();
     GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
     Block kind = te.getBlockType();
-    if (kind == ModBlocks.kabel)
-      Minecraft.getMinecraft().renderEngine.bindTexture(link);
-    if (kind == ModBlocks.exKabel)
-      Minecraft.getMinecraft().renderEngine.bindTexture(ex);
-    if (kind == ModBlocks.imKabel)
-      Minecraft.getMinecraft().renderEngine.bindTexture(im);
-    if (kind == ModBlocks.storageKabel)
-      Minecraft.getMinecraft().renderEngine.bindTexture(storage);
-    if (kind == ModBlocks.processKabel)
-      Minecraft.getMinecraft().renderEngine.bindTexture(process);
-    //    if (kind == ModBlocks.storage_kabel_plain)
-    //      Minecraft.getMinecraft().renderEngine.bindTexture(plain);
+    if (renderMaps.containsKey(kind)) {
+      Minecraft.getMinecraft().renderEngine.bindTexture(renderMaps.get(kind));
+    }
+
     GlStateManager.pushMatrix();
     GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
