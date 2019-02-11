@@ -4,7 +4,6 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.data.EnumStorageDirection;
 import mrriegel.storagenetwork.api.data.EnumUpgradeType;
 import mrriegel.storagenetwork.block.cable.BlockCable;
-import mrriegel.storagenetwork.block.cable.TesrCable;
 import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.cable.io.BlockCableIO;
 import mrriegel.storagenetwork.block.cable.io.TileCableIO;
@@ -72,16 +71,7 @@ public class RegistryEvents {
     registry.register(new ItemBlock(ModBlocks.controller).setRegistryName(ModBlocks.controller.getRegistryName()));
     // registry.register(new ItemBlock(ModBlocks.storage_kabel_plain).setRegistryName(ModBlocks.storage_kabel_plain.getRegistryName()));
 
-    ResourceLocation link = new ResourceLocation(StorageNetwork.MODID, "textures/tile/link.png");
-    ResourceLocation ex = new ResourceLocation(StorageNetwork.MODID, "textures/tile/ex.png");
-    ResourceLocation im = new ResourceLocation(StorageNetwork.MODID, "textures/tile/im.png");
-    ResourceLocation storage = new ResourceLocation(StorageNetwork.MODID, "textures/tile/storage.png");
-    ResourceLocation process = new ResourceLocation(StorageNetwork.MODID, "textures/tile/process.png");
-    TesrCable.addCableRender(ModBlocks.kabel, link);
-    TesrCable.addCableRender(ModBlocks.exKabel, ex);
-    TesrCable.addCableRender(ModBlocks.imKabel, im);
-    TesrCable.addCableRender(ModBlocks.storageKabel, storage);
-    TesrCable.addCableRender(ModBlocks.processKabel, process);
+
     registry.register(new ItemUpgrade());
     registry.register(new ItemRemote());
   }
