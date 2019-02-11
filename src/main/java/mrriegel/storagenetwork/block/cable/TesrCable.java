@@ -19,6 +19,7 @@ public class TesrCable extends TileEntitySpecialRenderer<TileCable> {
   private final ResourceLocation im = new ResourceLocation(StorageNetwork.MODID, "textures/tile/im.png");
   private final ResourceLocation storage = new ResourceLocation(StorageNetwork.MODID, "textures/tile/storage.png");
   private final ResourceLocation process = new ResourceLocation(StorageNetwork.MODID, "textures/tile/process.png");
+  private final ResourceLocation plain = new ResourceLocation(StorageNetwork.MODID, "textures/tile/plain.png");
 
   // TODO: Use baked models instead of tesrs
   public TesrCable() {
@@ -58,6 +59,8 @@ public class TesrCable extends TileEntitySpecialRenderer<TileCable> {
       Minecraft.getMinecraft().renderEngine.bindTexture(storage);
     if (kind == ModBlocks.processKabel)
       Minecraft.getMinecraft().renderEngine.bindTexture(process);
+    if (kind == ModBlocks.storage_kabel_plain)
+      Minecraft.getMinecraft().renderEngine.bindTexture(plain);
     GlStateManager.pushMatrix();
     GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
