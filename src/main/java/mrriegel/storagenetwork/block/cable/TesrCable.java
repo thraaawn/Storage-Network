@@ -59,8 +59,8 @@ public class TesrCable extends TileEntitySpecialRenderer<TileCable> {
       Minecraft.getMinecraft().renderEngine.bindTexture(storage);
     if (kind == ModBlocks.processKabel)
       Minecraft.getMinecraft().renderEngine.bindTexture(process);
-    if (kind == ModBlocks.storage_kabel_plain)
-      Minecraft.getMinecraft().renderEngine.bindTexture(plain);
+    //    if (kind == ModBlocks.storage_kabel_plain)
+    //      Minecraft.getMinecraft().renderEngine.bindTexture(plain);
     GlStateManager.pushMatrix();
     GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);

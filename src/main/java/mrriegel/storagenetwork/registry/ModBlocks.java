@@ -5,7 +5,6 @@ import mrriegel.storagenetwork.block.cable.BlockCable;
 import mrriegel.storagenetwork.block.cable.io.BlockCableIO;
 import mrriegel.storagenetwork.block.cable.link.BlockCableLink;
 import mrriegel.storagenetwork.block.control.BlockControl;
-import mrriegel.storagenetwork.block.linkplain.BlockCableLinkPlain;
 import mrriegel.storagenetwork.block.master.BlockMaster;
 import mrriegel.storagenetwork.block.request.BlockRequest;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -25,8 +24,8 @@ public class ModBlocks {
   @GameRegistry.ObjectHolder("storage_kabel")
   public static BlockCableLink storageKabel;
 
-  @GameRegistry.ObjectHolder("storage_kabel_plain")
-  public static BlockCableLinkPlain storage_kabel_plain;
+  // @GameRegistry.ObjectHolder("storage_kabel_plain")
+  // public static BlockCableLinkPlain storage_kabel_plain;
 
   @GameRegistry.ObjectHolder("ex_kabel")
   public static BlockCableIO exKabel;

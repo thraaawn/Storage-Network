@@ -48,23 +48,6 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
 // Runs this task automatically when build is ran.
 build.dependsOn signJar
 
-jar {
-    from sourceSets.main.output
-    from sourceSets.api.output
-}
-
-sourceJar {
-    from sourceSets.api.allJava
-}
-
-task apiJar(dependsOn: 'classes', type: Jar) {
-    from sourceSets.api.output
-    from sourceSets.api.allJava
-    classifier = 'api'
-}
-
-build.dependsOn(apiJar, sourceJar)
-
 repositories {
     maven { // JEI
         url "http://dvs1.progwml6.com/files/maven"
