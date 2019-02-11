@@ -1,5 +1,12 @@
 package mrriegel.storagenetwork.gui;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -26,14 +33,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Base class for Request table inventory and Remote inventory
@@ -437,7 +436,12 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
         }
       }
       else if (this.stackUnderMouse.isEmpty() == false) {
-        JeiHooks.testJeiKeybind(keyCode, this.stackUnderMouse);
+        try {
+          JeiHooks.testJeiKeybind(keyCode, this.stackUnderMouse);
+        }
+        catch (Throwable e) {
+          //its ok JEI not installed for maybe an addon mod is ok 
+        }
       }
       else {
         super.keyTyped(typedChar, keyCode);
