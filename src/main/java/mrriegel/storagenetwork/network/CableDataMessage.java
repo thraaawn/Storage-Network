@@ -8,6 +8,7 @@ import mrriegel.storagenetwork.block.cable.link.ContainerCableLink;
 import mrriegel.storagenetwork.block.cable.processing.ContainerCableProcessing;
 import mrriegel.storagenetwork.block.cable.processing.ProcessRequestModel;
 import mrriegel.storagenetwork.block.cable.processing.TileCableProcess;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -114,22 +115,27 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
             break;
           case IMPORT_FILTER:
             // First clear out all filters
-            con.link.filters.clear();
+            //            con.link.filters.clear();
+            //TODO: Fix this not auto sync to client 
+            //TODO: Fix this not auto sync to client   
 
             int targetSlot = 0;
             for(ItemStack filterSuggestion : con.link.getStoredStacks()) {
               // Ignore stacks that are already filtered
-              if(con.link.filters.isStackFiltered(filterSuggestion)) {
+              if (con.link.filters.exactStackAlreadyInList(filterSuggestion)) {
                 continue;
               }
 
               con.link.filters.setStackInSlot(targetSlot, filterSuggestion.copy());
               targetSlot++;
               if(targetSlot >= con.link.filters.getSlots()) {
-                break;
+                continue;
               }
             }
-            break;
+            StorageNetwork.log("Send new refresh client msg");
+            PacketRegistry.INSTANCE.sendTo(new RefreshFilterClientMessage(con.link.filters.getStacks()), player);
+            con.tile.markDirty();
+          break;
         }
       }
 
@@ -164,17 +170,11 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
           case IMPORT_FILTER:
             //TODO: Fix this not auto sync to client 
             //TODO: Fix this not auto sync to client 
-            //TODO: Fix this not auto sync to client  
-            //            con.autoIO.filters.isWhitelist = true;
-            // First clear out all filters
-            StorageNetwork.log("! cableDataMessage " + type);
-            //            con.autoIO.filters.clear();
+
 
             int targetSlot = 0;
-            StorageNetwork.log("cableDataMessage  " + con.autoIO.getStacksForFilter().size());
             for(ItemStack filterSuggestion : con.autoIO.getStacksForFilter()) {
-              // Ignore stacks that are already filtered
-              StorageNetwork.log("cableDataMessage loop  " + filterSuggestion);
+              // Ignore stacks that are already filtered 
               if (con.autoIO.filters.exactStackAlreadyInList(filterSuggestion)) {
                 continue;
               }
@@ -182,12 +182,14 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
               con.autoIO.filters.setStackInSlot(targetSlot, filterSuggestion.copy());
               targetSlot++;
               if(targetSlot >= con.autoIO.filters.getSlots()) {
-                break;
+                continue;
               }
             }
             break;
         }
 
+        StorageNetwork.log("Send new refresh client msg");
+        PacketRegistry.INSTANCE.sendTo(new RefreshFilterClientMessage(con.autoIO.filters.getStacks()), player);
         con.tile.markDirty();
       }
     });

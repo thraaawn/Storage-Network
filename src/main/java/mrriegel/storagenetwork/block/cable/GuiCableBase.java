@@ -179,4 +179,12 @@ public abstract class GuiCableBase extends GuiContainer {
   public void onGuiClosed() {
     super.onGuiClosed();
   }
+
+  public void setFilterItems(List<ItemStack> stacks) {
+    FilterItemStackHandler filter = this.getFilterHandler();
+    for (int i = 0; i < stacks.size(); i++) {
+      ItemStack s = stacks.get(i);
+      filter.setStackInSlot(i, s);
+    }
+  }
 }

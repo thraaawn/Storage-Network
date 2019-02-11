@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.block.cable;
 
+import java.io.IOException;
+import org.lwjgl.input.Keyboard;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.network.CableDataMessage;
@@ -12,9 +14,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
-import org.lwjgl.input.Keyboard;
-
-import java.io.IOException;
 
 public class GuiCable extends GuiCableBase implements IPublicGuiContainer {
 
