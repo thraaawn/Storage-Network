@@ -50,128 +50,145 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
         CableMessageType type = CableMessageType.values()[message.id];
 
         if (player.openContainer instanceof ContainerCableIO) {
-          ContainerCableIO con = (ContainerCableIO) player.openContainer;
-          if (con == null || con.autoIO == null) {
-            return;
-          }
-
-          INetworkMaster master = StorageNetwork.helpers.getTileMasterForConnectable(con.autoIO.connectable);
-
-          switch (type) {
-            case TOGGLE_MODE:
-              con.autoIO.operationMustBeSmaller = !con.autoIO.operationMustBeSmaller;
-              break;
-            case TOGGLE_WHITELIST:
-              con.autoIO.filters.isWhitelist = !con.autoIO.filters.isWhitelist;
-              break;
-            case PRIORITY_UP:
-              con.autoIO.priority++;
-              if(master != null) {
-                master.clearCache();
-              }
-              break;
-            case PRIORITY_DOWN:
-              con.autoIO.priority--;
-              if(master != null) {
-                master.clearCache();
-              }
-              break;
-            case IMPORT_FILTER:
-              // First clear out all filters
-              con.autoIO.filters.clear();
-
-              int targetSlot = 0;
-              for(ItemStack filterSuggestion : con.autoIO.getStacksForFilter()) {
-                // Ignore stacks that are already filtered
-                if(con.autoIO.filters.isStackFiltered(filterSuggestion)) {
-                  continue;
-                }
-
-                con.autoIO.filters.setStackInSlot(targetSlot, filterSuggestion.copy());
-                targetSlot++;
-                if(targetSlot >= con.autoIO.filters.getSlots()) {
-                  break;
-                }
-              }
-              break;
-          }
-
-          con.tile.markDirty();
+          updateCableIO(player, type);
         }
 
         if (player.openContainer instanceof ContainerCableLink) {
-          ContainerCableLink con = (ContainerCableLink) player.openContainer;
-          if (con == null || con.link == null) {
-            return;
-          }
-
-          INetworkMaster master = StorageNetwork.helpers.getTileMasterForConnectable(con.link.connectable);
-
-          switch(type) {
-            case TOGGLE_WAY:
-              con.link.filterDirection = con.link.filterDirection.next();
-              break;
-            case TOGGLE_WHITELIST:
-              con.link.filters.isWhitelist = !con.link.filters.isWhitelist;
-              break;
-            case PRIORITY_UP:
-              con.link.priority++;
-              if(master != null) {
-                master.clearCache();
-              }
-              break;
-            case PRIORITY_DOWN:
-              con.link.priority--;
-              if(master != null) {
-                master.clearCache();
-              }
-              break;
-            case IMPORT_FILTER:
-              // First clear out all filters
-              con.link.filters.clear();
-
-              int targetSlot = 0;
-              for(ItemStack filterSuggestion : con.link.getStoredStacks()) {
-                // Ignore stacks that are already filtered
-                if(con.link.filters.isStackFiltered(filterSuggestion)) {
-                  continue;
-                }
-
-                con.link.filters.setStackInSlot(targetSlot, filterSuggestion.copy());
-                targetSlot++;
-                if(targetSlot >= con.link.filters.getSlots()) {
-                  break;
-                }
-              }
-              break;
-          }
+          updateCableLink(player, type);
         }
 
         if(player.openContainer instanceof ContainerCableProcessing) {
-          ContainerCableProcessing con = (ContainerCableProcessing) player.openContainer;
-          if(!(con.tile instanceof TileCableProcess)) {
-            return;
-          }
-
-          TileCableProcess tileCable = (TileCableProcess) con.tile;
-
-          switch (type) {
-            case TOGGLE_P_RESTARTTRIGGER:
-              //stop listening for result, export recipe into block
-              tileCable.getRequest().setStatus(ProcessRequestModel.ProcessStatus.EXPORTING);
-              break;
-            case P_FACE_BOTTOM:
-              tileCable.processingBottom = EnumFacing.values()[message.value];
-              break;
-            case P_FACE_TOP:
-              tileCable.processingTop = EnumFacing.values()[message.value];
-              //                StorageNetwork.log(tileCable.processingTop.name() + " server is ?" + message.value);
-              break;
-          }
-
-          tileCable.markDirty();
-          UtilTileEntity.updateTile(tileCable.getWorld(), tileCable.getPos());
+          updateProcessing(message, player, type);
         }
+      }
+
+      private void updateProcessing(final CableDataMessage message, EntityPlayerMP player, CableMessageType type) {
+        ContainerCableProcessing con = (ContainerCableProcessing) player.openContainer;
+        if (!(con.tile instanceof TileCableProcess)) {
+          return;
+        }
+        TileCableProcess tileCable = (TileCableProcess) con.tile;
+        switch (type) {
+          case TOGGLE_P_RESTARTTRIGGER:
+            //stop listening for result, export recipe into block
+            tileCable.getRequest().setStatus(ProcessRequestModel.ProcessStatus.EXPORTING);
+          break;
+          case P_FACE_BOTTOM:
+            tileCable.processingBottom = EnumFacing.values()[message.value];
+          break;
+          case P_FACE_TOP:
+            tileCable.processingTop = EnumFacing.values()[message.value];
+          //                StorageNetwork.log(tileCable.processingTop.name() + " server is ?" + message.value);
+          break;
+        }
+        tileCable.markDirty();
+        UtilTileEntity.updateTile(tileCable.getWorld(), tileCable.getPos());
+      }
+
+      private void updateCableLink(EntityPlayerMP player, CableMessageType type) {
+        ContainerCableLink con = (ContainerCableLink) player.openContainer;
+        if (con == null || con.link == null) {
+          return;
+        }
+
+        INetworkMaster master = StorageNetwork.helpers.getTileMasterForConnectable(con.link.connectable);
+
+        switch(type) {
+          case TOGGLE_WAY:
+            con.link.filterDirection = con.link.filterDirection.next();
+            break;
+          case TOGGLE_WHITELIST:
+            con.link.filters.isWhitelist = !con.link.filters.isWhitelist;
+            break;
+          case PRIORITY_UP:
+            con.link.priority++;
+            if(master != null) {
+              master.clearCache();
+            }
+            break;
+          case PRIORITY_DOWN:
+            con.link.priority--;
+            if(master != null) {
+              master.clearCache();
+            }
+            break;
+          case IMPORT_FILTER:
+            // First clear out all filters
+            con.link.filters.clear();
+
+            int targetSlot = 0;
+            for(ItemStack filterSuggestion : con.link.getStoredStacks()) {
+              // Ignore stacks that are already filtered
+              if(con.link.filters.isStackFiltered(filterSuggestion)) {
+                continue;
+              }
+
+              con.link.filters.setStackInSlot(targetSlot, filterSuggestion.copy());
+              targetSlot++;
+              if(targetSlot >= con.link.filters.getSlots()) {
+                break;
+              }
+            }
+            break;
+        }
+      }
+
+      private void updateCableIO(EntityPlayerMP player, CableMessageType type) {
+        StorageNetwork.log("updateCableIO " + type);
+        ContainerCableIO con = (ContainerCableIO) player.openContainer;
+        if (con == null || con.autoIO == null) {
+          return;
+        }
+
+        INetworkMaster master = StorageNetwork.helpers.getTileMasterForConnectable(con.autoIO.connectable);
+
+        switch (type) {
+          case TOGGLE_MODE:
+            con.autoIO.operationMustBeSmaller = !con.autoIO.operationMustBeSmaller;
+            break;
+          case TOGGLE_WHITELIST:
+            con.autoIO.filters.isWhitelist = !con.autoIO.filters.isWhitelist;
+            break;
+          case PRIORITY_UP:
+            con.autoIO.priority++;
+            if(master != null) {
+              master.clearCache();
+            }
+            break;
+          case PRIORITY_DOWN:
+            con.autoIO.priority--;
+            if(master != null) {
+              master.clearCache();
+            }
+            break;
+          case IMPORT_FILTER:
+            //TODO: Fix this not auto sync to client 
+            //TODO: Fix this not auto sync to client 
+            //TODO: Fix this not auto sync to client  
+            //            con.autoIO.filters.isWhitelist = true;
+            // First clear out all filters
+            StorageNetwork.log("! cableDataMessage " + type);
+            //            con.autoIO.filters.clear();
+
+            int targetSlot = 0;
+            StorageNetwork.log("cableDataMessage  " + con.autoIO.getStacksForFilter().size());
+            for(ItemStack filterSuggestion : con.autoIO.getStacksForFilter()) {
+              // Ignore stacks that are already filtered
+              StorageNetwork.log("cableDataMessage loop  " + filterSuggestion);
+              if (con.autoIO.filters.exactStackAlreadyInList(filterSuggestion)) {
+                continue;
+              }
+
+              con.autoIO.filters.setStackInSlot(targetSlot, filterSuggestion.copy());
+              targetSlot++;
+              if(targetSlot >= con.autoIO.filters.getSlots()) {
+                break;
+              }
+            }
+            break;
+        }
+
+        con.tile.markDirty();
       }
     });
     return null;

@@ -1,5 +1,8 @@
 package mrriegel.storagenetwork.block.cable;
 
+import java.io.IOException;
+import java.util.List;
+import org.lwjgl.input.Mouse;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
@@ -16,10 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 import net.minecraftforge.items.ItemHandlerHelper;
-import org.lwjgl.input.Mouse;
-
-import java.io.IOException;
-import java.util.List;
 
 public abstract class GuiCableBase extends GuiContainer {
   public static final int SLOT_SIZE = 18;
@@ -59,10 +58,12 @@ public abstract class GuiCableBase extends GuiContainer {
 
     if(btnImport != null && button.id == btnImport.id) {
       // First clear out all filters
-      stackHandler.clear();
 
+      stackHandler.clear();
+      StorageNetwork.log("import btn pressed in guicablebase ");
       importSlotsButtonPressed();
 
+      StorageNetwork.log("CableDataMessage " + button.id);
       PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id));
     }
 

@@ -1,6 +1,10 @@
 package mrriegel.storagenetwork.block.cable.io;
 
+import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.input.Keyboard;
 import com.google.common.collect.Lists;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.data.EnumUpgradeType;
 import mrriegel.storagenetwork.block.cable.GuiCable;
 import mrriegel.storagenetwork.block.cable.GuiCableButton;
@@ -13,10 +17,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.input.Keyboard;
-
-import java.io.IOException;
 
 public class GuiCableIO extends GuiCable {
   ContainerCableIO containerCableIO;
@@ -39,6 +39,7 @@ public class GuiCableIO extends GuiCable {
   public void importSlotsButtonPressed() {
     super.importSlotsButtonPressed();
 
+    StorageNetwork.log("cableIO importSlotsButtonPressed");
     int targetSlot = 0;
     for(ItemStack filterSuggestion : containerCableIO.autoIO.getStacksForFilter()) {
       // Ignore stacks that are already filtered
@@ -48,6 +49,7 @@ public class GuiCableIO extends GuiCable {
 
       containerCableIO.autoIO.filters.setStackInSlot(targetSlot, filterSuggestion.copy());
       targetSlot++;
+      StorageNetwork.log("guicableIO " + targetSlot + "_" + filterSuggestion.getDisplayName());
       if(targetSlot >= containerCableIO.autoIO.filters.getSlots()) {
         break;
       }
@@ -196,6 +198,7 @@ public class GuiCableIO extends GuiCable {
       containerCableIO.autoIO.operationMustBeSmaller = !containerCableIO.autoIO.operationMustBeSmaller;
       PacketRegistry.INSTANCE.sendToServer(new CableDataMessage(button.id));
     }
+
   }
 
   @Override

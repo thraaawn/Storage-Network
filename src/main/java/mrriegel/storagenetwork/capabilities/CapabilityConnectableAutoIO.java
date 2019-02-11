@@ -1,13 +1,19 @@
 package mrriegel.storagenetwork.capabilities;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
+import javax.annotation.Nullable;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.capability.IConnectable;
 import mrriegel.storagenetwork.api.capability.IConnectableItemAutoIO;
+import mrriegel.storagenetwork.api.data.DimPos;
 import mrriegel.storagenetwork.api.data.EnumStorageDirection;
 import mrriegel.storagenetwork.api.data.EnumUpgradeType;
 import mrriegel.storagenetwork.api.data.IItemStackMatcher;
 import mrriegel.storagenetwork.api.network.INetworkMaster;
 import mrriegel.storagenetwork.data.ItemStackMatcher;
-import mrriegel.storagenetwork.api.data.DimPos;
 import mrriegel.storagenetwork.util.inventory.FilterItemStackHandler;
 import mrriegel.storagenetwork.util.inventory.UpgradesItemStackHandler;
 import net.minecraft.item.ItemStack;
@@ -21,12 +27,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 public class CapabilityConnectableAutoIO implements INBTSerializable<NBTTagCompound>, IConnectableItemAutoIO {
   public IConnectable connectable;
@@ -155,11 +155,13 @@ public class CapabilityConnectableAutoIO implements INBTSerializable<NBTTagCompo
       return Collections.emptyList();
     }
 
+    StorageNetwork.log("getStacksForFilter    " + inventoryFace);
     DimPos inventoryPos = connectable.getPos().offset(inventoryFace);
 
     // Test whether the connected block has the IItemHandler capability
     IItemHandler itemHandler = inventoryPos.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, inventoryFace.getOpposite());
     if (itemHandler == null) {
+      StorageNetwork.error("getStacksForFilter    null itemhandler connection ");
       return Collections.emptyList();
     }
 
@@ -171,12 +173,15 @@ public class CapabilityConnectableAutoIO implements INBTSerializable<NBTTagCompo
         continue;
       }
 
-      if (this.filters.isStackFiltered(stack)) {
+      StorageNetwork.log(slot + "getStacksForFilter    " + stack
+          + filters.exactStackAlreadyInList(stack));
+      if (this.filters.exactStackAlreadyInList(stack)) {
         continue;
       }
 
       result.add(stack.copy());
 
+      StorageNetwork.log("getStacksForFilter   size up   " + result.size());
       // We can abort after we've found FILTER_SIZE stacks; we don't have more filter slots anyway
       if(result.size() >= FilterItemStackHandler.FILTER_SIZE) {
         return result;
