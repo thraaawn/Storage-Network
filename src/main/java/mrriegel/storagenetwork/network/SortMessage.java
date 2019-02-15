@@ -2,9 +2,9 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.request.TileRequest;
+import mrriegel.storagenetwork.data.EnumSortType;
 import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.util.NBTHelper;
-import mrriegel.storagenetwork.util.data.EnumSortType;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;

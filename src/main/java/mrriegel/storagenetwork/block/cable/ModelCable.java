@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.block.cable;
 
 import mrriegel.storagenetwork.registry.ModBlocks;
+import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -75,63 +76,60 @@ public class ModelCable extends ModelBase {
     this.setRotateAngle(down, -1.5707963267948966F, 0.0F, 0.0F);
   }
 
-  private boolean oo(TileCable tile) {
-    boolean a = connected(tile.north) && connected(tile.south) && !connected(tile.west) && !connected(tile.east) && !connected(tile.up) && !connected(tile.down);
-    boolean b = !connected(tile.north) && !connected(tile.south) && connected(tile.west) && connected(tile.east) && !connected(tile.up) && !connected(tile.down);
-    boolean c = !connected(tile.north) && !connected(tile.south) && !connected(tile.west) && !connected(tile.east) && connected(tile.up) && connected(tile.down);
-    return (a ^ b ^ c);
-  }
-
-  private boolean connected(EnumCableType c) {
-    return c == EnumCableType.STORAGE || c == EnumCableType.CONNECT;
-  }
-
-  public void render(TileCable tile) {
+  public void render(UnlistedPropertyBlockNeighbors.BlockNeighbors neighbors, Block kind) {
     float f5 = 0.0625F;
-    if (tile.north == EnumCableType.CONNECT) {
+
+    if (neighbors.north() == UnlistedPropertyBlockNeighbors.EnumNeighborType.CABLE) {
       this.north.render(f5);
     }
-    else if (tile.north == EnumCableType.STORAGE) {
+    else if (neighbors.north() == UnlistedPropertyBlockNeighbors.EnumNeighborType.SPECIAL) {
       this.north.render(f5);
       this.northC.render(f5);
     }
-    if (tile.south == EnumCableType.CONNECT) {
+
+    if (neighbors.south() == UnlistedPropertyBlockNeighbors.EnumNeighborType.CABLE) {
       this.south.render(f5);
     }
-    else if (tile.south == EnumCableType.STORAGE) {
+    else if (neighbors.south() == UnlistedPropertyBlockNeighbors.EnumNeighborType.SPECIAL) {
       this.south.render(f5);
       this.southC.render(f5);
     }
-    if (tile.east == EnumCableType.CONNECT) {
+
+    if (neighbors.east() == UnlistedPropertyBlockNeighbors.EnumNeighborType.CABLE) {
       this.east.render(f5);
     }
-    else if (tile.east == EnumCableType.STORAGE) {
+    else if (neighbors.east() == UnlistedPropertyBlockNeighbors.EnumNeighborType.SPECIAL) {
       this.east.render(f5);
       this.eastC.render(f5);
     }
-    if (tile.west == EnumCableType.CONNECT) {
+
+    if (neighbors.west() == UnlistedPropertyBlockNeighbors.EnumNeighborType.CABLE) {
       this.west.render(f5);
     }
-    else if (tile.west == EnumCableType.STORAGE) {
+    else if (neighbors.west() == UnlistedPropertyBlockNeighbors.EnumNeighborType.SPECIAL) {
       this.west.render(f5);
       this.westC.render(f5);
     }
-    if (tile.up == EnumCableType.CONNECT) {
+
+    if (neighbors.up() == UnlistedPropertyBlockNeighbors.EnumNeighborType.CABLE) {
       this.up.render(f5);
     }
-    else if (tile.up == EnumCableType.STORAGE) {
+    else if (neighbors.up() == UnlistedPropertyBlockNeighbors.EnumNeighborType.SPECIAL) {
       this.up.render(f5);
       this.upC.render(f5);
     }
-    if (tile.down == EnumCableType.CONNECT) {
+
+    if (neighbors.down() == UnlistedPropertyBlockNeighbors.EnumNeighborType.CABLE) {
       this.down.render(f5);
     }
-    else if (tile.down == EnumCableType.STORAGE) {
+    else if (neighbors.down() == UnlistedPropertyBlockNeighbors.EnumNeighborType.SPECIAL) {
       this.down.render(f5);
       this.downC.render(f5);
     }
-    if (!oo(tile) || tile.getBlockType() != ModBlocks.kabel)
+
+    if (neighbors.requiresCube() || kind != ModBlocks.kabel) {
       this.cube.render(f5);
+    }
   }
 
   // @Override

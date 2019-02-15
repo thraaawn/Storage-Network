@@ -1,11 +1,12 @@
 package mrriegel.storagenetwork.gui;
 
+import net.minecraft.item.ItemStack;
+
 import java.util.List;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 
 public interface IStorageInventory {
 
-  void setStacks(List<StackWrapper> stacks);
+  void setStacks(List<ItemStack> stacks);
 
-  void setCraftableStacks(List<StackWrapper> stacks);
+  void setCraftableStacks(List<ItemStack> stacks);
 }

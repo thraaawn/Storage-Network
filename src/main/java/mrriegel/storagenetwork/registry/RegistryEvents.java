@@ -1,16 +1,30 @@
 package mrriegel.storagenetwork.registry;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.api.data.EnumStorageDirection;
+import mrriegel.storagenetwork.api.data.EnumUpgradeType;
+import mrriegel.storagenetwork.block.cable.BlockCable;
 import mrriegel.storagenetwork.block.cable.TileCable;
+import mrriegel.storagenetwork.block.cable.io.BlockCableIO;
+import mrriegel.storagenetwork.block.cable.io.TileCableIO;
+import mrriegel.storagenetwork.block.cable.link.BlockCableLink;
+import mrriegel.storagenetwork.block.cable.link.TileCableLink;
+import mrriegel.storagenetwork.block.cable.processing.BlockCableProcessing;
+import mrriegel.storagenetwork.block.cable.processing.TileCableProcess;
+import mrriegel.storagenetwork.block.control.BlockControl;
 import mrriegel.storagenetwork.block.control.TileControl;
+import mrriegel.storagenetwork.block.master.BlockMaster;
 import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.block.request.BlockRequest;
 import mrriegel.storagenetwork.block.request.TileRequest;
 import mrriegel.storagenetwork.item.ItemUpgrade;
+import mrriegel.storagenetwork.item.remote.ItemRemote;
 import mrriegel.storagenetwork.item.remote.RemoteType;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -22,15 +36,26 @@ public class RegistryEvents {
 
   @SubscribeEvent
   public void onRegistryBlock(RegistryEvent.Register<Block> event) {
-    IForgeRegistry<Block> registry = event.getRegistry();
-    registry.register(ModBlocks.request.setUnlocalizedName(ModBlocks.request.getRegistryName().toString()));
-    registry.register(ModBlocks.master.setUnlocalizedName(ModBlocks.master.getRegistryName().toString()));
-    registry.register(ModBlocks.kabel.setUnlocalizedName(ModBlocks.kabel.getRegistryName().toString()));
-    registry.register(ModBlocks.storageKabel.setUnlocalizedName(ModBlocks.storageKabel.getRegistryName().toString()));
-    registry.register(ModBlocks.exKabel.setUnlocalizedName(ModBlocks.exKabel.getRegistryName().toString()));
-    registry.register(ModBlocks.imKabel.setUnlocalizedName(ModBlocks.imKabel.getRegistryName().toString()));
-    registry.register(ModBlocks.processKabel.setUnlocalizedName(ModBlocks.processKabel.getRegistryName().toString()));
-    registry.register(ModBlocks.controller.setUnlocalizedName(ModBlocks.controller.getRegistryName().toString()));
+    IForgeRegistry<Block> reg = event.getRegistry();
+
+    reg.register(new BlockMaster("master"));
+    reg.register(new BlockRequest("request"));
+    reg.register(new BlockCable("kabel"));
+    reg.register(new BlockCableLink("storage_kabel"));
+    reg.register(new BlockCableIO("ex_kabel", EnumStorageDirection.OUT));
+    reg.register(new BlockCableIO("im_kabel", EnumStorageDirection.IN));
+    reg.register(new BlockCableProcessing("process_kabel"));
+    reg.register(new BlockControl("controller"));
+    // reg.register(new BlockCableLinkPlain("storage_kabel_plain"));
+
+    GameRegistry.registerTileEntity(TileCable.class, new ResourceLocation(StorageNetwork.MODID, "tileKabel"));
+    GameRegistry.registerTileEntity(TileCableLink.class, new ResourceLocation(StorageNetwork.MODID, "tileKabelLink"));
+    GameRegistry.registerTileEntity(TileCableIO.class, new ResourceLocation(StorageNetwork.MODID, "tileKabelIO"));
+    GameRegistry.registerTileEntity(TileCableProcess.class, new ResourceLocation(StorageNetwork.MODID, "tileKabelProcess"));
+    GameRegistry.registerTileEntity(TileMaster.class, new ResourceLocation(StorageNetwork.MODID, "tileMaster"));
+    GameRegistry.registerTileEntity(TileRequest.class, new ResourceLocation(StorageNetwork.MODID, "tileRequest"));
+    GameRegistry.registerTileEntity(TileControl.class, new ResourceLocation(StorageNetwork.MODID, "tileControl"));
+    //  GameRegistry.registerTileEntity(TileCableLinkPlain.class, new ResourceLocation(StorageNetwork.MODID, "tileCablePlain"));
   }
 
   @SubscribeEvent
@@ -44,12 +69,11 @@ public class RegistryEvents {
     registry.register(new ItemBlock(ModBlocks.imKabel).setRegistryName(ModBlocks.imKabel.getRegistryName()));
     registry.register(new ItemBlock(ModBlocks.processKabel).setRegistryName(ModBlocks.processKabel.getRegistryName()));
     registry.register(new ItemBlock(ModBlocks.controller).setRegistryName(ModBlocks.controller.getRegistryName()));
-    registry.register(ModItems.upgrade);
-    registry.register(ModItems.remote.setUnlocalizedName(ModItems.remote.getRegistryName().toString()));
-    GameRegistry.registerTileEntity(TileCable.class, "tileKabel");
-    GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
-    GameRegistry.registerTileEntity(TileRequest.class, "tileRequest");
-    GameRegistry.registerTileEntity(TileControl.class, "tileControl");
+    // registry.register(new ItemBlock(ModBlocks.storage_kabel_plain).setRegistryName(ModBlocks.storage_kabel_plain.getRegistryName()));
+
+
+    registry.register(new ItemUpgrade());
+    registry.register(new ItemRemote());
   }
 
   @SubscribeEvent
@@ -62,11 +86,13 @@ public class RegistryEvents {
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.master), 0, new ModelResourceLocation(StorageNetwork.MODID + ":master", "inventory"));
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.request), 0, new ModelResourceLocation(StorageNetwork.MODID + ":request", "inventory"));
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.controller), 0, new ModelResourceLocation(StorageNetwork.MODID + ":controller", "inventory"));
-    for (int i = 0; i < ItemUpgrade.NUM; i++) {
-      ModelLoader.setCustomModelResourceLocation(ModItems.upgrade, i, new ModelResourceLocation(StorageNetwork.MODID + ":upgrade_" + i, "inventory"));
+    //   ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.storage_kabel_plain), 0, new ModelResourceLocation(StorageNetwork.MODID + ":storage_kabel_plain", "inventory"));
+    for (EnumUpgradeType type : EnumUpgradeType.values()) {
+      ModelLoader.setCustomModelResourceLocation(ModItems.upgrade, type.getId(), new ModelResourceLocation(StorageNetwork.MODID + ":upgrade_" + type.getId(), "inventory"));
     }
-    for (int i = 0; i < RemoteType.values().length; i++) {
-      ModelLoader.setCustomModelResourceLocation(ModItems.remote, i, new ModelResourceLocation(StorageNetwork.MODID + ":remote_" + i, "inventory"));
+
+    for (RemoteType type : RemoteType.values()) {
+      ModelLoader.setCustomModelResourceLocation(ModItems.remote, type.ordinal(), new ModelResourceLocation(StorageNetwork.MODID + ":remote_" + type.ordinal(), "inventory"));
     }
   }
 }

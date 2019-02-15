@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.gui.fb;
 
 import mrriegel.storagenetwork.block.request.TileRequest;
-import mrriegel.storagenetwork.util.data.EnumSortType;
+import mrriegel.storagenetwork.data.EnumSortType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

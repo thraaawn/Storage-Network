@@ -10,10 +10,12 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.block.IConnectable;
+import mrriegel.storagenetwork.api.capability.IConnectable;
+import mrriegel.storagenetwork.block.BaseBlock;
+import mrriegel.storagenetwork.capabilities.StorageNetworkCapabilities;
+import mrriegel.storagenetwork.api.data.DimPos;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -31,10 +33,10 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class BlockMaster extends BlockContainer {
+public class BlockMaster extends BaseBlock {
 
-  public BlockMaster() {
-    super(Material.IRON);
+  public BlockMaster(String registryName) {
+    super(Material.IRON, registryName);
     this.setHardness(3.0F);
     this.setCreativeTab(CreativeTab.tab);
   }
@@ -46,13 +48,13 @@ public class BlockMaster extends BlockContainer {
 
   @Override
   public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-    onBlockPlacedBy(worldIn, pos, state, null, null);
+    //onBlockPlacedBy(worldIn, pos, state, null, null);
   }
 
   @Override
   public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
     super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-    BlockPos masterPos = null;
+    DimPos masterPos = null;
     if (worldIn.isRemote) {
       return;
     }
@@ -60,10 +62,10 @@ public class BlockMaster extends BlockContainer {
     IConnectable connect = null;
     for (BlockPos p : UtilTileEntity.getSides(pos)) {
       tileHere = worldIn.getTileEntity(p);
-      if (tileHere instanceof IConnectable) {
-        connect = (IConnectable) tileHere;
-        if (connect.getMaster() != null && !connect.getMaster().equals(pos)) {
-          masterPos = connect.getMaster();
+      if (tileHere != null && tileHere.hasCapability(StorageNetworkCapabilities.CONNECTABLE_CAPABILITY, null)) {
+        connect = tileHere.getCapability(StorageNetworkCapabilities.CONNECTABLE_CAPABILITY, null);
+        if (connect != null && connect.getMasterPos() != null && connect.getMasterPos().equals(worldIn, pos)) {
+          masterPos = connect.getMasterPos();
           break;
         }
       }
@@ -75,7 +77,7 @@ public class BlockMaster extends BlockContainer {
       Block.spawnAsEntity(worldIn, pos, ItemHandlerHelper.copyStackWithSize(stack, 1));
       //      ((TileMaster) worldIn.getTileEntity(masterPos)).refreshNetwork();
     }
-    else {//my position is tile so refresh myself 
+    else {//my position is tile so refresh myself
       TileEntity tileAtPos = worldIn.getTileEntity(pos);
       if (tileAtPos != null) {
         ((TileMaster) tileAtPos).refreshNetwork();
@@ -99,10 +101,10 @@ public class BlockMaster extends BlockContainer {
     }
     TileMaster tileMaster = (TileMaster) tileHere;
     playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + StorageNetwork.lang("chat.master.emptyslots") + tileMaster.emptySlots()));
-    playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + StorageNetwork.lang("chat.master.connectables") + tileMaster.getConnectables().size()));
+    playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + StorageNetwork.lang("chat.master.connectables") + tileMaster.getConnectablePositions().size()));
     Map<String, Integer> mapNamesToCount = new HashMap<String, Integer>();
-    for (BlockPos p : tileMaster.getConnectables()) {
-      String block = worldIn.getBlockState(p).getBlock().getLocalizedName();
+    for (DimPos p : tileMaster.getConnectablePositions()) {
+      String block = p.getBlockState().getBlock().getLocalizedName();
       mapNamesToCount.put(block, mapNamesToCount.get(block) != null ? (mapNamesToCount.get(block) + 1) : 1);
     }
     List<Entry<String, Integer>> listDisplayStrings = Lists.newArrayList();

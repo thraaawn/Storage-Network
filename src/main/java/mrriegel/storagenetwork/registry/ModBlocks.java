@@ -1,19 +1,41 @@
 package mrriegel.storagenetwork.registry;
 
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.cable.BlockCable;
+import mrriegel.storagenetwork.block.cable.io.BlockCableIO;
+import mrriegel.storagenetwork.block.cable.link.BlockCableLink;
 import mrriegel.storagenetwork.block.control.BlockControl;
 import mrriegel.storagenetwork.block.master.BlockMaster;
 import mrriegel.storagenetwork.block.request.BlockRequest;
-import net.minecraft.block.Block;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
+@GameRegistry.ObjectHolder(StorageNetwork.MODID)
 public class ModBlocks {
 
-  public static final Block master = new BlockMaster().setRegistryName("master");//network center
-  public static final Block request = new BlockRequest().setRegistryName("request");//the main request table
-  public static final Block kabel = new BlockCable().setRegistryName("kabel");
-  public static final Block storageKabel = new BlockCable().setRegistryName("storage_kabel");//cable that connects to chest
-  public static final Block exKabel = new BlockCable().setRegistryName("ex_kabel");
-  public static final Block imKabel = new BlockCable().setRegistryName("im_kabel");
-  public static final Block processKabel = new BlockCable().setRegistryName("process_kabel");
-  public static final Block controller = new BlockControl().setRegistryName("controller");
+  @GameRegistry.ObjectHolder("master")
+  public static BlockMaster master;//network center
+
+  @GameRegistry.ObjectHolder("request")
+  public static BlockRequest request;//the main request table
+
+  @GameRegistry.ObjectHolder("kabel")
+  public static BlockCable kabel;
+
+  @GameRegistry.ObjectHolder("storage_kabel")
+  public static BlockCableLink storageKabel;
+
+  // @GameRegistry.ObjectHolder("storage_kabel_plain")
+  // public static BlockCableLinkPlain storage_kabel_plain;
+
+  @GameRegistry.ObjectHolder("ex_kabel")
+  public static BlockCableIO exKabel;
+
+  @GameRegistry.ObjectHolder("im_kabel")
+  public static BlockCableIO imKabel;
+
+  @GameRegistry.ObjectHolder("process_kabel")
+  public static BlockCable processKabel;
+
+  @GameRegistry.ObjectHolder("controller")
+  public static BlockControl controller;
 }

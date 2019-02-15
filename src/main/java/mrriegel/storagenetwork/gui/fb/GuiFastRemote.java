@@ -2,9 +2,9 @@ package mrriegel.storagenetwork.gui.fb;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import mrriegel.storagenetwork.data.EnumSortType;
 import mrriegel.storagenetwork.item.remote.ItemRemote;
 import mrriegel.storagenetwork.util.NBTHelper;
-import mrriegel.storagenetwork.util.data.EnumSortType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;

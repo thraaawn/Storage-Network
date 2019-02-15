@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.registry;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.network.CableControlMessage;
 import mrriegel.storagenetwork.network.CableDataMessage;
 import mrriegel.storagenetwork.network.CableFilterMessage;
 import mrriegel.storagenetwork.network.CableLimitMessage;
@@ -8,6 +9,7 @@ import mrriegel.storagenetwork.network.CableRefreshClientMessage;
 import mrriegel.storagenetwork.network.ClearRecipeMessage;
 import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.RecipeMessage;
+import mrriegel.storagenetwork.network.RefreshFilterClientMessage;
 import mrriegel.storagenetwork.network.RequestCableMessage;
 import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
@@ -34,5 +36,7 @@ public class PacketRegistry {
     INSTANCE.registerMessage(CableFilterMessage.class, CableFilterMessage.class, id++, Side.SERVER);
     INSTANCE.registerMessage(CableRefreshClientMessage.class, CableRefreshClientMessage.class, id++, Side.CLIENT);
     INSTANCE.registerMessage(RequestCableMessage.class, RequestCableMessage.class, id++, Side.SERVER);
+    INSTANCE.registerMessage(CableControlMessage.class, CableControlMessage.class, id++, Side.SERVER);
+    INSTANCE.registerMessage(RefreshFilterClientMessage.class, RefreshFilterClientMessage.class, id++, Side.CLIENT);
   }
 }

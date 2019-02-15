@@ -1,12 +1,10 @@
 package mrriegel.storagenetwork.gui.fb;
 
-import java.util.ArrayList;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.item.remote.ItemRemote;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.NBTHelper;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -15,6 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
 
 public class ContainerFastRemote extends ContainerFastNetworkCrafter {
 
@@ -47,7 +47,7 @@ public class ContainerFastRemote extends ContainerFastNetworkCrafter {
     }
     if (!playerIn.world.isRemote && (forceSync || playerIn.world.getTotalWorldTime() % 40 == 0)) {
       forceSync = false;
-      PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(tileMaster.getStacks(), new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
+      PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(tileMaster.getStacks(), new ArrayList<>()), (EntityPlayerMP) playerIn);
     }
     return playerIn.getHeldItem(this.hand) == remoteItemStack;
   }

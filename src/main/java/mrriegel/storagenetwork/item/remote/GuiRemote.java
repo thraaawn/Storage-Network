@@ -2,9 +2,9 @@ package mrriegel.storagenetwork.item.remote;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import mrriegel.storagenetwork.data.EnumSortType;
 import mrriegel.storagenetwork.gui.GuiContainerStorageInventory;
 import mrriegel.storagenetwork.util.NBTHelper;
-import mrriegel.storagenetwork.util.data.EnumSortType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 

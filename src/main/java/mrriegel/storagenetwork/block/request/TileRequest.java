@@ -3,7 +3,7 @@ package mrriegel.storagenetwork.block.request;
 import java.util.HashMap;
 import java.util.Map;
 import mrriegel.storagenetwork.block.TileConnectable;
-import mrriegel.storagenetwork.util.data.EnumSortType;
+import mrriegel.storagenetwork.data.EnumSortType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

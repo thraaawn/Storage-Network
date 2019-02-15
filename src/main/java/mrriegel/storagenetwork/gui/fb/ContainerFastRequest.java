@@ -5,8 +5,8 @@ import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.block.request.TileRequest;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
+import mrriegel.storagenetwork.api.data.DimPos;
 import mrriegel.storagenetwork.util.UtilTileEntity;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -29,7 +29,10 @@ public class ContainerFastRequest extends ContainerFastNetworkCrafter {
       else this.craftMatrix.setInventorySlotContents(i, tile.matrix.getOrDefault(i, ItemStack.EMPTY));
     }
     SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(player, craftMatrix, craftResult, 0, 101, 128);
-    slotCraftOutput.setTileMaster((TileMaster) tile.getWorld().getTileEntity(tile.getMaster()));
+    DimPos masterPos = tile.getMaster();
+    TileMaster masterTile = masterPos.getTileEntity(TileMaster.class);
+
+    slotCraftOutput.setTileMaster(masterTile);
     this.addSlotToContainer(slotCraftOutput);
     bindGrid();
     bindPlayerInvo(player.inventory);
@@ -57,14 +60,14 @@ public class ContainerFastRequest extends ContainerFastNetworkCrafter {
     if (tileMaster == null) return false;
     if (!getTileRequest().getWorld().isRemote && (forceSync || getTileRequest().getWorld().getTotalWorldTime() % 40 == 0)) {
       forceSync = false;
-      PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(tileMaster.getStacks(), new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
+      PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(tileMaster.getStacks(), new ArrayList<>()), (EntityPlayerMP) playerIn);
     }
     return playerIn.getDistanceSq(getTileRequest().getPos().getX() + 0.5D, getTileRequest().getPos().getY() + 0.5D, getTileRequest().getPos().getZ() + 0.5D) <= 64.0D;
   }
 
   @Override
   public TileMaster getTileMaster() {
-    return (TileMaster) getTileRequest().getWorld().getTileEntity(getTileRequest().getMaster());
+    return getTileRequest().getMaster().getTileEntity(TileMaster.class);
   }
 
   public TileRequest getTileRequest() {

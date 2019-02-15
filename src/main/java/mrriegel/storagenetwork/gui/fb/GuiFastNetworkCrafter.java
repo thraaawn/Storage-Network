@@ -1,16 +1,10 @@
 package mrriegel.storagenetwork.gui.fb;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.data.EnumSortType;
 import mrriegel.storagenetwork.gui.IPublicGuiContainer;
 import mrriegel.storagenetwork.gui.IStorageInventory;
 import mrriegel.storagenetwork.gui.ItemSlotNetwork;
@@ -22,8 +16,6 @@ import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
-import mrriegel.storagenetwork.util.data.EnumSortType;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -38,11 +30,19 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import shadows.fastbench.gui.GuiFastBench;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Base class for Request table inventory and Remote inventory
- * 
+ *
  *
  */
 public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPublicGuiContainer, IStorageInventory {
@@ -51,7 +51,7 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
   private static final int WIDTH = 176;
   private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   protected int page = 1, maxPage = 1;
-  public List<StackWrapper> stacks, craftableStacks;
+  public List<ItemStack> stacks, craftableStacks;
   protected ItemStack stackUnderMouse = ItemStack.EMPTY;
   protected GuiTextField searchBar;
   protected GuiStorageButton directionBtn, sortBtn, jeiBtn, clearTextBtn;
@@ -70,12 +70,12 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
   }
 
   @Override
-  public void setStacks(List<StackWrapper> stacks) {
+  public void setStacks(List<ItemStack> stacks) {
     this.stacks = stacks;
   }
 
   @Override
-  public void setCraftableStacks(List<StackWrapper> stacks) {
+  public void setCraftableStacks(List<ItemStack> stacks) {
     this.craftableStacks = stacks;
   }
 
@@ -162,22 +162,22 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
 
   protected abstract boolean isScreenValid();
 
-  private boolean doesStackMatchSearch(StackWrapper stackWrapper) {
+  private boolean doesStackMatchSearch(ItemStack stack) {
     String searchText = searchBar.getText();
     if (searchText.startsWith("@")) {
-      String name = UtilTileEntity.getModNameForItem(stackWrapper.getStack().getItem());
+      String name = UtilTileEntity.getModNameForItem(stack.getItem());
       return name.toLowerCase().contains(searchText.toLowerCase().substring(1));
     }
     else if (searchText.startsWith("#")) {
       String tooltipString;
-      List<String> tooltip = stackWrapper.getStack().getTooltip(mc.player, TooltipFlags.NORMAL);
+      List<String> tooltip = stack.getTooltip(mc.player, TooltipFlags.NORMAL);
       tooltipString = Joiner.on(' ').join(tooltip).toLowerCase();
       tooltipString = ChatFormatting.stripFormatting(tooltipString);
       return tooltipString.toLowerCase().contains(searchText.toLowerCase().substring(1));
     }
     else if (searchText.startsWith("$")) {
       StringBuilder oreDictStringBuilder = new StringBuilder();
-      for (int oreId : OreDictionary.getOreIDs(stackWrapper.getStack())) {
+      for (int oreId : OreDictionary.getOreIDs(stack)) {
         String oreName = OreDictionary.getOreName(oreId);
         oreDictStringBuilder.append(oreName).append(' ');
       }
@@ -185,7 +185,7 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
     }
     else if (searchText.startsWith("%")) {
       StringBuilder creativeTabStringBuilder = new StringBuilder();
-      for (CreativeTabs creativeTab : stackWrapper.getStack().getItem().getCreativeTabs()) {
+      for (CreativeTabs creativeTab : stack.getItem().getCreativeTabs()) {
         if (creativeTab != null) {
           String creativeTabName = creativeTab.getTranslatedTabLabel();
           creativeTabStringBuilder.append(creativeTabName).append(' ');
@@ -194,7 +194,7 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
       return creativeTabStringBuilder.toString().toLowerCase().contains(searchText.toLowerCase().substring(1));
     }
     else {
-      return stackWrapper.getStack().getDisplayName().toLowerCase().contains(searchText.toLowerCase());
+      return stack.getDisplayName().toLowerCase().contains(searchText.toLowerCase());
     }
   }
 
@@ -204,8 +204,8 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
       return;
     }
     renderTextures();
-    List<StackWrapper> stacksToDisplay = applySearchTextToSlots();
-    sortStackWrappers(stacksToDisplay);
+    List<ItemStack> stacksToDisplay = applySearchTextToSlots();
+    sortItemStacks(stacksToDisplay);
     applyScrollPaging(stacksToDisplay);
     rebuildItemSlots(stacksToDisplay);
     renderItemSlots(mouseX, mouseY);
@@ -221,11 +221,11 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
     this.drawTexturedModalRect(xCenter, yCenter, 0, 0, this.xSize, this.ySize);
   }
 
-  private List<StackWrapper> applySearchTextToSlots() {
+  private List<ItemStack> applySearchTextToSlots() {
     String searchText = searchBar.getText();
-    List<StackWrapper> stacksToDisplay = searchText.equals("") ? Lists.newArrayList(stacks) : Lists.<StackWrapper> newArrayList();
+    List<ItemStack> stacksToDisplay = searchText.equals("") ? Lists.newArrayList(stacks) : Lists.newArrayList();
     if (!searchText.equals("")) {
-      for (StackWrapper stackWrapper : stacks) {
+      for (ItemStack stackWrapper : stacks) {
         if (doesStackMatchSearch(stackWrapper)) {
           stacksToDisplay.add(stackWrapper);
         }
@@ -248,7 +248,7 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
     }
   }
 
-  private void rebuildItemSlots(List<StackWrapper> stacksToDisplay) {
+  private void rebuildItemSlots(List<ItemStack> stacksToDisplay) {
     slots = Lists.newArrayList();
     int index = (page - 1) * (getColumns());
     for (int row = 0; row < getLines(); row++) {
@@ -257,13 +257,13 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
           break;
         }
         int in = index;
-        slots.add(new ItemSlotNetwork(this, stacksToDisplay.get(in).getStack(), guiLeft + 8 + col * 18, guiTop + 10 + row * 18, stacksToDisplay.get(in).getSize(), guiLeft, guiTop, true));
+        slots.add(new ItemSlotNetwork(this, stacksToDisplay.get(in), guiLeft + 8 + col * 18, guiTop + 10 + row * 18, stacksToDisplay.get(in).getCount(), guiLeft, guiTop, true));
         index++;
       }
     }
   }
 
-  private void applyScrollPaging(List<StackWrapper> stacksToDisplay) {
+  private void applyScrollPaging(List<ItemStack> stacksToDisplay) {
     maxPage = stacksToDisplay.size() / (getColumns());
     if (stacksToDisplay.size() % (getColumns()) != 0) {
       maxPage++;
@@ -280,20 +280,20 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
     }
   }
 
-  private void sortStackWrappers(List<StackWrapper> stacksToDisplay) {
-    Collections.sort(stacksToDisplay, new Comparator<StackWrapper>() {
+  private void sortItemStacks(List<ItemStack> stacksToDisplay) {
+    Collections.sort(stacksToDisplay, new Comparator<ItemStack>() {
 
       int mul = getDownwards() ? -1 : 1;
 
       @Override
-      public int compare(StackWrapper o2, StackWrapper o1) {
+      public int compare(ItemStack o2, ItemStack o1) {
         switch (getSort()) {
           case AMOUNT:
-            return Integer.compare(o1.getSize(), o2.getSize()) * mul;
+            return Integer.compare(o1.getCount(), o2.getCount()) * mul;
           case NAME:
-            return o2.getStack().getDisplayName().compareToIgnoreCase(o1.getStack().getDisplayName()) * mul;
+            return o2.getDisplayName().compareToIgnoreCase(o1.getDisplayName()) * mul;
           case MOD:
-            return UtilTileEntity.getModNameForItem(o2.getStack().getItem()).compareToIgnoreCase(UtilTileEntity.getModNameForItem(o1.getStack().getItem())) * mul;
+            return UtilTileEntity.getModNameForItem(o2.getItem()).compareToIgnoreCase(UtilTileEntity.getModNameForItem(o1.getItem())) * mul;
         }
         return 0;
       }
@@ -382,7 +382,7 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
     else if (button.id == this.clearTextBtn.id) {
       doSort = false;
       clearSearch();
-      //      this.searchBar.setFocused(true);//doesnt work..somethings overriding it?
+      //      this.fieldOperationLimit.setFocused(true);//doesnt work..somethings overriding it?
       this.forceFocus = true;//we have to force it to go next-tick
     }
     if (doSort) {

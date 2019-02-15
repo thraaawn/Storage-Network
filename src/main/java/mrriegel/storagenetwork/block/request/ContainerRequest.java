@@ -1,14 +1,11 @@
 package mrriegel.storagenetwork.block.request;
 
-import java.util.ArrayList;
-import java.util.List;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.gui.ContainerNetworkBase;
 import mrriegel.storagenetwork.gui.InventoryCraftingNetwork;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -16,6 +13,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContainerRequest extends ContainerNetworkBase {
 
@@ -26,9 +26,14 @@ public class ContainerRequest extends ContainerNetworkBase {
     this.setTileRequest(tile);
     this.playerInv = playerInv;
     result = new InventoryCraftResult();
-    SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(playerInv.player, matrix, result, 0, 101, 128);
-    slotCraftOutput.setTileMaster((TileMaster) tile.getWorld().getTileEntity(tile.getMaster()));
-    this.addSlotToContainer(slotCraftOutput);
+
+    TileMaster tileMaster = this.getTileMaster();
+    if (tileMaster != null) {
+      SlotCraftingNetwork slotCraftOutput = new SlotCraftingNetwork(playerInv.player, matrix, result, 0, 101, 128);
+      slotCraftOutput.setTileMaster(tileMaster);
+      this.addSlotToContainer(slotCraftOutput);
+    }
+
     bindGrid();
     bindPlayerInvo(playerInv);
     bindHotbar();
@@ -55,7 +60,7 @@ public class ContainerRequest extends ContainerNetworkBase {
   @Override
   public void slotChanged() {
     //parent is abstract
-    //seems to not happen from -shiftclick- crafting 
+    //seems to not happen from -shiftclick- crafting
     for (int i = 0; i < 9; i++) {
       getTileRequest().matrix.put(i, matrix.getStackInSlot(i));
     }
@@ -68,10 +73,12 @@ public class ContainerRequest extends ContainerNetworkBase {
     if (tileMaster == null) {
       return false;
     }
+
     if (!getTileRequest().getWorld().isRemote && getTileRequest().getWorld().getTotalWorldTime() % 40 == 0) {
-      List<StackWrapper> list = tileMaster.getStacks();
-      PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), (EntityPlayerMP) playerIn);
+      List<ItemStack> list = tileMaster.getStacks();
+      PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<>()), (EntityPlayerMP) playerIn);
     }
+
     return playerIn.getDistanceSq(getTileRequest().getPos().getX() + 0.5D, getTileRequest().getPos().getY() + 0.5D, getTileRequest().getPos().getZ() + 0.5D) <= 64.0D;
   }
 
@@ -82,7 +89,11 @@ public class ContainerRequest extends ContainerNetworkBase {
 
   @Override
   public TileMaster getTileMaster() {
-    return (TileMaster) getTileRequest().getWorld().getTileEntity(getTileRequest().getMaster());
+    if(getTileRequest() == null || getTileRequest().getMaster() == null) {
+      return null;
+    }
+
+    return getTileRequest().getMaster().getTileEntity(TileMaster.class);
   }
 
   public TileRequest getTileRequest() {

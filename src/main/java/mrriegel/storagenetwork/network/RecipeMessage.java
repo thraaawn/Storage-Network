@@ -1,16 +1,11 @@
 package mrriegel.storagenetwork.network;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.data.ItemStackMatcher;
 import mrriegel.storagenetwork.gui.IStorageContainer;
 import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilInventory;
-import mrriegel.storagenetwork.util.data.FilterItem;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -25,6 +20,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, IMessage> {
 
@@ -41,7 +41,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
    *  s7:[{id:"ic2:ingot",Count:1b,Damage:2s},{id:"immersiveengineering:metal",Count:1b,Damage:0s}],
    *  s8:[{id:"ic2:ingot",Count:1b,Damage:2s},{id:"immersiveengineering:metal",Count:1b,Damage:0s}]
    *  }
-   * @formatter:on 
+   * @formatter:on
    */
   private NBTTagCompound nbt;
   private int index = 0;
@@ -125,21 +125,21 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
             if (stackCurrent == null || stackCurrent.isEmpty()) {
               continue;
             }
-            FilterItem filterItem = new FilterItem(stackCurrent);
-            filterItem.setNbt(true);
-            filterItem.setOre(isOreDict);//important: set this for correct matching
+            ItemStackMatcher itemStackMatcher = new ItemStackMatcher(stackCurrent);
+            itemStackMatcher.setNbt(true);
+            itemStackMatcher.setOre(isOreDict);//important: set this for correct matching
             //   StorageNetwork.log("CALL exctractItem   " + stackCurrent + " isOreDict " + isOreDict);
-            ItemStack ex = UtilInventory.extractItem(new PlayerMainInvWrapper(player.inventory), filterItem, 1, true);
+            ItemStack ex = UtilInventory.extractItem(new PlayerMainInvWrapper(player.inventory), itemStackMatcher, 1, true);
             /*********** First try and use the players inventory **/
             //              int slot = j ;//- 1;
             if (ex != null && !ex.isEmpty() && craftMatrix.getStackInSlot(slot).isEmpty()) {
-              UtilInventory.extractItem(new PlayerMainInvWrapper(player.inventory), filterItem, 1, false);
+              UtilInventory.extractItem(new PlayerMainInvWrapper(player.inventory), itemStackMatcher, 1, false);
               //make sure to add the real item after the nonsimulated withdrawl is complete https://github.com/PrinceOfAmber/Storage-Network/issues/16
               craftMatrix.setInventorySlotContents(slot, ex);
               break;
             }
             /********* now find it from the network ***/
-            stackCurrent = master.request(!stackCurrent.isEmpty() ? filterItem : null, 1, false);
+            stackCurrent = master.request(!stackCurrent.isEmpty() ? itemStackMatcher : null, 1, false);
             if (!stackCurrent.isEmpty() && craftMatrix.getStackInSlot(slot).isEmpty()) {
               craftMatrix.setInventorySlotContents(slot, stackCurrent);
               break;
@@ -149,9 +149,10 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
         }
         //now make sure client sync happens.
         ctr.slotChanged();
-        List<StackWrapper> list = master.getStacks();
-        PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<StackWrapper>()), player);
-      }//end run 
+
+        List<ItemStack> list = master.getStacks();
+        PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(list, new ArrayList<>()), player);
+      }//end run
     });
     return null;
   }

@@ -1,47 +1,42 @@
 package mrriegel.storagenetwork.network;
 
-import java.util.HashMap;
-import java.util.Map;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.block.AbstractFilterTile;
-import mrriegel.storagenetwork.block.cable.ProcessRequestModel;
-import mrriegel.storagenetwork.block.cable.ProcessRequestModel.ProcessStatus;
-import mrriegel.storagenetwork.block.cable.TileCable;
-import mrriegel.storagenetwork.block.master.TileMaster;
+import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.api.network.INetworkMaster;
+import mrriegel.storagenetwork.block.cable.io.ContainerCableIO;
+import mrriegel.storagenetwork.block.cable.link.ContainerCableLink;
+import mrriegel.storagenetwork.block.cable.processing.ContainerCableProcessing;
+import mrriegel.storagenetwork.block.cable.processing.ProcessRequestModel;
+import mrriegel.storagenetwork.block.cable.processing.TileCableProcess;
+import mrriegel.storagenetwork.registry.PacketRegistry;
 import mrriegel.storagenetwork.util.UtilTileEntity;
-import mrriegel.storagenetwork.util.data.StackWrapper;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.items.IItemHandler;
 
 public class CableDataMessage implements IMessage, IMessageHandler<CableDataMessage, IMessage> {
 
+  // TODO: This message handling should be split up into multiple messages
   public enum CableMessageType {
-    PRIORITY_DOWN, PRIORITY_UP, P_ONOFF, TOGGLE_WHITELIST, TOGGLE_MODE, IMPORT_FILTER, TOGGLE_WAY, P_FACE_TOP, P_FACE_BOTTOM, TOGGLE_P_RESTARTTRIGGER, P_CTRL_MORE, P_CTRL_LESS, TOGGLE_NBT;
+    PRIORITY_DOWN, PRIORITY_UP, P_ONOFF, TOGGLE_WHITELIST, TOGGLE_MODE, IMPORT_FILTER, TOGGLE_WAY, P_FACE_TOP, P_FACE_BOTTOM, TOGGLE_P_RESTARTTRIGGER, P_CTRL_MORE, P_CTRL_LESS;
   }
 
   private int id;
   private int value = 0;
-  private BlockPos pos;
 
   public CableDataMessage() {}
 
-  public CableDataMessage(int id, BlockPos pos) {
+  public CableDataMessage(int id) {
     this.id = id;
-    this.pos = pos;
   }
 
-  public CableDataMessage(int id, BlockPos pos, int value) {
-    this(id, pos);
+  public CableDataMessage(int id, int value) {
+    this(id);
     this.value = value;
   }
 
@@ -53,117 +48,149 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
 
       @Override
       public void run() {
-        TileEntity t = player.world.getTileEntity(message.pos);
-        if (t instanceof AbstractFilterTile) {
-          AbstractFilterTile tile = (AbstractFilterTile) t;
-          TileCable tileCable = null;
-          if (t instanceof TileCable) {
-            tileCable = (TileCable) tile;
-          }
-          TileMaster mstr = null;
-          CableMessageType type = CableMessageType.values()[message.id];
-          switch (type) {
-            case TOGGLE_P_RESTARTTRIGGER:
-              //stop listening for result, export recipe into block
-              if (tileCable != null)
-                tileCable.getRequest().setStatus(ProcessStatus.EXPORTING);
+        CableMessageType type = CableMessageType.values()[message.id];
+
+        if (player.openContainer instanceof ContainerCableIO) {
+          updateCableIO(player, type);
+        }
+
+        if (player.openContainer instanceof ContainerCableLink) {
+          updateCableLink(player, type);
+        }
+
+        if(player.openContainer instanceof ContainerCableProcessing) {
+          updateProcessing(message, player, type);
+        }
+      }
+
+      private void updateProcessing(final CableDataMessage message, EntityPlayerMP player, CableMessageType type) {
+        ContainerCableProcessing con = (ContainerCableProcessing) player.openContainer;
+        if (!(con.tile instanceof TileCableProcess)) {
+          return;
+        }
+        TileCableProcess tileCable = (TileCableProcess) con.tile;
+        switch (type) {
+          case TOGGLE_P_RESTARTTRIGGER:
+            //stop listening for result, export recipe into block
+            tileCable.getRequest().setStatus(ProcessRequestModel.ProcessStatus.EXPORTING);
+          break;
+          case P_FACE_BOTTOM:
+            tileCable.processingBottom = EnumFacing.values()[message.value];
+          break;
+          case P_FACE_TOP:
+            tileCable.processingTop = EnumFacing.values()[message.value];
+          //                StorageNetwork.log(tileCable.processingTop.name() + " server is ?" + message.value);
+          break;
+        }
+        tileCable.markDirty();
+        UtilTileEntity.updateTile(tileCable.getWorld(), tileCable.getPos());
+      }
+
+      private void updateCableLink(EntityPlayerMP player, CableMessageType type) {
+        ContainerCableLink con = (ContainerCableLink) player.openContainer;
+        if (con == null || con.link == null) {
+          return;
+        }
+
+        INetworkMaster master = StorageNetwork.helpers.getTileMasterForConnectable(con.link.connectable);
+
+        switch(type) {
+          case TOGGLE_WAY:
+            con.link.filterDirection = con.link.filterDirection.next();
             break;
-            case PRIORITY_DOWN:
-              tile.setPriority(tile.getPriority() - 1);
-              try {
-                mstr = (TileMaster) player.world.getTileEntity(tile.getMaster());
-                mstr.clearCache();
+          case TOGGLE_WHITELIST:
+            con.link.filters.isWhitelist = !con.link.filters.isWhitelist;
+            break;
+          case PRIORITY_UP:
+            con.link.priority++;
+            if(master != null) {
+              master.clearCache();
+            }
+            break;
+          case PRIORITY_DOWN:
+            con.link.priority--;
+            if(master != null) {
+              master.clearCache();
+            }
+            break;
+          case IMPORT_FILTER:
+            // First clear out all filters
+            //            con.link.filters.clear();
+            //TODO: Fix this not auto sync to client 
+            //TODO: Fix this not auto sync to client   
+
+            int targetSlot = 0;
+            for(ItemStack filterSuggestion : con.link.getStoredStacks()) {
+              // Ignore stacks that are already filtered
+              if (con.link.filters.exactStackAlreadyInList(filterSuggestion)) {
+                continue;
               }
-              catch (Throwable e) {
-                // outside build height error? 
+
+              con.link.filters.setStackInSlot(targetSlot, filterSuggestion.copy());
+              targetSlot++;
+              if(targetSlot >= con.link.filters.getSlots()) {
+                continue;
               }
+            }
+            StorageNetwork.log("Send new refresh client msg");
+            PacketRegistry.INSTANCE.sendTo(new RefreshFilterClientMessage(con.link.filters.getStacks()), player);
+            con.tile.markDirty();
+          break;
+        }
+      }
+
+      private void updateCableIO(EntityPlayerMP player, CableMessageType type) {
+        StorageNetwork.log("updateCableIO " + type);
+        ContainerCableIO con = (ContainerCableIO) player.openContainer;
+        if (con == null || con.autoIO == null) {
+          return;
+        }
+
+        INetworkMaster master = StorageNetwork.helpers.getTileMasterForConnectable(con.autoIO.connectable);
+
+        switch (type) {
+          case TOGGLE_MODE:
+            con.autoIO.operationMustBeSmaller = !con.autoIO.operationMustBeSmaller;
             break;
-            case PRIORITY_UP:
-              tile.setPriority(tile.getPriority() + 1);
-              try {
-                mstr = (TileMaster) player.world.getTileEntity(tile.getMaster());
-                mstr.clearCache();
+          case TOGGLE_WHITELIST:
+            con.autoIO.filters.isWhitelist = !con.autoIO.filters.isWhitelist;
+            break;
+          case PRIORITY_UP:
+            con.autoIO.priority++;
+            if(master != null) {
+              master.clearCache();
+            }
+            break;
+          case PRIORITY_DOWN:
+            con.autoIO.priority--;
+            if(master != null) {
+              master.clearCache();
+            }
+            break;
+          case IMPORT_FILTER:
+            //TODO: Fix this not auto sync to client 
+            //TODO: Fix this not auto sync to client 
+
+
+            int targetSlot = 0;
+            for(ItemStack filterSuggestion : con.autoIO.getStacksForFilter()) {
+              // Ignore stacks that are already filtered 
+              if (con.autoIO.filters.exactStackAlreadyInList(filterSuggestion)) {
+                continue;
               }
-              catch (Throwable e) {
-                // outside build height error? 
+
+              con.autoIO.filters.setStackInSlot(targetSlot, filterSuggestion.copy());
+              targetSlot++;
+              if(targetSlot >= con.autoIO.filters.getSlots()) {
+                continue;
               }
+            }
             break;
-            case TOGGLE_WHITELIST:
-              tile.setWhite(!tile.isWhitelist());
-            break;
-            case TOGGLE_NBT:
-              tile.setNbt(!tile.getNbt());
-            break;
-            case TOGGLE_MODE://4 
-              if (tileCable != null)
-                tileCable.setMode(!tileCable.isMode());
-            break;
-            case IMPORT_FILTER:
-              if (tile.getInventory() != null) {
-                IItemHandler inv = tile.getInventory();
-                tile.setWhite(true);
-                int size = 9 * 2;
-                for (int i = 0; i < size; i++) {
-                  tile.getFilter().put(i, null);
-                }
-                //track used so if a chest is full of cobble we dont double up
-                int index = 0;
-                Map<Item, Boolean> used = new HashMap<>();
-                //TODO: FIX FOR PROC
-                //2 diff item stacks of size1 arent merging 
-                for (int i = 0; i < inv.getSlots() && index < size; i++) {
-                  ItemStack stackHereCopy = inv.getStackInSlot(i).copy();
-                  if (stackHereCopy.isEmpty()) {
-                    continue;
-                  }
-                  if (used.containsKey(stackHereCopy.getItem())) {
-                    continue;
-                  } // ?? && tileCable.getBlockType() != ModBlocks.processKabel
-                  else {
-                    used.put(stackHereCopy.getItem(), true);
-                    tile.getFilter().put(index, new StackWrapper(stackHereCopy, stackHereCopy.getCount()));
-                    index++;
-                  }
-                }
-              }
-            break;
-            case TOGGLE_WAY:
-              tile.setWay(tile.getWay().next());
-            break;
-            case P_FACE_BOTTOM:
-              if (tileCable != null)
-                tileCable.processingBottom = EnumFacing.values()[message.value];
-            break;
-            case P_FACE_TOP:
-              if (tileCable != null) {
-                tileCable.processingTop = EnumFacing.values()[message.value];
-                //                StorageNetwork.log(tileCable.processingTop.name() + " server is ?" + message.value);
-              }
-            break;
-            case P_ONOFF:
-              //process cable toggle always on
-              if (tileCable != null) {
-                ProcessRequestModel m = tileCable.getProcessModel();
-                m.setAlwaysActive(message.value == 1);
-                tileCable.setProcessModel(m);
-              }
-            break;
-            case P_CTRL_LESS:
-              if (tileCable != null) {
-                tileCable.getProcessModel().setCount(message.value);
-              }
-            break;
-            case P_CTRL_MORE:
-              if (tileCable != null) {
-                ProcessRequestModel m = tileCable.getProcessModel();
-                m.setCount(message.value);
-                tileCable.setProcessModel(m);
-              }
-            break;
-          }//end of switch
-          tile.markDirty();
-          UtilTileEntity.updateTile(t.getWorld(), t.getPos());
-        } //not the right TE 
+        }
+
+        StorageNetwork.log("Send new refresh client msg");
+        PacketRegistry.INSTANCE.sendTo(new RefreshFilterClientMessage(con.autoIO.filters.getStacks()), player);
+        con.tile.markDirty();
       }
     });
     return null;
@@ -171,14 +198,12 @@ public class CableDataMessage implements IMessage, IMessageHandler<CableDataMess
 
   @Override
   public void fromBytes(ByteBuf buf) {
-    this.pos = BlockPos.fromLong(buf.readLong());
     this.id = buf.readInt();
     value = buf.readInt();
   }
 
   @Override
   public void toBytes(ByteBuf buf) {
-    buf.writeLong(this.pos.toLong());
     buf.writeInt(this.id);
     buf.writeInt(value);
   }

@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.util;
 
-import mrriegel.storagenetwork.util.data.FilterItem;
+import mrriegel.storagenetwork.data.ItemStackMatcher;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -81,7 +81,7 @@ public class UtilInventory {
     return minimumCount - found;
   }
 
-  public static int getAmount(IItemHandler inv, FilterItem fil) {
+  public static int getAmount(IItemHandler inv, ItemStackMatcher fil) {
     if (inv == null || fil == null) {
       return 0;
     }
@@ -94,7 +94,7 @@ public class UtilInventory {
     return amount;
   }
 
-  public static ItemStack extractItem(IItemHandler inv, FilterItem fil, int num, boolean simulate) {
+  public static ItemStack extractItem(IItemHandler inv, ItemStackMatcher fil, int num, boolean simulate) {
     if (inv == null || fil == null) {
       return ItemStack.EMPTY;
     }
