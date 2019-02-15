@@ -19,6 +19,7 @@ public class ClientProxy extends CommonProxy {
 
   @Override
   public void init(FMLInitializationEvent event) {
+    super.init(event);
     ResourceLocation link = new ResourceLocation(StorageNetwork.MODID, "textures/tile/link.png");
     ResourceLocation ex = new ResourceLocation(StorageNetwork.MODID, "textures/tile/ex.png");
     ResourceLocation im = new ResourceLocation(StorageNetwork.MODID, "textures/tile/im.png");
