@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -291,7 +292,10 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
    * Pull into the network from the relevant linked cables
    */
   private void updateImports() {
-    for (IConnectable connectable : getConnectables()) {
+    Iterator<IConnectable> iter = getConnectables().iterator();
+    while (iter.hasNext()) {
+      final IConnectable connectable = iter.next();
+
       IConnectableItemAutoIO storage = connectable.getPos().getCapability(StorageNetworkCapabilities.CONNECTABLE_AUTO_IO, null);
       if (storage == null) {
         continue;
@@ -334,7 +338,9 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
   }
 
   private void updateProcess() {
-    for (IConnectable connectable : getConnectables()) {
+    Iterator<IConnectable> iter = getConnectables().iterator();
+    while (iter.hasNext()) {
+      final IConnectable connectable = iter.next();
       TileCableProcess cableProcess = connectable.getPos().getTileEntity(TileCableProcess.class);
       if(cableProcess == null) {
         continue;
@@ -348,7 +354,9 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
    * push OUT of the network to attached export cables
    */
   private void updateExports() {
-    for (IConnectable connectable : getConnectables()) {
+    Iterator<IConnectable> iter = getConnectables().iterator();
+    while (iter.hasNext()) {
+      final IConnectable connectable = iter.next();
       IConnectableItemAutoIO storage = connectable.getPos().getCapability(StorageNetworkCapabilities.CONNECTABLE_AUTO_IO, null);
       if (storage == null) {
         continue;
@@ -472,7 +480,10 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
 
   private Set<IConnectable> getConnectables() {
     Set<IConnectable> result = new HashSet<>();
-    for (DimPos pos : getConnectablePositions()) {
+    //
+    Iterator<DimPos> iter = getConnectablePositions().iterator();
+    while (iter.hasNext()) {
+      final DimPos pos = iter.next();
       if (!pos.isLoaded()) {
         continue;
       }

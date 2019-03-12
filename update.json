@@ -7,8 +7,8 @@
     "1.12-recommended": "1.0.15",
     "1.12.1-latest": "1.0.15",
     "1.12.1-recommended": "1.1.1",
-    "1.12.2-latest": "1.6.1",
-    "1.12.2-recommended": "1.6.1"
+    "1.12.2-latest": "1.6.2",
+    "1.12.2-recommended": "1.6.2"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -64,5 +64,6 @@
   	,"1.5.7":"Fixed an issue where item stacks would appear and be extracted even when the machine set those slots to disable extraction (for example machine upgrades if the mod had the right setting in IItemHandler:extractItem).  "
   	,"1.6.0":"Api and huge refactor using capabilities with thraaawn.  "
   	,"1.6.1":"Fixed network GUI's not opening.  Addon capability API in 1.6.0 is available for use.  "
+  	,"1.6.2":"Added safeguards to patch ConcurrentModificationException with processing cables.  "
   }
 }
