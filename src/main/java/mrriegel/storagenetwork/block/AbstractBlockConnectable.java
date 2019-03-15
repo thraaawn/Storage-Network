@@ -2,9 +2,9 @@ package mrriegel.storagenetwork.block;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.capability.IConnectable;
+import mrriegel.storagenetwork.api.data.DimPos;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.capabilities.StorageNetworkCapabilities;
-import mrriegel.storagenetwork.api.data.DimPos;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

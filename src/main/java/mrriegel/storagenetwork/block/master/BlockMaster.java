@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.block.master;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,9 +12,9 @@ import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.capability.IConnectable;
+import mrriegel.storagenetwork.api.data.DimPos;
 import mrriegel.storagenetwork.block.BaseBlock;
 import mrriegel.storagenetwork.capabilities.StorageNetworkCapabilities;
-import mrriegel.storagenetwork.api.data.DimPos;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -103,7 +104,10 @@ public class BlockMaster extends BaseBlock {
     playerIn.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + StorageNetwork.lang("chat.master.emptyslots") + tileMaster.emptySlots()));
     playerIn.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + StorageNetwork.lang("chat.master.connectables") + tileMaster.getConnectablePositions().size()));
     Map<String, Integer> mapNamesToCount = new HashMap<String, Integer>();
-    for (DimPos p : tileMaster.getConnectablePositions()) {
+    Iterator<DimPos> iter = tileMaster.getConnectablePositions().iterator();
+    while (iter.hasNext()) {
+      final DimPos p = iter.next();
+
       String block = p.getBlockState().getBlock().getLocalizedName();
       mapNamesToCount.put(block, mapNamesToCount.get(block) != null ? (mapNamesToCount.get(block) + 1) : 1);
     }
