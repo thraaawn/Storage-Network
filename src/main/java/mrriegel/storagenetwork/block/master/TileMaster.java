@@ -43,6 +43,7 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
   private Set<DimPos> connectables;
   private Map<String, DimPos> importCache = new HashMap<>();
   public static String[] blacklist;
+  private boolean shouldRefresh = true;
 
   public DimPos getDimPos() {
     return new DimPos(world, pos);
@@ -125,7 +126,13 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
    *
    * @param sourcePos
    */
-  private void addConnectables(final DimPos sourcePos) {
+  private Set<DimPos> getConnectables(final DimPos sourcePos) {
+    HashSet<DimPos> result = new HashSet<>();
+    addConnectables(sourcePos, result);
+    return result;
+  }
+
+  private void addConnectables(final DimPos sourcePos, Set<DimPos> set) {
     if (sourcePos == null || sourcePos.getWorld() == null || !sourcePos.isLoaded()) {
       return;
     }
@@ -159,22 +166,16 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
         IConnectable capabilityConnectable = tileHere.getCapability(StorageNetworkCapabilities.CONNECTABLE_CAPABILITY, direction.getOpposite());
         capabilityConnectable.setMasterPos(getDimPos());
         DimPos realConnectablePos = capabilityConnectable.getPos();
-        boolean beenHereBefore = this.connectables.contains(realConnectablePos);
+        boolean beenHereBefore = set.contains(realConnectablePos);
         if (beenHereBefore) {
           continue;
         }
         StorageNetwork.log(" connectables.add : " + realConnectablePos);
-        if (connectables.contains(realConnectablePos) == false) {
-          StorageNetwork.log(" connectables.add : " + realConnectablePos);
-          connectables.add(realConnectablePos);
-          addConnectables(realConnectablePos);
+        set.add(realConnectablePos);
+        addConnectables(realConnectablePos, set);
           tileHere.markDirty();
           chunk.setModified(true);
         }
-        else {
-          StorageNetwork.log(" connectables.add EXISTS  : " + realConnectablePos);
-        }
-      }
     }
   }
 
@@ -192,15 +193,8 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
     if (world.isRemote) {
       return;
     }
-    setConnectablesEmpty();
-    try {
-      addConnectables(getDimPos());
-    }
-    catch (Throwable e) {
-      StorageNetwork.instance.logger.error("Refresh network error ", e);
-    }
-    // addInventorys();
-    world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
+
+    shouldRefresh = true;
   }
 
   private boolean hasCachedSlot(ItemStack stack) {
@@ -437,9 +431,7 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
       return new HashSet<IConnectable>();
     }
     Set<IConnectable> result = new HashSet<>();
-    Iterator<DimPos> iter = positions.iterator();
-    while (iter.hasNext()) {
-      final DimPos pos = iter.next();
+    for(DimPos pos : positions) {
       if (!pos.isLoaded()) {
         continue;
       }
@@ -453,7 +445,7 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
       }
       result.add(tileEntity.getCapability(StorageNetworkCapabilities.CONNECTABLE_CAPABILITY, null));
     }
-    return Collections.synchronizedSet(result);
+    return result;
   }
 
   private Set<IConnectableLink> getConnectableStorage() {
@@ -524,9 +516,12 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
       return;
     }
     //refresh time in config, default 200 ticks aka 10 seconds
-    if (getConnectablePositions() == null || (world.getTotalWorldTime() % (ConfigHandler.refreshTicks) == 0)) {
+    if (getConnectablePositions() == null || (world.getTotalWorldTime() % (ConfigHandler.refreshTicks) == 0) || shouldRefresh) {
       try {
-        refreshNetwork();
+        this.connectables = getConnectables(getDimPos());
+        this.shouldRefresh = false;
+        // addInventorys();
+        world.getChunkFromBlockCoords(pos).setModified(true);//.setChunkModified();
       }
       catch (Throwable e) {
         StorageNetwork.instance.logger.error("Refresh network error ", e);
@@ -563,7 +558,8 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
     if (connectables == null) {
       connectables = new HashSet<DimPos>();
     }
-    return Collections.synchronizedSet(connectables);
+
+    return new HashSet<>(connectables);
   }
 
   private void setConnectablesEmpty() {
