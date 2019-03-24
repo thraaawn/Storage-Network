@@ -7,8 +7,8 @@
     "1.12-recommended": "1.0.15",
     "1.12.1-latest": "1.0.15",
     "1.12.1-recommended": "1.1.1",
-    "1.12.2-latest": "1.6.3",
-    "1.12.2-recommended": "1.6.3"
+    "1.12.2-latest": "1.6.4",
+    "1.12.2-recommended": "1.6.4"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -66,5 +66,6 @@
   	,"1.6.1":"Fixed network GUI's not opening.  Addon capability API in 1.6.0 is available for use.  "
   	,"1.6.2":"Added safeguards to patch ConcurrentModificationException with processing cables.  Fixed the remotes sometimes crashing the game.   "
   	,"1.6.3":"Fix a game crash when the network was large and was refreshing connections (such as player dying, etc)"
+  	,"1.6.4":"Fixed game crash when network refreshed itself multiple times on the same tick (Thanks Davenonymous aka thraaawn). "
   }
 }

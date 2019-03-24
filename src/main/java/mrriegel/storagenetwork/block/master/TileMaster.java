@@ -1,11 +1,9 @@
 package mrriegel.storagenetwork.block.master;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -170,7 +168,6 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
         if (beenHereBefore) {
           continue;
         }
-        StorageNetwork.log(" connectables.add : " + realConnectablePos);
         set.add(realConnectablePos);
         addConnectables(realConnectablePos, set);
           tileHere.markDirty();
@@ -261,9 +258,7 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
    * Pull into the network from the relevant linked cables
    */
   private void updateImports() {
-    Iterator<IConnectable> iter = getConnectables().iterator();
-    while (iter.hasNext()) {
-      final IConnectable connectable = iter.next();
+    for (IConnectable connectable : getConnectables()) {
       IConnectableItemAutoIO storage = connectable.getPos().getCapability(StorageNetworkCapabilities.CONNECTABLE_AUTO_IO, null);
       if (storage == null) {
         continue;
@@ -299,9 +294,7 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
   }
 
   private void updateProcess() {
-    Iterator<IConnectable> iter = getConnectables().iterator();
-    while (iter.hasNext()) {
-      final IConnectable connectable = iter.next();
+    for (final IConnectable connectable : getConnectables()) {
       TileCableProcess cableProcess = connectable.getPos().getTileEntity(TileCableProcess.class);
       if (cableProcess == null) {
         continue;
@@ -314,9 +307,7 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
    * push OUT of the network to attached export cables
    */
   private void updateExports() {
-    Iterator<IConnectable> iter = getConnectables().iterator();
-    while (iter.hasNext()) {
-      final IConnectable connectable = iter.next();
+    for (IConnectable connectable : getConnectables()) {
       IConnectableItemAutoIO storage = connectable.getPos().getCapability(StorageNetworkCapabilities.CONNECTABLE_AUTO_IO, null);
       if (storage == null) {
         continue;
@@ -450,9 +441,7 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
 
   private Set<IConnectableLink> getConnectableStorage() {
     Set<IConnectableLink> result = new HashSet<>();
-    Iterator<DimPos> iter = getConnectablePositions().iterator();
-    while (iter.hasNext()) {
-      final DimPos pos = iter.next();
+    for (final DimPos pos : getConnectablePositions()) {
       if (!pos.isLoaded()) {
         continue;
       }
@@ -474,9 +463,7 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
 
   public List<ProcessWrapper> getProcessors() {
     List<ProcessWrapper> result = new ArrayList<>();
-    Iterator<DimPos> iter = getConnectablePositions().iterator();
-    while (iter.hasNext()) {
-      final DimPos pos = iter.next();
+    for (DimPos pos : getConnectablePositions()) {
       if (!pos.isLoaded()) {
         continue;
       }
@@ -561,21 +548,20 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
 
     return new HashSet<>(connectables);
   }
-
-  private void setConnectablesEmpty() {
-    StorageNetwork.log("SetConnectables: EMPTY ");
-    if (connectables == null) {
-      connectables = new HashSet<DimPos>();
-      return;
-    }
-    Iterator<DimPos> iter = connectables.iterator();
-    while (iter.hasNext()) {
-      if (iter != null && iter.next() != null) {
-        iter.remove();
-      }
-    }
-    //    this.connectables = Sets.newHashSet();
-  }
+  //
+  //  private void setConnectablesEmpty() {
+  //    StorageNetwork.log("SetConnectables: EMPTY ");
+  //    if (connectables == null) {
+  //      connectables = new HashSet<DimPos>();
+  //      return;
+  //    }
+  //    Iterator<DimPos> iter = connectables.iterator();
+  //    while (iter.hasNext()) {
+  //      if (iter != null && iter.next() != null) {
+  //        iter.remove(); 
+  //      }
+  //    }
+  //  }
 
   @Override
   public void clearCache() {
