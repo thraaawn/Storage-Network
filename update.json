@@ -7,8 +7,8 @@
     "1.12-recommended": "1.0.15",
     "1.12.1-latest": "1.0.15",
     "1.12.1-recommended": "1.1.1",
-    "1.12.2-latest": "1.6.4",
-    "1.12.2-recommended": "1.6.4"
+    "1.12.2-latest": "1.6.5",
+    "1.12.2-recommended": "1.6.5"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -67,5 +67,7 @@
   	,"1.6.2":"Added safeguards to patch ConcurrentModificationException with processing cables.  Fixed the remotes sometimes crashing the game.   "
   	,"1.6.3":"Fix a game crash when the network was large and was refreshing connections (such as player dying, etc)"
   	,"1.6.4":"Fixed game crash when network refreshed itself multiple times on the same tick (Thanks Davenonymous aka thraaawn). "
+  	,"1.6.5":"Fixed a rare game crash that can happen when, if fastcraft is installed, and if chunk the master was in was unloaded (coming back from nether, etc) then this can happen when you come back if you open a network GUI before it can refresh."
+  	,"1.6.6":"Fixed a bug where the came might crash when playing on a server and using the network across dimensions.  "
   }
 }

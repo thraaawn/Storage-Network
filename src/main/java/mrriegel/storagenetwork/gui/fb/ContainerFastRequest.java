@@ -1,11 +1,11 @@
 package mrriegel.storagenetwork.gui.fb;
 
 import java.util.ArrayList;
+import mrriegel.storagenetwork.api.data.DimPos;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.block.request.TileRequest;
 import mrriegel.storagenetwork.network.StackRefreshClientMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
-import mrriegel.storagenetwork.api.data.DimPos;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -57,7 +57,9 @@ public class ContainerFastRequest extends ContainerFastNetworkCrafter {
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {
     TileMaster tileMaster = this.getTileMaster();
-    if (tileMaster == null) return false;
+    if (tileMaster == null) {
+      return false;
+    }
     if (!getTileRequest().getWorld().isRemote && (forceSync || getTileRequest().getWorld().getTotalWorldTime() % 40 == 0)) {
       forceSync = false;
       PacketRegistry.INSTANCE.sendTo(new StackRefreshClientMessage(tileMaster.getStacks(), new ArrayList<>()), (EntityPlayerMP) playerIn);
@@ -67,7 +69,10 @@ public class ContainerFastRequest extends ContainerFastNetworkCrafter {
 
   @Override
   public TileMaster getTileMaster() {
-    return getTileRequest().getMaster().getTileEntity(TileMaster.class);
+    if (tile == null || tile.getMaster() == null) {
+      return null;
+    }
+    return tile.getMaster().getTileEntity(TileMaster.class);
   }
 
   public TileRequest getTileRequest() {

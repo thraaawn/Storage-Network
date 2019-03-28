@@ -1,5 +1,8 @@
 package mrriegel.storagenetwork.gui.fb;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import mrriegel.storagenetwork.block.master.TileMaster;
@@ -24,10 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
 import shadows.fastbench.gui.ContainerFastBench;
 import shadows.fastbench.gui.SlotCraftingSucks;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public abstract class ContainerFastNetworkCrafter extends ContainerFastBench implements IStorageContainer {
 
@@ -66,13 +65,18 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
 
   @Override
   public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-    if (world.isRemote) return ItemStack.EMPTY;
+    if (world.isRemote) {
+      return ItemStack.EMPTY;
+    }
     ItemStack slotCopy = ItemStack.EMPTY;
     Slot slot = this.inventorySlots.get(index);
     if (slot != null && slot.getHasStack()) {
       ItemStack slotStack = slot.getStack();
       slotCopy = slotStack.copy();
       TileMaster tileMaster = this.getTileMaster();
+      if (tileMaster == null) {
+        return ItemStack.EMPTY;
+      }
       if (index == 0) {
         int num = slotCopy.getMaxStackSize() / slotCopy.getCount();
         IRecipe rec = lastRecipe;

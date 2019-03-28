@@ -61,10 +61,11 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
 
   @Nullable
   public <V> V getTileEntity(Class<V> tileEntityClassOrInterface) {
-    if (getWorld() == null) {
+    World world = getWorld();
+    if (world == null || getBlockPos() == null) {
       return null;
     }
-    TileEntity tileEntity = getWorld().getTileEntity(getBlockPos());
+    TileEntity tileEntity = world.getTileEntity(getBlockPos());
     if (tileEntity == null) {
       return null;
     }
@@ -76,7 +77,11 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
 
   @Nullable
   public <V> V getCapability(Capability<V> capability, EnumFacing side) {
-    TileEntity tileEntity = getWorld().getTileEntity(getBlockPos());
+    World world = getWorld();
+    if (world == null || getBlockPos() == null) {
+      return null;
+    }
+    TileEntity tileEntity = world.getTileEntity(getBlockPos());
     if (tileEntity == null) {
       return null;
     }
