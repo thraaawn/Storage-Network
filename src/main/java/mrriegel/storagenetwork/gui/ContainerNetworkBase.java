@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.gui;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.google.common.collect.Lists;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
@@ -9,7 +11,12 @@ import mrriegel.storagenetwork.registry.PacketRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.*;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCraftResult;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -17,16 +24,13 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class ContainerNetworkBase extends Container implements IStorageContainer {
 
   protected InventoryPlayer playerInv;
   protected InventoryCraftResult result;
   protected InventoryCraftingNetwork matrix;
   protected boolean recipeLocked = false;
-
+  protected boolean isSimple;
   @Override
   public InventoryCrafting getCraftMatrix() {
     return this.matrix;

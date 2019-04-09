@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.gui;
 
-import mrriegel.storagenetwork.block.cable.*;
+import mrriegel.storagenetwork.block.cable.TileCable;
 import mrriegel.storagenetwork.block.cable.io.ContainerCableIO;
 import mrriegel.storagenetwork.block.cable.io.GuiCableIO;
 import mrriegel.storagenetwork.block.cable.link.ContainerCableLink;
@@ -20,6 +20,7 @@ import mrriegel.storagenetwork.gui.fb.GuiFastRemote;
 import mrriegel.storagenetwork.gui.fb.GuiFastRequest;
 import mrriegel.storagenetwork.item.remote.ContainerRemote;
 import mrriegel.storagenetwork.item.remote.GuiRemote;
+import mrriegel.storagenetwork.item.remote.RemoteType;
 import mrriegel.storagenetwork.util.UtilTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
@@ -78,11 +79,12 @@ public class GuiHandler implements IGuiHandler {
     }
 
     if (ID == GuiIDs.REMOTE.ordinal()) {
-      if (FB_LOADED) {
-        return new ContainerFastRemote(player, world, EnumHand.values()[x]);
+      EnumHand hand = EnumHand.values()[x];
+      if (FB_LOADED && player.getHeldItem(hand).getMetadata() != RemoteType.SIMPLE.ordinal()) {
+        return new ContainerFastRemote(player, world, hand);
       }
       else {
-        return new ContainerRemote(player.inventory);
+        return new ContainerRemote(player.inventory, hand);
       }
     }
 
@@ -127,11 +129,12 @@ public class GuiHandler implements IGuiHandler {
     }
 
     if (ID == GuiIDs.REMOTE.ordinal()) {
-      if (FB_LOADED) {
-        return new GuiFastRemote(player, world, EnumHand.values()[x]);
+      EnumHand hand = EnumHand.values()[x];
+      if (FB_LOADED && player.getHeldItem(hand).getMetadata() != RemoteType.SIMPLE.ordinal()) {
+        return new GuiFastRemote(player, world, hand);
       }
       else {
-        return new GuiRemote(new ContainerRemote(player.inventory));
+        return new GuiRemote(new ContainerRemote(player.inventory, hand));
       }
     }
 

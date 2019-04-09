@@ -113,6 +113,7 @@ public class ItemRemote extends Item {
           canOpenGUI = isSameDimension && isWithinRange;
         break;
         case UNLIMITED:
+        case SIMPLE:// simple is same
           //unlimited range, but MUST be same dimension
           canOpenGUI = isSameDimension;
         break;

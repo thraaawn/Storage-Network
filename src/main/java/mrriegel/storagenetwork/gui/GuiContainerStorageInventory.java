@@ -14,7 +14,6 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.data.EnumSortType;
 import mrriegel.storagenetwork.jei.JeiHooks;
 import mrriegel.storagenetwork.jei.JeiSettings;
-import mrriegel.storagenetwork.network.ClearRecipeMessage;
 import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
@@ -43,7 +42,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
 
   private static final int HEIGHT = 256;
   private static final int WIDTH = 176;
-  private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
+  protected ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request.png");
   protected int page = 1, maxPage = 1;
   public List<ItemStack> stacks, craftableStacks;
   protected ItemStack stackUnderMouse = ItemStack.EMPTY;
@@ -52,15 +51,17 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
   protected List<ItemSlotNetwork> slots;
   protected long lastClick;
   private boolean forceFocus;
+  protected boolean isSimple;
 
-  public GuiContainerStorageInventory(ContainerNetworkBase inventorySlotsIn) {
-    super(inventorySlotsIn);
+  public GuiContainerStorageInventory(ContainerNetworkBase container) {
+    super(container);
     this.xSize = WIDTH;
     this.ySize = HEIGHT;
     this.stacks = Lists.newArrayList();
     this.craftableStacks = Lists.newArrayList();
     PacketRegistry.INSTANCE.sendToServer(new RequestMessage());
     lastClick = System.currentTimeMillis();
+
   }
 
   protected boolean canClick() {
@@ -83,6 +84,12 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
     Keyboard.enableRepeatEvents(true);
     searchBar = new GuiTextField(0, fontRenderer, guiLeft + 81, guiTop + 96, 85, fontRenderer.FONT_HEIGHT);
     searchBar.setMaxStringLength(30);
+    if (isSimple) {
+      searchBar.x -= 71;
+      searchBar.y += 66;
+      searchBar.width += 74;
+      searchBar.setMaxStringLength(60);
+    }
     searchBar.setEnableBackgroundDrawing(false);
     searchBar.setVisible(true);
     searchBar.setTextColor(16777215);
@@ -90,20 +97,22 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
     if (JeiSettings.isJeiLoaded() && JeiSettings.isJeiSearchSynced()) {
       searchBar.setText(JeiHooks.getFilterText());
     }
-    directionBtn = new GuiStorageButton(0, guiLeft + 7, guiTop + 93, "");
-    this.addButton(directionBtn);
-    sortBtn = new GuiStorageButton(1, guiLeft + 21, guiTop + 93, "");
-    this.addButton(sortBtn);
-    jeiBtn = new GuiStorageButton(4, guiLeft + 35, guiTop + 93, "");
-    if (JeiSettings.isJeiLoaded()) {
-      this.addButton(jeiBtn);
+    if (!isSimple) {
+      directionBtn = new GuiStorageButton(0, guiLeft + 7, searchBar.y - 3, "");
+      this.addButton(directionBtn);
+      sortBtn = new GuiStorageButton(1, guiLeft + 21, searchBar.y - 3, "");
+      this.addButton(sortBtn);
+      jeiBtn = new GuiStorageButton(4, guiLeft + 35, searchBar.y - 3, "");
+      if (JeiSettings.isJeiLoaded()) {
+        this.addButton(jeiBtn);
+      }
+      clearTextBtn = new GuiStorageButton(5, guiLeft + 64, searchBar.y - 3, "X");
+      this.addButton(clearTextBtn);
     }
-    clearTextBtn = new GuiStorageButton(5, guiLeft + 64, guiTop + 93, "X");
-    this.addButton(clearTextBtn);
   }
 
   private int getLines() {
-    return 4;
+    return isSimple ? 8 : 4;
   }
 
   private int getColumns() {
@@ -123,16 +132,17 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
   protected abstract int getDim();
 
   protected boolean inField(int mouseX, int mouseY) {
-    return mouseX > (guiLeft + 7) && mouseX < (guiLeft + xSize - 7) && mouseY > (guiTop + 7) && mouseY < (guiTop + 90);
+    int h = 90;
+    if (isSimple) {
+      h += 60;
+    }
+    return mouseX > (guiLeft + 7) && mouseX < (guiLeft + xSize - 7) && mouseY > (guiTop + 7) && mouseY < (guiTop + h);
   }
 
   protected boolean inSearchbar(int mouseX, int mouseY) {
     return isPointInRegion(81, 96, 85, fontRenderer.FONT_HEIGHT, mouseX, mouseY);
   }
 
-  protected boolean inX(int mouseX, int mouseY) {
-    return isPointInRegion(63, 110, 7, 7, mouseX, mouseY);
-  }
 
   @Override
   public void drawGradientRectP(int left, int top, int right, int bottom, int startColor, int endColor) {
@@ -400,16 +410,17 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
   public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
     searchBar.setFocused(false);
+    //int rectX = 63, rectY = (isSimple) ? 220 : 110;
     if (inSearchbar(mouseX, mouseY)) {
       searchBar.setFocused(true);
       if (mouseButton == UtilTileEntity.MOUSE_BTN_RIGHT) {
         clearSearch();
       }
     }
-    else if (inX(mouseX, mouseY)) {
-      PacketRegistry.INSTANCE.sendToServer(new ClearRecipeMessage());
-      PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
-    }
+    //    else if (isPointInRegion(rectX, rectY, 7, 7, mouseX, mouseY)) {
+    //      PacketRegistry.INSTANCE.sendToServer(new ClearRecipeMessage());
+    //      PacketRegistry.INSTANCE.sendToServer(new RequestMessage(0, ItemStack.EMPTY, false, false));
+    //    }
     else {
       ItemStack stackCarriedByMouse = mc.player.inventory.getItemStack();
       if (!stackUnderMouse.isEmpty()

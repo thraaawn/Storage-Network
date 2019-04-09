@@ -95,8 +95,11 @@ public class StorageNetwork {
     }
   }
 
+  public static void info(String s) {
+    instance.logger.info(s);
+  }
   public static void error(String s) {
-    instance.error(s);
+    instance.logger.error(s);
   }
 
   private static void benchmark(String s) {
