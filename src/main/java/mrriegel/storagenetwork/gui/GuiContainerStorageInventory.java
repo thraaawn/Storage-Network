@@ -86,7 +86,7 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
     searchBar.setMaxStringLength(30);
     if (isSimple) {
       searchBar.x -= 71;
-      searchBar.y += 66;
+      searchBar.y += 64;
       searchBar.width += 74;
       searchBar.setMaxStringLength(60);
     }
@@ -140,7 +140,9 @@ public abstract class GuiContainerStorageInventory extends GuiContainer implemen
   }
 
   protected boolean inSearchbar(int mouseX, int mouseY) {
-    return isPointInRegion(81, 96, 85, fontRenderer.FONT_HEIGHT, mouseX, mouseY);
+    //    System.out.println("mx! " + mouseX + " , my, " + mouseY);
+    //    System.out.println("s.x, " + searchBar.x + " , s.y, " + searchBar.y);
+    return isPointInRegion(searchBar.x - guiLeft + 14, searchBar.y - guiTop, searchBar.width, fontRenderer.FONT_HEIGHT + 6, mouseX, mouseY);
   }
 
 
