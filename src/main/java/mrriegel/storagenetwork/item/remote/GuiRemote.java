@@ -15,7 +15,6 @@ public class GuiRemote extends GuiContainerStorageInventory {
   public GuiRemote(ContainerRemote container) {
     super(container);
     this.container = container;
-    StorageNetwork.info("guiremote " + container.getItemRemote().getMetadata());
     isSimple = container.getItemRemote().getMetadata() == RemoteType.SIMPLE.ordinal();
     if (isSimple) {
       //set different texture for simple 
