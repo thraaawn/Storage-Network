@@ -10,11 +10,11 @@ import net.minecraft.inventory.Slot;
 
 public class ContainerControl extends Container implements IStorageContainer {
 
-  private TileControl tileControl;
   protected InventoryPlayer playerInv;
+  TileMaster master;
 
-  public ContainerControl(final TileControl tile, final InventoryPlayer pi) {
-    this.setTileControl(tile);
+  public ContainerControl(final TileMaster tile, final InventoryPlayer pi) {
+    super();
     this.playerInv = pi;
     int sq = 18;
     //TODO: base class /shared
@@ -41,25 +41,15 @@ public class ContainerControl extends Container implements IStorageContainer {
 
   @Override
   public boolean canInteractWith(EntityPlayer playerIn) {
-    return getTileMaster() != null && playerIn.getDistanceSq(getTileControl().getPos().getX() + 0.5D, getTileControl().getPos().getY() + 0.5D, getTileControl().getPos().getZ() + 0.5D) <= 64.0D;
+    return getTileMaster() != null;//
+    //&& playerIn.getDistanceSq(getTileControl().getPos().getX() + 0.5D, getTileControl().getPos().getY() + 0.5D, getTileControl().getPos().getZ() + 0.5D) <= 64.0D;
   }
 
   @Override
   public TileMaster getTileMaster() {
-    if(getTileControl() == null || getTileControl().getMaster() == null) {
-      return null;
-    }
-
-    return getTileControl().getMaster().getTileEntity(TileMaster.class);
+    return master;
   }
 
-  public TileControl getTileControl() {
-    return tileControl;
-  }
-
-  public void setTileControl(TileControl tileControl) {
-    this.tileControl = tileControl;
-  }
 
   @Override
   public boolean isRequest() {

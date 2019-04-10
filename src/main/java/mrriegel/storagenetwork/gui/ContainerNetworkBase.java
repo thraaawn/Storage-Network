@@ -112,6 +112,9 @@ public abstract class ContainerNetworkBase extends Container implements IStorage
    * @param tile
    */
   protected void craftShift(EntityPlayer player, TileMaster tile) {
+    if (matrix == null) {
+      return;
+    }
     IRecipe recipeCurrent = CraftingManager.findMatchingRecipe(matrix, player.world);
     if (recipeCurrent == null) {
       return;

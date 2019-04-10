@@ -4,8 +4,9 @@ import java.util.List;
 import javax.annotation.Nullable;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.block.AbstractBlockConnectable;
 import mrriegel.storagenetwork.api.capability.IConnectable;
+import mrriegel.storagenetwork.block.AbstractBlockConnectable;
+import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.capabilities.StorageNetworkCapabilities;
 import mrriegel.storagenetwork.gui.GuiHandler;
 import net.minecraft.block.material.Material;
@@ -77,7 +78,8 @@ public class BlockControl extends AbstractBlockConnectable {
       return false;
     }
     IConnectable tile = tileHere.getCapability(StorageNetworkCapabilities.CONNECTABLE_CAPABILITY, null);
-    if (!worldIn.isRemote && tile.getMasterPos() != null) {
+    if (!worldIn.isRemote && tile.getMasterPos() != null
+        && tile.getMasterPos().getTileEntity(TileMaster.class) != null) {
       playerIn.openGui(StorageNetwork.instance, GuiHandler.GuiIDs.CONTROLLER.ordinal(), worldIn, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }

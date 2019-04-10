@@ -6,12 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import mrriegel.storagenetwork.network.CableControlMessage;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.network.CableDataMessage;
+import mrriegel.storagenetwork.network.CableControlMessage;
 import mrriegel.storagenetwork.network.CableDataMessage.CableMessageType;
 import mrriegel.storagenetwork.network.RequestCableMessage;
 import mrriegel.storagenetwork.registry.PacketRegistry;
@@ -37,7 +35,7 @@ public class GuiControl extends GuiContainer {
   private static final int HEIGHT = 256;
   private static final int WIDTH = 176;
   private static final ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID, "textures/gui/request_full.png");
-  private TileControl tile;
+  //private TileControl tile;
   protected GuiTextField searchBar;
   //list includes search bar
   //private List<GuiTextField> textBoxes = new ArrayList<>();
@@ -55,7 +53,7 @@ public class GuiControl extends GuiContainer {
     processors = new ArrayList<>();
     this.xSize = WIDTH;
     this.ySize = HEIGHT;
-    tile = inventorySlotsIn.getTileControl();
+    //tile = inventorySlotsIn.getTileControl();
     //  request the list of tiles
     rowsCreated = false;
     refreshData();

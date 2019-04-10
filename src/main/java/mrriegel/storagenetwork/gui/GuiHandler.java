@@ -11,6 +11,7 @@ import mrriegel.storagenetwork.block.cable.processing.TileCableProcess;
 import mrriegel.storagenetwork.block.control.ContainerControl;
 import mrriegel.storagenetwork.block.control.GuiControl;
 import mrriegel.storagenetwork.block.control.TileControl;
+import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.block.request.ContainerRequest;
 import mrriegel.storagenetwork.block.request.GuiRequest;
 import mrriegel.storagenetwork.block.request.TileRequest;
@@ -66,7 +67,8 @@ public class GuiHandler implements IGuiHandler {
     }
 
     if (ID == GuiIDs.CONTROLLER.ordinal()) {
-      return new ContainerControl((TileControl) world.getTileEntity(pos), player.inventory);
+      TileMaster master = ((TileControl) world.getTileEntity(pos)).getMaster().getTileEntity(TileMaster.class);
+      return new ContainerControl(master, player.inventory);
     }
 
     if (ID == GuiIDs.REQUEST.ordinal()) {
@@ -116,9 +118,11 @@ public class GuiHandler implements IGuiHandler {
     }
 
     if (ID == GuiIDs.CONTROLLER.ordinal()) {
-      return new GuiControl(new ContainerControl((TileControl) world.getTileEntity(pos), player.inventory));
+      TileMaster master = ((TileControl) world.getTileEntity(pos)).getMaster().getTileEntity(TileMaster.class);
+      return new GuiControl(new ContainerControl(master, player.inventory));
     }
-
+    //todo new ID similar to CONTROLLER but pass master from itemstack not tile 
+    // for button on a gui 
     if (ID == GuiIDs.REQUEST.ordinal()) {
       if (FB_LOADED) {
         return new GuiFastRequest(player, world, pos);
