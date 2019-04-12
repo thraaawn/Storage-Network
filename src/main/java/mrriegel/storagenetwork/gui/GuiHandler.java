@@ -15,6 +15,7 @@ import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.block.request.ContainerRequest;
 import mrriegel.storagenetwork.block.request.GuiRequest;
 import mrriegel.storagenetwork.block.request.TileRequest;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.gui.fb.ContainerFastRemote;
 import mrriegel.storagenetwork.gui.fb.ContainerFastRequest;
 import mrriegel.storagenetwork.gui.fb.GuiFastRemote;
@@ -72,7 +73,7 @@ public class GuiHandler implements IGuiHandler {
     }
 
     if (ID == GuiIDs.REQUEST.ordinal()) {
-      if (FB_LOADED) {
+      if (FB_LOADED && ConfigHandler.allowFastWorkBenchIntegration) {
         return new ContainerFastRequest((TileRequest) world.getTileEntity(pos), player, world, pos);
       }
       else {
@@ -82,7 +83,7 @@ public class GuiHandler implements IGuiHandler {
 
     if (ID == GuiIDs.REMOTE.ordinal()) {
       EnumHand hand = EnumHand.values()[x];
-      if (FB_LOADED && player.getHeldItem(hand).getMetadata() != RemoteType.SIMPLE.ordinal()) {
+      if (FB_LOADED && ConfigHandler.allowFastWorkBenchIntegration && player.getHeldItem(hand).getMetadata() != RemoteType.SIMPLE.ordinal()) {
         return new ContainerFastRemote(player, world, hand);
       }
       else {
@@ -124,7 +125,7 @@ public class GuiHandler implements IGuiHandler {
     //todo new ID similar to CONTROLLER but pass master from itemstack not tile 
     // for button on a gui 
     if (ID == GuiIDs.REQUEST.ordinal()) {
-      if (FB_LOADED) {
+      if (FB_LOADED && ConfigHandler.allowFastWorkBenchIntegration) {
         return new GuiFastRequest(player, world, pos);
       }
       else {
@@ -134,7 +135,7 @@ public class GuiHandler implements IGuiHandler {
 
     if (ID == GuiIDs.REMOTE.ordinal()) {
       EnumHand hand = EnumHand.values()[x];
-      if (FB_LOADED && player.getHeldItem(hand).getMetadata() != RemoteType.SIMPLE.ordinal()) {
+      if (FB_LOADED && ConfigHandler.allowFastWorkBenchIntegration && player.getHeldItem(hand).getMetadata() != RemoteType.SIMPLE.ordinal()) {
         return new GuiFastRemote(player, world, hand);
       }
       else {

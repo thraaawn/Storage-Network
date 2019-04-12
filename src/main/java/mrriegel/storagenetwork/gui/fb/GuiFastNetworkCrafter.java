@@ -1,5 +1,12 @@
 package mrriegel.storagenetwork.gui.fb;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -30,15 +37,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 import shadows.fastbench.gui.GuiFastBench;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Base class for Request table inventory and Remote inventory
@@ -313,6 +312,8 @@ public abstract class GuiFastNetworkCrafter extends GuiFastBench implements IPub
 
   @Override
   public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+      this.fontRenderer.drawString("f", 0, 0, 4210752);
     this.fontRenderer.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 4210752);
     if (this.isScreenValid() == false) {
       return;
