@@ -82,6 +82,7 @@ tooltip.storagenetwork.upgrade_3=Keeps a specific amount of items in the attache
 
 
 tile.storagenetwork:controller.name=Controller
+tooltip.storagenetwork.controller=Manage all Processing Cables in the network
 
 chat.master.emptyslots=Potential Empty Slots: 
 chat.master.connectables=Connectables: 
