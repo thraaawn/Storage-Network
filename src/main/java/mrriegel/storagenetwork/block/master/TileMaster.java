@@ -472,6 +472,10 @@ public class TileMaster extends TileEntity implements ITickable, INetworkMaster 
         continue;
       }
       DimPos inventoryPos = pos.offset(cableProcess.getDirection());
+      if (inventoryPos == null) {
+        StorageNetwork.log("Error: processor null at  " + pos + "," + cableProcess.getDirection());
+        continue;
+      }
       IBlockState blockState = inventoryPos.getBlockState();
       String name = blockState.getBlock().getLocalizedName();
       try {

@@ -1,16 +1,11 @@
 package mrriegel.storagenetwork.block.cable;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.api.data.DimPos;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
-
-import javax.annotation.Nullable;
 
 public class TileCableWithFacing extends TileCable {
   @Nullable

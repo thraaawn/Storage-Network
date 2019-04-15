@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.api.data;
 import javax.annotation.Nullable;
 import com.google.common.base.Objects;
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -148,6 +149,10 @@ public class DimPos implements INBTSerializable<NBTTagCompound> {
   }
 
   public DimPos offset(EnumFacing direction) {
+    if (pos == null || direction == null) {
+      StorageNetwork.log("Error: null offset in DimPos " + direction);
+      return null;
+    }
     return new DimPos(this.dimension, this.pos.offset(direction));
   }
 

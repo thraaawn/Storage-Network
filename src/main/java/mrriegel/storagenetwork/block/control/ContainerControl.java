@@ -11,10 +11,11 @@ import net.minecraft.inventory.Slot;
 public class ContainerControl extends Container implements IStorageContainer {
 
   protected InventoryPlayer playerInv;
-  TileMaster master;
+  private TileMaster master;
 
   public ContainerControl(final TileMaster tile, final InventoryPlayer pi) {
     super();
+    master = tile;
     this.playerInv = pi;
     int sq = 18;
     //TODO: base class /shared
