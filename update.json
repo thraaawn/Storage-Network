@@ -7,8 +7,8 @@
     "1.12-recommended": "1.0.15",
     "1.12.1-latest": "1.0.15",
     "1.12.1-recommended": "1.1.1",
-    "1.12.2-latest": "1.7.2",
-    "1.12.2-recommended": "1.7.2"
+    "1.12.2-latest": "1.7.3",
+    "1.12.2-recommended": "1.7.3"
   },
   "1.11.2":{
 	"1.0.0":"First Release"
@@ -72,5 +72,6 @@
   	,"1.7.0":"Added simple remote with no crafting component.  Updated to work around some small server issues and crafting issues.  Add config to optionally disable fastworkbench compatibility even if mod is installed for testing.   "
   	,"1.7.1":"Tooltip fix"
   	,"1.7.2":"Fixed Processing Controller GUI not opening.  "
+  	,"1.7.3":""
   }
 }

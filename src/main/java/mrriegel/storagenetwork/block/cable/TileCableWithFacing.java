@@ -1,6 +1,10 @@
 package mrriegel.storagenetwork.block.cable;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.Nullable;
+import mrriegel.storagenetwork.block.master.TileMaster;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -56,21 +60,32 @@ public class TileCableWithFacing extends TileCable {
   }
 
 
-  public void rotateTo(EnumFacing direction) {
-    this.direction = direction;
-    this.markDirty();
-  }
-
   public void rotate() {
-    this.rotateTo(getNextPossibleDirection(direction));
+
+    EnumFacing previous = direction;
+    List<EnumFacing> targetFaces = Arrays.asList(EnumFacing.values());
+    Collections.shuffle(targetFaces);
+    for (EnumFacing facing : EnumFacing.values()) {
+      if (previous == facing) {
+        continue;
+      }
+      if (isValidLinkNeighbor(facing)) {
+        setDirection(facing);
+        this.markDirty();
+        if (previous != direction) {
+          TileMaster master = getTileMaster();
+          master.refreshNetwork();
+        }
+        return;
+      }
+    }
   }
 
-  private static EnumFacing getNextPossibleDirection(EnumFacing direction) {
-    int newOrd = direction.ordinal() + 1;
-    if(newOrd >= EnumFacing.values().length) {
-      newOrd = 0;
+  public TileMaster getTileMaster() {
+    if (getMaster() == null) {
+      return null;
     }
-    return EnumFacing.getFront(newOrd);
+    return getMaster().getTileEntity(TileMaster.class);
   }
 
   @Override
