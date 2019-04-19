@@ -15,6 +15,7 @@ import net.minecraft.client.util.RecipeItemHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
@@ -93,7 +94,7 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
             ModCyclic.logger.error("Caught third party error trying to transfer stack", e);
           }
         }
-        return ItemStack.EMPTY;//  return new ItemStack(Items.STICK);
+        return new ItemStack(Items.STICK);//code is never used 
       }
       else if (tileMaster != null) {
         int rest = tileMaster.insertStack(slotStack, false);
