@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.gui.fb;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import com.lothrazar.cyclicmagic.ModCyclic;
 import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import mrriegel.storagenetwork.block.master.TileMaster;
@@ -14,7 +15,6 @@ import net.minecraft.client.util.RecipeItemHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
@@ -81,10 +81,19 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
         int num = slotCopy.getMaxStackSize() / slotCopy.getCount();
         IRecipe rec = lastRecipe;
         for (int i = 0; i < num; i++) {
-          if (rec != lastRecipe) break;
-          super.transferStackInSlot(player, index);
+          if (rec != lastRecipe) {
+            break;
+          }
+          try {
+            super.transferStackInSlot(player, index);
+          }
+          catch (Throwable e) {
+            //could be sponge or vanilla or something else all together
+            //ex https://pastebin.com/3D4ccqrK
+            ModCyclic.logger.error("Caught third party error trying to transfer stack", e);
+          }
         }
-        return new ItemStack(Items.STICK);
+        return ItemStack.EMPTY;//  return new ItemStack(Items.STICK);
       }
       else if (tileMaster != null) {
         int rest = tileMaster.insertStack(slotStack, false);
@@ -99,7 +108,9 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
         return ItemStack.EMPTY;
       }
       slot.onSlotChanged();
-      if (slotStack.getCount() == slotCopy.getCount()) return ItemStack.EMPTY;
+      if (slotStack.getCount() == slotCopy.getCount()) {
+        return ItemStack.EMPTY;
+      }
       slot.onTake(player, slotStack);
     }
     return super.transferStackInSlot(player, index);
