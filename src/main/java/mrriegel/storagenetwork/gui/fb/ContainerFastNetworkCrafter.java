@@ -69,11 +69,11 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
     if (world.isRemote) {
       return ItemStack.EMPTY;
     }
-    ItemStack slotCopy = ItemStack.EMPTY;
+
     Slot slot = this.inventorySlots.get(index);
     if (slot != null && slot.getHasStack()) {
       ItemStack slotStack = slot.getStack();
-      slotCopy = slotStack.copy();
+      ItemStack slotCopy = slotStack.copy();
       TileMaster tileMaster = this.getTileMaster();
       if (tileMaster == null) {
         return ItemStack.EMPTY;
@@ -142,7 +142,9 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
         }
         IRecipe rec = lastRecipe;
         ItemStack take = super.onTake(player, stack);
-        if (!world.isRemote) tryRestockGridEntirely(craftMatrix, this, rec, lastItems);
+        if (!world.isRemote) {
+          tryRestockGridEntirely(craftMatrix, this, rec, lastItems);
+        }
         onCraftMatrixChanged(craftMatrix);
         detectAndSendChanges();
         if (lastRecipe != null && player instanceof EntityPlayerMP) {
@@ -167,35 +169,23 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
   public static final void tryRestockGridEntirely(InventoryCrafting matrix, SlotCraftingNetwork slot, IRecipe recipe, ItemStack[] requests) {
     //Can't restock from nowhere.
     if (slot.getTileMaster() == null) return;
+
     //If ingredients are complex, matching may fail, so we use the slow grabbing process.  This does not restock entirely.
-    boolean simple = true;
-    for (Ingredient ing : recipe.getIngredients()) {
-      if (!ing.isSimple()) {
-        simple = false;
-        break;
-      }
-    }
-    boolean one = false;
-    boolean two = false;
-    for (ItemStack i : requests) {
-      if (!i.isEmpty()) {
-        one = true;
-        continue;
-      }
-      if (one && !i.isEmpty()) {
-        two = true;
-        break;
-      }
-    }
+    boolean simple = recipe.getIngredients().stream().anyMatch(Ingredient::isSimple);
+
     if (!simple) {
+      boolean moreThanOneSlotUsed = Arrays.stream(requests).filter(s -> !s.isEmpty()).count() > 1;
+
       for (int i = 0; i < 9; i++) {
         if (matrix.getStackInSlot(i).isEmpty()) {
           ItemStack cached = requests[i];
-          if (!cached.isEmpty()) matrix.stackList.set(i, slot.getTileMaster().request(new ItemStackMatcher(cached, true, false, cached.hasTagCompound()), two ? 1 : cached.getMaxStackSize(), false));
+          if (!cached.isEmpty()) matrix.stackList.set(i, slot.getTileMaster().request(new ItemStackMatcher(cached, true, false, cached.hasTagCompound()), moreThanOneSlotUsed ? 1 : cached.getMaxStackSize(), false));
         }
       }
       return;
     }
+
+
     //If not, these requested stacks must meet an item/meta pair.
     /**
      * Grid Layout originally is preserved in the ItemStack[] as 0 1 2 3 4 5 6 7 8
@@ -207,13 +197,20 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
     boolean matrixFull = true;
     //Grab as much as possible
     for (int i = 0; i < 9; i++) {
+      // If the recipe does not require any items in the given slot, ignore it
+      if (requests[i].isEmpty()) {
+        continue;
+      }
+
       if (matrix.getStackInSlot(i).isEmpty()) {
         ItemStack cached = requests[i];
         if (!cached.isEmpty()) requested[i] = slot.getTileMaster().request(new ItemStackMatcher(cached, true, false, cached.hasTagCompound()), cached.getMaxStackSize(), false);
         matrixFull = false;
       }
     }
+
     if (matrixFull) return; //Early return if we don't need to request anything.
+
     //How much of each stack we have
     Int2IntOpenHashMap collected = new Int2IntOpenHashMap();
     for (ItemStack s : requested) {
