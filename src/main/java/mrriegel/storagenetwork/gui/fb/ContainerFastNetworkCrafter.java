@@ -1,11 +1,8 @@
 package mrriegel.storagenetwork.gui.fb;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import com.lothrazar.cyclicmagic.ModCyclic;
 import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.master.TileMaster;
 import mrriegel.storagenetwork.data.ItemStackMatcher;
 import mrriegel.storagenetwork.gui.IStorageContainer;
@@ -27,6 +24,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
 import shadows.fastbench.gui.ContainerFastBench;
 import shadows.fastbench.gui.SlotCraftingSucks;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class ContainerFastNetworkCrafter extends ContainerFastBench implements IStorageContainer {
 
@@ -90,10 +91,10 @@ public abstract class ContainerFastNetworkCrafter extends ContainerFastBench imp
           catch (Throwable e) {
             //could be sponge or vanilla or something else all together
             //ex https://pastebin.com/3D4ccqrK
-            ModCyclic.logger.error("Caught third party error trying to transfer stack", e);
+            StorageNetwork.instance.logger.error("Caught third party error trying to transfer stack", e);
           }
         }
-        return ItemStack.EMPTY; //new ItemStack(Items.STICK);//code is never used 
+        return ItemStack.EMPTY; //new ItemStack(Items.STICK);//code is never used
       }
       else if (tileMaster != null) {
         int rest = tileMaster.insertStack(slotStack, false);
